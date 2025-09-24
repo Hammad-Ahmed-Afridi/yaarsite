@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form'; // Import Controller
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
@@ -76,9 +76,17 @@ export default function SignupPage() {
         console.error("Signup Page: Supabase signup error:", error);
         toast.error(getAuthErrorMessage(error));
       } else {
-        toast.success("Account created successfully! Please check your email to verify your account and then log in.");
-        console.log("Signup Page: Redirecting to /login after successful signup.");
-        router.push('/login');
+        // IMPORTANT: Sign out the user immediately after successful signup
+        // This prevents automatic redirection to the dashboard and forces them to the login page.
+        const { error: signOutError } = await supabase.auth.signOut();
+        if (signOutError) {
+          console.error("Signup Page: Error signing out after signup:", signOutError);
+          toast.error("Account created, but failed to sign out. Please try logging in.");
+        } else {
+          toast.success("Account created successfully! Please check your email to verify your account and then log in.");
+          console.log("Signup Page: Redirecting to /login after successful signup and sign out.");
+          router.push('/login');
+        }
       }
     } catch (submitError) {
       console.error("Signup Page: Unexpected error during form submission:", submitError);
