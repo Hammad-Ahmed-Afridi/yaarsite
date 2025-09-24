@@ -14,16 +14,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff, Mail, Lock, Phone, User, Store } from 'lucide-react'; // Added User icon
+import { Eye, EyeOff, Mail, Lock, Phone, User, Store } from 'lucide-react';
 import Link from 'next/link';
 
 const formSchema = z.object({
-  name: z.string().min(1, { message: "Name is required." }), // New name field
+  name: z.string().min(1, { message: "Name is required." }),
   email: z.string().email({ message: "Enter a valid email address." }),
   phoneNumber: z.string()
     .regex(/^03\d{9}$/, { message: "Must start with 03 and be 11 digits long." })
     .optional()
-    .or(z.literal('')), // Allow empty string
+    .or(z.literal('')),
   password: z.string().min(6, { message: "Password must be at least 6 characters long." }),
   confirmPassword: z.string(),
   terms: z.boolean().refine(val => val === true, { message: "You must accept the terms and conditions." }),
@@ -41,7 +41,7 @@ export default function SignupPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "", // Default value for new name field
+      name: "",
       email: "",
       phoneNumber: "",
       password: "",
@@ -50,26 +50,45 @@ export default function SignupPage() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email: values.email,
-      password: values.password,
-      options: {
-        data: {
-          name: values.name, // Pass name to raw_user_meta_data
-          phone_number: values.phoneNumber || null, // Pass phone number to raw_user_meta_data
-        },
-      },
-    });
-
-    if (error) {
-      toast.error(getAuthErrorMessage(error));
-    } else {
-      toast.success("Account created successfully! Please check your email to verify your account and then log in.");
-      router.push('/login');
+  // Log form validation errors for debugging
+  React.useEffect(() => {
+    if (Object.keys(form.formState.errors).length > 0) {
+      console.log("Form validation errors:", form.formState.errors);
+      // Optionally, you could toast the first error message here if you want more immediate feedback
+      // const firstErrorKey = Object.keys(form.formState.errors)[0];
+      // toast.error(form.formState.errors[firstErrorKey]?.message);
     }
-    setIsLoading(false);
+  }, [form.formState.errors]);
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log("Attempting form submission with values:", values);
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+        options: {
+          data: {
+            name: values.name,
+            phone_number: values.phoneNumber || null,
+          },
+        },
+      });
+
+      if (error) {
+        console.error("Supabase signup error:", error);
+        toast.error(getAuthErrorMessage(error));
+      } else {
+        toast.success("Account created successfully! Please check your email to verify your account and then log in.");
+        router.push('/login');
+      }
+    } catch (submitError) {
+      console.error("Unexpected error during form submission:", submitError);
+      toast.error("An unexpected error occurred during signup.");
+    } finally {
+      setIsLoading(false);
+      console.log("Submission finished, isLoading set to false.");
+    }
   };
 
   return (
@@ -82,7 +101,6 @@ export default function SignupPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* New Name Input Field */}
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
               <div className="relative">
