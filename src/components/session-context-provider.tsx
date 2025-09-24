@@ -112,7 +112,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   return (
     <SessionContext.Provider value={{ session, user, profile, isLoading }}>
       {children}
-      <Toaster richColors />
+      <Toaster richColors duration={2000} />
     </SessionContext.Provider>
   );
 };
