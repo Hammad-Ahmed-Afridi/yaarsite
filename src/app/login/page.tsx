@@ -35,6 +35,7 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log("Login Page: Attempting form submission with values:", values);
     setIsLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       email: values.email,
@@ -42,12 +43,15 @@ export default function LoginPage() {
     });
 
     if (error) {
+      console.error("Login Page: Supabase sign-in error:", error);
       toast.error(getAuthErrorMessage(error));
     } else {
       toast.success("Logged in successfully!");
+      console.log("Login Page: Redirecting to / after successful login.");
       router.push('/');
     }
     setIsLoading(false);
+    console.log("Login Page: Submission finished, isLoading set to false.");
   };
 
   return (

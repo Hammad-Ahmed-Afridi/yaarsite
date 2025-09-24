@@ -38,6 +38,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
 
   // Function to fetch user profile
   const fetchUserProfile = async (userId: string) => {
+    console.log("SessionContext: Fetching profile for user:", userId);
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -45,14 +46,18 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       .single();
 
     if (error) {
-      console.error("Error fetching profile:", error);
+      console.error("SessionContext: Error fetching profile:", error);
       return null;
     }
+    console.log("SessionContext: Profile fetched:", data);
     return data as Profile;
   };
 
   useEffect(() => {
+    console.log("SessionContext: useEffect running. Current pathname:", pathname);
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
+      console.log("SessionContext: onAuthStateChange event:", _event, "session:", currentSession);
       setSession(currentSession);
       setUser(currentSession?.user || null);
 
@@ -63,18 +68,22 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
         setProfile(null);
       }
       setIsLoading(false);
+      console.log("SessionContext: isLoading set to false after auth state change.");
 
       const publicPaths = ['/login', '/signup'];
 
       if (currentSession && publicPaths.includes(pathname)) {
+        console.log("SessionContext: Redirecting authenticated user from public path to /");
         router.push('/'); // Redirect authenticated users from auth pages to home
       } else if (!currentSession && !publicPaths.includes(pathname)) {
+        console.log("SessionContext: Redirecting unauthenticated user from protected path to /login");
         router.push('/login'); // Redirect unauthenticated users from protected pages to login
       }
     });
 
     // Fetch initial session and profile
     supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
+      console.log("SessionContext: Initial getSession result:", initialSession);
       setSession(initialSession);
       setUser(initialSession?.user || null);
 
@@ -85,16 +94,22 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
         setProfile(null);
       }
       setIsLoading(false);
+      console.log("SessionContext: isLoading set to false after initial session fetch.");
 
       const publicPaths = ['/login', '/signup'];
       if (initialSession && publicPaths.includes(pathname)) {
+        console.log("SessionContext: Initial load: Redirecting authenticated user from public path to /");
         router.push('/');
       } else if (!initialSession && !publicPaths.includes(pathname)) {
+        console.log("SessionContext: Initial load: Redirecting unauthenticated user from protected path to /login");
         router.push('/login');
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      console.log("SessionContext: useEffect cleanup.");
+      subscription.unsubscribe();
+    };
   }, [router, pathname]);
 
   return (

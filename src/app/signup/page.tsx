@@ -53,15 +53,12 @@ export default function SignupPage() {
   // Log form validation errors for debugging
   React.useEffect(() => {
     if (Object.keys(form.formState.errors).length > 0) {
-      console.log("Form validation errors:", form.formState.errors);
-      // Optionally, you could toast the first error message here if you want more immediate feedback
-      // const firstErrorKey = Object.keys(form.formState.errors)[0];
-      // toast.error(form.formState.errors[firstErrorKey]?.message);
+      console.log("Signup Page: Form validation errors:", form.formState.errors);
     }
   }, [form.formState.errors]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("Attempting form submission with values:", values);
+    console.log("Signup Page: Attempting form submission with values:", values);
     setIsLoading(true);
     try {
       const { error } = await supabase.auth.signUp({
@@ -76,18 +73,19 @@ export default function SignupPage() {
       });
 
       if (error) {
-        console.error("Supabase signup error:", error);
+        console.error("Signup Page: Supabase signup error:", error);
         toast.error(getAuthErrorMessage(error));
       } else {
         toast.success("Account created successfully! Please check your email to verify your account and then log in.");
+        console.log("Signup Page: Redirecting to /login after successful signup.");
         router.push('/login');
       }
     } catch (submitError) {
-      console.error("Unexpected error during form submission:", submitError);
+      console.error("Signup Page: Unexpected error during form submission:", submitError);
       toast.error("An unexpected error occurred during signup.");
     } finally {
       setIsLoading(false);
-      console.log("Submission finished, isLoading set to false.");
+      console.log("Signup Page: Submission finished, isLoading set to false.");
     }
   };
 
