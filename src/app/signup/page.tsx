@@ -76,17 +76,11 @@ export default function SignupPage() {
         console.error("Signup Page: Supabase signup error:", error);
         toast.error(getAuthErrorMessage(error));
       } else {
-        // IMPORTANT: Sign out the user immediately after successful signup
-        // This prevents automatic redirection to the dashboard and forces them to the login page.
-        const { error: signOutError } = await supabase.auth.signOut();
-        if (signOutError) {
-          console.error("Signup Page: Error signing out after signup:", signOutError);
-          toast.error("Account created, but failed to sign out. Please try logging in.");
-        } else {
-          toast.success("Account created successfully! Please check your email to verify your account and then log in.");
-          console.log("Signup Page: Redirecting to /login after successful signup and sign out.");
-          router.push('/login');
-        }
+        // Only show success message, no redirection or explicit sign-out
+        toast.success("Account created successfully! Please check your email to verify your account and then log in.");
+        console.log("Signup Page: Account created. No automatic redirection.");
+        // Optionally, you might want to reset the form here:
+        form.reset();
       }
     } catch (submitError) {
       console.error("Signup Page: Unexpected error during form submission:", submitError);
