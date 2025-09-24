@@ -76,11 +76,10 @@ export default function SignupPage() {
         console.error("Signup Page: Supabase signup error:", error);
         toast.error(getAuthErrorMessage(error));
       } else {
-        // Only show success message, no redirection or explicit sign-out
-        toast.success("Account created successfully! Please check your email to verify your account and then log in.");
+        // Updated success message as requested
+        toast.success("Account created successfully, kindly sign in.");
         console.log("Signup Page: Account created. No automatic redirection.");
-        // Optionally, you might want to reset the form here:
-        form.reset();
+        form.reset(); // Reset the form after successful signup
       }
     } catch (submitError) {
       console.error("Signup Page: Unexpected error during form submission:", submitError);
