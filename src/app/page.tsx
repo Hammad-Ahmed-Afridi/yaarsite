@@ -4,9 +4,11 @@ import { MadeWithDyad } from "@/components/made-with-dyad";
 import { useSession } from "@/components/session-context-provider";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button"; // Ensure Button is imported
+import { supabase } from "@/integrations/supabase/client"; // Ensure supabase client is imported
 
 export default function Home() {
-  const { user, isLoading } = useSession();
+  const { user, profile, isLoading } = useSession(); // Get profile from context
   const router = useRouter();
 
   useEffect(() => {
@@ -26,8 +28,8 @@ export default function Home() {
   return (
     <div className="grid grid-rows-[1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)] bg-background text-foreground">
       <main className="flex flex-col gap-8 row-start-1 items-center sm:items-start">
-        <h1 className="text-3xl font-bold">Welcome, {user.email}!</h1>
-        <p className="text-lg">Your tenant slug is: <span className="font-mono bg-muted px-2 py-1 rounded">{user.user_metadata?.tenant_slug || 'N/A'}</span></p>
+        <h1 className="text-3xl font-bold">Welcome, {profile?.first_name || user.email}!</h1> {/* Use profile name */}
+        <p className="text-lg">Your tenant slug is: <span className="font-mono bg-muted px-2 py-1 rounded">{profile?.tenant_slug || 'N/A'}</span></p> {/* Use profile tenant slug */}
         <p>This is your main application page. More content will go here.</p>
         <Button onClick={async () => {
           await supabase.auth.signOut();

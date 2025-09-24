@@ -14,10 +14,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff, Mail, Lock, Phone, Store } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, Phone, User, Store } from 'lucide-react'; // Added User icon
 import Link from 'next/link';
 
 const formSchema = z.object({
+  name: z.string().min(1, { message: "Name is required." }), // New name field
   email: z.string().email({ message: "Enter a valid email address." }),
   phoneNumber: z.string()
     .regex(/^03\d{9}$/, { message: "Must start with 03 and be 11 digits long." })
@@ -40,6 +41,7 @@ export default function SignupPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: "", // Default value for new name field
       email: "",
       phoneNumber: "",
       password: "",
@@ -55,6 +57,7 @@ export default function SignupPage() {
       password: values.password,
       options: {
         data: {
+          name: values.name, // Pass name to raw_user_meta_data
           phone_number: values.phoneNumber || null, // Pass phone number to raw_user_meta_data
         },
       },
@@ -79,6 +82,24 @@ export default function SignupPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* New Name Input Field */}
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Enter your full name"
+                  className="pl-10"
+                  {...form.register("name")}
+                />
+              </div>
+              {form.formState.errors.name && (
+                <p className="text-destructive text-sm">{form.formState.errors.name.message}</p>
+              )}
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
