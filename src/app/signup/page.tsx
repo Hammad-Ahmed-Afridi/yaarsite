@@ -76,10 +76,10 @@ export default function SignupPage() {
         console.error("Signup Page: Supabase signup error:", error);
         toast.error(getAuthErrorMessage(error));
       } else {
-        // Updated toast message and added duration
-        toast.success("Account created! Redirecting to dashboard...", { duration: 2000 });
-        console.log("Signup Page: Account created. Redirecting to /.");
-        router.push('/'); // Redirect to dashboard immediately
+        // Account created, but DO NOT redirect. Stay on signup page.
+        toast.success("Account created! Please sign in to continue.", { duration: 3000 });
+        console.log("Signup Page: Account created. Staying on signup page.");
+        form.reset(); // Clear the form fields
       }
     } catch (submitError) {
       console.error("Signup Page: Unexpected error during form submission:", submitError);
