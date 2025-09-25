@@ -61,8 +61,8 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
     // Paths that are publicly accessible (like the store pages)
     const publicStorePathPrefix = '/store';
 
-    const handleAuthStateChange = async (_event: string, currentSession: Session | null) => {
-      console.log("SessionContext: onAuthStateChange event:", _event, "session:", currentSession);
+    const handleAuthStateChange = async (event: string, currentSession: Session | null) => {
+      console.log("SessionContext: onAuthStateChange event:", event, "session:", currentSession);
       setSession(currentSession);
       setUser(currentSession?.user || null);
 
@@ -71,10 +71,22 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
         const userProfile = await fetchUserProfile(currentSession.user.id);
         setProfile(userProfile);
 
-        // If authenticated user tries to access login/signup, redirect to dashboard
-        if (authOnlyPaths.includes(pathname)) {
-          console.log("SessionContext: Authenticated user on auth-only path, redirecting to /");
+        // If authenticated user is on the login page, always redirect to dashboard
+        if (pathname === '/login') {
+          console.log("SessionContext: Authenticated user on login path, redirecting to /");
           router.push('/');
+        }
+        // If authenticated user is on the signup page:
+        //   - If the event is 'SIGNED_IN' (meaning they just signed up), let them stay on the signup page.
+        //   - Otherwise (e.g., they were already signed in and navigated to /signup, or refreshed), redirect to dashboard.
+        else if (pathname === '/signup') {
+          if (event !== 'SIGNED_IN') { // If not a fresh signup event, redirect
+            console.log("SessionContext: Already authenticated user on signup path (or refreshed), redirecting to /");
+            router.push('/');
+          } else {
+            console.log("SessionContext: User just signed up on /signup, staying on page.");
+            // Do nothing, allow them to stay on the signup page
+          }
         }
       } else {
         // User is NOT authenticated
@@ -99,6 +111,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
     // Fetch initial session and profile
     supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
       console.log("SessionContext: Initial getSession result:", initialSession);
+      // Pass 'INITIAL_SESSION' as the event type for the initial load
       await handleAuthStateChange('INITIAL_SESSION', initialSession);
     });
 
