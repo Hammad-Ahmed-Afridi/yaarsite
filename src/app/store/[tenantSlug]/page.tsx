@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Package, Store } from 'lucide-react';
 import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge'; // Added missing import
 
 interface Product {
   id: string;
@@ -127,26 +128,32 @@ export default function PublicStorePage() {
       </header>
 
       {/* Main Content - Product Grid */}
-      <main className="flex-1 p-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <h2 className="col-span-full text-2xl font-bold mb-4">Our Products</h2>
+      <main className="flex-1 p-8">
+        <h2 className="text-2xl font-bold mb-6">Our Products</h2>
         {products.length === 0 ? (
-          <p className="col-span-full text-muted-foreground">No products available yet.</p>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <Package className="h-16 w-16 text-muted-foreground mb-4" />
+            <p className="text-xl text-muted-foreground mb-4">No products available yet.</p>
+            <p className="text-sm text-muted-foreground">Check back later or contact the store owner.</p>
+          </div>
         ) : (
-          products.map((product) => (
-            <Card key={product.id} className="bg-card text-card-foreground shadow-md">
-              <CardHeader>
-                <CardTitle className="text-lg">{product.name}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <p className="text-sm text-muted-foreground">{product.description || "No description available."}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
-                  <Badge variant="secondary">{product.stock} in stock</Badge>
-                </div>
-                <Button className="w-full mt-4">View Details</Button>
-              </CardContent>
-            </Card>
-          ))
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {products.map((product) => (
+              <Card key={product.id} className="bg-card text-card-foreground shadow-md">
+                <CardHeader>
+                  <CardTitle className="text-lg">{product.name}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <p className="text-sm text-muted-foreground">{product.description || "No description available."}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
+                    <Badge variant="secondary">{product.stock} in stock</Badge>
+                  </div>
+                  <Button className="w-full mt-4">View Details</Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         )}
       </main>
       <MadeWithDyad />
