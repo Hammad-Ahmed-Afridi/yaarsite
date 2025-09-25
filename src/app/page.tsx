@@ -30,6 +30,17 @@ export default function DashboardPage() {
     router.replace('/login');
   };
 
+  const handleOpenStore = () => {
+    if (profile?.store_url) {
+      // Use window.open for external URLs or if you specifically want a new tab
+      // For internal Next.js routes, router.push is generally preferred for client-side navigation
+      window.open(profile.store_url, '_blank');
+    } else {
+      // Fallback if store_url is not available
+      router.push('/store');
+    }
+  };
+
   if (isLoading || !user) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
@@ -98,10 +109,8 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">See how your store looks to customers</p>
-            <Button asChild className="w-full">
-              <a href={profile?.store_url || '/store'} target="_blank" rel="noopener noreferrer">
-                Open Store
-              </a>
+            <Button onClick={handleOpenStore} className="w-full">
+              Open Store
             </Button>
           </CardContent>
         </Card>
