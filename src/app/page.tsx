@@ -22,9 +22,8 @@ export default function DashboardPage() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    // Use router.replace to clear history and router.refresh to ensure state is fully reset
+    // Use router.replace to clear history and navigate directly to the login page
     router.replace('/login');
-    router.refresh(); 
   };
 
   if (isLoading || !user) {
