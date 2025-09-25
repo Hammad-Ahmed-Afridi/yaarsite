@@ -14,7 +14,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff, Mail, Lock, Phone, User, Store } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { Eye, EyeOff, Mail, Lock, Phone, User, Store, Chrome } from 'lucide-react';
 import Link from 'next/link';
 
 const formSchema = z.object({
@@ -37,6 +38,7 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = React.useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,7 +52,6 @@ export default function SignupPage() {
     },
   });
 
-  // Log form validation errors for debugging
   React.useEffect(() => {
     if (Object.keys(form.formState.errors).length > 0) {
       console.log("Signup Page: Form validation errors:", form.formState.errors);
@@ -76,9 +77,16 @@ export default function SignupPage() {
         console.error("Signup Page: Supabase signup error:", error);
         toast.error(getAuthErrorMessage(error));
       } else {
-        // Updated toast message and added duration
-        toast.success("Account created, kindly sign in.", { duration: 2000 });
-        console.log("Signup Page: Account created. No automatic redirection.");
+        // Explicitly sign out the user after successful signup
+        const { error: signOutError } = await supabase.auth.signOut();
+        if (signOutError) {
+          console.error("Signup Page: Error during sign out after signup:", signOutError);
+          toast.error("Account created, but failed to sign out. Please try logging in.");
+        } else {
+          toast.success("Account created successfully! Please sign in.", { duration: 3000 });
+          console.log("Signup Page: Account created and signed out. Redirecting to /login.");
+          router.push('/login'); // Redirect to login page
+        }
         form.reset(); // Reset the form after successful signup
       }
     } catch (submitError) {
@@ -88,6 +96,24 @@ export default function SignupPage() {
       setIsLoading(false);
       console.log("Signup Page: Submission finished, isLoading set to false.");
     }
+  };
+
+  const handleGoogleSignUp = async () => {
+    console.log("Signup Page: Attempting Google sign-up.");
+    setIsGoogleLoading(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      console.error("Signup Page: Supabase Google sign-up error:", error);
+      toast.error(getAuthErrorMessage(error));
+      setIsGoogleLoading(false);
+    }
+    console.log("Signup Page: Google sign-up initiated. Awaiting redirect.");
   };
 
   return (
@@ -227,10 +253,32 @@ export default function SignupPage() {
               <p className="text-destructive text-sm">{form.formState.errors.terms.message}</p>
             )}
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
               {isLoading ? "Creating Account..." : "Create Account"}
             </Button>
           </form>
+
+          <div className="relative my-6">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-sm text-muted-foreground">
+              OR
+            </span>
+          </div>
+
+          <Button
+            variant="outline"
+            className="w-full flex items-center gap-2"
+            onClick={handleGoogleSignUp}
+            disabled={isLoading || isGoogleLoading}
+          >
+            {isGoogleLoading ? (
+              "Signing up with Google..."
+            ) : (
+              <>
+                <Chrome className="h-4 w-4" /> Sign up with Google
+              </>
+            )}
+          </Button>
 
           <div className="mt-6 text-center text-sm">
             Already have an account?{" "}
