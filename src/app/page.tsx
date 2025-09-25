@@ -9,31 +9,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { Package, ShoppingCart, DollarSign, Store, Settings, LayoutDashboard } from "lucide-react";
+import { toast } from "sonner"; // Import toast for error messages
 
 export default function DashboardPage() {
   const { user, profile, isLoading } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.push('/login');
-    }
-    // Add this console log to check the store_url
-    if (profile) {
-      console.log("Dashboard Page: Current user profile:", profile);
-      console.log("Dashboard Page: Profile store URL:", profile.store_url);
-    }
-  }, [user, isLoading, router, profile]);
+  // Removed the useEffect that handled redirection to /login.
+  // This logic is now centralized in SessionContextProvider.
 
   const handleSignOut = async () => {
     console.log("Dashboard Page: Attempting to sign out.");
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error("Dashboard Page: Error during sign out:", error);
-      // Optionally show a toast error here if sign out itself fails
+      toast.error("Failed to sign out. Please try again."); // Show toast error
     } else {
       console.log("Dashboard Page: Sign out successful. SessionContextProvider will handle redirect.");
-      // No direct router.replace here; SessionContextProvider's onAuthStateChange will handle it.
+      // SessionContextProvider's onAuthStateChange will now handle the redirect to /login
     }
   };
 

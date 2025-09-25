@@ -56,58 +56,51 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   useEffect(() => {
     console.log("SessionContext: useEffect running. Current pathname:", pathname);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
+    const publicPaths = ['/login', '/signup'];
+
+    const handleAuthStateChange = async (_event: string, currentSession: Session | null) => {
       console.log("SessionContext: onAuthStateChange event:", _event, "session:", currentSession);
       setSession(currentSession);
       setUser(currentSession?.user || null);
 
       if (currentSession) {
+        // User is authenticated
         const userProfile = await fetchUserProfile(currentSession.user.id);
         setProfile(userProfile);
+
+        // If authenticated user tries to access login/signup, redirect to dashboard
+        if (publicPaths.includes(pathname)) {
+          console.log("SessionContext: Authenticated user on public path, redirecting to /");
+          router.push('/');
+        }
       } else {
+        // User is NOT authenticated
         setProfile(null);
+
+        // If unauthenticated user is on a protected path, redirect to login
+        if (!publicPaths.includes(pathname)) {
+          console.log("SessionContext: Unauthenticated user on protected path, redirecting to /login");
+          router.push('/login');
+        }
       }
       setIsLoading(false);
       console.log("SessionContext: isLoading set to false after auth state change.");
+    };
 
-      const publicPaths = ['/login', '/signup'];
-
-      // ONLY redirect unauthenticated users from protected paths to /login
-      // Do NOT redirect authenticated users from public paths (like /login or /signup) to /
-      if (!currentSession && !publicPaths.includes(pathname)) {
-        console.log("SessionContext: Redirecting unauthenticated user from protected path to /login");
-        router.push('/login'); // Redirect unauthenticated users from protected pages to login
-      }
-    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthStateChange);
 
     // Fetch initial session and profile
     supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
       console.log("SessionContext: Initial getSession result:", initialSession);
-      setSession(initialSession);
-      setUser(initialSession?.user || null);
-
-      if (initialSession) {
-        const userProfile = await fetchUserProfile(initialSession.user.id);
-        setProfile(userProfile);
-      } else {
-        setProfile(null);
-      }
-      setIsLoading(false);
-      console.log("SessionContext: isLoading set to false after initial session fetch.");
-
-      const publicPaths = ['/login', '/signup'];
-      // ONLY redirect unauthenticated users from protected paths to /login on initial load
-      if (!initialSession && !publicPaths.includes(pathname)) {
-        console.log("SessionContext: Initial load: Redirecting unauthenticated user from protected path to /login");
-        router.push('/login');
-      }
+      // Call the same handler for initial session to ensure consistent logic
+      await handleAuthStateChange('INITIAL_SESSION', initialSession);
     });
 
     return () => {
       console.log("SessionContext: useEffect cleanup.");
       subscription.unsubscribe();
     };
-  }, [router, pathname]);
+  }, [router, pathname]); // Added router and pathname to dependency array
 
   return (
     <SessionContext.Provider value={{ session, user, profile, isLoading }}>
