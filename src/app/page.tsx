@@ -9,14 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { Package, ShoppingCart, DollarSign, Store, Settings, LayoutDashboard } from "lucide-react";
-import { toast } from "sonner"; // Ensure toast is imported
+import { toast } from "sonner";
 
 export default function DashboardPage() {
   const { user, profile, isLoading } = useSession();
   const router = useRouter();
-
-  // Removed the useEffect that handled redirection to /login.
-  // This logic is now centralized in SessionContextProvider.
 
   const handleSignOut = async () => {
     console.log("Dashboard Page: Attempting to sign out.");
@@ -34,10 +31,11 @@ export default function DashboardPage() {
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error("Dashboard Page: Error during sign out:", error);
-      toast.error("Failed to sign out. Please try again."); // Show toast error
+      toast.error("Failed to sign out. Please try again.");
     } else {
-      console.log("Dashboard Page: Sign out successful. SessionContextProvider will handle redirect.");
-      // SessionContextProvider's onAuthStateChange will now handle the redirect to /login
+      console.log("Dashboard Page: Sign out successful. Explicitly redirecting to /login.");
+      toast.success("Signed out successfully!"); // Added success toast
+      router.push('/login'); // Explicitly redirect to login page
     }
   };
 
