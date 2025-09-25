@@ -35,7 +35,14 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("Login Page: Attempting form submission with values:", values);
+    // Explicit client-side validation check
+    if (!form.formState.isValid) {
+      console.warn("Login Page: Client-side validation failed, not submitting.");
+      toast.error("Please correct the form errors.");
+      return; // Stop submission if client-side validation fails
+    }
+
+    console.log("Login Page: Client-side validation passed. Attempting form submission with values:", values);
     setIsLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       email: values.email,
