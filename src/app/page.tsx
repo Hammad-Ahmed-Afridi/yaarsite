@@ -32,11 +32,11 @@ export default function DashboardPage() {
 
   const handleOpenStore = () => {
     if (profile?.tenant_slug) {
-      // Use router.push for internal navigation to the dynamic store page
-      router.push(`/store/${profile.tenant_slug}`);
+      // Open the store URL in a new tab
+      window.open(`/store/${profile.tenant_slug}`, '_blank');
     } else {
       // Fallback if tenant_slug is not available
-      router.push('/store');
+      window.open('/store', '_blank');
     }
   };
 
