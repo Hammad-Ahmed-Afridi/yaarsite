@@ -13,7 +13,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { Separator } from '@/components/ui/separator'; // Added Separator import
+import { Eye, EyeOff, Mail, Lock, Chrome } from 'lucide-react'; // Added Chrome icon import
 import Link from 'next/link';
 
 const formSchema = z.object({
@@ -25,6 +26,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = React.useState(false); // New state for Google loading
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,6 +54,25 @@ export default function LoginPage() {
     }
     setIsLoading(false);
     console.log("Login Page: Submission finished, isLoading set to false.");
+  };
+
+  const handleGoogleSignIn = async () => {
+    console.log("Login Page: Attempting Google sign-in.");
+    setIsGoogleLoading(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`, // Ensure this matches your Supabase redirect URL
+      },
+    });
+
+    if (error) {
+      console.error("Login Page: Supabase Google sign-in error:", error);
+      toast.error(getAuthErrorMessage(error));
+      setIsGoogleLoading(false); // Reset loading on error
+    }
+    // Supabase handles the redirect, so no need for router.push here on success
+    console.log("Login Page: Google sign-in initiated. Awaiting redirect.");
   };
 
   return (
@@ -104,10 +125,32 @@ export default function LoginPage() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
               {isLoading ? "Signing In..." : "Sign In"}
             </Button>
           </form>
+
+          <div className="relative my-6">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-sm text-muted-foreground">
+              OR
+            </span>
+          </div>
+
+          <Button
+            variant="outline"
+            className="w-full flex items-center gap-2"
+            onClick={handleGoogleSignIn}
+            disabled={isLoading || isGoogleLoading}
+          >
+            {isGoogleLoading ? (
+              "Signing in with Google..."
+            ) : (
+              <>
+                <Chrome className="h-4 w-4" /> Sign in with Google
+              </>
+            )}
+          </Button>
 
           <div className="mt-6 text-center text-sm">
             Don't have an account?{" "}
