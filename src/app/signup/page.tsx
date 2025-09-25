@@ -61,7 +61,7 @@ export default function SignupPage() {
     console.log("Signup Page: Attempting form submission with values:", values);
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
+      const { error: signUpError } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
         options: {
@@ -72,13 +72,21 @@ export default function SignupPage() {
         },
       });
 
-      if (error) {
-        console.error("Signup Page: Supabase signup error:", error);
-        toast.error(getAuthErrorMessage(error));
+      if (signUpError) {
+        console.error("Signup Page: Supabase signup error:", signUpError);
+        toast.error(getAuthErrorMessage(signUpError));
       } else {
-        // Account created, but DO NOT redirect. Stay on signup page.
-        toast.success("Account created! Please sign in to continue.", { duration: 3000 });
-        console.log("Signup Page: Account created. Staying on signup page.");
+        // Account created successfully. Now, explicitly sign out the user
+        // so they have to log in manually on the login page.
+        const { error: signOutError } = await supabase.auth.signOut();
+        if (signOutError) {
+          console.error("Signup Page: Error during sign out after signup:", signOutError);
+          // Even if sign out fails, we still want to inform the user about account creation
+          toast.error("Account created, but there was an issue logging you out. Please sign in manually.");
+        } else {
+          toast.success("Account created! Please sign in to continue.", { duration: 3000 });
+          console.log("Signup Page: Account created and user signed out. Staying on signup page.");
+        }
         form.reset(); // Clear the form fields
       }
     } catch (submitError) {
