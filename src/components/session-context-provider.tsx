@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useRouter, usePathname } from 'next/navigation';
@@ -24,6 +24,7 @@ interface SessionContextType {
   user: User | null;
   profile: Profile | null;
   isLoading: boolean;
+  refreshProfile: () => Promise<void>; // Added refreshProfile function
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
@@ -37,7 +38,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   const pathname = usePathname();
 
   // Function to fetch user profile
-  const fetchUserProfile = async (userId: string) => {
+  const fetchUserProfile = useCallback(async (userId: string) => {
     console.log("SessionContext: Fetching profile for user:", userId);
     const { data, error } = await supabase
       .from('profiles')
@@ -51,59 +52,56 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
     }
     console.log("SessionContext: Profile fetched:", data);
     return data as Profile;
-  };
+  }, []); // No dependencies, as it only uses supabase client
+
+  const handleAuthStateChange = useCallback(async (event: string, currentSession: Session | null) => {
+    console.log("SessionContext: onAuthStateChange event:", event, "session:", currentSession);
+    setSession(currentSession);
+    setUser(currentSession?.user || null);
+
+    const isAuthPage = ['/login', '/signup'].includes(pathname);
+    const isPublicStorePage = pathname.startsWith('/store');
+
+    if (currentSession) {
+      // User is authenticated
+      const userProfile = await fetchUserProfile(currentSession.user.id);
+      setProfile(userProfile);
+
+      // If authenticated user is on the login page, redirect to dashboard
+      if (pathname === '/login') {
+        console.log("SessionContext: Authenticated user on login path, redirecting to /");
+        router.push('/');
+      }
+    } else {
+      // User is NOT authenticated
+      setProfile(null);
+
+      // If unauthenticated user is on a protected path, redirect to login
+      if (!isAuthPage && !isPublicStorePage) {
+        console.log("SessionContext: Unauthenticated user on protected path, redirecting to /login");
+        router.push('/login');
+      }
+    }
+    setIsLoading(false);
+    console.log("SessionContext: isLoading set to false after auth state change.");
+  }, [pathname, router, fetchUserProfile]);
+
+  // Function to manually refresh the profile
+  const refreshProfile = useCallback(async () => {
+    if (user) {
+      const updatedProfile = await fetchUserProfile(user.id);
+      setProfile(updatedProfile);
+    }
+  }, [user, fetchUserProfile]);
 
   useEffect(() => {
     console.log("SessionContext: useEffect running. Current pathname:", pathname);
-
-    // Paths that are explicitly for authentication (login/signup)
-    const authOnlyPaths = ['/login', '/signup'];
-    // Paths that are publicly accessible (like the store pages)
-    const publicStorePathPrefix = '/store';
-
-    const handleAuthStateChange = async (event: string, currentSession: Session | null) => {
-      console.log("SessionContext: onAuthStateChange event:", event, "session:", currentSession);
-      setSession(currentSession);
-      setUser(currentSession?.user || null);
-
-      const isAuthPage = authOnlyPaths.includes(pathname);
-      const isPublicStorePage = pathname.startsWith(publicStorePathPrefix);
-
-      if (currentSession) {
-        // User is authenticated
-        const userProfile = await fetchUserProfile(currentSession.user.id);
-        setProfile(userProfile);
-
-        // If authenticated user is on the login page, redirect to dashboard
-        if (pathname === '/login') {
-          console.log("SessionContext: Authenticated user on login path, redirecting to /");
-          router.push('/');
-        }
-        // IMPORTANT: If authenticated user is on the signup page, DO NOT redirect.
-        // They should be able to stay there after registration to see the toast.
-        // The previous logic for /signup was still causing redirects in some cases.
-        // We explicitly remove any redirection from /signup for authenticated users.
-
-      } else {
-        // User is NOT authenticated
-        setProfile(null);
-
-        // If unauthenticated user is on a protected path, redirect to login
-        if (!isAuthPage && !isPublicStorePage) {
-          console.log("SessionContext: Unauthenticated user on protected path, redirecting to /login");
-          router.push('/login');
-        }
-      }
-      setIsLoading(false);
-      console.log("SessionContext: isLoading set to false after auth state change.");
-    };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthStateChange);
 
     // Fetch initial session and profile
     supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
       console.log("SessionContext: Initial getSession result:", initialSession);
-      // Pass 'INITIAL_SESSION' as the event type for the initial load
       await handleAuthStateChange('INITIAL_SESSION', initialSession);
     });
 
@@ -111,10 +109,10 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       console.log("SessionContext: useEffect cleanup.");
       subscription.unsubscribe();
     };
-  }, [router, pathname]); // Added router and pathname to dependency array for client-side redirects
+  }, [handleAuthStateChange]);
 
   return (
-    <SessionContext.Provider value={{ session, user, profile, isLoading }}>
+    <SessionContext.Provider value={{ session, user, profile, isLoading, refreshProfile }}>
       {children}
       <Toaster richColors />
     </SessionContext.Provider>

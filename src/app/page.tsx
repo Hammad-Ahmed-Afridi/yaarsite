@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { Package, ShoppingCart, DollarSign, Store, Settings, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
+import { StoreSetupDialog } from "@/components/store-setup-dialog"; // Import the new component
 
 export default function DashboardPage() {
   const { user, profile, isLoading } = useSession();
@@ -18,7 +19,6 @@ export default function DashboardPage() {
   const handleSignOut = async () => {
     console.log("Dashboard Page: Attempting to sign out.");
     
-    // Simplified sign-out logic: directly call signOut without pre-checking session
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error("Dashboard Page: Error during sign out:", error);
@@ -26,17 +26,16 @@ export default function DashboardPage() {
     } else {
       console.log("Dashboard Page: Sign out successful. Explicitly redirecting to /login.");
       toast.success("Signed out successfully!");
-      router.push('/login'); // Explicitly redirect to login page
+      router.push('/login');
     }
   };
 
   const handleOpenStore = () => {
     if (profile?.tenant_slug) {
-      // Open the store URL in a new tab
       window.open(`/store/${profile.tenant_slug}`, '_blank');
     } else {
-      // Fallback if tenant_slug is not available
-      window.open('/store', '_blank');
+      // Fallback if tenant_slug is not available (should be handled by dialog now)
+      toast.info("Please set up your store first!");
     }
   };
 
@@ -50,6 +49,9 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
+      {/* Render the StoreSetupDialog if the store is not configured */}
+      {profile?.tenant_name === null && <StoreSetupDialog />}
+
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-border bg-card">
         <div className="flex items-center space-x-4">
@@ -108,7 +110,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">See how your store looks to customers</p>
-            <Button onClick={handleOpenStore} className="w-full">
+            <Button onClick={handleOpenStore} className="w-full" disabled={profile?.tenant_name === null}>
               Open Store
             </Button>
           </CardContent>
@@ -121,7 +123,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">Add, edit, and organize your products</p>
-            <Button onClick={() => router.push('/products')} className="w-full">Manage Products</Button>
+            <Button onClick={() => router.push('/products')} className="w-full" disabled={profile?.tenant_name === null}>Manage Products</Button>
           </CardContent>
         </Card>
 
@@ -132,7 +134,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">Track and manage customer orders</p>
-            <Button onClick={() => router.push('/orders')} className="w-full">View Orders</Button>
+            <Button onClick={() => router.push('/orders')} className="w-full" disabled={profile?.tenant_name === null}>View Orders</Button>
           </CardContent>
         </Card>
 
@@ -143,7 +145,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">Update your store information</p>
-            <Button onClick={() => router.push('/settings')} className="w-full">Settings</Button>
+            <Button onClick={() => router.push('/settings')} className="w-full" disabled={profile?.tenant_name === null}>Settings</Button>
           </CardContent>
         </Card>
       </main>
