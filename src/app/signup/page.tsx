@@ -77,9 +77,9 @@ export default function SignupPage() {
         toast.error(getAuthErrorMessage(error));
       } else {
         // Updated toast message and added duration
-        toast.success("Account created, kindly sign in.", { duration: 2000 });
-        console.log("Signup Page: Account created. No automatic redirection.");
-        form.reset(); // Reset the form after successful signup
+        toast.success("Account created! Redirecting to dashboard...", { duration: 2000 });
+        console.log("Signup Page: Account created. Redirecting to /.");
+        router.push('/'); // Redirect to dashboard immediately
       }
     } catch (submitError) {
       console.error("Signup Page: Unexpected error during form submission:", submitError);
