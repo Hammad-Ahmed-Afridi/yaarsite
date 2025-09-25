@@ -18,23 +18,14 @@ export default function DashboardPage() {
   const handleSignOut = async () => {
     console.log("Dashboard Page: Attempting to sign out.");
     
-    // Check the Supabase client's internal session state before calling signOut
-    const { data: { session: currentClientSession } } = await supabase.auth.getSession();
-    console.log("Dashboard Page: Supabase client's current session before signOut:", currentClientSession);
-
-    if (!currentClientSession) {
-      console.error("Dashboard Page: Supabase client reports no active session before signOut. Cannot sign out.");
-      toast.error("No active session to sign out from.");
-      return;
-    }
-
+    // Simplified sign-out logic: directly call signOut without pre-checking session
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error("Dashboard Page: Error during sign out:", error);
       toast.error("Failed to sign out. Please try again.");
     } else {
       console.log("Dashboard Page: Sign out successful. Explicitly redirecting to /login.");
-      toast.success("Signed out successfully!"); // Added success toast
+      toast.success("Signed out successfully!");
       router.push('/login'); // Explicitly redirect to login page
     }
   };
