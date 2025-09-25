@@ -83,9 +83,9 @@ export default function SignupPage() {
           console.error("Signup Page: Error during sign out after signup:", signOutError);
           toast.error("Account created, but failed to sign out. Please try logging in.");
         } else {
-          toast.success("Account created successfully! Please sign in.", { duration: 3000 });
-          console.log("Signup Page: Account created and signed out. Redirecting to /login.");
-          router.push('/login'); // Redirect to login page
+          toast.success("Account created successfully! Kindly sign in.", { duration: 3000 });
+          console.log("Signup Page: Account created and signed out. User remains on signup page.");
+          // NO REDIRECTION HERE - user stays on the signup page
         }
         form.reset(); // Reset the form after successful signup
       }
