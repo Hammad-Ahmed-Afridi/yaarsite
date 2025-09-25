@@ -22,7 +22,6 @@ export default function DashboardPage() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    // Use router.replace to clear history and navigate directly to the login page
     router.replace('/login');
   };
 
@@ -94,7 +93,11 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">See how your store looks to customers</p>
-            <Button onClick={() => router.push('/store')} className="w-full">Open Store</Button>
+            <Button asChild className="w-full">
+              <a href={profile?.store_url || '/store'} target="_blank" rel="noopener noreferrer">
+                Open Store
+              </a>
+            </Button>
           </CardContent>
         </Card>
 
