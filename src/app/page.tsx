@@ -18,7 +18,12 @@ export default function DashboardPage() {
     if (!isLoading && !user) {
       router.push('/login');
     }
-  }, [user, isLoading, router]);
+    // Add this console log to check the store_url
+    if (profile) {
+      console.log("Dashboard Page: Current user profile:", profile);
+      console.log("Dashboard Page: Profile store URL:", profile.store_url);
+    }
+  }, [user, isLoading, router, profile]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
