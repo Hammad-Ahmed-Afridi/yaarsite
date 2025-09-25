@@ -31,12 +31,11 @@ export default function DashboardPage() {
   };
 
   const handleOpenStore = () => {
-    if (profile?.store_url) {
-      // Use window.open for external URLs or if you specifically want a new tab
-      // For internal Next.js routes, router.push is generally preferred for client-side navigation
-      window.open(profile.store_url, '_blank');
+    if (profile?.tenant_slug) {
+      // Use router.push for internal navigation to the dynamic store page
+      router.push(`/store/${profile.tenant_slug}`);
     } else {
-      // Fallback if store_url is not available
+      // Fallback if tenant_slug is not available
       router.push('/store');
     }
   };
