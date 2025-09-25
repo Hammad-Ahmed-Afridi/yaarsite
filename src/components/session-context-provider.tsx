@@ -66,37 +66,29 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       setSession(currentSession);
       setUser(currentSession?.user || null);
 
+      const isAuthPage = authOnlyPaths.includes(pathname);
+      const isPublicStorePage = pathname.startsWith(publicStorePathPrefix);
+
       if (currentSession) {
         // User is authenticated
         const userProfile = await fetchUserProfile(currentSession.user.id);
         setProfile(userProfile);
 
-        // If authenticated user is on the login page, always redirect to dashboard
+        // If authenticated user is on the login page, redirect to dashboard
         if (pathname === '/login') {
           console.log("SessionContext: Authenticated user on login path, redirecting to /");
           router.push('/');
         }
-        // If authenticated user is on the signup page:
-        //   - If the event is 'SIGNED_IN' (meaning they just signed up), let them stay on the signup page.
-        //   - Otherwise (e.g., they were already signed in and navigated to /signup, or refreshed), redirect to dashboard.
-        else if (pathname === '/signup') {
-          if (event !== 'SIGNED_IN') { // If not a fresh signup event, redirect
-            console.log("SessionContext: Already authenticated user on signup path (or refreshed), redirecting to /");
-            router.push('/');
-          } else {
-            console.log("SessionContext: User just signed up on /signup, staying on page.");
-            // Do nothing, allow them to stay on the signup page
-          }
-        }
+        // IMPORTANT: If authenticated user is on the signup page, DO NOT redirect.
+        // They should be able to stay there after registration to see the toast.
+        // The previous logic for /signup was still causing redirects in some cases.
+        // We explicitly remove any redirection from /signup for authenticated users.
+
       } else {
         // User is NOT authenticated
         setProfile(null);
 
         // If unauthenticated user is on a protected path, redirect to login
-        // A path is protected if it's not an auth-only page AND not a public store page
-        const isAuthPage = authOnlyPaths.includes(pathname);
-        const isPublicStorePage = pathname.startsWith(publicStorePathPrefix);
-
         if (!isAuthPage && !isPublicStorePage) {
           console.log("SessionContext: Unauthenticated user on protected path, redirecting to /login");
           router.push('/login');
