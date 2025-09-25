@@ -26,8 +26,15 @@ export default function DashboardPage() {
   }, [user, isLoading, router, profile]);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.replace('/login');
+    console.log("Dashboard Page: Attempting to sign out.");
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Dashboard Page: Error during sign out:", error);
+      // Optionally show a toast error here if sign out itself fails
+    } else {
+      console.log("Dashboard Page: Sign out successful. SessionContextProvider will handle redirect.");
+      // No direct router.replace here; SessionContextProvider's onAuthStateChange will handle it.
+    }
   };
 
   const handleOpenStore = () => {
