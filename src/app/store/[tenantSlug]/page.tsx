@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Package, Store } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
-import { MadeWithDyad } from '@/components/made-with-dyad'; // Ensuring this import is present
+import { MadeWithDyad } from '@/components/made-with-dyad'; // Added missing import
 
 interface Product {
   id: string;

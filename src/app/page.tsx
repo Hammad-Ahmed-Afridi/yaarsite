@@ -31,15 +31,11 @@ export default function DashboardPage() {
   };
 
   const handleOpenStore = () => {
-    if (profile?.store_url) {
-      // Open the store URL in a new tab
-      window.open(profile.store_url, '_blank');
-    } else if (profile?.tenant_slug) {
-      // Fallback to internal navigation if store_url is not directly available
-      // This should ideally not be hit if store_url is correctly populated
+    if (profile?.tenant_slug) {
+      // Use router.push for internal navigation to the dynamic store page
       router.push(`/store/${profile.tenant_slug}`);
     } else {
-      // Fallback if no store identifier is available
+      // Fallback if tenant_slug is not available
       router.push('/store');
     }
   };
