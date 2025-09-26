@@ -8,12 +8,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
 
-    // Temporarily hardcoding the Supabase Project ID for debugging purposes.
-    // This should ideally come from process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID
-    const SUPABASE_PROJECT_ID = "vpfrtytxeimezwxhhtuf"; 
-    const EDGE_FUNCTION_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/place-order`;
+    const SUPABASE_PROJECT_ID = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID;
+    
+    if (!SUPABASE_PROJECT_ID) {
+      console.error("Environment variable NEXT_PUBLIC_SUPABASE_PROJECT_ID is not defined.");
+      return NextResponse.json({ message: 'Supabase Project ID is not defined in environment variables.' }, { status: 500 });
+    }
 
-    // Removed the check for SUPABASE_PROJECT_ID being defined as it's now hardcoded.
+    const EDGE_FUNCTION_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/place-order`;
 
     const edgeFunctionResponse = await fetch(EDGE_FUNCTION_URL, {
       method: 'POST',
