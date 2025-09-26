@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Package, ArrowLeft, LogOut, Store } from 'lucide-react';
+import { Plus, Package, ArrowLeft, LogOut, Store, Loader2 } from 'lucide-react'; // Added Loader2
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
