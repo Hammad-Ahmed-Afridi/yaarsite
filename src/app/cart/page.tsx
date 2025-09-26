@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -10,10 +10,40 @@ import { useCart } from '@/components/cart-context-provider';
 import { ArrowLeft, Trash2, ShoppingCart, Minus, Plus } from 'lucide-react';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
+import { supabase } from '@/integrations/supabase/client'; // Import supabase
 
 export default function CartPage() {
   const router = useRouter();
   const { cartItems, removeFromCart, updateQuantity, cartTotal, itemCount } = useCart();
+  const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null);
+  const [isLoadingStoreSlug, setIsLoadingStoreSlug] = useState(true);
+
+  useEffect(() => {
+    async function fetchStoreSlug() {
+      setIsLoadingStoreSlug(true);
+      if (cartItems.length > 0) {
+        // Assuming all items in the cart belong to the same store owner
+        const storeOwnerId = cartItems[0].storeOwnerId;
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('tenant_slug')
+          .eq('id', storeOwnerId)
+          .single();
+
+        if (profileError || !profileData?.tenant_slug) {
+          console.error("Error fetching store tenant slug:", profileError);
+          setStoreTenantSlug(null); // Fallback to generic store if error
+        } else {
+          setStoreTenantSlug(profileData.tenant_slug);
+        }
+      } else {
+        setStoreTenantSlug(null); // No items, no specific store slug
+      }
+      setIsLoadingStoreSlug(false);
+    }
+
+    fetchStoreSlug();
+  }, [cartItems]); // Re-fetch when cartItems change
 
   const handleUpdateQuantity = (productId: string, newQuantity: number) => {
     if (newQuantity < 1) {
@@ -22,6 +52,8 @@ export default function CartPage() {
       updateQuantity(productId, newQuantity);
     }
   };
+
+  const continueShoppingPath = storeTenantSlug ? `/store/${storeTenantSlug}` : '/store';
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -42,8 +74,8 @@ export default function CartPage() {
             <p className="text-sm text-muted-foreground mb-6">
               Looks like you haven't added anything to your cart yet.
             </p>
-            <Button asChild>
-              <Link href="/store">Start Shopping</Link>
+            <Button asChild disabled={isLoadingStoreSlug}>
+              <Link href={continueShoppingPath}>Start Shopping</Link>
             </Button>
           </div>
         ) : (
