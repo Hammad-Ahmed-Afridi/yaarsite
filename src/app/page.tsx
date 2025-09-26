@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Package, ShoppingCart, DollarSign, Store, Settings, LayoutDashboard, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
+import { InactivityWarningBanner } from "@/components/inactivity-warning-banner"; // New import
 
 export default function DashboardPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
@@ -124,6 +125,9 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Render the StoreSetupDialog if the store is not configured */}
       {profile?.tenant_name === null && <StoreSetupDialog />}
+
+      {/* Inactivity Warning Banner */}
+      <InactivityWarningBanner />
 
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-border bg-card">
