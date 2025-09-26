@@ -8,11 +8,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
 
-    const SUPABASE_PROJECT_ID = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID;
+    // Try to get the project ID from NEXT_PUBLIC_SUPABASE_PROJECT_ID first
+    let SUPABASE_PROJECT_ID = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID;
+
+    // If NEXT_PUBLIC_ version is still undefined, try the non-public version (for server-side)
+    if (!SUPABASE_PROJECT_ID) {
+      SUPABASE_PROJECT_ID = process.env.SUPABASE_PROJECT_ID;
+    }
     
     if (!SUPABASE_PROJECT_ID) {
-      console.error("Environment variable NEXT_PUBLIC_SUPABASE_PROJECT_ID is not defined.");
-      return NextResponse.json({ message: 'Supabase Project ID is not defined in environment variables.' }, { status: 500 });
+      console.error("Environment variable SUPABASE_PROJECT_ID is not defined.");
+      return NextResponse.json({ message: 'Supabase Project ID is not defined in environment variables. Please ensure either NEXT_PUBLIC_SUPABASE_PROJECT_ID or SUPABASE_PROJECT_ID is set in Vercel.' }, { status: 500 });
     }
 
     const EDGE_FUNCTION_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/place-order`;
