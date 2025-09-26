@@ -32,7 +32,7 @@ interface SessionContextType {
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
-const INACTIVITY_TIMEOUT_MS = 5 * 1000; // 5 seconds for inactivity logout
+const INACTIVITY_TIMEOUT_MS = 10 * 1000; // 10 seconds for inactivity logout
 
 export const SessionContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
