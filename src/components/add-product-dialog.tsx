@@ -59,8 +59,8 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
       description: "",
       price: 0.01,
       stock: 0,
-      images: undefined, // Changed to undefined
-    },
+      images: [] as File[], // Explicitly cast to File[]
+    } as z.infer<typeof formSchema>, // Explicitly cast the entire defaultValues object
   });
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
