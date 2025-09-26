@@ -42,7 +42,7 @@ export default function SettingsPage() {
     if (profile) {
       form.reset({
         storeName: profile.tenant_name || "",
-        storeDescription: profile.phone_number || "", // Assuming phone_number is used for description temporarily, will fix if schema changes
+        storeDescription: profile.store_description || "", // Now using store_description
       });
     }
   }, [profile, form]);
@@ -75,7 +75,7 @@ export default function SettingsPage() {
           tenant_name: values.storeName,
           tenant_slug: newTenantSlug,
           store_url: newStoreUrl,
-          phone_number: values.storeDescription || null, // Assuming phone_number is used for description temporarily
+          store_description: values.storeDescription || null, // Now updating store_description
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);

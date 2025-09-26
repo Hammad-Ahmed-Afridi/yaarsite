@@ -16,6 +16,8 @@ interface Profile {
   phone_number: string | null;
   tenant_name: string | null;
   tenant_slug: string | null;
+  store_url: string | null; // Added store_url
+  store_description: string | null; // Added store_description
   avatar_url: string | null;
   updated_at: string | null;
 }
