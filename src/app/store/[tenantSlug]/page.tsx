@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Package, Store } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
-import { MadeWithDyad } from '@/components/made-with-dyad'; // Added missing import
+import { MadeWithDyad } from '@/components/made-with-dyad';
+import Image from 'next/image'; // Import Next.js Image component
 
 interface Product {
   id: string;
@@ -17,6 +18,7 @@ interface Product {
   price: number;
   stock: number;
   user_id: string; // Owner of the product
+  image_urls: string[] | null; // Added image_urls
 }
 
 interface Profile {
@@ -141,6 +143,17 @@ export default function PublicStorePage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products.map((product) => (
               <Card key={product.id} className="bg-card text-card-foreground shadow-md">
+                {product.image_urls && product.image_urls.length > 0 && (
+                  <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
+                    <Image
+                      src={product.image_urls[0]}
+                      alt={product.name}
+                      layout="fill"
+                      objectFit="cover"
+                      className="transition-transform duration-300 hover:scale-105"
+                    />
+                  </div>
+                )}
                 <CardHeader>
                   <CardTitle className="text-lg">{product.name}</CardTitle>
                 </CardHeader>
