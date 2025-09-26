@@ -38,14 +38,6 @@ export default function SettingsPage() {
     },
   });
 
-  // Redirect unauthenticated users to login
-  useEffect(() => {
-    if (!isSessionLoading && !user) {
-      console.log("SettingsPage: User not authenticated, redirecting to /login");
-      router.push('/login');
-    }
-  }, [isSessionLoading, user, router]);
-
   useEffect(() => {
     if (profile) {
       form.reset({
@@ -121,17 +113,6 @@ export default function SettingsPage() {
       <div className="flex items-center justify-center min-h-screen bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <p className="ml-2 text-foreground">Loading settings...</p>
-      </div>
-    );
-  }
-
-  // If not loading and no user, the useEffect above should have redirected.
-  // This block should ideally not be reached if the redirect works.
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-foreground">Redirecting to login...</p>
       </div>
     );
   }

@@ -21,14 +21,6 @@ export default function DashboardPage() {
   const [totalProfit, setTotalProfit] = useState(0);
   const [isLoadingDashboardData, setIsLoadingDashboardData] = useState(false);
 
-  // Redirect unauthenticated users to login
-  useEffect(() => {
-    if (!isSessionLoading && !user) {
-      console.log("DashboardPage: User not authenticated, redirecting to /login");
-      router.push('/login');
-    }
-  }, [isSessionLoading, user, router]);
-
   const fetchDashboardData = useCallback(async () => {
     if (!user) {
       return;
@@ -113,26 +105,18 @@ export default function DashboardPage() {
     }
   };
 
-  // Show loading spinner if session is loading or dashboard data is loading
-  if (isSessionLoading || isLoadingDashboardData) {
+  // Show loading spinner if dashboard data is loading
+  if (isLoadingDashboardData) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-foreground">Loading dashboard...</p>
+        <p className="ml-2 text-foreground">Loading dashboard data...</p>
       </div>
     );
   }
 
-  // If not loading and no user, the useEffect above should have redirected.
-  // This block should ideally not be reached if the redirect works.
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-foreground">Redirecting to login...</p>
-      </div>
-    );
-  }
+  // If user is null, AuthWrapper will handle the redirect to /login.
+  // This component will only render if user is present.
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">

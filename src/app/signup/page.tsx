@@ -76,18 +76,16 @@ export default function SignupPage() {
         console.error("Signup Page: Supabase signup error:", signUpError);
         toast.error(getAuthErrorMessage(signUpError));
       } else {
-        // Account created successfully. Now, explicitly sign out the user
-        // so they have to log in manually on the login page.
+        // Account created successfully.
+        // Explicitly sign out the user if they were automatically signed in by Supabase
+        // This ensures they go through the login page.
         const { error: signOutError } = await supabase.auth.signOut();
         if (signOutError) {
-          console.error("Signup Page: Error during sign out after signup:", signOutError);
-          // Even if sign out fails, we still want to inform the user about account creation
-          toast.error("Account created, but there was an issue logging you out. Please sign in manually.");
-        } else {
-          toast.success("Account created! Please sign in to continue.", { duration: 3000 });
-          console.log("Signup Page: Account created and user signed out. Staying on signup page.");
+          console.warn("Signup Page: Error during sign out after signup (might be already signed out):", signOutError);
         }
-        form.reset(); // Clear the form fields
+        toast.success("Account created! Please sign in to continue.", { duration: 3000 });
+        console.log("Signup Page: Account created. Redirecting to /login.");
+        router.push('/login'); // Redirect to login page
       }
     } catch (submitError) {
       console.error("Signup Page: Unexpected error during form submission:", submitError);

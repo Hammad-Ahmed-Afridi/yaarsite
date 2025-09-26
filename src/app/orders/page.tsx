@@ -36,14 +36,6 @@ export default function OrdersPage() {
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [isDeletingOrder, setIsDeletingOrder] = useState(false);
 
-  // Redirect unauthenticated users to login
-  useEffect(() => {
-    if (!isSessionLoading && !user) {
-      console.log("OrdersPage: User not authenticated, redirecting to /login");
-      router.push('/login');
-    }
-  }, [isSessionLoading, user, router]);
-
   const fetchOrders = useCallback(async () => {
     if (!user) {
       setIsLoadingOrders(false);
@@ -116,22 +108,11 @@ export default function OrdersPage() {
     setIsDeletingOrder(false);
   };
 
-  if (isSessionLoading || isLoadingOrders) {
+  if (isLoadingOrders) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <p className="ml-2 text-foreground">Loading orders...</p>
-      </div>
-    );
-  }
-
-  // If not loading and no user, the useEffect above should have redirected.
-  // This block should ideally not be reached if the redirect works.
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-foreground">Redirecting to login...</p>
       </div>
     );
   }

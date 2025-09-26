@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionContextProvider } from "@/components/session-context-provider";
-import { CartContextProvider } from "@/components/cart-context-provider"; // Import CartContextProvider
+import { CartContextProvider } from "@/components/cart-context-provider";
+import { AuthWrapper } from '@/components/auth-wrapper'; // New import
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,8 +55,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SessionContextProvider>
-          <CartContextProvider> {/* Wrap with CartContextProvider */}
-            {children}
+          <CartContextProvider>
+            <AuthWrapper> {/* Wrap children with AuthWrapper */}
+              {children}
+            </AuthWrapper>
           </CartContextProvider>
         </SessionContextProvider>
       </body>
