@@ -60,7 +60,7 @@ export default function CheckoutPage() {
 
       if (profileError || !profileData?.tenant_slug) {
         console.error("Error fetching store tenant slug for redirection:", profileError);
-        // If slug can't be found, storeTenantSlug remains null, and we'll fall back to '/'
+        // If slug can't be found, storeTenantSlug remains null, and we'll fall back to generic /store
       } else {
         setStoreTenantSlug(profileData.tenant_slug);
       }
@@ -100,8 +100,8 @@ export default function CheckoutPage() {
   };
 
   if (orderPlaced) {
-    // Determine the redirect path: to the specific store if slug is found, otherwise to home
-    const redirectPath = storeTenantSlug ? `/store/${storeTenantSlug}` : '/';
+    // Determine the redirect path: to the specific store if slug is found, otherwise to generic /store
+    const redirectPath = storeTenantSlug ? `/store/${storeTenantSlug}` : '/store';
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
         <CheckCircle className="h-20 w-20 text-green-500 mb-6" />

@@ -19,20 +19,17 @@ export default function DashboardPage() {
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
-  const [isLoadingDashboardData, setIsLoadingDashboardData] = useState(false);
+  const [isLoadingDashboardData, setIsLoadingDashboardData] = useState(true); // Initialize as true
 
   const fetchDashboardData = useCallback(async () => {
-    if (!user) {
-      return;
-    }
-
+    // This function should only be called when `user` is guaranteed to be present by the useEffect.
     setIsLoadingDashboardData(true);
     try {
       // Fetch Total Products
       const { count: productsCount, error: productsError } = await supabase
         .from('products')
         .select('id', { count: 'exact', head: true })
-        .eq('user_id', user.id);
+        .eq('user_id', user?.id); // Use optional chaining for safety, though user should be defined here
 
       if (productsError) {
         console.error("Dashboard Page: Error fetching products count:", productsError);
@@ -45,7 +42,7 @@ export default function DashboardPage() {
       const { count: ordersCount, error: ordersError } = await supabase
         .from('orders')
         .select('id', { count: 'exact', head: true })
-        .eq('user_id', user.id);
+        .eq('user_id', user?.id); // Use optional chaining
 
       if (ordersError) {
         console.error("Dashboard Page: Error fetching orders count:", ordersError);
@@ -58,7 +55,7 @@ export default function DashboardPage() {
       const { data: profitData, error: profitError } = await supabase
         .from('orders')
         .select('total_amount')
-        .eq('user_id', user.id)
+        .eq('user_id', user?.id) // Use optional chaining
         .eq('status', 'delivered'); // Only sum delivered orders for profit
 
       if (profitError) {
@@ -73,15 +70,33 @@ export default function DashboardPage() {
       console.error("Dashboard Page: Unexpected error fetching dashboard data:", error);
       toast.error("An unexpected error occurred while loading dashboard data.");
     } finally {
-      setIsLoadingDashboardData(false);
+      setIsLoadingDashboardData(false); // Always set loading to false when done
     }
-  }, [user]);
+  }, [user]); // Dependency on user is correct
 
   useEffect(() => {
     if (!isSessionLoading && user) {
+      // Session is loaded and user is present, now fetch dashboard data
       fetchDashboardData();
+    } else if (!isSessionLoading && !user) {
+      // Session is loaded but no user (e.g., after logout or initial unauthenticated load)
+      // In this case, AuthWrapper should redirect to /login, but as a fallback, ensure local loading is false.
+      setIsLoadingDashboardData(false);
     }
   }, [isSessionLoading, user, fetchDashboardData]);
+
+  // Show a combined loading spinner if either session or dashboard data is loading
+  if (isSessionLoading || isLoadingDashboardData) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="ml-2 text-foreground">Loading {isSessionLoading ? 'session' : 'dashboard'} data...</p>
+      </div>
+    );
+  }
+
+  // If user is null at this point, AuthWrapper should have redirected to /login.
+  // This component will only render its main content if user is present.
 
   const handleSignOut = async () => {
     console.log("Dashboard Page: Attempting to sign out.");
@@ -104,19 +119,6 @@ export default function DashboardPage() {
       toast.info("Please set up your store first!");
     }
   };
-
-  // Show loading spinner if dashboard data is loading
-  if (isLoadingDashboardData) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-foreground">Loading dashboard data...</p>
-      </div>
-    );
-  }
-
-  // If user is null, AuthWrapper will handle the redirect to /login.
-  // This component will only render if user is present.
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
