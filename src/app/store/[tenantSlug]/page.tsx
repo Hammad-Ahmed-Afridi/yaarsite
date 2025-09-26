@@ -170,13 +170,13 @@ export default function PublicStorePage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products.map((product) => (
               <Card key={product.id} className="bg-card text-card-foreground shadow-md">
-                {product.image_urls && product.image_urls.length > 0 && (
+                {product.image_urls && product.image_urls.length > 0 && ( // Ensure image_urls exists and is not empty
                   <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
                     <Image
                       src={product.image_urls[0]}
                       alt={product.name}
-                      layout="fill"
-                      objectFit="cover"
+                      fill // Updated prop
+                      style={{ objectFit: 'cover' }} // Updated prop
                       className="transition-transform duration-300 hover:scale-105"
                     />
                   </div>

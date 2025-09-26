@@ -43,7 +43,7 @@ export default function CartPage() {
               Looks like you haven't added anything to your cart yet.
             </p>
             <Button asChild>
-              <Link href="/store">Start Shopping</Link> {/* Changed redirection to /store */}
+              <Link href="/store">Start Shopping</Link>
             </Button>
           </div>
         ) : (
@@ -69,13 +69,13 @@ export default function CartPage() {
                       {cartItems.map((item) => (
                         <TableRow key={item.id}>
                           <TableCell>
-                            {item.image_url && (
+                            {item.image_url && ( // Ensure image_url exists
                               <Image
                                 src={item.image_url}
                                 alt={item.name}
                                 width={64}
                                 height={64}
-                                objectFit="cover"
+                                style={{ objectFit: 'cover' }} // Updated prop
                                 className="rounded-md"
                               />
                             )}

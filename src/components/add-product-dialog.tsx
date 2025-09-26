@@ -248,7 +248,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
             <div className="flex gap-2 mt-2">
               {imagePreviews.map((preview, index) => (
                 <div key={index} className="relative w-24 h-24 border rounded-md overflow-hidden">
-                  <Image src={preview} alt={`Product preview ${index + 1}`} layout="fill" objectFit="cover" />
+                  <Image src={preview} alt={`Product preview ${index + 1}`} fill style={{ objectFit: 'cover' }} /> {/* Updated prop */}
                   <Button
                     type="button"
                     variant="destructive"
