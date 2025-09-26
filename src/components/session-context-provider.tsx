@@ -135,20 +135,6 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
     enabled: !!user, // Only enable if a user is logged in
   });
 
-  const publicPaths = ['/login', '/signup', '/cart', '/checkout'];
-  const isPublicPath = publicPaths.includes(pathname) || pathname.startsWith('/store');
-
-  // If loading and on a protected path, render null to prevent children from showing their loaders
-  // before the redirect to login happens. The Toaster is still rendered to ensure it's available.
-  if (isLoading && !isPublicPath) {
-    return (
-      <>
-        {/* A minimal global loading indicator could go here if desired, but null is faster */}
-        <Toaster richColors />
-      </>
-    );
-  }
-
   return (
     <SessionContext.Provider value={{ session, user, profile, isLoading, refreshProfile }}>
       {children}
