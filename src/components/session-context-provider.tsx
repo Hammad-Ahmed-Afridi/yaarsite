@@ -5,7 +5,8 @@ import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useRouter, usePathname } from 'next/navigation';
 import { Toaster } from 'sonner';
-import { useInactivityLogout } from '@/hooks/use-inactivity-logout'; // Import the new hook
+import { useInactivityLogout } from '@/hooks/use-inactivity-logout';
+import { LoadingScreen } from './loading-screen'; // Import the new LoadingScreen component
 
 // Define the Profile type based on your Supabase schema
 interface Profile {
@@ -16,8 +17,8 @@ interface Profile {
   phone_number: string | null;
   tenant_name: string | null;
   tenant_slug: string | null;
-  store_url: string | null; // Added store_url
-  store_description: string | null; // Added store_description
+  store_url: string | null;
+  store_description: string | null;
   avatar_url: string | null;
   updated_at: string | null;
 }
@@ -27,7 +28,7 @@ interface SessionContextType {
   user: User | null;
   profile: Profile | null;
   isLoading: boolean;
-  refreshProfile: () => Promise<void>; // Added refreshProfile function
+  refreshProfile: () => Promise<void>;
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
@@ -57,7 +58,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
     }
     console.log("SessionContext: Profile fetched:", data);
     return data as Profile;
-  }, []); // No dependencies, as it only uses supabase client
+  }, []);
 
   const handleAuthStateChange = useCallback(async (event: string, currentSession: Session | null) => {
     console.log("SessionContext: onAuthStateChange event:", event, "session:", currentSession);
@@ -115,7 +116,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       console.log("SessionContext: useEffect cleanup.");
       subscription.unsubscribe();
     };
-  }, [handleAuthStateChange]);
+  }, [handleAuthStateChange, pathname]); // Added pathname to dependencies for clarity
 
   // Inactivity logout hook
   useInactivityLogout({
@@ -125,34 +126,27 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error("SessionContext: Error during inactivity logout:", error);
-        // toast.error("Failed to log out due to inactivity."); // Optionally show a toast
       } else {
         console.log("SessionContext: Successfully logged out due to inactivity.");
-        // toast.info("You have been logged out due to inactivity."); // Optionally show a toast
-        router.push('/login'); // Redirect to login after inactivity logout
+        router.push('/login');
       }
     },
-    enabled: !!user, // Only enable if a user is logged in
+    enabled: !!user,
   });
 
   const publicPaths = ['/login', '/signup', '/cart', '/checkout'];
   const isPublicPath = publicPaths.includes(pathname) || pathname.startsWith('/store');
 
-  // If loading and on a protected path, render null to prevent children from showing their loaders
-  // before the redirect to login happens. The Toaster is still rendered to ensure it's available.
+  // If loading and on a protected path, render a loading screen
   if (isLoading && !isPublicPath) {
-    return (
-      <>
-        {/* A minimal global loading indicator could go here if desired, but null is faster */}
-        <Toaster richColors />
-      </>
-    );
+    console.log("SessionContext: Rendering LoadingScreen for protected path.");
+    return <LoadingScreen />;
   }
 
   return (
     <SessionContext.Provider value={{ session, user, profile, isLoading, refreshProfile }}>
       {children}
-      <Toaster richColors />
+      <Toaster richColors /> {/* Ensure Toaster is rendered only once here */}
     </SessionContext.Provider>
   );
 };
