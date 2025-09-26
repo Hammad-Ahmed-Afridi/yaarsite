@@ -8,13 +8,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
 
-    // Replace with your actual Supabase Project ID and Edge Function name
-    const SUPABASE_PROJECT_ID = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID;
+    // Temporarily hardcoding the Supabase Project ID for debugging purposes.
+    // This should ideally come from process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID
+    const SUPABASE_PROJECT_ID = "vpfrtytxeimezwxhhtuf"; 
     const EDGE_FUNCTION_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/place-order`;
 
-    if (!SUPABASE_PROJECT_ID) {
-      throw new Error("NEXT_PUBLIC_SUPABASE_PROJECT_ID is not defined.");
-    }
+    // Removed the check for SUPABASE_PROJECT_ID being defined as it's now hardcoded.
 
     const edgeFunctionResponse = await fetch(EDGE_FUNCTION_URL, {
       method: 'POST',
