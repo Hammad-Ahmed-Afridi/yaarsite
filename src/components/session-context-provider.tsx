@@ -32,11 +32,18 @@ const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
 const INACTIVITY_TIMEOUT_MS = 15 * 1000;
 
-export const SessionContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+interface SessionContextProviderProps {
+  children: React.ReactNode;
+  initialSession: Session | null;
+  initialUser: User | null;
+  initialProfile: Profile | null;
+}
+
+export const SessionContextProvider = ({ children, initialSession, initialUser, initialProfile }: SessionContextProviderProps) => {
+  const [session, setSession] = useState<Session | null>(initialSession);
+  const [user, setUser] = useState<User | null>(initialUser);
+  const [profile, setProfile] = useState<Profile | null>(initialProfile);
+  const [isLoading, setIsLoading] = useState(false); // No longer loading initially if data is provided
 
   const fetchUserProfile = useCallback(async (userId: string) => {
     console.log("SessionContext: Fetching profile for user:", userId);
@@ -79,18 +86,15 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   useEffect(() => {
     console.log("SessionContext: useEffect running.");
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthStateChange);
-
-    supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
-      console.log("SessionContext: Initial getSession result:", initialSession);
-      await handleAuthStateChange('INITIAL_SESSION', initialSession);
-    });
-
-    return () => {
-      console.log("SessionContext: useEffect cleanup.");
-      subscription.unsubscribe();
-    };
-  }, [handleAuthStateChange]);
+    // Only set up listener if not already initialized with a session
+    if (!initialSession) {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthStateChange);
+      return () => {
+        console.log("SessionContext: useEffect cleanup.");
+        subscription.unsubscribe();
+      };
+    }
+  }, [handleAuthStateChange, initialSession]);
 
   useInactivityLogout({
     inactivityTimeoutMs: INACTIVITY_TIMEOUT_MS,
