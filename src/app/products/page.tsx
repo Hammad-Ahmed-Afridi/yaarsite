@@ -4,14 +4,26 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Package, ArrowLeft, LogOut, Store, Loader2 } from 'lucide-react';
+import { Plus, Package, ArrowLeft, LogOut, Store, Loader2, Trash2 } from 'lucide-react';
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { AddProductDialog } from '@/components/add-product-dialog';
+import { EditProductDialog } from '@/components/edit-product-dialog'; // Import EditProductDialog
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface Product {
   id: string;
@@ -19,15 +31,19 @@ interface Product {
   description: string | null;
   price: number;
   stock: number;
+  user_id: string; // Add user_id to Product interface
   image_urls: string[] | null;
   created_at: string;
 }
+
+const PRODUCT_LIMIT = 3; // Define the product limit
 
 export default function ProductsPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+  const [isDeletingProduct, setIsDeletingProduct] = useState(false);
 
   const fetchProducts = useCallback(async () => {
     if (!user) {
@@ -67,6 +83,49 @@ export default function ProductsPage() {
     }
   };
 
+  const handleDeleteProduct = async (productId: string, imageUrls: string[] | null) => {
+    setIsDeletingProduct(true);
+    try {
+      // 1. Delete images from storage if they exist
+      if (imageUrls && imageUrls.length > 0 && user) {
+        const imagePaths = imageUrls.map(url => {
+          const path = url.split('product-images/')[1];
+          return path;
+        }).filter(Boolean) as string[]; // Filter out any undefined paths
+
+        if (imagePaths.length > 0) {
+          const { error: deleteStorageError } = await supabase.storage
+            .from('product-images')
+            .remove(imagePaths);
+
+          if (deleteStorageError) {
+            console.warn("Failed to delete product images from storage:", deleteStorageError.message);
+            // Don't throw, proceed with database deletion
+          }
+        }
+      }
+
+      // 2. Delete product from database
+      const { error: deleteDbError } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', productId)
+        .eq('user_id', user?.id); // Ensure only owner can delete
+
+      if (deleteDbError) {
+        throw new Error(`Failed to delete product: ${deleteDbError.message}`);
+      }
+
+      toast.success("Product deleted successfully!");
+      fetchProducts(); // Refresh the list of products
+    } catch (error: any) {
+      console.error("Error deleting product:", error);
+      toast.error(error.message || "Failed to delete product. Please try again.");
+    } finally {
+      setIsDeletingProduct(false);
+    }
+  };
+
   if (isSessionLoading || isLoadingProducts) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
@@ -87,6 +146,8 @@ export default function ProductsPage() {
       </div>
     );
   }
+
+  const isAddProductDisabled = products.length >= PRODUCT_LIMIT;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -116,10 +177,13 @@ export default function ProductsPage() {
       <main className="flex-1 p-8">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">Product Management</h2>
-          <AddProductDialog onProductAdded={fetchProducts} />
+          <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
         </div>
         <p className="text-muted-foreground mb-6">
-          {products.length}/3 products used
+          {products.length}/{PRODUCT_LIMIT} products used
+          {isAddProductDisabled && (
+            <span className="ml-2 text-destructive"> (Maximum limit reached)</span>
+          )}
         </p>
 
         {products.length === 0 ? (
@@ -127,9 +191,9 @@ export default function ProductsPage() {
             <Package className="h-16 w-16 text-muted-foreground mb-4" />
             <p className="text-xl text-muted-foreground mb-4">No Products Yet</p>
             <p className="text-sm text-muted-foreground mb-6">
-              Add your first product to start selling! You can add up to 3 products.
+              Add your first product to start selling! You can add up to {PRODUCT_LIMIT} products.
             </p>
-            <AddProductDialog onProductAdded={fetchProducts} />
+            <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -156,8 +220,33 @@ export default function ProductsPage() {
                     <Badge variant="secondary">{product.stock} in stock</Badge>
                   </div>
                   <div className="flex gap-2 mt-4">
-                    <Button variant="outline" className="flex-1">Edit</Button>
-                    <Button variant="destructive" className="flex-1">Delete</Button>
+                    <EditProductDialog product={product} onProductUpdated={fetchProducts} />
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" size="sm" className="flex-1">
+                          <Trash2 className="mr-2 h-4 w-4" /> Delete
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete your product
+                            and remove its data and images from our servers.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDeleteProduct(product.id, product.image_urls)}
+                            disabled={isDeletingProduct}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            {isDeletingProduct ? "Deleting..." : "Delete"}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </CardContent>
               </Card>

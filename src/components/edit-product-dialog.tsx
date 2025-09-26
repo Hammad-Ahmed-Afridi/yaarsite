@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
-import { v4 as uuidv4 } from 'uuid'; // For unique file names
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   Dialog,
@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Image as ImageIcon, Loader2, X } from 'lucide-react';
+import { Image as ImageIcon, Loader2, X, Edit } from 'lucide-react';
 import Image from 'next/image';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -30,46 +30,75 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/web
 const formSchema = z.object({
   name: z.string().min(1, { message: "Product name is required." }),
   description: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
-  price: z.coerce.number().min(0.01, { message: "Price must be greater than 0." }), // Changed from preprocess
-  stock: z.coerce.number().int().min(0, { message: "Stock quantity cannot be negative." }), // Changed from preprocess
-  images: z.array(z.instanceof(File)).max(2, { message: "You can upload a maximum of 2 images." }).optional(),
+  price: z.coerce.number().min(0.01, { message: "Price must be greater than 0." }),
+  stock: z.coerce.number().int().min(0, { message: "Stock quantity cannot be negative." }),
+  // images field for new uploads, existing images are handled separately
+  newImages: z.array(z.instanceof(File)).max(2, { message: "You can upload a maximum of 2 new images." }).optional(),
 });
 
-interface AddProductDialogProps {
-  onProductAdded: () => void;
-  currentProductCount: number; // New prop to receive current product count
+interface Product {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  stock: number;
+  user_id: string;
+  image_urls: string[] | null;
+  created_at: string;
 }
 
-export function AddProductDialog({ onProductAdded, currentProductCount }: AddProductDialogProps) {
+interface EditProductDialogProps {
+  product: Product;
+  onProductUpdated: () => void;
+}
+
+export function EditProductDialog({ product, onProductUpdated }: EditProductDialogProps) {
   const { user } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedImageFiles, setSelectedImageFiles] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [selectedNewImageFiles, setSelectedNewImageFiles] = useState<File[]>([]);
+  const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      price: 0.01,
-      stock: 0,
-      images: undefined, // Explicitly undefined for optional array
+      name: product.name,
+      description: product.description || "",
+      price: product.price,
+      stock: product.stock,
+      newImages: undefined,
     },
   });
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if (isOpen) {
+      // Reset form with current product data when dialog opens
+      form.reset({
+        name: product.name,
+        description: product.description || "",
+        price: product.price,
+        stock: product.stock,
+        newImages: undefined,
+      });
+      setExistingImageUrls(product.image_urls || []);
+      setSelectedNewImageFiles([]);
+      setNewImagePreviews([]);
+    }
+  }, [isOpen, product, form]);
+
+  const handleNewImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const files = Array.from(event.target.files);
-      const newFiles = [...selectedImageFiles, ...files];
+      const totalImages = existingImageUrls.length + selectedNewImageFiles.length + files.length;
 
-      if (newFiles.length > 2) {
-        toast.error("You can upload a maximum of 2 images.");
+      if (totalImages > 2) {
+        toast.error("You can have a maximum of 2 images in total (existing + new).");
         return;
       }
 
       const validFiles: File[] = [];
-      const newPreviews: string[] = [];
+      const previews: string[] = [];
 
       for (const file of files) {
         if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
@@ -81,44 +110,52 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
           continue;
         }
         validFiles.push(file);
-        newPreviews.push(URL.createObjectURL(file));
+        previews.push(URL.createObjectURL(file));
       }
 
-      setSelectedImageFiles(prev => [...prev, ...validFiles]);
-      setImagePreviews(prev => [...prev, ...newPreviews]);
-      // When setting the value, ensure it's an array of Files, even if empty
-      form.setValue("images", [...selectedImageFiles, ...validFiles]);
-      form.clearErrors("images");
+      setSelectedNewImageFiles(prev => [...prev, ...validFiles]);
+      setNewImagePreviews(prev => [...prev, ...previews]);
+      form.setValue("newImages", [...selectedNewImageFiles, ...validFiles]);
+      form.clearErrors("newImages");
     }
   };
 
-  const handleRemoveImage = (indexToRemove: number) => {
-    const updatedFiles = selectedImageFiles.filter((_, index) => index !== indexToRemove);
-    const updatedPreviews = imagePreviews.filter((_, index) => index !== indexToRemove);
-    setSelectedImageFiles(updatedFiles);
-    setImagePreviews(updatedPreviews);
-    form.setValue("images", updatedFiles);
+  const handleRemoveExistingImage = (urlToRemove: string) => {
+    setExistingImageUrls(prev => prev.filter(url => url !== urlToRemove));
+  };
+
+  const handleRemoveNewImage = (indexToRemove: number) => {
+    const updatedFiles = selectedNewImageFiles.filter((_, index) => index !== indexToRemove);
+    const updatedPreviews = newImagePreviews.filter((_, index) => index !== indexToRemove);
+    setSelectedNewImageFiles(updatedFiles);
+    setNewImagePreviews(updatedPreviews);
+    form.setValue("newImages", updatedFiles);
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) {
-      toast.error("You must be logged in to add a product.");
-      return;
-    }
-
-    if (currentProductCount >= 3) {
-      toast.error("You have reached the maximum limit of 3 products.");
-      setIsSubmitting(false); // Ensure submitting state is reset
+      toast.error("You must be logged in to edit a product.");
       return;
     }
 
     setIsSubmitting(true);
-    let imageUrls: string[] = [];
+    let finalImageUrls: string[] = [...existingImageUrls]; // Start with remaining existing images
+    const oldImagePathsToRemove: string[] = [];
 
     try {
-      // 1. Upload images to Supabase Storage
-      if (selectedImageFiles.length > 0) {
-        for (const file of selectedImageFiles) {
+      // Determine which existing images were removed
+      const initialImageUrls = product.image_urls || [];
+      for (const initialUrl of initialImageUrls) {
+        if (!existingImageUrls.includes(initialUrl)) {
+          // This image was removed by the user
+          const path = initialUrl.split('product-images/')[1];
+          if (path) oldImagePathsToRemove.push(path);
+        }
+      }
+
+      // 1. Upload new images to Supabase Storage
+      if (selectedNewImageFiles.length > 0) {
+        for (const file of selectedNewImageFiles) {
           const fileExtension = file.name.split('.').pop();
           const fileName = `${user.id}/${uuidv4()}.${fileExtension}`; // Store under user ID folder
           const { data, error: uploadError } = await supabase.storage
@@ -137,58 +174,69 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
             .getPublicUrl(fileName);
 
           if (publicUrlData?.publicUrl) {
-            imageUrls.push(publicUrlData.publicUrl);
+            finalImageUrls.push(publicUrlData.publicUrl);
           } else {
             throw new Error("Failed to get public URL for uploaded image.");
           }
         }
       }
 
-      // 2. Insert product data into Supabase database
-      const { error: insertError } = await supabase
+      // 2. Delete old images from Supabase Storage that were removed by the user
+      if (oldImagePathsToRemove.length > 0) {
+        const { error: deleteError } = await supabase.storage
+          .from('product-images')
+          .remove(oldImagePathsToRemove);
+
+        if (deleteError) {
+          console.warn("Failed to delete old product images:", deleteError.message);
+          // Don't throw, as product update can still proceed
+        }
+      }
+
+      // 3. Update product data in Supabase database
+      const { error: updateError } = await supabase
         .from('products')
-        .insert({
-          user_id: user.id,
+        .update({
           name: values.name,
           description: values.description,
           price: values.price,
           stock: values.stock,
-          image_urls: imageUrls.length > 0 ? imageUrls : null, // Set to null if no images
-        });
+          image_urls: finalImageUrls.length > 0 ? finalImageUrls : null, // Set to null if no images
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', product.id)
+        .eq('user_id', user.id); // Ensure only owner can update
 
-      if (insertError) {
-        throw new Error(`Failed to add product: ${insertError.message}`);
+      if (updateError) {
+        throw new Error(`Failed to update product: ${updateError.message}`);
       }
 
-      toast.success("Product added successfully!");
-      form.reset();
-      setSelectedImageFiles([]);
-      setImagePreviews([]);
+      toast.success("Product updated successfully!");
       setIsOpen(false); // Close the dialog
-      onProductAdded(); // Notify parent component to refresh product list
+      onProductUpdated(); // Notify parent component to refresh product list
 
     } catch (error: any) {
-      console.error("Error adding product:", error);
-      toast.error(error.message || "Failed to add product. Please try again.");
+      console.error("Error updating product:", error);
+      toast.error(error.message || "Failed to update product. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const isAddProductDisabled = currentProductCount >= 3;
+  const totalCurrentImages = existingImageUrls.length + selectedNewImageFiles.length;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2" disabled={isAddProductDisabled}>
-          <Plus className="h-4 w-4" /> Add Product
+        <Button variant="outline" size="sm" className="flex-1">
+          <Edit className="mr-2 h-4 w-4" /> Edit
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Add New Product</DialogTitle>
+          <DialogTitle>Edit Product</DialogTitle>
           <DialogDescription>
-            Fill in the details to add a new product to your store.
+            Update the details for your product.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
@@ -246,7 +294,7 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
           </div>
 
           <div className="grid gap-2">
-            <Label>Product Images ({selectedImageFiles.length}/2)</Label>
+            <Label>Product Images ({totalCurrentImages}/2)</Label>
             <p className="text-xs text-muted-foreground">
               Recommended: 800x800 pixels for product images.
               <br />
@@ -254,22 +302,36 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
               <br />
               • Use online image compressor tools for the best possible outcomes
             </p>
-            <div className="flex gap-2 mt-2">
-              {imagePreviews.map((preview, index) => (
-                <div key={index} className="relative w-24 h-24 border rounded-md overflow-hidden">
-                  <Image src={preview} alt={`Product preview ${index + 1}`} fill style={{ objectFit: 'cover' }} /> {/* Updated prop */}
+            <div className="flex gap-2 mt-2 flex-wrap">
+              {existingImageUrls.map((url, index) => (
+                <div key={`existing-${index}`} className="relative w-24 h-24 border rounded-md overflow-hidden">
+                  <Image src={url} alt={`Existing product image ${index + 1}`} fill style={{ objectFit: 'cover' }} />
                   <Button
                     type="button"
                     variant="destructive"
                     size="icon"
                     className="absolute top-1 right-1 h-6 w-6 rounded-full"
-                    onClick={() => handleRemoveImage(index)}
+                    onClick={() => handleRemoveExistingImage(url)}
                   >
                     <X className="h-3 w-3" />
                   </Button>
                 </div>
               ))}
-              {selectedImageFiles.length < 2 && (
+              {newImagePreviews.map((preview, index) => (
+                <div key={`new-${index}`} className="relative w-24 h-24 border rounded-md overflow-hidden">
+                  <Image src={preview} alt={`New product preview ${index + 1}`} fill style={{ objectFit: 'cover' }} />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-1 right-1 h-6 w-6 rounded-full"
+                    onClick={() => handleRemoveNewImage(index)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+              {totalCurrentImages < 2 && (
                 <Label htmlFor="image-upload" className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed rounded-md cursor-pointer hover:bg-muted/50">
                   <ImageIcon className="h-6 w-6 text-muted-foreground" />
                   <span className="text-xs text-muted-foreground">Add image</span>
@@ -278,17 +340,17 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
                     type="file"
                     accept="image/jpeg,image/jpg,image/png,image/webp"
                     className="hidden"
-                    onChange={handleImageChange}
+                    onChange={handleNewImageChange}
                     multiple
                   />
                 </Label>
               )}
             </div>
-            {form.formState.errors.images && (
-              <p className="text-destructive text-sm">{form.formState.errors.images.message}</p>
+            {form.formState.errors.newImages && (
+              <p className="text-destructive text-sm">{form.formState.errors.newImages.message}</p>
             )}
             <p className="text-xs text-muted-foreground mt-1">
-              Upload exactly 2 high-quality images • Recommended 1000x1000px or higher square aspect ratio • Supported formats: JPG, PNG, WebP
+              Upload up to 2 high-quality images • Recommended 1000x1000px or higher square aspect ratio • Supported formats: JPG, PNG, WebP
             </p>
           </div>
 
@@ -300,10 +362,10 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Adding Product...
+                  Updating Product...
                 </>
               ) : (
-                "Add Product"
+                "Update Product"
               )}
             </Button>
           </div>
