@@ -11,9 +11,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Loader2, CheckCircle, Mail } from 'lucide-react';
 import Link from 'next/link';
-import { supabase } from '@/integrations/supabase/client'; // Import supabase client
+import { supabase } from '@/integrations/supabase/client';
 
 const formSchema = z.object({
   customerEmail: z.string().email({ message: "Please enter a valid email address." }),
@@ -24,7 +24,7 @@ export default function CheckoutPage() {
   const { cartItems, cartTotal, clearCart } = useCart();
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
-  const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null); // State to hold the tenant slug for redirection
+  const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,14 +44,12 @@ export default function CheckoutPage() {
     toast.info("Placing your order...", { duration: 3000 });
 
     try {
-      // Assuming all items in the cart belong to the same store owner
       const currentStoreOwnerId = cartItems[0]?.storeOwnerId;
 
       if (!currentStoreOwnerId) {
         throw new Error("Store owner information missing for cart items.");
       }
 
-      // Fetch the tenant slug for redirection *before* clearing the cart
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('tenant_slug')
@@ -60,12 +58,10 @@ export default function CheckoutPage() {
 
       if (profileError || !profileData?.tenant_slug) {
         console.error("Error fetching store tenant slug for redirection:", profileError);
-        // If slug can't be found, storeTenantSlug remains null, and we'll fall back to '/'
       } else {
         setStoreTenantSlug(profileData.tenant_slug);
       }
 
-      // Call the Next.js API route to proxy the Edge Function call
       const response = await fetch('/api/place-order', {
         method: 'POST',
         headers: {
@@ -88,7 +84,7 @@ export default function CheckoutPage() {
       console.log("Order placed successfully:", result);
 
       toast.success("Order placed successfully! Check your email for confirmation.", { duration: 5000 });
-      clearCart(); // Clear cart AFTER capturing storeOwnerId and attempting to fetch slug
+      clearCart();
       setOrderPlaced(true);
 
     } catch (error: any) {
@@ -100,14 +96,13 @@ export default function CheckoutPage() {
   };
 
   if (orderPlaced) {
-    // Determine the redirect path: to the specific store if slug is found, otherwise to home
     const redirectPath = storeTenantSlug ? `/store/${storeTenantSlug}` : '/';
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
-        <CheckCircle className="h-20 w-20 text-green-500 mb-6" />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-primary/10 to-background p-4 text-center animate-in fade-in duration-500">
+        <CheckCircle className="h-20 w-20 text-green-500 mb-6 animate-in zoom-in-90 duration-700" />
         <h1 className="text-3xl font-bold mb-4">Order Placed!</h1>
-        <p className="text-lg text-muted-foreground mb-8">Thank you for your purchase. A confirmation email has been sent.</p>
-        <Button asChild>
+        <p className="text-lg text-muted-foreground mb-8 max-w-md">Thank you for your purchase. A confirmation email has been sent.</p>
+        <Button asChild className="h-11 text-base font-semibold">
           <Link href={redirectPath}>Continue Shopping</Link>
         </Button>
       </div>
@@ -115,31 +110,31 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted text-foreground flex flex-col">
       {/* Header */}
-      <header className="flex items-center p-4 border-b border-border bg-card">
+      <header className="flex items-center p-4 md:px-8 border-b border-border bg-card shadow-sm">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-xl font-bold ml-4">Checkout</h1>
+        <h1 className="text-xl md:text-2xl font-bold ml-4">Checkout</h1>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 p-8 flex items-center justify-center">
-        <Card className="w-full max-w-md bg-card text-card-foreground shadow-lg">
-          <CardHeader className="text-center space-y-2">
-            <CardTitle className="text-2xl font-bold">Confirm Your Order</CardTitle>
-            <CardDescription className="text-muted-foreground">
+      <main className="flex-1 p-4 md:p-8 flex items-center justify-center">
+        <Card className="w-full max-w-md bg-card text-card-foreground shadow-xl border-2 border-primary/20 rounded-lg animate-in zoom-in-95 duration-500">
+          <CardHeader className="text-center space-y-2 pt-8">
+            <CardTitle className="text-3xl font-bold">Confirm Your Order</CardTitle>
+            <CardDescription className="text-muted-foreground text-base">
               Enter your email to finalize your purchase.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4 mb-6">
+          <CardContent className="pb-8">
+            <div className="space-y-4 mb-6 p-4 bg-muted/30 rounded-md border border-border">
               <div className="flex justify-between text-lg font-semibold">
                 <span>Total Items:</span>
                 <span>{cartItems.reduce((count, item) => count + item.quantity, 0)}</span>
               </div>
-              <div className="flex justify-between text-2xl font-bold">
+              <div className="flex justify-between text-3xl font-bold text-primary">
                 <span>Order Total:</span>
                 <span>Rs{cartTotal.toFixed(2)}</span>
               </div>
@@ -147,19 +142,23 @@ export default function CheckoutPage() {
 
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="customerEmail">Your Email</Label>
-                <Input
-                  id="customerEmail"
-                  type="email"
-                  placeholder="your.email@example.com"
-                  {...form.register("customerEmail")}
-                />
+                <Label htmlFor="customerEmail" className="text-sm font-medium">Your Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="customerEmail"
+                    type="email"
+                    placeholder="your.email@example.com"
+                    className="pl-10 h-11 text-base focus-visible:ring-primary"
+                    {...form.register("customerEmail")}
+                  />
+                </div>
                 {form.formState.errors.customerEmail && (
-                  <p className="text-destructive text-sm">{form.formState.errors.customerEmail.message}</p>
+                  <p className="text-destructive text-sm mt-1">{form.formState.errors.customerEmail.message}</p>
                 )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={isPlacingOrder || cartItems.length === 0}>
+              <Button type="submit" className="w-full h-11 text-base font-semibold" disabled={isPlacingOrder || cartItems.length === 0}>
                 {isPlacingOrder ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

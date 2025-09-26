@@ -5,13 +5,13 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Package, Store, ShoppingCart, Image as ImageIcon } from 'lucide-react';
+import { Package, Store, ShoppingCart, Image as ImageIcon, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { MadeWithDyad } from '@/components/made-with-dyad';
 import Image from 'next/image';
 import { useCart } from '@/components/cart-context-provider';
-import { ProductDetailDialog } from '@/components/product-detail-dialog'; // Import ProductDetailDialog
+import { ProductDetailDialog } from '@/components/product-detail-dialog';
 
 interface Product {
   id: string;
@@ -19,7 +19,7 @@ interface Product {
   description: string | null;
   price: number;
   stock: number;
-  user_id: string; // Owner of the product
+  user_id: string;
   image_urls: string[] | null;
 }
 
@@ -30,6 +30,7 @@ interface Profile {
   tenant_name: string | null;
   tenant_slug: string | null;
   store_url: string | null;
+  store_description: string | null; // Added store_description
 }
 
 export default function PublicStorePage() {
@@ -42,8 +43,8 @@ export default function PublicStorePage() {
   const [error, setError] = useState<string | null>(null);
   const { itemCount } = useCart();
 
-  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false); // State for dialog open/close
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null); // State for selected product
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     async function fetchStoreData() {
@@ -75,7 +76,7 @@ export default function PublicStorePage() {
         const { data: productsData, error: productsError } = await supabase
           .from('products')
           .select('*')
-          .eq('user_id', profileData.id); // Use the user_id from the fetched profile
+          .eq('user_id', profileData.id);
 
         if (productsError) {
           console.error("Error fetching products:", productsError);
@@ -114,7 +115,7 @@ export default function PublicStorePage() {
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
         <h1 className="text-3xl font-bold text-destructive mb-4">Error</h1>
         <p className="text-lg text-muted-foreground">{error}</p>
-        <Button onClick={() => window.location.href = '/'} className="mt-6">Go to Dashboard</Button>
+        <Button onClick={() => router.push('/')} className="mt-6">Go to Dashboard</Button>
       </div>
     );
   }
@@ -124,43 +125,50 @@ export default function PublicStorePage() {
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
         <h1 className="text-3xl font-bold mb-4">Store Not Found</h1>
         <p className="text-lg text-muted-foreground">The store you are looking for does not exist.</p>
-        <Button onClick={() => window.location.href = '/'} className="mt-6">Go to Dashboard</Button>
+        <Button onClick={() => router.push('/')} className="mt-6">Go to Dashboard</Button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted text-foreground flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 border-b border-border bg-card">
+      <header className="flex items-center justify-between p-4 md:px-8 border-b border-border bg-card shadow-sm">
         <div className="flex items-center space-x-4">
-          <Store className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
+          <Button variant="ghost" size="icon" onClick={() => router.push('/')}>
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+            <h1 className="text-xl md:text-2xl font-bold">{profile.tenant_name || "Public Store"}</h1>
+            {profile.store_description && (
+              <p className="text-sm text-muted-foreground hidden sm:block">{profile.store_description}</p>
+            )}
+          </div>
         </div>
         <Button onClick={() => router.push('/cart')} variant="outline" className="relative">
           <ShoppingCart className="h-5 w-5" />
           {itemCount > 0 && (
-            <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 rounded-full">
+            <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 rounded-full animate-in zoom-in">
               {itemCount}
             </Badge>
           )}
-          <span className="ml-2">Cart</span>
+          <span className="ml-2 hidden sm:inline">Cart</span>
         </Button>
       </header>
 
       {/* Main Content - Product Grid */}
-      <main className="flex-1 p-8">
-        <h2 className="text-2xl font-bold mb-6">Our Products</h2>
+      <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
+        <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">Our Products</h2>
         {products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-lg p-8 bg-card/50">
             <Package className="h-16 w-16 text-muted-foreground mb-4" />
             <p className="text-xl text-muted-foreground mb-4">No products available yet.</p>
             <p className="text-sm text-muted-foreground">Check back later or contact the store owner.</p>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products.map((product) => (
-              <Card key={product.id} className="bg-card text-card-foreground shadow-md cursor-pointer" onClick={() => handleProductClick(product)}>
+              <Card key={product.id} className="bg-card text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group" onClick={() => handleProductClick(product)}>
                 {product.image_urls && product.image_urls.length > 0 ? (
                   <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
                     <Image
@@ -168,7 +176,7 @@ export default function PublicStorePage() {
                       alt={product.name}
                       fill
                       style={{ objectFit: 'cover' }}
-                      className="transition-transform duration-300 hover:scale-105"
+                      className="transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
                 ) : (
@@ -176,14 +184,14 @@ export default function PublicStorePage() {
                     <ImageIcon className="h-16 w-16 text-muted-foreground" />
                   </div>
                 )}
-                <CardHeader>
-                  <CardTitle className="text-lg">{product.name}</CardTitle>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg font-semibold group-hover:text-primary transition-colors">{product.name}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <p className="text-sm text-muted-foreground line-clamp-2">{product.description || "No description available."}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
-                    <Badge variant="secondary">{product.stock} in stock</Badge>
+                  <div className="flex items-center justify-between pt-2">
+                    <span className="text-xl font-bold text-primary">Rs{product.price.toFixed(2)}</span>
+                    <Badge variant="secondary" className="text-sm">{product.stock} in stock</Badge>
                   </div>
                 </CardContent>
               </Card>

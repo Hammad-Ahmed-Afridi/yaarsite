@@ -17,11 +17,11 @@ import { toast } from 'sonner';
 
 interface Order {
   id: string;
-  user_id: string; // Store owner's ID
+  user_id: string;
   customer_email: string;
   total_amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  items_json: any[]; // JSONB column, will be an array of cart items
+  items_json: any[];
   created_at: string;
   updated_at: string;
 }
@@ -86,7 +86,7 @@ export default function OrdersPage() {
       toast.error("Failed to update order status.");
     } else {
       toast.success("Order status updated successfully!");
-      fetchOrders(); // Refresh the list of orders
+      fetchOrders();
     }
     setIsUpdatingStatus(false);
   };
@@ -103,7 +103,7 @@ export default function OrdersPage() {
       toast.error("Failed to delete order.");
     } else {
       toast.success("Order deleted successfully!");
-      fetchOrders(); // Refresh the list of orders
+      fetchOrders();
     }
     setIsDeletingOrder(false);
   };
@@ -130,18 +130,18 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted text-foreground flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 border-b border-border bg-card">
-        <div className="flex items-center space-x-4">
+      <header className="flex items-center justify-between p-4 md:px-8 border-b border-border bg-card shadow-sm">
+        <div className="flex items-center space-x-3 md:space-x-4">
           <Button variant="ghost" size="icon" onClick={() => router.push('/')}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
             <Store className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold">quick</h1>
+            <h1 className="text-xl md:text-2xl font-bold">Orders</h1>
             {profile?.tenant_slug && (
-              <Badge variant="secondary" className="bg-primary text-primary-foreground">
+              <Badge variant="secondary" className="bg-primary text-primary-foreground hidden sm:flex">
                 ID: {profile.tenant_slug}
               </Badge>
             )}
@@ -149,18 +149,18 @@ export default function OrdersPage() {
         </div>
         <Button onClick={handleSignOut} variant="outline" className="flex items-center gap-2">
           <LogOut className="h-4 w-4" />
-          Sign Out
+          <span className="hidden sm:inline">Sign Out</span>
         </Button>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Order Management</h2>
+          <h2 className="text-2xl md:text-3xl font-bold">Order Management</h2>
         </div>
 
         {orders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-lg p-8">
+          <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-lg p-8 bg-card/50">
             <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
             <p className="text-xl text-muted-foreground mb-4">No Orders Yet</p>
             <p className="text-sm text-muted-foreground mb-6">
@@ -169,94 +169,96 @@ export default function OrdersPage() {
             <Button onClick={() => router.push('/')}>Go to Dashboard</Button>
           </div>
         ) : (
-          <Card className="bg-card text-card-foreground shadow-md">
+          <Card className="bg-card text-card-foreground shadow-lg">
             <CardHeader>
               <CardTitle>All Orders</CardTitle>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Order ID</TableHead>
-                    <TableHead>Customer Email</TableHead>
-                    <TableHead>Total Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Order Date</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {orders.map((order) => (
-                    <TableRow key={order.id}>
-                      <TableCell className="font-medium">{order.id.substring(0, 8)}...</TableCell>
-                      <TableCell>{order.customer_email}</TableCell>
-                      <TableCell>Rs{order.total_amount.toFixed(2)}</TableCell>
-                      <TableCell>
-                        <Select
-                          value={order.status}
-                          onValueChange={(newStatus: Order['status']) => handleUpdateOrderStatus(order.id, newStatus)}
-                          disabled={isUpdatingStatus}
-                        >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select Status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ORDER_STATUSES.map((status) => (
-                              <SelectItem key={status} value={status}>
-                                {status.charAt(0).toUpperCase() + status.slice(1)}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <span className="sr-only">Open menu</span>
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => toast.info("Edit order details coming soon!")}>
-                              <Edit className="mr-2 h-4 w-4" /> Edit Order
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
-                                  <Trash2 className="mr-2 h-4 w-4" /> Delete Order
-                                </DropdownMenuItem>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete this order
-                                    and remove its data from our servers.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDeleteOrder(order.id)}
-                                    disabled={isDeletingOrder}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    {isDeletingOrder ? "Deleting..." : "Delete"}
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="min-w-[100px]">Order ID</TableHead>
+                      <TableHead className="min-w-[150px]">Customer Email</TableHead>
+                      <TableHead className="min-w-[100px]">Total Amount</TableHead>
+                      <TableHead className="min-w-[150px]">Status</TableHead>
+                      <TableHead className="min-w-[120px]">Order Date</TableHead>
+                      <TableHead className="text-right min-w-[80px]">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {orders.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell className="font-medium">{order.id.substring(0, 8)}...</TableCell>
+                        <TableCell>{order.customer_email}</TableCell>
+                        <TableCell>Rs{order.total_amount.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Select
+                            value={order.status}
+                            onValueChange={(newStatus: Order['status']) => handleUpdateOrderStatus(order.id, newStatus)}
+                            disabled={isUpdatingStatus}
+                          >
+                            <SelectTrigger className="w-[140px] h-9 text-sm">
+                              <SelectValue placeholder="Select Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {ORDER_STATUSES.map((status) => (
+                                <SelectItem key={status} value={status}>
+                                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
+                        <TableCell className="text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem onClick={() => toast.info("Edit order details coming soon!")}>
+                                <Edit className="mr-2 h-4 w-4" /> Edit Order
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive">
+                                    <Trash2 className="mr-2 h-4 w-4" /> Delete Order
+                                  </DropdownMenuItem>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      This action cannot be undone. This will permanently delete this order
+                                      and remove its data from our servers.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDeleteOrder(order.id)}
+                                      disabled={isDeletingOrder}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      {isDeletingOrder ? "Deleting..." : "Delete"}
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         )}
