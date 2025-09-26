@@ -5,12 +5,13 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Package, Store, ShoppingCart } from 'lucide-react';
+import { Package, Store, ShoppingCart, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { MadeWithDyad } from '@/components/made-with-dyad';
 import Image from 'next/image';
-import { useCart } from '@/components/cart-context-provider'; // Import useCart
+import { useCart } from '@/components/cart-context-provider';
+import { ProductDetailDialog } from '@/components/product-detail-dialog'; // Import ProductDetailDialog
 
 interface Product {
   id: string;
@@ -39,7 +40,10 @@ export default function PublicStorePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { addToCart, itemCount } = useCart(); // Use cart context
+  const { itemCount } = useCart();
+
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false); // State for dialog open/close
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null); // State for selected product
 
   useEffect(() => {
     async function fetchStoreData() {
@@ -92,22 +96,9 @@ export default function PublicStorePage() {
     fetchStoreData();
   }, [tenantSlug]);
 
-  const handleAddToCart = (product: Product) => {
-    if (product.stock <= 0) {
-      toast.error("This product is out of stock.");
-      return;
-    }
-    if (!profile) {
-      toast.error("Cannot add to cart: Store information missing.");
-      return;
-    }
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image_url: product.image_urls?.[0],
-      storeOwnerId: profile.id, // Pass the store owner's ID
-    });
+  const handleProductClick = (product: Product) => {
+    setSelectedProduct(product);
+    setIsDetailDialogOpen(true);
   };
 
   if (isLoading) {
@@ -169,34 +160,31 @@ export default function PublicStorePage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products.map((product) => (
-              <Card key={product.id} className="bg-card text-card-foreground shadow-md">
-                {product.image_urls && product.image_urls.length > 0 && ( // Ensure image_urls exists and is not empty
+              <Card key={product.id} className="bg-card text-card-foreground shadow-md cursor-pointer" onClick={() => handleProductClick(product)}>
+                {product.image_urls && product.image_urls.length > 0 ? (
                   <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
                     <Image
                       src={product.image_urls[0]}
                       alt={product.name}
-                      fill // Updated prop
-                      style={{ objectFit: 'cover' }} // Updated prop
+                      fill
+                      style={{ objectFit: 'cover' }}
                       className="transition-transform duration-300 hover:scale-105"
                     />
+                  </div>
+                ) : (
+                  <div className="relative h-48 w-full overflow-hidden rounded-t-lg bg-muted flex items-center justify-center">
+                    <ImageIcon className="h-16 w-16 text-muted-foreground" />
                   </div>
                 )}
                 <CardHeader>
                   <CardTitle className="text-lg">{product.name}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <p className="text-sm text-muted-foreground">{product.description || "No description available."}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2">{product.description || "No description available."}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
                     <Badge variant="secondary">{product.stock} in stock</Badge>
                   </div>
-                  <Button
-                    className="w-full mt-4"
-                    onClick={() => handleAddToCart(product)}
-                    disabled={product.stock <= 0}
-                  >
-                    {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
-                  </Button>
                 </CardContent>
               </Card>
             ))}
@@ -204,6 +192,16 @@ export default function PublicStorePage() {
         )}
       </main>
       <MadeWithDyad />
+
+      {/* Product Detail Dialog */}
+      {selectedProduct && profile && (
+        <ProductDetailDialog
+          product={selectedProduct}
+          isOpen={isDetailDialogOpen}
+          onOpenChange={setIsDetailDialogOpen}
+          storeOwnerId={profile.id}
+        />
+      )}
     </div>
   );
 }
