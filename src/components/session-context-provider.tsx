@@ -5,7 +5,7 @@ import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useRouter, usePathname } from 'next/navigation';
 import { Toaster } from 'sonner';
-import { useInactivityLogout } from '@/hooks/use-inactivity-logout'; // Import the new hook
+import { useInactivityLogout } from '@/hooks/use-inactivity-logout';
 
 // Define the Profile type based on your Supabase schema
 interface Profile {
@@ -39,8 +39,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
-  const pathname = usePathname();
+  // useRouter and usePathname are kept for potential future logging or context if needed by children.
 
   // Function to fetch user profile
   const fetchUserProfile = useCallback(async (userId: string) => {
@@ -64,33 +63,19 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
     setSession(currentSession);
     setUser(currentSession?.user || null);
 
-    // Define pages that are publicly accessible or part of the auth flow
-    const publicPaths = ['/login', '/signup', '/cart', '/checkout'];
-    const isPublicPath = publicPaths.includes(pathname) || pathname.startsWith('/store');
-
     if (currentSession) {
       // User is authenticated
       const userProfile = await fetchUserProfile(currentSession.user.id);
       setProfile(userProfile);
-
-      // If authenticated user is on the login page, redirect to dashboard
-      if (pathname === '/login') {
-        console.log("SessionContext: Authenticated user on login path, redirecting to /");
-        router.push('/');
-      }
+      // Removed redirect logic for authenticated users on /login
     } else {
       // User is NOT authenticated
       setProfile(null);
-
-      // If unauthenticated user is on a protected path, redirect to login
-      if (!isPublicPath) {
-        console.log("SessionContext: Unauthenticated user on protected path, redirecting to /login");
-        router.push('/login');
-      }
+      // Removed redirect logic for unauthenticated users on protected paths
     }
     setIsLoading(false);
     console.log("SessionContext: isLoading set to false after auth state change.");
-  }, [pathname, router, fetchUserProfile]);
+  }, [fetchUserProfile]); // Removed pathname, router from dependencies
 
   // Function to manually refresh the profile
   const refreshProfile = useCallback(async () => {
@@ -101,7 +86,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   }, [user, fetchUserProfile]);
 
   useEffect(() => {
-    console.log("SessionContext: useEffect running. Current pathname:", pathname);
+    console.log("SessionContext: useEffect running.");
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthStateChange);
 
@@ -128,27 +113,13 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
         // toast.error("Failed to log out due to inactivity."); // Optionally show a toast
       } else {
         console.log("SessionContext: Successfully logged out due to inactivity.");
-        // toast.info("You have been logged out due to inactivity."); // Optionally show a toast
-        router.push('/login'); // Redirect to login after inactivity logout
+        // The page-level redirect will handle sending to /login
       }
     },
     enabled: !!user, // Only enable if a user is logged in
   });
 
-  const publicPaths = ['/login', '/signup', '/cart', '/checkout'];
-  const isPublicPath = publicPaths.includes(pathname) || pathname.startsWith('/store');
-
-  // If loading and on a protected path, render null to prevent children from showing their loaders
-  // before the redirect to login happens. The Toaster is still rendered to ensure it's available.
-  if (isLoading && !isPublicPath) {
-    return (
-      <>
-        {/* A minimal global loading indicator could go here if desired, but null is faster */}
-        <Toaster richColors />
-      </>
-    );
-  }
-
+  // The provider will always render children, and pages will handle their own auth checks.
   return (
     <SessionContext.Provider value={{ session, user, profile, isLoading, refreshProfile }}>
       {children}

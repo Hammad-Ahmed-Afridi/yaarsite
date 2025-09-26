@@ -45,6 +45,14 @@ export default function ProductsPage() {
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
 
+  // Redirect unauthenticated users to login
+  useEffect(() => {
+    if (!isSessionLoading && !user) {
+      console.log("ProductsPage: User not authenticated, redirecting to /login");
+      router.push('/login');
+    }
+  }, [isSessionLoading, user, router]);
+
   const fetchProducts = useCallback(async () => {
     if (!user) {
       setIsLoadingProducts(false);
@@ -135,14 +143,13 @@ export default function ProductsPage() {
     );
   }
 
+  // If not loading and no user, the useEffect above should have redirected.
+  // This block should ideally not be reached if the redirect works.
   if (!user) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
-        <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
-        <p className="text-lg text-muted-foreground mb-8">Please log in to manage your products.</p>
-        <Button asChild>
-          <Link href="/login">Go to Login</Link>
-        </Button>
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="ml-2 text-foreground">Redirecting to login...</p>
       </div>
     );
   }

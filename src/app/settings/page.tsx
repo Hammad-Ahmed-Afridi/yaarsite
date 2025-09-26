@@ -38,11 +38,19 @@ export default function SettingsPage() {
     },
   });
 
+  // Redirect unauthenticated users to login
+  useEffect(() => {
+    if (!isSessionLoading && !user) {
+      console.log("SettingsPage: User not authenticated, redirecting to /login");
+      router.push('/login');
+    }
+  }, [isSessionLoading, user, router]);
+
   useEffect(() => {
     if (profile) {
       form.reset({
         storeName: profile.tenant_name || "",
-        storeDescription: profile.store_description || "", // Now using store_description
+        storeDescription: profile.store_description || "",
       });
     }
   }, [profile, form]);
@@ -75,7 +83,7 @@ export default function SettingsPage() {
           tenant_name: values.storeName,
           tenant_slug: newTenantSlug,
           store_url: newStoreUrl,
-          store_description: values.storeDescription || null, // Now updating store_description
+          store_description: values.storeDescription || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -85,7 +93,7 @@ export default function SettingsPage() {
         toast.error("Failed to update store settings. Please try again.");
       } else {
         toast.success("Store settings updated successfully!");
-        await refreshProfile(); // Refresh the session context profile
+        await refreshProfile();
       }
     } catch (err) {
       console.error("Unexpected error during store settings update:", err);
@@ -108,11 +116,22 @@ export default function SettingsPage() {
     }
   };
 
-  if (isSessionLoading || !user) {
+  if (isSessionLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <p className="ml-2 text-foreground">Loading settings...</p>
+      </div>
+    );
+  }
+
+  // If not loading and no user, the useEffect above should have redirected.
+  // This block should ideally not be reached if the redirect works.
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="ml-2 text-foreground">Redirecting to login...</p>
       </div>
     );
   }
