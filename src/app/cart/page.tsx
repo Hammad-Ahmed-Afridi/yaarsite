@@ -74,9 +74,7 @@ export default function CartPage() {
             <p className="text-sm text-muted-foreground mb-6">
               Looks like you haven't added anything to your cart yet.
             </p>
-            <Button asChild disabled={isLoadingStoreSlug}>
-              <Link href={continueShoppingPath}>Start Shopping</Link>
-            </Button>
+            {/* Removed the "Start Shopping" button */}
           </div>
         ) : (
           <div className="grid gap-8 lg:grid-cols-3">
