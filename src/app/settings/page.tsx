@@ -2,37 +2,39 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation'; // Import usePathname
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
-import { generateSlug, compressImage } from '@/lib/utils'; // Import compressImage
-import { v4 as uuidv4 } from 'uuid'; // For unique file names
+import { generateSlug, compressImage } from '@/lib/utils';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Store, Settings, LogOut, Copy, ExternalLink, Loader2, Image as ImageIcon, X } from 'lucide-react';
+import { Settings, Copy, ExternalLink, Loader2, Image as ImageIcon, X } from 'lucide-react';
 import { MadeWithDyad } from '@/components/made-with-dyad';
 import Image from 'next/image';
+import { DashboardHeader } from '@/components/dashboard-header'; // Import DashboardHeader
 
-const MAX_LOGO_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+const MAX_LOGO_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_LOGO_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
   storeDescription: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
-  logo: z.instanceof(File).optional(), // New field for logo file
+  logo: z.instanceof(File).optional(),
 });
 
 export default function SettingsPage() {
   const router = useRouter();
+  const pathname = usePathname(); // Get current pathname
   const { user, profile, isLoading: isSessionLoading, refreshProfile } = useSession();
   const [isUpdatingStore, setIsUpdatingStore] = useState(false);
   const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
@@ -52,9 +54,9 @@ export default function SettingsPage() {
       form.reset({
         storeName: profile.tenant_name || "",
         storeDescription: profile.store_description || "",
-        logo: undefined, // Reset logo file input
+        logo: undefined,
       });
-      setLogoPreview(profile.avatar_url || null); // Set initial logo preview from profile
+      setLogoPreview(profile.avatar_url || null);
     }
   }, [profile, form]);
 
@@ -82,8 +84,7 @@ export default function SettingsPage() {
       }
 
       let fileToUpload = file;
-      // Only compress if the file size is significantly larger than a threshold
-      if (file.size > 500 * 1024) { // e.g., compress if larger than 500KB
+      if (file.size > 500 * 1024) {
         toast.info("Compressing logo for faster loading...");
         fileToUpload = await compressImage(file);
         if (fileToUpload.size < file.size) {
@@ -105,7 +106,6 @@ export default function SettingsPage() {
 
     setIsUpdatingStore(true);
     try {
-      // Delete image from storage if it exists
       if (profile?.avatar_url) {
         const path = profile.avatar_url.split('store-logos/')[1];
         if (path) {
@@ -119,7 +119,6 @@ export default function SettingsPage() {
         }
       }
 
-      // Update profile to remove avatar_url
       const { error } = await supabase
         .from('profiles')
         .update({ avatar_url: null, updated_at: new Date().toISOString() })
@@ -152,10 +151,8 @@ export default function SettingsPage() {
     let newAvatarUrl = profile?.avatar_url || null;
 
     try {
-      // 1. Upload new logo if selected
       if (selectedLogoFile) {
-        // Delete old logo from storage if it exists and is different from the new one
-        if (profile?.avatar_url && profile.avatar_url !== logoPreview) { // Check if old logo exists and is not the same as the new preview
+        if (profile?.avatar_url && profile.avatar_url !== logoPreview) {
           const oldPath = profile.avatar_url.split('store-logos/')[1];
           if (oldPath) {
             const { error: deleteOldLogoError } = await supabase.storage
@@ -168,7 +165,7 @@ export default function SettingsPage() {
         }
 
         const fileExtension = selectedLogoFile.name.split('.').pop();
-        const fileName = `${user.id}/${uuidv4()}.${fileExtension}`; // Store under user ID folder
+        const fileName = `${user.id}/${uuidv4()}.${fileExtension}`;
         const { data, error: uploadError } = await supabase.storage
           .from('store-logos')
           .upload(fileName, selectedLogoFile, {
@@ -191,7 +188,6 @@ export default function SettingsPage() {
         }
       }
 
-      // 2. Update profile data in Supabase database
       const newTenantSlug = generateSlug(values.storeName);
       const appBaseUrl = window.location.origin;
       const newStoreUrl = `${appBaseUrl}/store/${newTenantSlug}`;
@@ -203,7 +199,7 @@ export default function SettingsPage() {
           tenant_slug: newTenantSlug,
           store_url: newStoreUrl,
           store_description: values.storeDescription || null,
-          avatar_url: newAvatarUrl, // Update with new logo URL
+          avatar_url: newAvatarUrl,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -214,7 +210,7 @@ export default function SettingsPage() {
       } else {
         toast.success("Store settings updated successfully!");
         await refreshProfile();
-        setSelectedLogoFile(null); // Clear selected file after successful upload
+        setSelectedLogoFile(null);
       }
     } catch (err) {
       console.error("Unexpected error during store settings update:", err);
@@ -260,29 +256,8 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Header */}
-      <header className="flex items-center justify-between p-4 border-b border-border bg-card">
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" onClick={() => router.push('/')}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center gap-2">
-            <Store className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold">quick</h1>
-            {profile?.tenant_slug && (
-              <Badge variant="secondary" className="bg-primary text-primary-foreground">
-                ID: {profile.tenant_slug}
-              </Badge>
-            )}
-          </div>
-        </div>
-        <Button onClick={handleSignOut} variant="outline" className="flex items-center gap-2">
-          <LogOut className="h-4 w-4" />
-          Sign Out
-        </Button>
-      </header>
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} currentPath={pathname} />
 
-      {/* Main Content */}
       <main className="flex-1 p-8 flex justify-center">
         <Card className="w-full max-w-2xl bg-card text-card-foreground shadow-lg">
           <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">

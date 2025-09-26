@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { MadeWithDyad } from '@/components/made-with-dyad';
 import Image from 'next/image';
 import { useCart } from '@/components/cart-context-provider';
-import { ProductDetailDialog } from '@/components/product-detail-dialog'; // Import ProductDetailDialog
+import { ProductDetailDialog } from '@/components/product-detail-dialog';
 
 interface Product {
   id: string;
@@ -19,7 +19,7 @@ interface Product {
   description: string | null;
   price: number;
   stock: number;
-  user_id: string; // Owner of the product
+  user_id: string;
   image_urls: string[] | null;
 }
 
@@ -30,6 +30,7 @@ interface Profile {
   tenant_name: string | null;
   tenant_slug: string | null;
   store_url: string | null;
+  avatar_url: string | null; // Added avatar_url to Profile interface
 }
 
 export default function PublicStorePage() {
@@ -42,8 +43,8 @@ export default function PublicStorePage() {
   const [error, setError] = useState<string | null>(null);
   const { itemCount } = useCart();
 
-  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false); // State for dialog open/close
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null); // State for selected product
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     async function fetchStoreData() {
@@ -58,7 +59,6 @@ export default function PublicStorePage() {
       }
 
       try {
-        // Fetch tenant profile
         console.log("PublicStorePage: Fetching profile for tenantSlug:", tenantSlug);
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
@@ -75,12 +75,11 @@ export default function PublicStorePage() {
         setProfile(profileData);
         console.log("PublicStorePage: Profile fetched:", profileData);
 
-        // Fetch products for this tenant's user_id
         console.log("PublicStorePage: Fetching products for user_id:", profileData.id);
         const { data: productsData, error: productsError } = await supabase
           .from('products')
           .select('*')
-          .eq('user_id', profileData.id); // Use the user_id from the fetched profile
+          .eq('user_id', profileData.id);
 
         if (productsError) {
           console.error("PublicStorePage: Error fetching products:", productsError);
@@ -141,7 +140,19 @@ export default function PublicStorePage() {
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-border bg-card">
         <div className="flex items-center space-x-4">
-          <Store className="h-6 w-6 text-primary" />
+          {profile?.avatar_url ? (
+            <div className="relative h-8 w-8 rounded-full overflow-hidden">
+              <Image
+                src={profile.avatar_url}
+                alt="Store Logo"
+                fill
+                style={{ objectFit: 'cover' }}
+                className="rounded-full"
+              />
+            </div>
+          ) : (
+            <Store className="h-6 w-6 text-primary" />
+          )}
           <h1 className="text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
         </div>
         <Button onClick={() => router.push('/cart')} variant="outline" className="relative">
@@ -200,7 +211,6 @@ export default function PublicStorePage() {
       </main>
       <MadeWithDyad />
 
-      {/* Product Detail Dialog */}
       {selectedProduct && profile && (
         <ProductDetailDialog
           product={selectedProduct}

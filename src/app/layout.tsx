@@ -3,7 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionContextProvider } from "@/components/session-context-provider";
 import { CartContextProvider } from "@/components/cart-context-provider";
-import { AuthWrapper } from '@/components/auth-wrapper'; // New import
+import { AuthWrapper } from '@/components/auth-wrapper';
+import { Toaster } from 'sonner'; // Import Toaster
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +35,6 @@ export const metadata: Metadata = {
       },
     ],
   },
-  // Google Verification - Remember to replace this value
   verification: {
     google: "google72f769dc7b33038e.html",
   },
@@ -48,7 +48,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Favicon setup */}
         <link rel="icon" type="image/x-icon" href="https://placehold.co/32x32/1e293b/cbd5e1?text=Ys" />
       </head>
       <body
@@ -56,11 +55,12 @@ export default function RootLayout({
       >
         <SessionContextProvider>
           <CartContextProvider>
-            <AuthWrapper> {/* Wrap children with AuthWrapper */}
+            <AuthWrapper>
               {children}
             </AuthWrapper>
           </CartContextProvider>
         </SessionContextProvider>
+        <Toaster richColors /> {/* Toaster moved here */}
       </body>
     </html>
   );

@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation'; // Import usePathname
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -10,18 +9,19 @@ import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MoreHorizontal, Trash2, Edit, ArrowLeft, Store, Loader2, ShoppingCart, LogOut } from 'lucide-react';
+import { MoreHorizontal, Trash2, Edit, ShoppingCart, Loader2 } from 'lucide-react';
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { DashboardHeader } from '@/components/dashboard-header'; // Import DashboardHeader
 
 interface Order {
   id: string;
-  user_id: string; // Store owner's ID
+  user_id: string;
   customer_email: string;
   total_amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  items_json: any[]; // JSONB column, will be an array of cart items
+  items_json: any[];
   created_at: string;
   updated_at: string;
 }
@@ -31,6 +31,7 @@ const ORDER_STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'cancel
 export default function OrdersPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
   const router = useRouter();
+  const pathname = usePathname(); // Get current pathname
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
@@ -86,7 +87,7 @@ export default function OrdersPage() {
       toast.error("Failed to update order status.");
     } else {
       toast.success("Order status updated successfully!");
-      fetchOrders(); // Refresh the list of orders
+      fetchOrders();
     }
     setIsUpdatingStatus(false);
   };
@@ -103,7 +104,7 @@ export default function OrdersPage() {
       toast.error("Failed to delete order.");
     } else {
       toast.success("Order deleted successfully!");
-      fetchOrders(); // Refresh the list of orders
+      fetchOrders();
     }
     setIsDeletingOrder(false);
   };
@@ -119,29 +120,8 @@ export default function OrdersPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Header */}
-      <header className="flex items-center justify-between p-4 border-b border-border bg-card">
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" onClick={() => router.push('/')}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center gap-2">
-            <Store className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold">quick</h1>
-            {profile?.tenant_slug && (
-              <Badge variant="secondary" className="bg-primary text-primary-foreground">
-                ID: {profile.tenant_slug}
-              </Badge>
-            )}
-          </div>
-        </div>
-        <Button onClick={handleSignOut} variant="outline" className="flex items-center gap-2">
-          <LogOut className="h-4 w-4" />
-          Sign Out
-        </Button>
-      </header>
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} currentPath={pathname} />
 
-      {/* Main Content */}
       <main className="flex-1 p-8">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">Order Management</h2>

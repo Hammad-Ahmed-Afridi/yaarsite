@@ -1,18 +1,17 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from 'react';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Package, ArrowLeft, LogOut, Store, Loader2, Trash2 } from 'lucide-react';
+import { Plus, Package, Loader2, Trash2 } from 'lucide-react';
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { AddProductDialog } from '@/components/add-product-dialog';
-import { EditProductDialog } from '@/components/edit-product-dialog'; // Import EditProductDialog
+import { EditProductDialog } from '@/components/edit-product-dialog';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation'; // Import usePathname
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,6 +23,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { DashboardHeader } from '@/components/dashboard-header'; // Import DashboardHeader
 
 interface Product {
   id: string;
@@ -31,16 +31,17 @@ interface Product {
   description: string | null;
   price: number;
   stock: number;
-  user_id: string; // Add user_id to Product interface
+  user_id: string;
   image_urls: string[] | null;
   created_at: string;
 }
 
-const PRODUCT_LIMIT = 3; // Define the product limit
+const PRODUCT_LIMIT = 3;
 
 export default function ProductsPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
   const router = useRouter();
+  const pathname = usePathname(); // Get current pathname
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
@@ -86,12 +87,11 @@ export default function ProductsPage() {
   const handleDeleteProduct = async (productId: string, imageUrls: string[] | null) => {
     setIsDeletingProduct(true);
     try {
-      // 1. Delete images from storage if they exist
       if (imageUrls && imageUrls.length > 0 && user) {
         const imagePaths = imageUrls.map(url => {
           const path = url.split('product-images/')[1];
           return path;
-        }).filter(Boolean) as string[]; // Filter out any undefined paths
+        }).filter(Boolean) as string[];
 
         if (imagePaths.length > 0) {
           const { error: deleteStorageError } = await supabase.storage
@@ -100,24 +100,22 @@ export default function ProductsPage() {
 
           if (deleteStorageError) {
             console.warn("Failed to delete product images from storage:", deleteStorageError.message);
-            // Don't throw, proceed with database deletion
           }
         }
       }
 
-      // 2. Delete product from database
       const { error: deleteDbError } = await supabase
         .from('products')
         .delete()
         .eq('id', productId)
-        .eq('user_id', user?.id); // Ensure only owner can delete
+        .eq('user_id', user?.id);
 
       if (deleteDbError) {
         throw new Error(`Failed to delete product: ${deleteDbError.message}`);
       }
 
       toast.success("Product deleted successfully!");
-      fetchProducts(); // Refresh the list of products
+      fetchProducts();
     } catch (error: any) {
       console.error("Error deleting product:", error);
       toast.error(error.message || "Failed to delete product. Please try again.");
@@ -139,29 +137,8 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Header */}
-      <header className="flex items-center justify-between p-4 border-b border-border bg-card">
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" onClick={() => router.push('/')}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center gap-2">
-            <Store className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold">quick</h1>
-            {profile?.tenant_slug && (
-              <Badge variant="secondary" className="bg-primary text-primary-foreground">
-                ID: {profile.tenant_slug}
-              </Badge>
-            )}
-          </div>
-        </div>
-        <Button onClick={handleSignOut} variant="outline" className="flex items-center gap-2">
-          <LogOut className="h-4 w-4" />
-          Sign Out
-        </Button>
-      </header>
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} currentPath={pathname} />
 
-      {/* Main Content */}
       <main className="flex-1 p-8">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">Product Management</h2>

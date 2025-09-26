@@ -2,36 +2,35 @@
 
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { useSession } from "@/components/session-context-provider";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, ShoppingCart, DollarSign, Store, Settings, LayoutDashboard, Loader2 } from "lucide-react";
+import { Package, ShoppingCart, DollarSign, Store, Settings, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
-import { InactivityWarningBanner } from "@/components/inactivity-warning-banner"; // New import
-import Image from "next/image"; // Import Image component
+import { InactivityWarningBanner } from "@/components/inactivity-warning-banner";
+import { DashboardHeader } from "@/components/dashboard-header"; // Import DashboardHeader
 
 export default function DashboardPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
   const router = useRouter();
+  const pathname = usePathname(); // Get current pathname
 
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
-  const [isLoadingDashboardData, setIsLoadingDashboardData] = useState(true); // Initialize as true
+  const [isLoadingDashboardData, setIsLoadingDashboardData] = useState(true);
 
   const fetchDashboardData = useCallback(async () => {
-    // This function should only be called when `user` is guaranteed to be present by the useEffect.
     setIsLoadingDashboardData(true);
     try {
-      // Fetch Total Products
       const { count: productsCount, error: productsError } = await supabase
         .from('products')
         .select('id', { count: 'exact', head: true })
-        .eq('user_id', user?.id); // Use optional chaining for safety, though user should be defined here
+        .eq('user_id', user?.id);
 
       if (productsError) {
         console.error("Dashboard Page: Error fetching products count:", productsError);
@@ -40,11 +39,10 @@ export default function DashboardPage() {
         setTotalProducts(productsCount || 0);
       }
 
-      // Fetch Total Orders
       const { count: ordersCount, error: ordersError } = await supabase
         .from('orders')
         .select('id', { count: 'exact', head: true })
-        .eq('user_id', user?.id); // Use optional chaining
+        .eq('user_id', user?.id);
 
       if (ordersError) {
         console.error("Dashboard Page: Error fetching orders count:", ordersError);
@@ -53,12 +51,11 @@ export default function DashboardPage() {
         setTotalOrders(ordersCount || 0);
       }
 
-      // Calculate Total Profit (from delivered orders)
       const { data: profitData, error: profitError } = await supabase
         .from('orders')
         .select('total_amount')
-        .eq('user_id', user?.id) // Use optional chaining
-        .eq('status', 'delivered'); // Only sum delivered orders for profit
+        .eq('user_id', user?.id)
+        .eq('status', 'delivered');
 
       if (profitError) {
         console.error("Dashboard Page: Error fetching profit data:", profitError);
@@ -72,22 +69,18 @@ export default function DashboardPage() {
       console.error("Dashboard Page: Unexpected error fetching dashboard data:", error);
       toast.error("An unexpected error occurred while loading dashboard data.");
     } finally {
-      setIsLoadingDashboardData(false); // Always set loading to false when done
+      setIsLoadingDashboardData(false);
     }
-  }, [user]); // Dependency on user is correct
+  }, [user]);
 
   useEffect(() => {
     if (!isSessionLoading && user) {
-      // Session is loaded and user is present, now fetch dashboard data
       fetchDashboardData();
     } else if (!isSessionLoading && !user) {
-      // Session is loaded but no user (e.g., after logout or initial unauthenticated load)
-      // In this case, AuthWrapper should redirect to /login, but as a fallback, ensure local loading is false.
       setIsLoadingDashboardData(false);
     }
   }, [isSessionLoading, user, fetchDashboardData]);
 
-  // Show a combined loading spinner if either session or dashboard data is loading
   if (isSessionLoading || isLoadingDashboardData) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
@@ -96,9 +89,6 @@ export default function DashboardPage() {
       </div>
     );
   }
-
-  // If user is null at this point, AuthWrapper should have redirected to /login.
-  // This component will only render its main content if user is present.
 
   const handleSignOut = async () => {
     console.log("Dashboard Page: Attempting to sign out.");
@@ -124,44 +114,12 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Render the StoreSetupDialog if the store is not configured */}
       {profile?.tenant_name === null && <StoreSetupDialog />}
-
-      {/* Inactivity Warning Banner */}
       <InactivityWarningBanner />
 
-      {/* Header */}
-      <header className="flex items-center justify-between p-4 border-b border-border bg-card">
-        <div className="flex items-center space-x-4">
-          {profile?.avatar_url ? (
-            <div className="relative h-8 w-8 rounded-full overflow-hidden">
-              <Image
-                src={profile.avatar_url}
-                alt="Store Logo"
-                fill
-                style={{ objectFit: 'cover' }}
-                className="rounded-full"
-              />
-            </div>
-          ) : (
-            <LayoutDashboard className="h-6 w-6 text-primary" />
-          )}
-          <h1 className="text-xl font-bold">{profile?.tenant_name || "Dashboard"}</h1>
-          {profile?.tenant_slug && (
-            <Badge variant="secondary" className="bg-primary text-primary-foreground">
-              ID: {profile.tenant_slug}
-            </Badge>
-          )}
-        </div>
-        <Button onClick={handleSignOut} variant="outline" className="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-          Sign Out
-        </Button>
-      </header>
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
 
-      {/* Main Content */}
       <main className="flex-1 p-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {/* Summary Cards */}
         <Card className="bg-card text-card-foreground shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Products</CardTitle>
@@ -192,7 +150,6 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Action Cards */}
         <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
           <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
             <Store className="h-6 w-6 text-primary" />
