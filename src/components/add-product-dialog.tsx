@@ -59,7 +59,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
       description: "",
       price: 0.01,
       stock: 0,
-      images: [],
+      images: [] as File[], // Explicitly cast to File[] to satisfy Zod schema
     },
   });
 
