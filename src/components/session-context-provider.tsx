@@ -61,7 +61,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
 
     // Define pages that are publicly accessible or part of the auth flow
     const publicPaths = ['/login', '/signup', '/cart', '/checkout'];
-    const isAuthRelatedPage = publicPaths.includes(pathname) || pathname.startsWith('/store');
+    const isPublicPath = publicPaths.includes(pathname) || pathname.startsWith('/store');
 
     if (currentSession) {
       // User is authenticated
@@ -78,7 +78,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       setProfile(null);
 
       // If unauthenticated user is on a protected path, redirect to login
-      if (!isAuthRelatedPage) {
+      if (!isPublicPath) {
         console.log("SessionContext: Unauthenticated user on protected path, redirecting to /login");
         router.push('/login');
       }
@@ -111,6 +111,20 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       subscription.unsubscribe();
     };
   }, [handleAuthStateChange]);
+
+  const publicPaths = ['/login', '/signup', '/cart', '/checkout'];
+  const isPublicPath = publicPaths.includes(pathname) || pathname.startsWith('/store');
+
+  // If loading and on a protected path, render null to prevent children from showing their loaders
+  // before the redirect to login happens. The Toaster is still rendered to ensure it's available.
+  if (isLoading && !isPublicPath) {
+    return (
+      <>
+        {/* A minimal global loading indicator could go here if desired, but null is faster */}
+        <Toaster richColors />
+      </>
+    );
+  }
 
   return (
     <SessionContext.Provider value={{ session, user, profile, isLoading, refreshProfile }}>
