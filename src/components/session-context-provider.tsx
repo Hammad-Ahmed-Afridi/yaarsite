@@ -39,9 +39,12 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Start as true
   const router = useRouter();
   const pathname = usePathname();
+
+  const publicPaths = ['/login', '/signup', '/cart', '/checkout'];
+  const isPublicPath = publicPaths.includes(pathname) || pathname.startsWith('/store');
 
   // Function to fetch user profile
   const fetchUserProfile = useCallback(async (userId: string) => {
@@ -61,22 +64,18 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   }, []);
 
   const handleAuthStateChange = useCallback(async (event: string, currentSession: Session | null) => {
-    console.log("SessionContext: onAuthStateChange event:", event, "session:", currentSession);
+    console.log("SessionContext: onAuthStateChange event:", event, "session:", currentSession ? "present" : "null");
     setSession(currentSession);
     setUser(currentSession?.user || null);
-
-    // Define pages that are publicly accessible or part of the auth flow
-    const publicPaths = ['/login', '/signup', '/cart', '/checkout'];
-    const isPublicPath = publicPaths.includes(pathname) || pathname.startsWith('/store');
 
     if (currentSession) {
       // User is authenticated
       const userProfile = await fetchUserProfile(currentSession.user.id);
       setProfile(userProfile);
 
-      // If authenticated user is on the login page, redirect to dashboard
-      if (pathname === '/login') {
-        console.log("SessionContext: Authenticated user on login path, redirecting to /");
+      // If authenticated user is on the login/signup page, redirect to dashboard
+      if (pathname === '/login' || pathname === '/signup') {
+        console.log("SessionContext: Authenticated user on auth path, redirecting to /");
         router.push('/');
       }
     } else {
@@ -85,13 +84,13 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
 
       // If unauthenticated user is on a protected path, redirect to login
       if (!isPublicPath) {
-        console.log("SessionContext: Unauthenticated user on protected path, redirecting to /login");
+        console.log(`SessionContext: Unauthenticated user on protected path (${pathname}), redirecting to /login`);
         router.push('/login');
       }
     }
-    setIsLoading(false);
+    setIsLoading(false); // Set loading to false after handling auth state
     console.log("SessionContext: isLoading set to false after auth state change.");
-  }, [pathname, router, fetchUserProfile]);
+  }, [pathname, router, fetchUserProfile, isPublicPath]); // Added isPublicPath to dependencies
 
   // Function to manually refresh the profile
   const refreshProfile = useCallback(async () => {
@@ -102,21 +101,17 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   }, [user, fetchUserProfile]);
 
   useEffect(() => {
-    console.log("SessionContext: useEffect running. Current pathname:", pathname);
+    console.log("SessionContext: useEffect running. Current pathname:", pathname, "isPublicPath:", isPublicPath);
 
+    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthStateChange);
 
-    // Fetch initial session and profile
-    supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
-      console.log("SessionContext: Initial getSession result:", initialSession);
-      await handleAuthStateChange('INITIAL_SESSION', initialSession);
-    });
-
+    // Cleanup subscription on unmount
     return () => {
       console.log("SessionContext: useEffect cleanup.");
       subscription.unsubscribe();
     };
-  }, [handleAuthStateChange, pathname]); // Added pathname to dependencies for clarity
+  }, [handleAuthStateChange, pathname, isPublicPath]); // Added isPublicPath to dependencies
 
   // Inactivity logout hook
   useInactivityLogout({
@@ -134,19 +129,16 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
     enabled: !!user,
   });
 
-  const publicPaths = ['/login', '/signup', '/cart', '/checkout'];
-  const isPublicPath = publicPaths.includes(pathname) || pathname.startsWith('/store');
-
-  // If loading and on a protected path, render a loading screen
+  // Render loading screen if still loading and not on a public path
   if (isLoading && !isPublicPath) {
-    console.log("SessionContext: Rendering LoadingScreen for protected path.");
+    console.log("SessionContext: Rendering LoadingScreen for protected path during initial load.");
     return <LoadingScreen />;
   }
 
   return (
     <SessionContext.Provider value={{ session, user, profile, isLoading, refreshProfile }}>
       {children}
-      <Toaster richColors /> {/* Ensure Toaster is rendered only once here */}
+      <Toaster richColors />
     </SessionContext.Provider>
   );
 };
