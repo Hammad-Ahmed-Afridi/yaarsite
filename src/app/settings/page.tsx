@@ -42,7 +42,7 @@ export default function SettingsPage() {
     if (profile) {
       form.reset({
         storeName: profile.tenant_name || "",
-        storeDescription: profile.store_description || "",
+        storeDescription: profile.store_description || "", // Now using store_description
       });
     }
   }, [profile, form]);
@@ -75,7 +75,7 @@ export default function SettingsPage() {
           tenant_name: values.storeName,
           tenant_slug: newTenantSlug,
           store_url: newStoreUrl,
-          store_description: values.storeDescription || null,
+          store_description: values.storeDescription || null, // Now updating store_description
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -85,7 +85,7 @@ export default function SettingsPage() {
         toast.error("Failed to update store settings. Please try again.");
       } else {
         toast.success("Store settings updated successfully!");
-        await refreshProfile();
+        await refreshProfile(); // Refresh the session context profile
       }
     } catch (err) {
       console.error("Unexpected error during store settings update:", err);
@@ -130,18 +130,18 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted text-foreground flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 md:px-8 border-b border-border bg-card shadow-sm">
-        <div className="flex items-center space-x-3 md:space-x-4">
+      <header className="flex items-center justify-between p-4 border-b border-border bg-card">
+        <div className="flex items-center space-x-4">
           <Button variant="ghost" size="icon" onClick={() => router.push('/')}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
             <Store className="h-6 w-6 text-primary" />
-            <h1 className="text-xl md:text-2xl font-bold">Settings</h1>
+            <h1 className="text-xl font-bold">quick</h1>
             {profile?.tenant_slug && (
-              <Badge variant="secondary" className="bg-primary text-primary-foreground hidden sm:flex">
+              <Badge variant="secondary" className="bg-primary text-primary-foreground">
                 ID: {profile.tenant_slug}
               </Badge>
             )}
@@ -149,12 +149,12 @@ export default function SettingsPage() {
         </div>
         <Button onClick={handleSignOut} variant="outline" className="flex items-center gap-2">
           <LogOut className="h-4 w-4" />
-          <span className="hidden sm:inline">Sign Out</span>
+          Sign Out
         </Button>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-8 flex justify-center">
+      <main className="flex-1 p-8 flex justify-center">
         <Card className="w-full max-w-2xl bg-card text-card-foreground shadow-lg">
           <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">
             <Settings className="h-6 w-6 text-primary" />
@@ -163,32 +163,30 @@ export default function SettingsPage() {
           <CardContent>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid gap-2">
-                <Label htmlFor="storeName" className="text-sm font-medium">Store Name *</Label>
+                <Label htmlFor="storeName">Store Name *</Label>
                 <Input
                   id="storeName"
                   placeholder="Enter your store name"
-                  className="h-11 text-base focus-visible:ring-primary"
                   {...form.register("storeName")}
                 />
                 {form.formState.errors.storeName && (
-                  <p className="text-destructive text-sm mt-1">{form.formState.errors.storeName.message}</p>
+                  <p className="text-destructive text-sm">{form.formState.errors.storeName.message}</p>
                 )}
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="storeDescription" className="text-sm font-medium">Store Description</Label>
+                <Label htmlFor="storeDescription">Store Description</Label>
                 <Textarea
                   id="storeDescription"
                   placeholder="A brief description of what your store offers."
-                  className="min-h-[80px] text-base focus-visible:ring-primary"
                   {...form.register("storeDescription")}
                 />
                 {form.formState.errors.storeDescription && (
-                  <p className="text-destructive text-sm mt-1">{form.formState.errors.storeDescription.message}</p>
+                  <p className="text-destructive text-sm">{form.formState.errors.storeDescription.message}</p>
                 )}
               </div>
 
-              <Button type="submit" className="w-full h-11 text-base font-semibold" disabled={isUpdatingStore}>
+              <Button type="submit" className="w-full" disabled={isUpdatingStore}>
                 {isUpdatingStore ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -201,29 +199,27 @@ export default function SettingsPage() {
             </form>
 
             <div className="mt-8 space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2 mb-4">Store Information</h3>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                <Badge className="bg-green-500 text-white text-sm px-3 py-1">Active</Badge>
-                <span className="text-muted-foreground text-sm">Store ID: <span className="font-mono">{profile.tenant_slug}</span></span>
+              <h3 className="text-lg font-semibold">Store Status</h3>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-green-500 text-white">Active</Badge>
+                <span className="text-muted-foreground">Store ID: {profile.tenant_slug}</span>
               </div>
 
-              <h3 className="text-lg font-semibold mt-6 border-b pb-2 mb-4">Store URL</h3>
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <h3 className="text-lg font-semibold mt-6">Store URL</h3>
+              <div className="flex items-center gap-2">
                 <Input
                   value={profile.store_url || "Not available"}
                   readOnly
-                  className="flex-1 text-base"
+                  className="flex-1"
                 />
-                <div className="flex gap-2">
-                  <Button variant="outline" size="icon" onClick={handleCopyStoreUrl} disabled={!profile.store_url}>
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="icon" onClick={handleOpenStoreUrl} disabled={!profile.store_url}>
-                    <ExternalLink className="h-4 w-4" />
-                  </Button>
-                </div>
+                <Button variant="outline" size="icon" onClick={handleCopyStoreUrl} disabled={!profile.store_url}>
+                  <Copy className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="icon" onClick={handleOpenStoreUrl} disabled={!profile.store_url}>
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
               </div>
-              <p className="text-sm text-muted-foreground mt-2">This URL works in any browser and doesn't require login</p>
+              <p className="text-sm text-muted-foreground">This URL works in any browser and doesn't require login</p>
             </div>
           </CardContent>
         </Card>
