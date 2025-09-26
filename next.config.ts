@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
+  images: {
+    domains: ['vpfrtytxeimezwxhhtuf.supabase.co'], // Allow images from your Supabase storage
+  },
 };
 
 export default nextConfig;
