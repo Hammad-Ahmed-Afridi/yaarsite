@@ -87,7 +87,8 @@ export default function DashboardPage() {
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <p className="ml-2 text-foreground">
           Loading {isSessionLoading ? 'session' : 'dashboard'} data...
-          {isLoadingDashboardData && " If it is taking time, kindly refresh the browser."}
+          <br />
+          {isLoadingDashboardData && "If it is taking time, kindly refresh the browser."}
         </p>
       </div>
     );
