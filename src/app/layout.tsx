@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionContextProvider } from "@/components/session-context-provider";
+import { CartContextProvider } from "@/components/cart-context-provider"; // Import CartContextProvider
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +30,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SessionContextProvider>
-          {children}
+          <CartContextProvider> {/* Wrap with CartContextProvider */}
+            {children}
+          </CartContextProvider>
         </SessionContextProvider>
       </body>
     </html>

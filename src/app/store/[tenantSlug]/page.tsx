@@ -1,15 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Package, Store } from 'lucide-react';
+import { Package, Store, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { MadeWithDyad } from '@/components/made-with-dyad';
-import Image from 'next/image'; // Import Next.js Image component
+import Image from 'next/image';
+import { useCart } from '@/components/cart-context-provider'; // Import useCart
 
 interface Product {
   id: string;
@@ -18,7 +19,7 @@ interface Product {
   price: number;
   stock: number;
   user_id: string; // Owner of the product
-  image_urls: string[] | null; // Added image_urls
+  image_urls: string[] | null;
 }
 
 interface Profile {
@@ -32,11 +33,13 @@ interface Profile {
 
 export default function PublicStorePage() {
   const params = useParams();
+  const router = useRouter();
   const tenantSlug = params.tenantSlug as string;
   const [profile, setProfile] = useState<Profile | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { addToCart, itemCount } = useCart(); // Use cart context
 
   useEffect(() => {
     async function fetchStoreData() {
@@ -89,6 +92,24 @@ export default function PublicStorePage() {
     fetchStoreData();
   }, [tenantSlug]);
 
+  const handleAddToCart = (product: Product) => {
+    if (product.stock <= 0) {
+      toast.error("This product is out of stock.");
+      return;
+    }
+    if (!profile) {
+      toast.error("Cannot add to cart: Store information missing.");
+      return;
+    }
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image_url: product.image_urls?.[0],
+      storeOwnerId: profile.id, // Pass the store owner's ID
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
@@ -125,8 +146,14 @@ export default function PublicStorePage() {
           <Store className="h-6 w-6 text-primary" />
           <h1 className="text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
         </div>
-        <Button onClick={() => toast.info("Share this URL!")} variant="outline">
-          Share Store
+        <Button onClick={() => router.push('/cart')} variant="outline" className="relative">
+          <ShoppingCart className="h-5 w-5" />
+          {itemCount > 0 && (
+            <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 rounded-full">
+              {itemCount}
+            </Badge>
+          )}
+          <span className="ml-2">Cart</span>
         </Button>
       </header>
 
@@ -163,7 +190,13 @@ export default function PublicStorePage() {
                     <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
                     <Badge variant="secondary">{product.stock} in stock</Badge>
                   </div>
-                  <Button className="w-full mt-4">View Details</Button>
+                  <Button
+                    className="w-full mt-4"
+                    onClick={() => handleAddToCart(product)}
+                    disabled={product.stock <= 0}
+                  >
+                    {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
+                  </Button>
                 </CardContent>
               </Card>
             ))}
