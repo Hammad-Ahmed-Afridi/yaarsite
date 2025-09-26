@@ -30,14 +30,8 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/web
 const formSchema = z.object({
   name: z.string().min(1, { message: "Product name is required." }),
   description: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
-  price: z.preprocess(
-    (val) => parseFloat(String(val)),
-    z.number().min(0.01, { message: "Price must be greater than 0." })
-  ),
-  stock: z.preprocess(
-    (val) => parseInt(String(val), 10),
-    z.number().int().min(0, { message: "Stock quantity cannot be negative." })
-  ),
+  price: z.coerce.number().min(0.01, { message: "Price must be greater than 0." }), // Changed from preprocess
+  stock: z.coerce.number().int().min(0, { message: "Stock quantity cannot be negative." }), // Changed from preprocess
   images: z.array(z.instanceof(File)).max(2, { message: "You can upload a maximum of 2 images." }).optional(),
 });
 
@@ -59,8 +53,8 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
       description: "",
       price: 0.01,
       stock: 0,
-      images: [] as File[], // Explicitly cast to File[]
-    } as z.infer<typeof formSchema>, // Explicitly cast the entire defaultValues object
+      images: undefined, // Explicitly undefined for optional array
+    },
   });
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
