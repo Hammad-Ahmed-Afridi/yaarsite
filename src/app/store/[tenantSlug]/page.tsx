@@ -47,9 +47,11 @@ export default function PublicStorePage() {
 
   useEffect(() => {
     async function fetchStoreData() {
+      console.log("PublicStorePage: Starting fetchStoreData for tenantSlug:", tenantSlug);
       setIsLoading(true);
       setError(null);
       if (!tenantSlug) {
+        console.error("PublicStorePage: Missing tenant slug.");
         setError("Store not found: Missing tenant slug.");
         setIsLoading(false);
         return;
@@ -57,6 +59,7 @@ export default function PublicStorePage() {
 
       try {
         // Fetch tenant profile
+        console.log("PublicStorePage: Fetching profile for tenantSlug:", tenantSlug);
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
@@ -64,31 +67,35 @@ export default function PublicStorePage() {
           .single();
 
         if (profileError || !profileData) {
-          console.error("Error fetching profile:", profileError);
+          console.error("PublicStorePage: Error fetching profile:", profileError);
           setError("Store not found or an error occurred.");
           setIsLoading(false);
           return;
         }
         setProfile(profileData);
+        console.log("PublicStorePage: Profile fetched:", profileData);
 
         // Fetch products for this tenant's user_id
+        console.log("PublicStorePage: Fetching products for user_id:", profileData.id);
         const { data: productsData, error: productsError } = await supabase
           .from('products')
           .select('*')
           .eq('user_id', profileData.id); // Use the user_id from the fetched profile
 
         if (productsError) {
-          console.error("Error fetching products:", productsError);
+          console.error("PublicStorePage: Error fetching products:", productsError);
           setError("Could not load products for this store.");
           setIsLoading(false);
           return;
         }
         setProducts(productsData || []);
+        console.log("PublicStorePage: Products fetched:", productsData);
 
-      } catch (err) {
-        console.error("Unexpected error fetching store data:", err);
-        setError("An unexpected error occurred.");
+      } catch (err: any) {
+        console.error("PublicStorePage: Unexpected error fetching store data:", err);
+        setError(err.message || "An unexpected error occurred.");
       } finally {
+        console.log("PublicStorePage: Finished fetchStoreData. Setting isLoading to false.");
         setIsLoading(false);
       }
     }
