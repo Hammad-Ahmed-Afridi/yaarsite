@@ -59,8 +59,9 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
     setSession(currentSession);
     setUser(currentSession?.user || null);
 
-    const isAuthPage = ['/login', '/signup'].includes(pathname);
-    const isPublicStorePage = pathname.startsWith('/store');
+    // Define pages that are publicly accessible or part of the auth flow
+    const publicPaths = ['/login', '/signup', '/cart', '/checkout'];
+    const isAuthRelatedPage = publicPaths.includes(pathname) || pathname.startsWith('/store');
 
     if (currentSession) {
       // User is authenticated
@@ -77,7 +78,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       setProfile(null);
 
       // If unauthenticated user is on a protected path, redirect to login
-      if (!isAuthPage && !isPublicStorePage) {
+      if (!isAuthRelatedPage) {
         console.log("SessionContext: Unauthenticated user on protected path, redirecting to /login");
         router.push('/login');
       }
