@@ -85,7 +85,10 @@ export default function DashboardPage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-foreground">Loading {isSessionLoading ? 'session' : 'dashboard'} data...</p>
+        <p className="ml-2 text-foreground">
+          Loading {isSessionLoading ? 'session' : 'dashboard'} data...
+          {isLoadingDashboardData && " If it is taking time, kindly refresh the browser."}
+        </p>
       </div>
     );
   }
