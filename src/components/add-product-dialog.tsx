@@ -59,7 +59,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
       description: "",
       price: 0.01,
       stock: 0,
-      images: [] as File[], // Explicitly cast to File[] to satisfy Zod schema
+      images: undefined, // Changed to undefined
     },
   });
 
@@ -91,6 +91,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
 
       setSelectedImageFiles(prev => [...prev, ...validFiles]);
       setImagePreviews(prev => [...prev, ...newPreviews]);
+      // When setting the value, ensure it's an array of Files, even if empty
       form.setValue("images", [...selectedImageFiles, ...validFiles]);
       form.clearErrors("images");
     }
