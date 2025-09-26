@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useCart } from '@/components/cart-context-provider';
 import { ArrowLeft, Trash2, ShoppingCart, Minus, Plus } from 'lucide-react';
@@ -43,7 +43,7 @@ export default function CartPage() {
               Looks like you haven't added anything to your cart yet.
             </p>
             <Button asChild>
-              <Link href="/">Start Shopping</Link>
+              <Link href="/store">Start Shopping</Link> {/* Changed redirection to /store */}
             </Button>
           </div>
         ) : (
