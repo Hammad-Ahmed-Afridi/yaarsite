@@ -8,11 +8,12 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { useCart } from '@/components/cart-context-provider';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'; // Added CardDescription
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
+import { supabase } from '@/integrations/supabase/client'; // Import supabase client
 
 const formSchema = z.object({
   customerEmail: z.string().email({ message: "Please enter a valid email address." }),
@@ -23,6 +24,7 @@ export default function CheckoutPage() {
   const { cartItems, cartTotal, clearCart } = useCart();
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null); // State to hold the tenant slug for redirection
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,15 +45,28 @@ export default function CheckoutPage() {
 
     try {
       // Assuming all items in the cart belong to the same store owner
-      // This is a simplification; a real multi-vendor cart would need more complex logic
-      const storeOwnerId = cartItems[0]?.storeOwnerId;
+      const currentStoreOwnerId = cartItems[0]?.storeOwnerId;
 
-      if (!storeOwnerId) {
+      if (!currentStoreOwnerId) {
         throw new Error("Store owner information missing for cart items.");
       }
 
-      // Call the Supabase Edge Function to place the order
-      const response = await fetch('/api/place-order', { // Using a Next.js API route to proxy the Edge Function call
+      // Fetch the tenant slug for redirection *before* clearing the cart
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('tenant_slug')
+        .eq('id', currentStoreOwnerId)
+        .single();
+
+      if (profileError || !profileData?.tenant_slug) {
+        console.error("Error fetching store tenant slug for redirection:", profileError);
+        // If slug can't be found, storeTenantSlug remains null, and we'll fall back to '/'
+      } else {
+        setStoreTenantSlug(profileData.tenant_slug);
+      }
+
+      // Call the Next.js API route to proxy the Edge Function call
+      const response = await fetch('/api/place-order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +75,7 @@ export default function CheckoutPage() {
           customerEmail: values.customerEmail,
           totalAmount: cartTotal,
           items: cartItems,
-          storeOwnerId: storeOwnerId,
+          storeOwnerId: currentStoreOwnerId,
         }),
       });
 
@@ -73,7 +88,7 @@ export default function CheckoutPage() {
       console.log("Order placed successfully:", result);
 
       toast.success("Order placed successfully! Check your email for confirmation.", { duration: 5000 });
-      clearCart();
+      clearCart(); // Clear cart AFTER capturing storeOwnerId and attempting to fetch slug
       setOrderPlaced(true);
 
     } catch (error: any) {
@@ -85,13 +100,15 @@ export default function CheckoutPage() {
   };
 
   if (orderPlaced) {
+    // Determine the redirect path: to the specific store if slug is found, otherwise to home
+    const redirectPath = storeTenantSlug ? `/store/${storeTenantSlug}` : '/';
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
         <CheckCircle className="h-20 w-20 text-green-500 mb-6" />
         <h1 className="text-3xl font-bold mb-4">Order Placed!</h1>
         <p className="text-lg text-muted-foreground mb-8">Thank you for your purchase. A confirmation email has been sent.</p>
         <Button asChild>
-          <Link href="/">Continue Shopping</Link>
+          <Link href={redirectPath}>Continue Shopping</Link>
         </Button>
       </div>
     );
