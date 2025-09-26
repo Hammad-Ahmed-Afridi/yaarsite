@@ -5,6 +5,7 @@ import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useRouter, usePathname } from 'next/navigation';
 import { Toaster } from 'sonner';
+import { useInactivityLogout } from '@/hooks/use-inactivity-logout'; // Import the new hook
 
 // Define the Profile type based on your Supabase schema
 interface Profile {
@@ -28,6 +29,8 @@ interface SessionContextType {
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
+
+const INACTIVITY_TIMEOUT_MS = 30 * 1000; // 30 seconds as requested
 
 export const SessionContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -111,6 +114,24 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       subscription.unsubscribe();
     };
   }, [handleAuthStateChange]);
+
+  // Inactivity logout hook
+  useInactivityLogout({
+    inactivityTimeoutMs: INACTIVITY_TIMEOUT_MS,
+    onLogout: async () => {
+      console.log("SessionContext: Inactivity detected, logging out...");
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("SessionContext: Error during inactivity logout:", error);
+        // toast.error("Failed to log out due to inactivity."); // Optionally show a toast
+      } else {
+        console.log("SessionContext: Successfully logged out due to inactivity.");
+        // toast.info("You have been logged out due to inactivity."); // Optionally show a toast
+        router.push('/login'); // Redirect to login after inactivity logout
+      }
+    },
+    enabled: !!user, // Only enable if a user is logged in
+  });
 
   const publicPaths = ['/login', '/signup', '/cart', '/checkout'];
   const isPublicPath = publicPaths.includes(pathname) || pathname.startsWith('/store');
