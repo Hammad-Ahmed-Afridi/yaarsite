@@ -159,7 +159,7 @@ export default function ProductsPage() {
           </Button>
           <div className="flex items-center gap-2">
             <Store className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold">{profile?.tenant_name || "Products"}</h1>
+            <h1 className="text-xl font-bold">quick</h1>
             {profile?.tenant_slug && (
               <Badge variant="secondary" className="bg-primary text-primary-foreground">
                 ID: {profile.tenant_slug}

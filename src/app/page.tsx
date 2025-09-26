@@ -127,7 +127,7 @@ export default function DashboardPage() {
       <header className="flex items-center justify-between p-4 border-b border-border bg-card">
         <div className="flex items-center space-x-4">
           <LayoutDashboard className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold">{profile?.tenant_name || "Dashboard"}</h1>
+          <h1 className="text-xl font-bold">quick</h1>
           {profile?.tenant_slug && (
             <Badge variant="secondary" className="bg-primary text-primary-foreground">
               ID: {profile.tenant_slug}

@@ -6,12 +6,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function generateSlug(name: string): string {
-  // Generate a random 6-character alphanumeric string
-  let result = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const charactersLength = characters.length;
-  for (let i = 0; i < 6; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '') // Remove non-alphanumeric characters except spaces and hyphens
+    .trim()
+    .replace(/\s+/g, '-'); // Replace spaces with hyphens
 }
