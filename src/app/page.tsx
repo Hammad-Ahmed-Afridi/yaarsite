@@ -3,18 +3,86 @@
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { useSession } from "@/components/session-context-provider";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, ShoppingCart, DollarSign, Store, Settings, LayoutDashboard } from "lucide-react";
+import { Package, ShoppingCart, DollarSign, Store, Settings, LayoutDashboard, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { StoreSetupDialog } from "@/components/store-setup-dialog"; // Import the new component
+import { StoreSetupDialog } from "@/components/store-setup-dialog";
 
 export default function DashboardPage() {
-  const { user, profile, isLoading } = useSession();
+  const { user, profile, isLoading: isSessionLoading } = useSession();
   const router = useRouter();
+
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [totalProfit, setTotalProfit] = useState(0);
+  const [isLoadingDashboardData, setIsLoadingDashboardData] = useState(true);
+
+  const fetchDashboardData = useCallback(async () => {
+    if (!user) {
+      setIsLoadingDashboardData(false);
+      return;
+    }
+
+    setIsLoadingDashboardData(true);
+    try {
+      // Fetch Total Products
+      const { count: productsCount, error: productsError } = await supabase
+        .from('products')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+
+      if (productsError) {
+        console.error("Dashboard Page: Error fetching products count:", productsError);
+        toast.error("Failed to load total products.");
+      } else {
+        setTotalProducts(productsCount || 0);
+      }
+
+      // Fetch Total Orders
+      const { count: ordersCount, error: ordersError } = await supabase
+        .from('orders')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+
+      if (ordersError) {
+        console.error("Dashboard Page: Error fetching orders count:", ordersError);
+        toast.error("Failed to load total orders.");
+      } else {
+        setTotalOrders(ordersCount || 0);
+      }
+
+      // Calculate Total Profit (from delivered orders)
+      const { data: profitData, error: profitError } = await supabase
+        .from('orders')
+        .select('total_amount')
+        .eq('user_id', user.id)
+        .eq('status', 'delivered'); // Only sum delivered orders for profit
+
+      if (profitError) {
+        console.error("Dashboard Page: Error fetching profit data:", profitError);
+        toast.error("Failed to load total profit.");
+      } else {
+        const calculatedProfit = profitData?.reduce((sum, order) => sum + order.total_amount, 0) || 0;
+        setTotalProfit(calculatedProfit);
+      }
+
+    } catch (error) {
+      console.error("Dashboard Page: Unexpected error fetching dashboard data:", error);
+      toast.error("An unexpected error occurred while loading dashboard data.");
+    } finally {
+      setIsLoadingDashboardData(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (!isSessionLoading && user) {
+      fetchDashboardData();
+    }
+  }, [isSessionLoading, user, fetchDashboardData]);
 
   const handleSignOut = async () => {
     console.log("Dashboard Page: Attempting to sign out.");
@@ -34,15 +102,15 @@ export default function DashboardPage() {
     if (profile?.tenant_slug) {
       window.open(`/store/${profile.tenant_slug}`, '_blank');
     } else {
-      // Fallback if tenant_slug is not available (should be handled by dialog now)
       toast.info("Please set up your store first!");
     }
   };
 
-  if (isLoading || !user) {
+  if (isSessionLoading || !user || isLoadingDashboardData) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
-        <p className="text-foreground">Loading...</p>
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="ml-2 text-foreground">Loading dashboard...</p>
       </div>
     );
   }
@@ -78,7 +146,7 @@ export default function DashboardPage() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div> {/* Placeholder for actual data */}
+            <div className="text-2xl font-bold">{totalProducts}</div>
           </CardContent>
         </Card>
 
@@ -88,7 +156,7 @@ export default function DashboardPage() {
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div> {/* Placeholder for actual data */}
+            <div className="text-2xl font-bold">{totalOrders}</div>
           </CardContent>
         </Card>
 
@@ -98,7 +166,7 @@ export default function DashboardPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Rs0</div> {/* Placeholder for actual data */}
+            <div className="text-2xl font-bold">Rs{totalProfit.toFixed(2)}</div>
           </CardContent>
         </Card>
 
