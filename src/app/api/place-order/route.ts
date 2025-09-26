@@ -1,17 +1,16 @@
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
+  // --- Start Debugging Logs (moved to very top) ---
+  console.log("--- Debugging Environment Variables in /api/place-order ---");
+  console.log("process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID:", process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID);
+  console.log("process.env.SUPABASE_PROJECT_ID:", process.env.SUPABASE_PROJECT_ID);
+  console.log("Available process.env keys:", Object.keys(process.env)); // Log all keys to see what's present
+  console.log("----------------------------------------------------------");
+  // --- End Debugging Logs ---
+
   try {
     const { customerEmail, totalAmount, items, storeOwnerId } = await request.json();
-
-    // --- Start Debugging Logs ---
-    console.log("--- Debugging Environment Variables in /api/place-order ---");
-    console.log("process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID:", process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID);
-    console.log("process.env.SUPABASE_PROJECT_ID:", process.env.SUPABASE_PROJECT_ID);
-    // You can also log all environment variables, but be cautious with sensitive data
-    // console.log("All process.env variables:", process.env); 
-    console.log("----------------------------------------------------------");
-    // --- End Debugging Logs ---
 
     if (!customerEmail || !totalAmount || !items || !storeOwnerId) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
