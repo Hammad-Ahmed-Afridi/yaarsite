@@ -8,7 +8,7 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { useCart } from '@/components/cart-context-provider';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'; // Added CardDescription
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
