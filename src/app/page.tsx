@@ -19,15 +19,16 @@ export default function DashboardPage() {
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
-  const [isLoadingDashboardData, setIsLoadingDashboardData] = useState(true);
+  const [isLoadingDashboardData, setIsLoadingDashboardData] = useState(false); // Changed initial state to false
 
   const fetchDashboardData = useCallback(async () => {
     if (!user) {
-      setIsLoadingDashboardData(false);
+      // If user is not available, we can't fetch data, so just return.
+      // The main loading state will be handled by isSessionLoading.
       return;
     }
 
-    setIsLoadingDashboardData(true);
+    setIsLoadingDashboardData(true); // Start loading dashboard specific data
     try {
       // Fetch Total Products
       const { count: productsCount, error: productsError } = await supabase
@@ -74,11 +75,12 @@ export default function DashboardPage() {
       console.error("Dashboard Page: Unexpected error fetching dashboard data:", error);
       toast.error("An unexpected error occurred while loading dashboard data.");
     } finally {
-      setIsLoadingDashboardData(false);
+      setIsLoadingDashboardData(false); // End loading dashboard specific data
     }
-  }, [user]);
+  }, [user]); // Dependency on user ensures it refetches if user changes (e.g., after login/logout)
 
   useEffect(() => {
+    // Only fetch dashboard data if session is not loading AND user is available
     if (!isSessionLoading && user) {
       fetchDashboardData();
     }
@@ -106,7 +108,8 @@ export default function DashboardPage() {
     }
   };
 
-  if (isSessionLoading || !user || isLoadingDashboardData) {
+  // The main loading condition now correctly combines session loading and dashboard data loading
+  if (isSessionLoading || isLoadingDashboardData || !user) { // Added !user to ensure loader if user is null
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
