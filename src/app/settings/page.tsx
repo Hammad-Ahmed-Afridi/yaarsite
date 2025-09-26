@@ -9,7 +9,8 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
-import { generateSlug } from '@/lib/utils';
+import { generateSlug, compressImage } from '@/lib/utils'; // Import compressImage
+import { v4 as uuidv4 } from 'uuid'; // For unique file names
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -17,24 +18,32 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Store, Settings, LogOut, Copy, ExternalLink, Loader2 } from 'lucide-react';
+import { ArrowLeft, Store, Settings, LogOut, Copy, ExternalLink, Loader2, Image as ImageIcon, X } from 'lucide-react';
 import { MadeWithDyad } from '@/components/made-with-dyad';
+import Image from 'next/image';
+
+const MAX_LOGO_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+const ACCEPTED_LOGO_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
   storeDescription: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
+  logo: z.instanceof(File).optional(), // New field for logo file
 });
 
 export default function SettingsPage() {
   const router = useRouter();
   const { user, profile, isLoading: isSessionLoading, refreshProfile } = useSession();
   const [isUpdatingStore, setIsUpdatingStore] = useState(false);
+  const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       storeName: "",
       storeDescription: "",
+      logo: undefined,
     },
   });
 
@@ -43,7 +52,9 @@ export default function SettingsPage() {
       form.reset({
         storeName: profile.tenant_name || "",
         storeDescription: profile.store_description || "",
+        logo: undefined, // Reset logo file input
       });
+      setLogoPreview(profile.avatar_url || null); // Set initial logo preview from profile
     }
   }, [profile, form]);
 
@@ -57,6 +68,80 @@ export default function SettingsPage() {
     }
   };
 
+  const handleLogoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+
+      if (!ACCEPTED_LOGO_IMAGE_TYPES.includes(file.type)) {
+        toast.error("Invalid file type. Please upload a JPEG, PNG, or WebP image.");
+        return;
+      }
+      if (file.size > MAX_LOGO_FILE_SIZE) {
+        toast.error(`File is too large (max ${MAX_LOGO_FILE_SIZE / (1024 * 1024)}MB).`);
+        return;
+      }
+
+      let fileToUpload = file;
+      // Only compress if the file size is significantly larger than a threshold
+      if (file.size > 500 * 1024) { // e.g., compress if larger than 500KB
+        toast.info("Compressing logo for faster loading...");
+        fileToUpload = await compressImage(file);
+        if (fileToUpload.size < file.size) {
+          toast.success("Logo compressed successfully!");
+        } else {
+          toast.info("Logo size is already optimized.");
+        }
+      }
+
+      setSelectedLogoFile(fileToUpload);
+      setLogoPreview(URL.createObjectURL(fileToUpload));
+      form.setValue("logo", fileToUpload);
+      form.clearErrors("logo");
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    if (!user) return;
+
+    setIsUpdatingStore(true);
+    try {
+      // Delete image from storage if it exists
+      if (profile?.avatar_url) {
+        const path = profile.avatar_url.split('store-logos/')[1];
+        if (path) {
+          const { error: deleteStorageError } = await supabase.storage
+            .from('store-logos')
+            .remove([path]);
+
+          if (deleteStorageError) {
+            console.warn("Failed to delete old logo from storage:", deleteStorageError.message);
+          }
+        }
+      }
+
+      // Update profile to remove avatar_url
+      const { error } = await supabase
+        .from('profiles')
+        .update({ avatar_url: null, updated_at: new Date().toISOString() })
+        .eq('id', user.id);
+
+      if (error) {
+        console.error("Error removing logo:", error);
+        toast.error("Failed to remove logo. Please try again.");
+      } else {
+        toast.success("Logo removed successfully!");
+        setSelectedLogoFile(null);
+        setLogoPreview(null);
+        await refreshProfile();
+      }
+    } catch (err) {
+      console.error("Unexpected error during logo removal:", err);
+      toast.error("An unexpected error occurred during logo removal.");
+    } finally {
+      setIsUpdatingStore(false);
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) {
       toast.error("You must be logged in to update store settings.");
@@ -64,7 +149,49 @@ export default function SettingsPage() {
     }
 
     setIsUpdatingStore(true);
+    let newAvatarUrl = profile?.avatar_url || null;
+
     try {
+      // 1. Upload new logo if selected
+      if (selectedLogoFile) {
+        // Delete old logo from storage if it exists and is different from the new one
+        if (profile?.avatar_url && profile.avatar_url !== logoPreview) { // Check if old logo exists and is not the same as the new preview
+          const oldPath = profile.avatar_url.split('store-logos/')[1];
+          if (oldPath) {
+            const { error: deleteOldLogoError } = await supabase.storage
+              .from('store-logos')
+              .remove([oldPath]);
+            if (deleteOldLogoError) {
+              console.warn("Failed to delete old logo from storage:", deleteOldLogoError.message);
+            }
+          }
+        }
+
+        const fileExtension = selectedLogoFile.name.split('.').pop();
+        const fileName = `${user.id}/${uuidv4()}.${fileExtension}`; // Store under user ID folder
+        const { data, error: uploadError } = await supabase.storage
+          .from('store-logos')
+          .upload(fileName, selectedLogoFile, {
+            cacheControl: '3600',
+            upsert: false,
+          });
+
+        if (uploadError) {
+          throw new Error(`Logo upload failed: ${uploadError.message}`);
+        }
+
+        const { data: publicUrlData } = supabase.storage
+          .from('store-logos')
+          .getPublicUrl(fileName);
+
+        if (publicUrlData?.publicUrl) {
+          newAvatarUrl = publicUrlData.publicUrl;
+        } else {
+          throw new Error("Failed to get public URL for uploaded logo.");
+        }
+      }
+
+      // 2. Update profile data in Supabase database
       const newTenantSlug = generateSlug(values.storeName);
       const appBaseUrl = window.location.origin;
       const newStoreUrl = `${appBaseUrl}/store/${newTenantSlug}`;
@@ -76,6 +203,7 @@ export default function SettingsPage() {
           tenant_slug: newTenantSlug,
           store_url: newStoreUrl,
           store_description: values.storeDescription || null,
+          avatar_url: newAvatarUrl, // Update with new logo URL
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -86,6 +214,7 @@ export default function SettingsPage() {
       } else {
         toast.success("Store settings updated successfully!");
         await refreshProfile();
+        setSelectedLogoFile(null); // Clear selected file after successful upload
       }
     } catch (err) {
       console.error("Unexpected error during store settings update:", err);
@@ -183,6 +312,57 @@ export default function SettingsPage() {
                 />
                 {form.formState.errors.storeDescription && (
                   <p className="text-destructive text-sm">{form.formState.errors.storeDescription.message}</p>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                <Label>Store Logo</Label>
+                <p className="text-xs text-muted-foreground">
+                  Upload your store logo. Recommended: Square aspect ratio (e.g., 200x200px), max 2MB.
+                  <br />
+                  Supported formats: JPG, PNG, WebP. Image will be compressed for faster loading.
+                </p>
+                <div className="flex items-center gap-4 mt-2">
+                  {(logoPreview || profile?.avatar_url) ? (
+                    <div className="relative w-24 h-24 border rounded-md overflow-hidden">
+                      <Image
+                        src={logoPreview || profile!.avatar_url!}
+                        alt="Store Logo Preview"
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-1 right-1 h-6 w-6 rounded-full"
+                        onClick={handleRemoveLogo}
+                        disabled={isUpdatingStore}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center w-24 h-24 border-2 border-dashed rounded-md bg-muted">
+                      <ImageIcon className="h-10 w-10 text-muted-foreground" />
+                    </div>
+                  )}
+                  <Label htmlFor="logo-upload" className="flex-1">
+                    <Input
+                      id="logo-upload"
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      className="hidden"
+                      onChange={handleLogoChange}
+                      disabled={isUpdatingStore}
+                    />
+                    <Button asChild variant="outline" className="w-full" disabled={isUpdatingStore}>
+                      <span>{logoPreview || profile?.avatar_url ? "Change Logo" : "Upload Logo"}</span>
+                    </Button>
+                  </Label>
+                </div>
+                {form.formState.errors.logo && (
+                  <p className="text-destructive text-sm">{form.formState.errors.logo.message}</p>
                 )}
               </div>
 

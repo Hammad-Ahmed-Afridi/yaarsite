@@ -12,6 +12,7 @@ import { Package, ShoppingCart, DollarSign, Store, Settings, LayoutDashboard, Lo
 import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
 import { InactivityWarningBanner } from "@/components/inactivity-warning-banner"; // New import
+import Image from "next/image"; // Import Image component
 
 export default function DashboardPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
@@ -132,7 +133,19 @@ export default function DashboardPage() {
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-border bg-card">
         <div className="flex items-center space-x-4">
-          <LayoutDashboard className="h-6 w-6 text-primary" />
+          {profile?.avatar_url ? (
+            <div className="relative h-8 w-8 rounded-full overflow-hidden">
+              <Image
+                src={profile.avatar_url}
+                alt="Store Logo"
+                fill
+                style={{ objectFit: 'cover' }}
+                className="rounded-full"
+              />
+            </div>
+          ) : (
+            <LayoutDashboard className="h-6 w-6 text-primary" />
+          )}
           <h1 className="text-xl font-bold">{profile?.tenant_name || "Dashboard"}</h1>
           {profile?.tenant_slug && (
             <Badge variant="secondary" className="bg-primary text-primary-foreground">

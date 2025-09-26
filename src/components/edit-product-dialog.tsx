@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
 import { v4 as uuidv4 } from 'uuid';
+import { compressImage } from '@/lib/utils'; // Import compressImage
 
 import {
   Dialog,
@@ -87,7 +88,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
     }
   }, [isOpen, product, form]);
 
-  const handleNewImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNewImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const files = Array.from(event.target.files);
       const totalImages = existingImageUrls.length + selectedNewImageFiles.length + files.length;
@@ -109,8 +110,20 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
           toast.error(`File "${file.name}" is too large (max 5MB).`);
           continue;
         }
-        validFiles.push(file);
-        previews.push(URL.createObjectURL(file));
+
+        let fileToUpload = file;
+        if (file.size > 500 * 1024) { // Compress if larger than 500KB
+          toast.info(`Compressing "${file.name}" for faster loading...`);
+          fileToUpload = await compressImage(file);
+          if (fileToUpload.size < file.size) {
+            toast.success(`"${file.name}" compressed successfully!`);
+          } else {
+            toast.info(`"${file.name}" size is already optimized.`);
+          }
+        }
+
+        validFiles.push(fileToUpload);
+        previews.push(URL.createObjectURL(fileToUpload));
       }
 
       setSelectedNewImageFiles(prev => [...prev, ...validFiles]);
@@ -296,11 +309,9 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
           <div className="grid gap-2">
             <Label>Product Images ({totalCurrentImages}/2)</Label>
             <p className="text-xs text-muted-foreground">
-              Recommended: 800x800 pixels for product images.
+              Upload up to 2 high-quality images. Recommended: 1000x1000px or higher square aspect ratio, max 5MB per image.
               <br />
-              • Use online image editor tools for the best possible outcomes
-              <br />
-              • Use online image compressor tools for the best possible outcomes
+              Supported formats: JPG, PNG, WebP. Images will be compressed for faster loading.
             </p>
             <div className="flex gap-2 mt-2 flex-wrap">
               {existingImageUrls.map((url, index) => (
@@ -349,9 +360,6 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
             {form.formState.errors.newImages && (
               <p className="text-destructive text-sm">{form.formState.errors.newImages.message}</p>
             )}
-            <p className="text-xs text-muted-foreground mt-1">
-              Upload up to 2 high-quality images • Recommended 1000x1000px or higher square aspect ratio • Supported formats: JPG, PNG, WebP
-            </p>
           </div>
 
           <div className="flex justify-end gap-2 mt-6">

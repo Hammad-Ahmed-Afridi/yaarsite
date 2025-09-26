@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
 import { v4 as uuidv4 } from 'uuid'; // For unique file names
+import { compressImage } from '@/lib/utils'; // Import compressImage
 
 import {
   Dialog,
@@ -58,7 +59,7 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
     },
   });
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const files = Array.from(event.target.files);
       const newFiles = [...selectedImageFiles, ...files];
@@ -80,13 +81,24 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
           toast.error(`File "${file.name}" is too large (max 5MB).`);
           continue;
         }
-        validFiles.push(file);
-        newPreviews.push(URL.createObjectURL(file));
+        
+        let fileToUpload = file;
+        if (file.size > 500 * 1024) { // Compress if larger than 500KB
+          toast.info(`Compressing "${file.name}" for faster loading...`);
+          fileToUpload = await compressImage(file);
+          if (fileToUpload.size < file.size) {
+            toast.success(`"${file.name}" compressed successfully!`);
+          } else {
+            toast.info(`"${file.name}" size is already optimized.`);
+          }
+        }
+
+        validFiles.push(fileToUpload);
+        newPreviews.push(URL.createObjectURL(fileToUpload));
       }
 
       setSelectedImageFiles(prev => [...prev, ...validFiles]);
       setImagePreviews(prev => [...prev, ...newPreviews]);
-      // When setting the value, ensure it's an array of Files, even if empty
       form.setValue("images", [...selectedImageFiles, ...validFiles]);
       form.clearErrors("images");
     }
@@ -248,11 +260,9 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
           <div className="grid gap-2">
             <Label>Product Images ({selectedImageFiles.length}/2)</Label>
             <p className="text-xs text-muted-foreground">
-              Recommended: 800x800 pixels for product images.
+              Upload up to 2 high-quality images. Recommended: 1000x1000px or higher square aspect ratio, max 5MB per image.
               <br />
-              • Use online image editor tools for the best possible outcomes
-              <br />
-              • Use online image compressor tools for the best possible outcomes
+              Supported formats: JPG, PNG, WebP. Images will be compressed for faster loading.
             </p>
             <div className="flex gap-2 mt-2">
               {imagePreviews.map((preview, index) => (
@@ -287,9 +297,6 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
             {form.formState.errors.images && (
               <p className="text-destructive text-sm">{form.formState.errors.images.message}</p>
             )}
-            <p className="text-xs text-muted-foreground mt-1">
-              Upload exactly 2 high-quality images • Recommended 1000x1000px or higher square aspect ratio • Supported formats: JPG, PNG, WebP
-            </p>
           </div>
 
           <div className="flex justify-end gap-2 mt-6">
