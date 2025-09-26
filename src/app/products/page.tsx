@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Package, ArrowLeft, LogOut, Store, Loader2 } from 'lucide-react'; // Added Loader2
+import { Plus, Package, ArrowLeft, LogOut, Store, Loader2 } from 'lucide-react';
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -129,11 +129,7 @@ export default function ProductsPage() {
             <p className="text-sm text-muted-foreground mb-6">
               Add your first product to start selling! You can add up to 3 products.
             </p>
-            <AddProductDialog onProductAdded={fetchProducts}>
-              <Button className="flex items-center gap-2">
-                <Plus className="h-4 w-4" /> Add Your First Product
-              </Button>
-            </AddProductDialog>
+            <AddProductDialog onProductAdded={fetchProducts} />
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
