@@ -1,7 +1,7 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { createSupabaseServerClient } from '@/integrations/supabase/server'; // Correct import for server-side
-import { StoreClientPage } from '@/components/store-client-page'; // New client component
+import { createSupabaseServerClient } from '@/integrations/supabase/server';
+import { StoreClientPage } from '@/components/store-client-page';
 
 interface Product {
   id: string;
@@ -23,14 +23,23 @@ interface Profile {
   avatar_url: string | null;
 }
 
-export default async function PublicStorePage({ params }: { params: { tenantSlug: string } }) {
-  const { tenantSlug } = params;
+// Using a more generic type for params to match Next.js's internal PageProps structure
+interface DynamicPageProps {
+  params: {
+    [key: string]: string | string[]; // Allow for more generic string or string array
+  };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
+export default async function PublicStorePage({ params }: DynamicPageProps) {
+  // Explicitly cast params to the expected type for safety within the function
+  const { tenantSlug } = params as { tenantSlug: string };
 
   if (!tenantSlug) {
-    notFound(); // Or handle as an error
+    notFound();
   }
 
-  const supabase = createSupabaseServerClient(); // Initialize server-side client
+  const supabase = createSupabaseServerClient();
 
   // Fetch profile data on the server
   const { data: profileData, error: profileError } = await supabase
@@ -41,7 +50,7 @@ export default async function PublicStorePage({ params }: { params: { tenantSlug
 
   if (profileError || !profileData) {
     console.error("Server Component: Error fetching profile:", profileError);
-    notFound(); // Store not found
+    notFound();
   }
 
   // Fetch products data on the server
@@ -52,8 +61,6 @@ export default async function PublicStorePage({ params }: { params: { tenantSlug
 
   if (productsError) {
     console.error("Server Component: Error fetching products:", productsError);
-    // Even if products fail to load, we can still show the store profile
-    // and an empty products message, so we don't call notFound here.
   }
 
   return (
