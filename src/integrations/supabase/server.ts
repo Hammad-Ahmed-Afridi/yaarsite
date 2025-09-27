@@ -1,11 +1,11 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { cookies, ReadonlyRequestCookies } from 'next/headers'; // Import ReadonlyRequestCookies
+import { cookies } from 'next/headers'; // Removed ReadonlyRequestCookies import
 
 // This file is used to create a Supabase client that can be used in Server Components and Server Actions.
 // It reads the user's session from cookies.
 
 export function createSupabaseServerClient() {
-  const cookieStore: ReadonlyRequestCookies = cookies(); // Explicitly type cookieStore
+  const cookieStore = cookies(); // Let TypeScript infer the type
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,7 +19,7 @@ export function createSupabaseServerClient() {
           cookieStore.set(name, value, options);
         },
         remove(name: string, options: CookieOptions) {
-          cookieStore.delete(name);
+          cookieStore.delete(name, options);
         },
       },
     }
