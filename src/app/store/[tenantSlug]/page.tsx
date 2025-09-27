@@ -1,6 +1,6 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { supabase } from '@/integrations/supabase/client'; // Supabase client for server-side
+import { createSupabaseServerClient } from '@/integrations/supabase/server'; // Correct import for server-side
 import { StoreClientPage } from '@/components/store-client-page'; // New client component
 
 interface Product {
@@ -29,6 +29,8 @@ export default async function PublicStorePage({ params }: { params: { tenantSlug
   if (!tenantSlug) {
     notFound(); // Or handle as an error
   }
+
+  const supabase = createSupabaseServerClient(); // Initialize server-side client
 
   // Fetch profile data on the server
   const { data: profileData, error: profileError } = await supabase
