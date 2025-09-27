@@ -1,1 +1,0 @@
-<dyad-delete path="src/components/auth-wrapper.tsx"></dyad-delete>
