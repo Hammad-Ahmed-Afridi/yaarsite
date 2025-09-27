@@ -23,17 +23,18 @@ interface Profile {
   avatar_url: string | null;
 }
 
-// Using a more generic type for params to match Next.js's internal PageProps structure
-interface DynamicPageProps {
+// Directly define the props type for the component, making it as specific as possible
+interface PublicStorePageProps {
   params: {
-    [key: string]: string | string[]; // Allow for more generic string or string array
+    tenantSlug: string;
   };
+  // searchParams is optional and can be more complex, but for this error,
+  // focusing on params is key.
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export default async function PublicStorePage({ params }: DynamicPageProps) {
-  // Explicitly cast params to the expected type for safety within the function
-  const { tenantSlug } = params as { tenantSlug: string };
+export default async function PublicStorePage({ params }: PublicStorePageProps) {
+  const { tenantSlug } = params; // Directly destructure the specific parameter
 
   if (!tenantSlug) {
     notFound();
