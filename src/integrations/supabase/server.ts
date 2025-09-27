@@ -1,11 +1,11 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { cookies, ReadonlyRequestCookies } from 'next/headers'; // Import ReadonlyRequestCookies
 
 // This file is used to create a Supabase client that can be used in Server Components and Server Actions.
 // It reads the user's session from cookies.
 
 export function createSupabaseServerClient() {
-  const cookieStore = cookies();
+  const cookieStore: ReadonlyRequestCookies = cookies(); // Explicitly type cookieStore
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
