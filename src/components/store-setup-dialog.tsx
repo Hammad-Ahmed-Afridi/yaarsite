@@ -59,7 +59,7 @@ export function StoreSetupDialog() {
     }
 
     setIsBuildingStore(true);
-    toast.info("Yaarsite AI is building your store. Wait for the magic to happen...", { duration: 5000 });
+    toast.info("Yaarsite AI is building your store. Wait for the magic to happen...", { duration: 7000 }); // Increased duration
 
     try {
       const tenantSlug = generateSlug(values.storeName);
@@ -85,7 +85,7 @@ export function StoreSetupDialog() {
       }
 
       // Simulate build time
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise(resolve => setTimeout(resolve, 7000)); // Increased duration
 
       toast.success("Your store was created successfully!");
       
