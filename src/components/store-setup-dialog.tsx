@@ -59,7 +59,7 @@ export function StoreSetupDialog() {
     }
 
     setIsBuildingStore(true);
-    toast.info("Yaarsite AI is building your store. Wait for the magic to happen...", { duration: 5000 });
+    toast.info("Yaarsite AI is building your store. Wait for the magic to happen...", { duration: 9000 }); // Increased duration
 
     try {
       const tenantSlug = generateSlug(values.storeName);
@@ -85,7 +85,7 @@ export function StoreSetupDialog() {
       }
 
       // Simulate build time
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise(resolve => setTimeout(resolve, 9000)); // Increased duration
 
       toast.success("Your store was created successfully!");
       
@@ -107,7 +107,7 @@ export function StoreSetupDialog() {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-full max-w-md p-6"> {/* Adjusted DialogContent styling */}
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Store className="h-6 w-6 text-primary" />
@@ -118,7 +118,12 @@ export function StoreSetupDialog() {
           </DialogDescription>
         </DialogHeader>
         {isBuildingStore ? (
-          <AppLoader message="Yaarsite AI is building your store. Wait for the magic to happen..." size="sm" />
+          <AppLoader 
+            message="Yaarsite AI is building your store. Wait for the magic to happen..." 
+            size="lg" // Increased size for prominence
+            isFullScreen={false} // Not full screen when in dialog
+            className="py-12" // Added vertical padding
+          />
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
             <div className="grid gap-2">

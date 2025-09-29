@@ -7,9 +7,11 @@ interface AppLoaderProps {
   message?: string;
   secondaryMessage?: string;
   size?: 'sm' | 'md' | 'lg';
+  isFullScreen?: boolean; // New prop to control full screen height
+  className?: string; // Allow custom classNames
 }
 
-export function AppLoader({ message = "Loading...", secondaryMessage, size = 'md' }: AppLoaderProps) {
+export function AppLoader({ message = "Loading...", secondaryMessage, size = 'md', isFullScreen = true, className }: AppLoaderProps) {
   const iconSizeClasses = {
     sm: "text-4xl", // Adjusted for text size
     md: "text-6xl",
@@ -23,7 +25,7 @@ export function AppLoader({ message = "Loading...", secondaryMessage, size = 'md
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground p-4">
+    <div className={`flex flex-col items-center justify-center bg-background text-foreground p-4 ${isFullScreen ? 'min-h-screen' : ''} ${className}`}>
       <div className="relative flex items-center justify-center mb-4">
         <span className={`${iconSizeClasses[size]} font-bold text-primary animate-spin-slow`}>
           Ys
