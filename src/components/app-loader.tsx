@@ -25,7 +25,7 @@ export function AppLoader({ message = "Loading...", secondaryMessage, size = 'md
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground p-4">
       <div className="relative flex items-center justify-center mb-4">
-        <span className={`${iconSizeClasses[size]} font-extrabold text-primary animate-spin-slow`}>
+        <span className={`${iconSizeClasses[size]} font-bold text-primary animate-spin-slow`}>
           Ys
         </span>
       </div>

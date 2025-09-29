@@ -123,7 +123,7 @@ export default function DashboardPage() {
 
       <main className="flex-1 px-8 py-8">
         {/* ScrollHintArrow placed here, aligned to the right */}
-        <div className="flex justify-end pr-4 py-3"> {/* Added pr-4 to align with Sign Out button, py-3 for spacing */}
+        <div className="flex justify-end pr-4 py-1"> {/* Adjusted py-3 to py-1 for less vertical spacing */}
           <ScrollHintArrow />
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
