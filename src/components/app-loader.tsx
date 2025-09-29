@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Store, Loader2 } from 'lucide-react';
+import { Store } from 'lucide-react'; // Removed Loader2 import
 
 interface AppLoaderProps {
   message?: string;
@@ -26,7 +26,7 @@ export function AppLoader({ message = "Loading...", icon: Icon = Store, size = '
     <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground p-4">
       <div className="relative flex items-center justify-center mb-4">
         <Icon className={`${iconSizeClasses[size]} text-primary animate-spin-slow`} />
-        <Loader2 className={`${iconSizeClasses[size]} text-primary/50 absolute animate-spin-fast`} />
+        {/* Removed Loader2 for a cleaner look */}
       </div>
       <p className={`${textSizeClasses[size]} text-foreground font-medium text-center`}>
         {message}

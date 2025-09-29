@@ -118,9 +118,11 @@ export default function DashboardPage() {
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
 
-      <main className="flex-1 p-8 relative"> {/* Removed grid classes from main, added relative for arrow */}
-        <ScrollHintArrow /> {/* Moved the scroll hint arrow here */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-8"> {/* Added a div to contain the grid items */}
+      <main className="flex-1 p-8 relative">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 animate-bounce-down"> {/* Moved arrow to top */}
+          <ScrollHintArrow />
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-8">
           <Card className="bg-card text-card-foreground shadow-md">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Products</CardTitle>

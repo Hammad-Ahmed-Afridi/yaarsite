@@ -103,7 +103,7 @@ export default {
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
-            'marquee': 'marquee 25s linear infinite', // Adjusted duration for faster scroll
+            'marquee': 'marquee 15s linear infinite', // Adjusted duration for faster scroll
             'bounce-down': 'bounce-down 1.5s infinite', // New animation
             'spin-slow': 'spin-slow 8s linear infinite',
             'spin-fast': 'spin-fast 3s linear infinite',
