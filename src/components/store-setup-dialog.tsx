@@ -59,7 +59,7 @@ export function StoreSetupDialog() {
     }
 
     setIsBuildingStore(true);
-    toast.info("Yaarsite AI is building your store. Wait for the magic to happen...", { duration: 9000 }); // Increased duration
+    toast.info("Yaarsite AI is building your store. Wait for the magic to happen...", { duration: 5000 });
 
     try {
       const tenantSlug = generateSlug(values.storeName);
@@ -85,7 +85,7 @@ export function StoreSetupDialog() {
       }
 
       // Simulate build time
-      await new Promise(resolve => setTimeout(resolve, 9000)); // Increased duration
+      await new Promise(resolve => setTimeout(resolve, 5000));
 
       toast.success("Your store was created successfully!");
       
@@ -107,9 +107,9 @@ export function StoreSetupDialog() {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogContent className="sm:max-w-[425px] flex flex-col items-center justify-center p-0"> {/* Added flex, items-center, justify-center, p-0 */}
-        <DialogHeader className="p-6 pb-0 text-center"> {/* Added padding and text-center */}
-          <DialogTitle className="flex items-center justify-center gap-2"> {/* Added justify-center */}
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
             <Store className="h-6 w-6 text-primary" />
             Set Up Your Store
           </DialogTitle>
@@ -118,13 +118,9 @@ export function StoreSetupDialog() {
           </DialogDescription>
         </DialogHeader>
         {isBuildingStore ? (
-          <AppLoader 
-            message="Yaarsite AI is building your store. Wait for the magic to happen..." 
-            size="sm" 
-            className="flex-1 w-full h-full p-6" // Make it fill the dialog content and add padding
-          />
+          <AppLoader message="Yaarsite AI is building your store. Wait for the magic to happen..." size="sm" />
         ) : (
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4 px-6"> {/* Added px-6 */}
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="storeName">Store Name</Label>
               <Input
