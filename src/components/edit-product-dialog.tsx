@@ -313,7 +313,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
               <br />
               Supported formats: JPG, PNG, WebP. Images will be compressed for faster loading.
             </p>
-            <div className="flex gap-2 mt-2 flex-wrap">
+            <div className="flex gap-2 mt-2 flex-wrap"> {/* Added flex-wrap */}
               {existingImageUrls.map((url, index) => (
                 <div key={`existing-${index}`} className="relative w-24 h-24 border rounded-md overflow-hidden">
                   <Image src={url} alt={`Existing product image ${index + 1}`} fill style={{ objectFit: 'cover' }} />

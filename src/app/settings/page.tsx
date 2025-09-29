@@ -297,7 +297,7 @@ export default function SettingsPage() {
                   <br />
                   Supported formats: JPG, PNG, WebP. Image will be compressed for faster loading.
                 </p>
-                <div className="flex items-center gap-4 mt-2">
+                <div className="flex items-center gap-4 mt-2 flex-wrap"> {/* Added flex-wrap */}
                   {(logoPreview || profile?.avatar_url) ? (
                     <div className="relative w-24 h-24 border rounded-md overflow-hidden">
                       <Image

@@ -264,7 +264,7 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
               <br />
               Supported formats: JPG, PNG, WebP. Images will be compressed for faster loading.
             </p>
-            <div className="flex gap-2 mt-2">
+            <div className="flex gap-2 mt-2 flex-wrap"> {/* Added flex-wrap */}
               {imagePreviews.map((preview, index) => (
                 <div key={index} className="relative w-24 h-24 border rounded-md overflow-hidden">
                   <Image src={preview} alt={`Product preview ${index + 1}`} fill style={{ objectFit: 'cover' }} /> {/* Updated prop */}
