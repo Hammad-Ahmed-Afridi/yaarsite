@@ -122,11 +122,11 @@ export default function DashboardPage() {
       <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
 
       <main className="flex-1 p-8 relative">
-        {/* ScrollHintArrow moved here, below the header and within the main content flow */}
-        <div className="flex justify-center mt-4 mb-8"> {/* Added margin-top and margin-bottom for spacing */}
+        {/* ScrollHintArrow positioned below the header, within the main content area */}
+        <div className="absolute top-8 left-1/2 -translate-x-1/2"> {/* Adjusted top value */}
           <ScrollHintArrow />
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-16"> {/* Added mt-16 to push content below the arrow */}
           <Card className="bg-card text-card-foreground shadow-md">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Products</CardTitle>
