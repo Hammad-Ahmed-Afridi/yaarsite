@@ -43,7 +43,9 @@ export const SessionContextProvider = ({ children, initialSession, initialUser, 
   const [session, setSession] = useState<Session | null>(initialSession);
   const [user, setUser] = useState<User | null>(initialUser);
   const [profile, setProfile] = useState<Profile | null>(initialProfile);
-  const [isLoading, setIsLoading] = useState(false); // No longer loading initially if data is provided
+  // isLoading should be true if there's no initial session, as we need to check for one client-side.
+  // If an initial session is provided, we are not "loading" for the initial state.
+  const [isLoading, setIsLoading] = useState(!initialSession); 
 
   const fetchUserProfile = useCallback(async (userId: string) => {
     console.log("SessionContext: Fetching profile for user:", userId);
@@ -72,7 +74,7 @@ export const SessionContextProvider = ({ children, initialSession, initialUser, 
     } else {
       setProfile(null);
     }
-    setIsLoading(false);
+    setIsLoading(false); // Once auth state is determined, loading is complete
     console.log("SessionContext: isLoading set to false after auth state change.");
   }, [fetchUserProfile]);
 
@@ -85,16 +87,14 @@ export const SessionContextProvider = ({ children, initialSession, initialUser, 
 
   useEffect(() => {
     console.log("SessionContext: useEffect running.");
-
-    // Only set up listener if not already initialized with a session
-    if (!initialSession) {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthStateChange);
-      return () => {
-        console.log("SessionContext: useEffect cleanup.");
-        subscription.unsubscribe();
-      };
-    }
-  }, [handleAuthStateChange, initialSession]);
+    // Always set up the listener client-side.
+    // The initial state is handled by useState initialization.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthStateChange);
+    return () => {
+      console.log("SessionContext: useEffect cleanup.");
+      subscription.unsubscribe();
+    };
+  }, [handleAuthStateChange]);
 
   useInactivityLogout({
     inactivityTimeoutMs: INACTIVITY_TIMEOUT_MS,
