@@ -121,12 +121,12 @@ export default function DashboardPage() {
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
 
-      <main className="flex-1 px-8 pb-8 pt-4 relative"> {/* Adjusted top padding */}
-        {/* ScrollHintArrow in normal flow, below the header */}
-        <div className="flex justify-center mb-4"> {/* Added margin-bottom for spacing */}
+      <main className="flex-1 px-8 pb-8"> {/* Removed pt-4 from main */}
+        {/* ScrollHintArrow in normal flow, below the header, with controlled padding */}
+        <div className="flex justify-center pt-4 pb-2"> {/* Added pt-4 pb-2 for arrow spacing */}
           <ScrollHintArrow />
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Removed mt-16 */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* No mt- here, it follows the arrow div */}
           <Card className="bg-card text-card-foreground shadow-md">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Products</CardTitle>
