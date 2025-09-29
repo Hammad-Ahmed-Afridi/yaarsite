@@ -103,7 +103,7 @@ export default function SignupPage() {
           <Store className="mx-auto h-10 w-10 text-primary" />
           <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
           <CardDescription className="text-muted-foreground">Sign up to get started with your store</CardDescription>
-          <p className="text-destructive text-sm mt-2">Kindly put in the correct credentials or your account will get banned and deleted.</p> {/* Added message */}
+          <p className="text-destructive text-sm mt-2">Important: Kindly put in the correct credentials or your account will get banned and deleted.</p> {/* Updated message */}
         </CardHeader>
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
