@@ -19,7 +19,7 @@ export function DashboardHeader({ profile, onSignOut, showBackButton = true, cur
   const isDashboardRoot = currentPath === '/';
 
   return (
-    <header className="flex items-center justify-between py-2 px-4 border-b border-border bg-card">
+    <header className="flex items-center justify-between p-4 border-b border-border bg-card">
       <div className="flex items-center space-x-4">
         {showBackButton && !isDashboardRoot && (
           <Button variant="ghost" size="icon" asChild>
