@@ -121,12 +121,8 @@ export default function DashboardPage() {
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
 
-      <main className="flex-1 px-8 pb-8"> {/* Removed pt-4 from main */}
-        {/* ScrollHintArrow in its own container with minimal padding */}
-        <div className="flex justify-center py-3"> {/* Minimal vertical padding */}
-          <ScrollHintArrow />
-        </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* No mt- here */}
+      <main className="flex-1 px-8 py-8"> {/* Adjusted padding for main content */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <Card className="bg-card text-card-foreground shadow-md">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Products</CardTitle>
@@ -205,6 +201,7 @@ export default function DashboardPage() {
         </div>
       </main>
       <MadeWithDyad />
+      <ScrollHintArrow /> {/* Placed outside main for fixed positioning */}
     </div>
   );
 }
