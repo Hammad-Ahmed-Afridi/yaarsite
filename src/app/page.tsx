@@ -121,9 +121,9 @@ export default function DashboardPage() {
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
 
-      <main className="flex-1 px-8 py-8">
-        {/* ScrollHintArrow placed here, aligned to the right */}
-        <div className="flex justify-end pr-4 pt-0"> {/* Changed py-1 to pt-0 */}
+      <main className="flex-1 px-8 pt-4 pb-8"> {/* Adjusted padding here */}
+        {/* ScrollHintArrow placed here, aligned to the center */}
+        <div className="flex justify-center mb-4"> {/* Changed justify-end to justify-center, added mb-4 */}
           <ScrollHintArrow />
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
