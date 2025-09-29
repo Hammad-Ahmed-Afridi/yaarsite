@@ -12,6 +12,7 @@ import { MadeWithDyad } from '@/components/made-with-dyad';
 import Image from 'next/image';
 import { useCart } from '@/components/cart-context-provider';
 import { ProductDetailDialog } from '@/components/product-detail-dialog';
+import { AppLoader } from '@/components/app-loader'; // Import AppLoader
 
 interface Product {
   id: string;
@@ -109,9 +110,7 @@ export default function PublicStorePage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <p className="text-foreground">Loading store...</p>
-      </div>
+      <AppLoader message="Loading store..." />
     );
   }
 

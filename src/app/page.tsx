@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, ShoppingCart, DollarSign, Store, Settings, Loader2 } from "lucide-react";
+import { Package, ShoppingCart, DollarSign, Store, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
 import { InactivityWarningBanner } from "@/components/inactivity-warning-banner";
 import { DashboardHeader } from "@/components/dashboard-header"; // Import DashboardHeader
 import { ScrollHintArrow } from "@/components/scroll-hint-arrow"; // Import ScrollHintArrow
+import { AppLoader } from "@/components/app-loader"; // Import AppLoader
 
 export default function DashboardPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
@@ -84,14 +85,7 @@ export default function DashboardPage() {
 
   if (isSessionLoading || isLoadingDashboardData) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-foreground">
-          Loading {isSessionLoading ? 'session' : 'dashboard'} data...
-          <br />
-          {isLoadingDashboardData && "If it is taking time, kindly refresh the browser."}
-        </p>
-      </div>
+      <AppLoader message={isSessionLoading ? 'Loading session data...' : 'Loading dashboard data...'} />
     );
   }
 

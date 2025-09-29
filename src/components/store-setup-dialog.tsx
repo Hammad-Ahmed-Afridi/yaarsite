@@ -21,7 +21,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Store } from 'lucide-react';
+import { Store } from 'lucide-react';
+import { AppLoader } from '@/components/app-loader'; // Import AppLoader
 
 const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
@@ -117,11 +118,7 @@ export function StoreSetupDialog() {
           </DialogDescription>
         </DialogHeader>
         {isBuildingStore ? (
-          <div className="flex flex-col items-center justify-center py-10 text-center">
-            <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
-            <p className="text-lg font-medium">Yaarsite AI is building your store.</p>
-            <p className="text-sm text-muted-foreground">Wait for the magic to happen...</p>
-          </div>
+          <AppLoader message="Yaarsite AI is building your store. Wait for the magic to happen..." size="sm" />
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
             <div className="grid gap-2">

@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSession } from '@/components/session-context-provider';
-import { Loader2 } from 'lucide-react';
+import { AppLoader } from '@/components/app-loader'; // Import AppLoader
 
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { user, isLoading: isSessionLoading } = useSession();
@@ -38,10 +38,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   // Show a loading spinner while session is being determined
   if (isSessionLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-foreground">Loading...</p>
-      </div>
+      <AppLoader message="Initializing session..." />
     );
   }
 

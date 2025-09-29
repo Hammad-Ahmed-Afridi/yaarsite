@@ -18,10 +18,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Settings, Copy, ExternalLink, Loader2, Image as ImageIcon, X } from 'lucide-react';
+import { Settings, Copy, ExternalLink, Image as ImageIcon, X } from 'lucide-react';
 import { MadeWithDyad } from '@/components/made-with-dyad';
 import Image from 'next/image';
 import { DashboardHeader } from '@/components/dashboard-header'; // Import DashboardHeader
+import { AppLoader } from '@/components/app-loader'; // Import AppLoader
 
 const MAX_LOGO_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_LOGO_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -235,10 +236,7 @@ export default function SettingsPage() {
 
   if (isSessionLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-foreground">Loading settings...</p>
-      </div>
+      <AppLoader message="Loading settings..." />
     );
   }
 

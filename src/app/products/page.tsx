@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Package, Loader2, Trash2 } from 'lucide-react';
+import { Plus, Package, Trash2 } from 'lucide-react';
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -24,6 +24,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { DashboardHeader } from '@/components/dashboard-header'; // Import DashboardHeader
+import { AppLoader } from '@/components/app-loader'; // Import AppLoader
 
 interface Product {
   id: string;
@@ -126,10 +127,7 @@ export default function ProductsPage() {
 
   if (isLoadingProducts) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-foreground">Loading products...</p>
-      </div>
+      <AppLoader message="Loading products..." />
     );
   }
 
