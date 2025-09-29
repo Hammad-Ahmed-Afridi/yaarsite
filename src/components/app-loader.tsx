@@ -1,17 +1,18 @@
 "use client";
 
 import React from 'react';
-// Removed Store import as it's no longer used
+import { cn } from '@/lib/utils'; // Import cn for conditional classNames
 
 interface AppLoaderProps {
   message?: string;
   secondaryMessage?: string;
   size?: 'sm' | 'md' | 'lg';
+  className?: string; // Add className prop for external styling
 }
 
-export function AppLoader({ message = "Loading...", secondaryMessage, size = 'md' }: AppLoaderProps) {
+export function AppLoader({ message = "Loading...", secondaryMessage, size = 'md', className }: AppLoaderProps) {
   const iconSizeClasses = {
-    sm: "text-4xl", // Adjusted for text size
+    sm: "text-4xl",
     md: "text-6xl",
     lg: "text-8xl",
   };
@@ -23,7 +24,10 @@ export function AppLoader({ message = "Loading...", secondaryMessage, size = 'md
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground p-4">
+    <div className={cn(
+      "flex flex-col items-center justify-center bg-background text-foreground", // Removed min-h-screen and p-4
+      className // Apply external className
+    )}>
       <div className="relative flex items-center justify-center mb-4">
         <span className={`${iconSizeClasses[size]} font-bold text-primary animate-spin-slow`}>
           Ys
