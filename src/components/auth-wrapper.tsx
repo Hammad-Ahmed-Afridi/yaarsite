@@ -5,6 +5,8 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useSession } from '@/components/session-context-provider';
 import { AppLoader } from '@/components/app-loader'; // Import AppLoader
 
+const YS_FAVICON_URL = "https://placehold.co/32x32/1e293b/cbd5e1?text=Ys"; // Define favicon URL
+
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { user, isLoading: isSessionLoading } = useSession();
   const router = useRouter();
@@ -38,7 +40,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   // Show a loading spinner while session is being determined
   if (isSessionLoading) {
     return (
-      <AppLoader message="Initializing session..." />
+      <AppLoader message="Initializing session..." imageSrc={YS_FAVICON_URL} />
     );
   }
 

@@ -26,6 +26,7 @@ import { AppLoader } from '@/components/app-loader'; // Import AppLoader
 
 const MAX_LOGO_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_LOGO_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+const YS_FAVICON_URL = "https://placehold.co/32x32/1e293b/cbd5e1?text=Ys"; // Define favicon URL
 
 const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
@@ -236,7 +237,7 @@ export default function SettingsPage() {
 
   if (isSessionLoading) {
     return (
-      <AppLoader message="Loading settings..." />
+      <AppLoader message="Loading settings..." imageSrc={YS_FAVICON_URL} />
     );
   }
 

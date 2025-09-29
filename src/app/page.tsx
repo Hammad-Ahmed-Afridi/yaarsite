@@ -13,8 +13,10 @@ import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
 import { InactivityWarningBanner } from "@/components/inactivity-warning-banner";
 import { DashboardHeader } from "@/components/dashboard-header"; // Import DashboardHeader
-import { ScrollHintArrow } from "@/components/scroll-hint-arrow"; // Import ScrollHintArrow
+// Removed import for ScrollHintArrow
 import { AppLoader } from "@/components/app-loader"; // Import AppLoader
+
+const YS_FAVICON_URL = "https://placehold.co/32x32/1e293b/cbd5e1?text=Ys"; // Define favicon URL
 
 export default function DashboardPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
@@ -88,6 +90,7 @@ export default function DashboardPage() {
       <AppLoader
         message={isSessionLoading ? 'Loading session data...' : 'Loading dashboard data...'}
         secondaryMessage="If it does not load, kindly refresh the browser and sign in."
+        imageSrc={YS_FAVICON_URL} // Pass the favicon URL
       />
     );
   }
@@ -122,11 +125,7 @@ export default function DashboardPage() {
       <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
 
       <main className="flex-1 px-8 py-8">
-        {/* ScrollHintArrow placed here, aligned to the right */}
-        <div className="flex flex-col items-end pr-4 py-3"> {/* Changed to flex-col to stack text and arrow */}
-          <p className="text-sm text-muted-foreground mb-1">Scroll down for more</p>
-          <ScrollHintArrow />
-        </div>
+        {/* Removed ScrollHintArrow and its wrapper div */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <Card className="bg-card text-card-foreground shadow-md">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

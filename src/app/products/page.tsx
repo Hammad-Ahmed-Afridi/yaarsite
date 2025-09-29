@@ -38,6 +38,7 @@ interface Product {
 }
 
 const PRODUCT_LIMIT = 3;
+const YS_FAVICON_URL = "https://placehold.co/32x32/1e293b/cbd5e1?text=Ys"; // Define favicon URL
 
 export default function ProductsPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
@@ -127,7 +128,7 @@ export default function ProductsPage() {
 
   if (isLoadingProducts) {
     return (
-      <AppLoader message="Loading products..." />
+      <AppLoader message="Loading products..." imageSrc={YS_FAVICON_URL} />
     );
   }
 

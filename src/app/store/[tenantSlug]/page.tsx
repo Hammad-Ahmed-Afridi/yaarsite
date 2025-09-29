@@ -34,6 +34,8 @@ interface Profile {
   avatar_url: string | null; // Added avatar_url to Profile interface
 }
 
+const YS_FAVICON_URL = "https://placehold.co/32x32/1e293b/cbd5e1?text=Ys"; // Define favicon URL
+
 export default function PublicStorePage() {
   const params = useParams();
   const router = useRouter();
@@ -110,7 +112,7 @@ export default function PublicStorePage() {
 
   if (isLoading) {
     return (
-      <AppLoader message="Loading store..." />
+      <AppLoader message="Loading store..." imageSrc={YS_FAVICON_URL} />
     );
   }
 
