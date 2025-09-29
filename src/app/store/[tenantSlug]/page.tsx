@@ -23,17 +23,7 @@ interface Profile {
   avatar_url: string | null;
 }
 
-// Directly define the props type for the component, making it as specific as possible
-interface PublicStorePageProps {
-  params: {
-    tenantSlug: string;
-  };
-  // searchParams is optional and can be more complex, but for this error,
-  // focusing on params is key.
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
-
-export default async function PublicStorePage({ params }: PublicStorePageProps) {
+export default async function PublicStorePage({ params }: { params: { tenantSlug: string } }) {
   const { tenantSlug } = params; // Directly destructure the specific parameter
 
   if (!tenantSlug) {
