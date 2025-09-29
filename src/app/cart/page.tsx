@@ -84,78 +84,75 @@ export default function CartPage() {
                   <CardTitle>Cart Items</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {/* Added overflow-x-auto for responsiveness */}
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[100px]">Product</TableHead>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Price</TableHead>
-                          <TableHead className="text-center">Quantity</TableHead>
-                          <TableHead className="text-right">Total</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {cartItems.map((item) => (
-                          <TableRow key={item.id}>
-                            <TableCell>
-                              {item.image_url && ( // Ensure image_url exists
-                                <Image
-                                  src={item.image_url}
-                                  alt={item.name}
-                                  width={64}
-                                  height={64}
-                                  style={{ objectFit: 'cover' }} // Updated prop
-                                  className="rounded-md"
-                                />
-                              )}
-                            </TableCell>
-                            <TableCell className="font-medium">{item.name}</TableCell>
-                            <TableCell>Rs{item.price.toFixed(2)}</TableCell>
-                            <TableCell className="text-center">
-                              <div className="flex items-center justify-center gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  className="h-7 w-7"
-                                  onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                                >
-                                  <Minus className="h-4 w-4" />
-                                </Button>
-                                <Input
-                                  type="number"
-                                  value={item.quantity}
-                                  onChange={(e) => handleUpdateQuantity(item.id, parseInt(e.target.value))}
-                                  className="w-16 text-center"
-                                  min="1"
-                                />
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  className="h-7 w-7"
-                                  onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                                >
-                                  <Plus className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-right">Rs{(item.price * item.quantity).toFixed(2)}</TableCell>
-                            <TableCell className="text-right">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[100px]">Product</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Price</TableHead>
+                        <TableHead className="text-center">Quantity</TableHead>
+                        <TableHead className="text-right">Total</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {cartItems.map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell>
+                            {item.image_url && ( // Ensure image_url exists
+                              <Image
+                                src={item.image_url}
+                                alt={item.name}
+                                width={64}
+                                height={64}
+                                style={{ objectFit: 'cover' }} // Updated prop
+                                className="rounded-md"
+                              />
+                            )}
+                          </TableCell>
+                          <TableCell className="font-medium">{item.name}</TableCell>
+                          <TableCell>Rs{item.price.toFixed(2)}</TableCell>
+                          <TableCell className="text-center">
+                            <div className="flex items-center justify-center gap-2">
                               <Button
-                                variant="destructive"
+                                variant="outline"
                                 size="icon"
-                                onClick={() => removeFromCart(item.id)}
+                                className="h-7 w-7"
+                                onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <Minus className="h-4 w-4" />
                               </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
+                              <Input
+                                type="number"
+                                value={item.quantity}
+                                onChange={(e) => handleUpdateQuantity(item.id, parseInt(e.target.value))}
+                                className="w-16 text-center"
+                                min="1"
+                              />
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-7 w-7"
+                                onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">Rs{(item.price * item.quantity).toFixed(2)}</TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => removeFromCart(item.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </CardContent>
               </Card>
             </div>

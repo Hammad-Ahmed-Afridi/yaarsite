@@ -32,20 +32,11 @@ const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
 const INACTIVITY_TIMEOUT_MS = 15 * 1000;
 
-interface SessionContextProviderProps {
-  children: React.ReactNode;
-  initialSession: Session | null;
-  initialUser: User | null;
-  initialProfile: Profile | null;
-}
-
-export const SessionContextProvider = ({ children, initialSession, initialUser, initialProfile }: SessionContextProviderProps) => {
-  const [session, setSession] = useState<Session | null>(initialSession);
-  const [user, setUser] = useState<User | null>(initialUser);
-  const [profile, setProfile] = useState<Profile | null>(initialProfile);
-  // isLoading should be true if there's no initial session, as we need to check for one client-side.
-  // If an initial session is provided, we are not "loading" for the initial state.
-  const [isLoading, setIsLoading] = useState(!initialSession); 
+export const SessionContextProvider = ({ children }: { children: React.ReactNode }) => {
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchUserProfile = useCallback(async (userId: string) => {
     console.log("SessionContext: Fetching profile for user:", userId);
@@ -74,7 +65,7 @@ export const SessionContextProvider = ({ children, initialSession, initialUser, 
     } else {
       setProfile(null);
     }
-    setIsLoading(false); // Once auth state is determined, loading is complete
+    setIsLoading(false);
     console.log("SessionContext: isLoading set to false after auth state change.");
   }, [fetchUserProfile]);
 
@@ -87,9 +78,14 @@ export const SessionContextProvider = ({ children, initialSession, initialUser, 
 
   useEffect(() => {
     console.log("SessionContext: useEffect running.");
-    // Always set up the listener client-side.
-    // The initial state is handled by useState initialization.
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthStateChange);
+
+    supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
+      console.log("SessionContext: Initial getSession result:", initialSession);
+      await handleAuthStateChange('INITIAL_SESSION', initialSession);
+    });
+
     return () => {
       console.log("SessionContext: useEffect cleanup.");
       subscription.unsubscribe();
