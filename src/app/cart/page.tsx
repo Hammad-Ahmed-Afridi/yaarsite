@@ -10,13 +10,15 @@ import { useCart } from '@/components/cart-context-provider';
 import { ArrowLeft, Trash2, ShoppingCart, Minus, Plus } from 'lucide-react';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
-import { supabase } from '@/integrations/supabase/client'; // Import supabase
+import { supabase } from '@/integrations/supabase/client';
+import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
 
 export default function CartPage() {
   const router = useRouter();
   const { cartItems, removeFromCart, updateQuantity, cartTotal, itemCount } = useCart();
   const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null);
   const [isLoadingStoreSlug, setIsLoadingStoreSlug] = useState(true);
+  const isMobile = useIsMobile(); // Use the hook
 
   useEffect(() => {
     async function fetchStoreSlug() {
@@ -79,84 +81,143 @@ export default function CartPage() {
         ) : (
           <div className="grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <Card className="bg-card text-card-foreground shadow-md">
-                <CardHeader>
-                  <CardTitle>Cart Items</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto"> {/* Added for responsiveness */}
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[100px]">Product</TableHead>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Price</TableHead>
-                          <TableHead className="text-center">Quantity</TableHead>
-                          <TableHead className="text-right">Total</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {cartItems.map((item) => (
-                          <TableRow key={item.id}>
-                            <TableCell>
-                              {item.image_url && ( // Ensure image_url exists
-                                <Image
-                                  src={item.image_url}
-                                  alt={item.name}
-                                  width={64}
-                                  height={64}
-                                  style={{ objectFit: 'cover' }} // Updated prop
-                                  className="rounded-md"
-                                />
-                              )}
-                            </TableCell>
-                            <TableCell className="font-medium">{item.name}</TableCell>
-                            <TableCell>Rs{item.price.toFixed(2)}</TableCell>
-                            <TableCell className="text-center">
-                              <div className="flex items-center justify-center gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  className="h-7 w-7"
-                                  onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                                >
-                                  <Minus className="h-4 w-4" />
-                                </Button>
-                                <Input
-                                  type="number"
-                                  value={item.quantity}
-                                  onChange={(e) => handleUpdateQuantity(item.id, parseInt(e.target.value))}
-                                  className="w-16 text-center"
-                                  min="1"
-                                />
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  className="h-7 w-7"
-                                  onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                                >
-                                  <Plus className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-right">Rs{(item.price * item.quantity).toFixed(2)}</TableCell>
-                            <TableCell className="text-right">
-                              <Button
-                                variant="destructive"
-                                size="icon"
-                                onClick={() => removeFromCart(item.id)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </TableCell>
+              {isMobile ? (
+                <div className="grid gap-4">
+                  {cartItems.map((item) => (
+                    <Card key={item.id} className="bg-card text-card-foreground shadow-md">
+                      <CardContent className="p-4 flex items-center gap-4">
+                        {item.image_url && (
+                          <Image
+                            src={item.image_url}
+                            alt={item.name}
+                            width={80}
+                            height={80}
+                            style={{ objectFit: 'cover' }}
+                            className="rounded-md flex-shrink-0"
+                          />
+                        )}
+                        <div className="flex-1 space-y-1">
+                          <CardTitle className="text-lg">{item.name}</CardTitle>
+                          <p className="text-muted-foreground">Price: Rs{item.price.toFixed(2)}</p>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <Input
+                              type="number"
+                              value={item.quantity}
+                              onChange={(e) => handleUpdateQuantity(item.id, parseInt(e.target.value))}
+                              className="w-16 text-center"
+                              min="1"
+                            />
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <p className="font-semibold">Total: Rs{(item.price * item.quantity).toFixed(2)}</p>
+                        </div>
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          onClick={() => removeFromCart(item.id)}
+                          className="flex-shrink-0"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card className="bg-card text-card-foreground shadow-md">
+                  <CardHeader>
+                    <CardTitle>Cart Items</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-[100px]">Product</TableHead>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Price</TableHead>
+                            <TableHead className="text-center">Quantity</TableHead>
+                            <TableHead className="text-right">Total</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </CardContent>
-              </Card>
+                        </TableHeader>
+                        <TableBody>
+                          {cartItems.map((item) => (
+                            <TableRow key={item.id}>
+                              <TableCell>
+                                {item.image_url && (
+                                  <Image
+                                    src={item.image_url}
+                                    alt={item.name}
+                                    width={64}
+                                    height={64}
+                                    style={{ objectFit: 'cover' }}
+                                    className="rounded-md"
+                                  />
+                                )}
+                              </TableCell>
+                              <TableCell className="font-medium">{item.name}</TableCell>
+                              <TableCell>Rs{item.price.toFixed(2)}</TableCell>
+                              <TableCell className="text-center">
+                                <div className="flex items-center justify-center gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                                  >
+                                    <Minus className="h-4 w-4" />
+                                  </Button>
+                                  <Input
+                                    type="number"
+                                    value={item.quantity}
+                                    onChange={(e) => handleUpdateQuantity(item.id, parseInt(e.target.value))}
+                                    className="w-16 text-center"
+                                    min="1"
+                                  />
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                                  >
+                                    <Plus className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-right">Rs{(item.price * item.quantity).toFixed(2)}</TableCell>
+                              <TableCell className="text-right">
+                                <Button
+                                  variant="destructive"
+                                  size="icon"
+                                  onClick={() => removeFromCart(item.id)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
 
             <div className="lg:col-span-1">

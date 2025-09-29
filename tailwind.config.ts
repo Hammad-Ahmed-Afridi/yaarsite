@@ -95,7 +95,7 @@ export default {
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
-            'marquee': 'marquee 25s linear infinite', // Increased duration for full scroll
+            'marquee': 'marquee 45s linear infinite', // Increased duration for full scroll and faster speed
             'bounce-down': 'bounce-down 1.5s infinite', // New animation
   		}
   	}

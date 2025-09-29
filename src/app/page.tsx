@@ -124,83 +124,85 @@ export default function DashboardPage() {
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
 
-      <main className="flex-1 p-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 relative"> {/* Added relative for arrow positioning */}
-        <Card className="bg-card text-card-foreground shadow-md">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Products</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalProducts}</div>
-          </CardContent>
-        </Card>
+      <main className="flex-1 p-8 relative"> {/* Removed grid classes from main, added relative for arrow */}
+        <ScrollHintArrow /> {/* Moved the scroll hint arrow here */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-8"> {/* Added a div to contain the grid items */}
+          <Card className="bg-card text-card-foreground shadow-md">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+              <Package className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totalProducts}</div>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-card text-card-foreground shadow-md">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalOrders}</div>
-          </CardContent>
-        </Card>
+          <Card className="bg-card text-card-foreground shadow-md">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totalOrders}</div>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-card text-card-foreground shadow-md">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Profit (Rs)</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">Rs{totalProfit.toFixed(2)}</div>
-          </CardContent>
-        </Card>
+          <Card className="bg-card text-card-foreground shadow-md">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Profit (Rs)</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">Rs{totalProfit.toFixed(2)}</div>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
-          <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
-            <Store className="h-6 w-6 text-primary" />
-            <CardTitle className="text-lg font-semibold">View Your Store</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">See how your store looks to customers</p>
-            <Button onClick={handleOpenStore} className="w-full" disabled={profile?.tenant_name === null}>
-              Open Store
-            </Button>
-          </CardContent>
-        </Card>
+          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
+            <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
+              <Store className="h-6 w-6 text-primary" />
+              <CardTitle className="text-lg font-semibold">View Your Store</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">See how your store looks to customers</p>
+              <Button onClick={handleOpenStore} className="w-full" disabled={profile?.tenant_name === null}>
+                Open Store
+              </Button>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
-          <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
-            <Package className="h-6 w-6 text-green-500" />
-            <CardTitle className="text-lg font-semibold">Manage Products</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">Add, edit, and organize your products</p>
-            <Button onClick={() => router.push('/products')} className="w-full" disabled={profile?.tenant_name === null}>Manage Products</Button>
-          </CardContent>
-        </Card>
+          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
+            <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
+              <Package className="h-6 w-6 text-green-500" />
+              <CardTitle className="text-lg font-semibold">Manage Products</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">Add, edit, and organize your products</p>
+              <Button onClick={() => router.push('/products')} className="w-full" disabled={profile?.tenant_name === null}>Manage Products</Button>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
-          <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
-            <ShoppingCart className="h-6 w-6 text-purple-500" />
-            <CardTitle className="text-lg font-semibold">View Orders</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">Track and manage customer orders</p>
-            <Button onClick={() => router.push('/orders')} className="w-full" disabled={profile?.tenant_name === null}>View Orders</Button>
-          </CardContent>
-        </Card>
+          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
+            <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
+              <ShoppingCart className="h-6 w-6 text-purple-500" />
+              <CardTitle className="text-lg font-semibold">View Orders</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">Track and manage customer orders</p>
+              <Button onClick={() => router.push('/orders')} className="w-full" disabled={profile?.tenant_name === null}>View Orders</Button>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
-          <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
-            <Settings className="h-6 w-6 text-yellow-500" />
-            <CardTitle className="text-lg font-semibold">Store Settings</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">Update your store information</p>
-            <Button onClick={() => router.push('/settings')} className="w-full" disabled={profile?.tenant_name === null}>Settings</Button>
-          </CardContent>
-        </Card>
-        <ScrollHintArrow /> {/* Added the scroll hint arrow */}
+          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
+            <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
+              <Settings className="h-6 w-6 text-yellow-500" />
+              <CardTitle className="text-lg font-semibold">Store Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">Update your store information</p>
+              <Button onClick={() => router.push('/settings')} className="w-full" disabled={profile?.tenant_name === null}>Settings</Button>
+            </CardContent>
+          </Card>
+        </div>
       </main>
       <MadeWithDyad />
     </div>
