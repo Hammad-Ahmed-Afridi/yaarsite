@@ -29,8 +29,6 @@ const formSchema = z.object({
   storeDescription: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
 });
 
-const YS_FAVICON_URL = "https://placehold.co/32x32/1e293b/cbd5e1?text=Ys"; // Define favicon URL
-
 export function StoreSetupDialog() {
   const router = useRouter();
   const { user, profile, refreshProfile } = useSession();
@@ -120,7 +118,7 @@ export function StoreSetupDialog() {
           </DialogDescription>
         </DialogHeader>
         {isBuildingStore ? (
-          <AppLoader message="Yaarsite AI is building your store. Wait for the magic to happen..." size="sm" imageSrc={YS_FAVICON_URL} />
+          <AppLoader message="Yaarsite AI is building your store. Wait for the magic to happen..." size="sm" />
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
             <div className="grid gap-2">

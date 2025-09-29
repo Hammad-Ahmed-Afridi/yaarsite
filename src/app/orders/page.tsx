@@ -29,7 +29,6 @@ interface Order {
 }
 
 const ORDER_STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
-const YS_FAVICON_URL = "https://placehold.co/32x32/1e293b/cbd5e1?text=Ys"; // Define favicon URL
 
 export default function OrdersPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
@@ -115,7 +114,7 @@ export default function OrdersPage() {
 
   if (isLoadingOrders) {
     return (
-      <AppLoader message="Loading orders..." imageSrc={YS_FAVICON_URL} />
+      <AppLoader message="Loading orders..." />
     );
   }
 
