@@ -166,7 +166,7 @@ export default function OrdersPage() {
                             onValueChange={(newStatus: Order['status']) => handleUpdateOrderStatus(order.id, newStatus)}
                             disabled={isUpdatingStatus}
                           >
-                            <SelectTrigger className="w-[180px]">
+                            <SelectTrigger className="min-w-[120px] w-full max-w-[180px]"> {/* Adjusted width */}
                               <SelectValue placeholder="Select Status" />
                             </SelectTrigger>
                             <SelectContent>

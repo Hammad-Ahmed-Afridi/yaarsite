@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
 import { InactivityWarningBanner } from "@/components/inactivity-warning-banner";
 import { DashboardHeader } from "@/components/dashboard-header"; // Import DashboardHeader
+import { ScrollHintArrow } from "@/components/scroll-hint-arrow"; // Import ScrollHintArrow
 
 export default function DashboardPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
@@ -123,7 +124,7 @@ export default function DashboardPage() {
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
 
-      <main className="flex-1 p-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <main className="flex-1 p-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 relative"> {/* Added relative for arrow positioning */}
         <Card className="bg-card text-card-foreground shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Products</CardTitle>
@@ -199,6 +200,7 @@ export default function DashboardPage() {
             <Button onClick={() => router.push('/settings')} className="w-full" disabled={profile?.tenant_name === null}>Settings</Button>
           </CardContent>
         </Card>
+        <ScrollHintArrow /> {/* Added the scroll hint arrow */}
       </main>
       <MadeWithDyad />
     </div>
