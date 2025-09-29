@@ -23,7 +23,6 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Store } from 'lucide-react';
 import { AppLoader } from '@/components/app-loader'; // Import AppLoader
-import { CardContent } from '@/components/ui/card'; // Import CardContent
 
 const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
@@ -60,7 +59,7 @@ export function StoreSetupDialog() {
     }
 
     setIsBuildingStore(true);
-    toast.info("Yaarsite AI is building your store. Wait for the magic to happen...", { duration: 9000 });
+    toast.info("Yaarsite AI is building your store. Wait for the magic to happen...", { duration: 5000 });
 
     try {
       const tenantSlug = generateSlug(values.storeName);
@@ -85,8 +84,8 @@ export function StoreSetupDialog() {
         return;
       }
 
-      // Simulate build time for 9 seconds
-      await new Promise(resolve => setTimeout(resolve, 9000));
+      // Simulate build time
+      await new Promise(resolve => setTimeout(resolve, 5000));
 
       toast.success("Your store was created successfully!");
       
@@ -119,9 +118,7 @@ export function StoreSetupDialog() {
           </DialogDescription>
         </DialogHeader>
         {isBuildingStore ? (
-          <CardContent className="flex flex-col items-center justify-center py-8">
-            <AppLoader message="Yaarsite AI is building your store. Wait for the magic to happen..." size="sm" />
-          </CardContent>
+          <AppLoader message="Yaarsite AI is building your store. Wait for the magic to happen..." size="sm" />
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
             <div className="grid gap-2">
