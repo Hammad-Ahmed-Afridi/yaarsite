@@ -16,7 +16,7 @@ interface Order {
 }
 
 export default async function OrdersPage() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient(); // Add await
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {

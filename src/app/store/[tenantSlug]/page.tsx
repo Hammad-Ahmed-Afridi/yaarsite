@@ -40,7 +40,7 @@ export default async function PublicStorePage({ params }: PublicStorePageProps) 
     notFound();
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient(); // Add await
 
   // Fetch profile data on the server
   const { data: profileData, error: profileError } = await supabase

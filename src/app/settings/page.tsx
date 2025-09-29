@@ -5,7 +5,7 @@ import { SettingsClientPage } from './settings-client-page'; // New client compo
 import { Profile } from "@/components/session-context-provider";
 
 export default async function SettingsPage() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient(); // Add await
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {

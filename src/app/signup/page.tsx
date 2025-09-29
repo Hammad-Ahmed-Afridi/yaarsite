@@ -5,7 +5,7 @@ import { createSupabaseServerClient } from '@/integrations/supabase/server'; // 
 import SignupPageClient from './signup-client'; // Import the new client component
 
 export default async function SignupPage() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient(); // Add await
   const { data: { session } } = await supabase.auth.getSession();
 
   if (session) {
