@@ -18,7 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Settings, Copy, ExternalLink, Image as ImageIcon, X } from 'lucide-react';
+import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2 } from 'lucide-react'; // Import Loader2
 import { MadeWithDyad } from '@/components/made-with-dyad';
 import Image from 'next/image';
 import { DashboardHeader } from '@/components/dashboard-header'; // Import DashboardHeader
