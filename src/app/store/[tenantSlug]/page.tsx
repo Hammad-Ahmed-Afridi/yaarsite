@@ -208,7 +208,7 @@ export default function PublicStorePage() {
           </div>
         )}
       </main>
-      <MadeWithDyad />
+      <MadeWithDyad message="Made with Yaarsite" />
 
       {selectedProduct && profile && (
         <ProductDetailDialog
