@@ -87,7 +87,7 @@ export default function CheckoutPage() {
       const result = await response.json();
       console.log("Order placed successfully:", result);
 
-      toast.success("Order placed successfully! Check your email for confirmation.", { duration: 5000 });
+      toast.success("Thank you for your purchase. We will contact you soon.", { duration: 5000 });
       clearCart(); // Clear cart AFTER capturing storeOwnerId and attempting to fetch slug
       setOrderPlaced(true);
 
@@ -106,7 +106,7 @@ export default function CheckoutPage() {
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
         <CheckCircle className="h-20 w-20 text-green-500 mb-6" />
         <h1 className="text-3xl font-bold mb-4">Order Placed!</h1>
-        <p className="text-lg text-muted-foreground mb-8">Thank you for your purchase. A confirmation email has been sent.</p>
+        <p className="text-lg text-muted-foreground mb-8">Thank you for your purchase. We will contact you soon.</p>
         <Button asChild>
           <Link href={redirectPath}>Continue Shopping</Link>
         </Button>
