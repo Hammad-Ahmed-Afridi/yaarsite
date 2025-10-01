@@ -119,7 +119,7 @@ export default {
             },
             'pulse-glow': {
                 '0%, 100%': { transform: 'scale(1)', opacity: '0.6' },
-                '50%': { transform: 'scale(1.05)', opacity: '1' },
+                '50%': { transform: 'scale(1.02)', opacity: '0.8' }, /* Made pulse more subtle */
             }
   		},
   		animation: {
@@ -132,7 +132,7 @@ export default {
             // Custom animations from landing page HTML
             'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
             'shimmer': 'shimmer 2s linear infinite',
-            'pulse-glow': 'pulse-glow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite', // Changed from 2s to 4s
+            'pulse-glow': 'pulse-glow 8s cubic-bezier(0.4, 0, 0.6, 1) infinite', /* Increased duration for slower pulse */
   		}
   	}
   },

@@ -9,9 +9,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Menu, X, ChevronLeft, ChevronRight, Zap, Smartphone, Package, DollarSign, Star } from 'lucide-react'; // Removed Share2, kept Star
-import useEmblaCarousel from 'embla-carousel-react'; // Import Embla Carousel
-import { WhatsappIcon, InstagramIcon, FacebookIcon, TiktokIcon } from '@/components/social-icons'; // Import custom social icons
+import { Menu, X, ChevronLeft, ChevronRight, Zap, Smartphone, Package, DollarSign, Star } from 'lucide-react';
+import useEmblaCarousel from 'embla-carousel-react';
 
 const sliderImages = [
   { src: "https://placehold.co/1000x562/334155/e2e8f0?text=Your+Store+Design", alt: "Premium and professional website design" }, // Placeholder
@@ -449,21 +448,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Social Media Buttons - Fixed Position */}
-      <div className="fixed bottom-4 right-4 flex flex-col space-y-2 z-40">
-        <a href="https://wa.me/yourphonenumber" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full flex items-center justify-center bg-white icon-container">
-          <WhatsappIcon size={32} color="#25D366" />
-        </a>
-        <a href="https://www.instagram.com/yourusername" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full flex items-center justify-center bg-white icon-container">
-          <InstagramIcon size={32} style={{ background: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }} />
-        </a>
-        <a href="https://www.tiktok.com/@yourusername" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full flex items-center justify-center bg-white icon-container">
-          <TiktokIcon size={32} color="#000000" />
-        </a>
-        <a href="https://www.facebook.com/yourpagename" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full flex items-center justify-center bg-white icon-container">
-          <FacebookIcon size={32} color="#1877F2" />
-        </a>
-      </div>
+      {/* Social Media Buttons - Fixed Position (REMOVED) */}
 
       {/* Footer */}
       <footer className="bg-bg-deep py-12 border-t border-border-subtle text-center text-text-secondary">
