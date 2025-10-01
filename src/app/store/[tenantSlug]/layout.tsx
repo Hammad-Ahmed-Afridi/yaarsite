@@ -5,16 +5,96 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Store, ShoppingCart, Menu } from 'lucide-react'; // Import Menu icon
+import { Store, ShoppingCart, Menu } from 'lucide-react';
 import Image from 'next/image';
 import { useCart } from '@/components/cart-context-provider';
 import { AppLoader } from '@/components/app-loader';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { Profile } from '@/components/session-context-provider';
 import { StoreNavbar } from '@/components/store-navbar';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'; // Import Sheet components
-import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
-// Removed ThemeProvider import as it's no longer needed here
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { StoreThemeProvider, useStoreTheme } from '@/components/store-theme-provider'; // Import new theme provider and hook
+import { StoreThemeToggle } from '@/components/store-theme-toggle'; // Import new theme toggle
+import { cn } from '@/lib/utils'; // Import cn for class merging
+
+// Define a wrapper component to use the theme context
+function StoreLayoutContent({ children, tenantSlug, profile }: { children: React.ReactNode; tenantSlug: string; profile: Profile }) {
+  const router = useRouter();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const { itemCount } = useCart();
+  const isMobile = useIsMobile();
+  const { storeTheme } = useStoreTheme(); // Use the store theme hook
+
+  return (
+    <div className={cn(
+      "min-h-screen bg-background text-foreground flex flex-col",
+      storeTheme === 'dark' && 'dark' // Apply 'dark' class based on storeTheme
+    )}>
+      {/* Header */}
+      <header className="flex items-center justify-between p-4 border-b border-border bg-card">
+        <div className="flex items-center space-x-4">
+          {isMobile && (
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64 p-4">
+                <h2 className="text-xl font-bold mb-6">Navigation</h2>
+                <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
+              </SheetContent>
+            </Sheet>
+          )}
+          {profile?.avatar_url ? (
+            <div className="relative h-8 w-8 rounded-full overflow-hidden">
+              <Image
+                src={profile.avatar_url}
+                alt="Store Logo"
+                fill
+                style={{ objectFit: 'cover' }}
+                className="rounded-full"
+              />
+            </div>
+          ) : (
+            <Store className="h-6 w-6 text-primary" />
+          )}
+          <h1 className="text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
+        </div>
+
+        {/* Center Section: Desktop Navigation */}
+        {!isMobile && (
+          <div className="flex-grow flex justify-center">
+            <StoreNavbar tenantSlug={tenantSlug} direction="horizontal" />
+          </div>
+        )}
+
+        {/* Right Section: Theme Toggle, Cart Button */}
+        <div className="flex items-center gap-2">
+          <StoreThemeToggle /> {/* Use the new StoreThemeToggle */}
+          <Button onClick={() => router.push('/cart')} variant="outline" className="relative">
+            <ShoppingCart className="h-5 w-5" />
+            {itemCount > 0 && (
+              <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 rounded-full">
+                {itemCount}
+              </Badge>
+            )}
+          </Button>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 p-8">
+        {children}
+      </main>
+
+      <footer className="w-full py-4 text-center text-muted-foreground text-sm border-t border-border bg-card">
+        Made with Yaarsite
+      </footer>
+    </div>
+  );
+}
 
 export default function StoreLayout({
   children,
@@ -28,9 +108,6 @@ export default function StoreLayout({
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isSheetOpen, setIsSheetOpen] = useState(false); // State for mobile menu
-  const { itemCount } = useCart();
-  const isMobile = useIsMobile(); // Use the hook to detect mobile
 
   useEffect(() => {
     async function fetchStoreProfile() {
@@ -90,70 +167,10 @@ export default function StoreLayout({
   }
 
   return (
-    // Removed ThemeProvider wrapper here. The store will now inherit the theme from the root layout.
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Header */}
-      <header className="flex items-center justify-between p-4 border-b border-border bg-card">
-        <div className="flex items-center space-x-4">
-          {isMobile && (
-            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Toggle menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-64 p-4">
-                <h2 className="text-xl font-bold mb-6">Navigation</h2>
-                <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
-              </SheetContent>
-            </Sheet>
-          )}
-          {profile?.avatar_url ? (
-            <div className="relative h-8 w-8 rounded-full overflow-hidden">
-              <Image
-                src={profile.avatar_url}
-                alt="Store Logo"
-                fill
-                style={{ objectFit: 'cover' }}
-                className="rounded-full"
-              />
-            </div>
-          ) : (
-            <Store className="h-6 w-6 text-primary" />
-          )}
-          <h1 className="text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
-        </div>
-
-        {/* Center Section: Desktop Navigation */}
-        {!isMobile && (
-          <div className="flex-grow flex justify-center"> {/* This will center the navbar */}
-            <StoreNavbar tenantSlug={tenantSlug} direction="horizontal" />
-          </div>
-        )}
-
-        {/* Right Section: Theme Toggle, Cart Button */}
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <Button onClick={() => router.push('/cart')} variant="outline" className="relative">
-            <ShoppingCart className="h-5 w-5" />
-            {itemCount > 0 && (
-              <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 rounded-full">
-                {itemCount}
-              </Badge>
-            )}
-          </Button>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-1 p-8">
+    <StoreThemeProvider>
+      <StoreLayoutContent tenantSlug={tenantSlug} profile={profile}>
         {children}
-      </main>
-
-      <footer className="w-full py-4 text-center text-muted-foreground text-sm border-t border-border bg-card">
-        Made with Yaarsite
-      </footer>
-    </div>
+      </StoreLayoutContent>
+    </StoreThemeProvider>
   );
 }
