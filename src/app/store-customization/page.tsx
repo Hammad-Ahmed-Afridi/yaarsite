@@ -472,6 +472,7 @@ export default function StoreCustomizationPage() {
                   )}
                 </Button>
               </form>
+            </Tabs> {/* Closing Tabs tag added here */}
 
             <div className="mt-8 space-y-4">
               <h3 className="text-lg font-semibold">Store Status</h3>
