@@ -27,11 +27,31 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  // Load cart from localStorage on initial render
+  // Load cart from localStorage on initial render and validate it
   useEffect(() => {
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
-      setCartItems(JSON.parse(storedCart));
+      try {
+        const parsedCart: CartItem[] = JSON.parse(storedCart);
+        if (parsedCart.length > 0) {
+          const firstStoreOwnerId = parsedCart[0].storeOwnerId;
+          const isConsistent = parsedCart.every(item => item.storeOwnerId === firstStoreOwnerId);
+
+          if (!isConsistent) {
+            // If cart is inconsistent (items from multiple stores), clear it
+            setCartItems([]);
+            toast.warning("Your cart contained items from multiple stores and has been cleared for consistency.");
+          } else {
+            setCartItems(parsedCart);
+          }
+        } else {
+          setCartItems(parsedCart); // Cart is empty, no consistency check needed
+        }
+      } catch (e) {
+        console.error("Failed to parse cart from localStorage:", e);
+        setCartItems([]); // Clear cart if parsing fails
+        toast.error("There was an issue loading your cart. It has been reset.");
+      }
     }
   }, []);
 
