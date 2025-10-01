@@ -15,6 +15,21 @@ export function generateSlug(name: string): string {
 }
 
 /**
+ * Generates a random alphanumeric string of a specified length.
+ * @param length The desired length of the alphanumeric string.
+ * @returns A random alphanumeric string.
+ */
+export function generateRandomAlphanumeric(length: number): string {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
+/**
  * Compresses an image file using browser-image-compression.
  * @param imageFile The File object to compress.
  * @returns A Promise that resolves to the compressed File object.

@@ -9,7 +9,7 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
-import { generateSlug, compressImage } from '@/lib/utils';
+import { compressImage } from '@/lib/utils'; // Removed generateSlug as it's no longer used for tenant_slug
 import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from '@/components/ui/button';
@@ -188,15 +188,16 @@ export default function SettingsPage() {
         }
       }
 
-      const newTenantSlug = generateSlug(values.storeName);
+      // The tenant_slug is now a fixed random ID, so it should not be updated here.
+      // The store_url should be constructed using the existing tenant_slug.
       const appBaseUrl = window.location.origin;
-      const newStoreUrl = `${appBaseUrl}/store/${newTenantSlug}`;
+      const newStoreUrl = `${appBaseUrl}/store/${profile?.tenant_slug}`;
 
       const { error } = await supabase
         .from('profiles')
         .update({
           tenant_name: values.storeName,
-          tenant_slug: newTenantSlug,
+          // tenant_slug is intentionally not updated here as it's a fixed ID
           store_url: newStoreUrl,
           store_description: values.storeDescription || null,
           avatar_url: newAvatarUrl,

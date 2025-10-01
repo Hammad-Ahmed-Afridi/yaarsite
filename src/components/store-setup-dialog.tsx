@@ -8,7 +8,7 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
-import { generateSlug } from '@/lib/utils';
+import { generateRandomAlphanumeric } from '@/lib/utils'; // Import the new utility function
 
 import {
   Dialog,
@@ -62,17 +62,54 @@ export function StoreSetupDialog() {
     toast.info("Yaarsite AI is building your store. Wait for the magic to happen...", { duration: 9000 }); // Increased duration
 
     try {
-      const tenantSlug = generateSlug(values.storeName);
-      const appBaseUrl = window.location.origin; // Dynamically get base URL
-      const storeUrl = `${appBaseUrl}/store/${tenantSlug}`;
+      // 1. Check if a store with the same name already exists
+      const { data: existingStore, error: checkNameError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('tenant_name', values.storeName)
+        .single();
 
-      // Update the user's profile with store information
+      if (checkNameError && checkNameError.code !== 'PGRST116') { // PGRST116 means "no rows found"
+        throw new Error(`Error checking for existing store name: ${checkNameError.message}`);
+      }
+
+      if (existingStore) {
+        toast.error("A store with this name already exists. Please choose a different name.");
+        setIsBuildingStore(false);
+        return;
+      }
+
+      // 2. Generate a unique 6-character alphanumeric tenant_slug
+      let uniqueTenantSlug = '';
+      let isSlugUnique = false;
+      while (!isSlugUnique) {
+        const potentialSlug = generateRandomAlphanumeric(6);
+        const { count, error: slugCheckError } = await supabase
+          .from('profiles')
+          .select('id', { count: 'exact', head: true })
+          .eq('tenant_slug', potentialSlug);
+
+        if (slugCheckError) {
+          throw new Error(`Error checking slug uniqueness: ${slugCheckError.message}`);
+        }
+
+        if (count === 0) {
+          uniqueTenantSlug = potentialSlug;
+          isSlugUnique = true;
+        }
+      }
+
+      const appBaseUrl = window.location.origin; // Dynamically get base URL
+      const storeUrl = `${appBaseUrl}/store/${uniqueTenantSlug}`;
+
+      // 3. Update the user's profile with store information
       const { error } = await supabase
         .from('profiles')
         .update({
           tenant_name: values.storeName,
-          tenant_slug: tenantSlug,
+          tenant_slug: uniqueTenantSlug, // Use the generated unique slug
           store_url: storeUrl,
+          store_description: values.storeDescription || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -98,9 +135,9 @@ export function StoreSetupDialog() {
       setIsDialogOpen(false); // Close the dialog
       router.push('/'); // Redirect to dashboard (already there, but ensures state consistency)
 
-    } catch (err) {
+    } catch (err: any) {
       console.error("Unexpected error during store creation:", err);
-      toast.error("An unexpected error occurred during store creation.");
+      toast.error(err.message || "An unexpected error occurred during store creation.");
       setIsBuildingStore(false);
     }
   };
