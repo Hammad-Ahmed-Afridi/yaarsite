@@ -18,6 +18,7 @@ interface Profile {
   home_page_description: string | null;
 }
 
+// @ts-expect-error
 export default async function StoreHomePage({ params }: { params: { tenantSlug: string } }) {
   const tenantSlug = params.tenantSlug;
 

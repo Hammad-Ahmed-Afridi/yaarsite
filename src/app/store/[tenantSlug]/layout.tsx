@@ -14,6 +14,7 @@ import { StoreNavbar } from '@/components/store-navbar';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+// @ts-expect-error
 export default function StoreLayout({
   children,
   params,

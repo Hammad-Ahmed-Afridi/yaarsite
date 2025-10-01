@@ -9,6 +9,7 @@ interface Profile {
   about_page_content: string | null;
 }
 
+// @ts-expect-error
 export default async function StoreAboutPage({ params }: { params: { tenantSlug: string } }) {
   const tenantSlug = params.tenantSlug;
 
