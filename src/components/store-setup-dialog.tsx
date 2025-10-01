@@ -8,7 +8,7 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
-import { generateSlug } from '@/lib/utils';
+import { generateRandomAlphanumericCode } from '@/lib/utils'; // Updated import
 
 import {
   Dialog,
@@ -62,7 +62,25 @@ export function StoreSetupDialog() {
     toast.info("Yaarsite AI is building your store. Wait for the magic to happen...", { duration: 9000 }); // Increased duration
 
     try {
-      const tenantSlug = generateSlug(values.storeName);
+      // Check if store name already exists
+      const { data: existingStore, error: checkError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('tenant_name', values.storeName)
+        .single();
+
+      if (checkError && checkError.code !== 'PGRST116') { // PGRST116 means no rows found
+        console.error("Error checking for existing store name:", checkError);
+        throw new Error("Failed to check for existing store name.");
+      }
+
+      if (existingStore) {
+        toast.error("A store with this name already exists. Please choose a different name.");
+        setIsBuildingStore(false);
+        return;
+      }
+
+      const tenantSlug = generateRandomAlphanumericCode(); // Generate random alphanumeric code
       const appBaseUrl = window.location.origin; // Dynamically get base URL
       const storeUrl = `${appBaseUrl}/store/${tenantSlug}`;
 
@@ -73,6 +91,7 @@ export function StoreSetupDialog() {
           tenant_name: values.storeName,
           tenant_slug: tenantSlug,
           store_url: storeUrl,
+          store_description: values.storeDescription || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -100,7 +119,7 @@ export function StoreSetupDialog() {
 
     } catch (err) {
       console.error("Unexpected error during store creation:", err);
-      toast.error("An unexpected error occurred during store creation.");
+      toast.error((err as Error).message || "An unexpected error occurred during store creation.");
       setIsBuildingStore(false);
     }
   };
