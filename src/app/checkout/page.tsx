@@ -20,6 +20,8 @@ const generateRandomCode = () => {
   return Math.random().toString(36).substring(2, 6).toUpperCase();
 };
 
+const COD_CHARGE = 200; // Define COD charge here
+
 const formSchema = z.object({
   customerName: z.string().min(1, { message: "Name is required." }),
   customerEmail: z.string().email({ message: "Please enter a valid email address." }),
@@ -126,6 +128,8 @@ export default function CheckoutPage() {
         determinedTenantSlug = profileData.tenant_slug;
       }
 
+      const totalAmountWithCod = cartTotal + COD_CHARGE; // Calculate total including COD
+
       const response = await fetch('/api/place-order', {
         method: 'POST',
         headers: {
@@ -138,7 +142,7 @@ export default function CheckoutPage() {
           shippingProvince: values.shippingProvince,
           shippingCity: values.shippingCity,
           shippingAddressLine: values.shippingAddressLine,
-          totalAmount: cartTotal,
+          totalAmount: totalAmountWithCod, // Send total with COD charge
           items: cartItems,
           storeOwnerId: currentStoreOwnerId,
         }),
@@ -183,6 +187,9 @@ export default function CheckoutPage() {
     );
   }
 
+  const displayCartTotal = cartTotal;
+  const displayTotalWithCod = cartTotal + COD_CHARGE;
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <header className="flex items-center p-4 border-b border-border bg-card">
@@ -203,12 +210,16 @@ export default function CheckoutPage() {
           <CardContent>
             <div className="space-y-4 mb-6">
               <div className="flex justify-between text-lg font-semibold">
-                <span>Total Items:</span>
-                <span>{cartItems.reduce((count, item) => count + item.quantity, 0)}</span>
+                <span>Items Total:</span>
+                <span>Rs{displayCartTotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-lg font-semibold">
+                <span>COD Charges:</span>
+                <span>Rs{COD_CHARGE.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-2xl font-bold">
                 <span>Order Total:</span>
-                <span>Rs{cartTotal.toFixed(2)}</span>
+                <span>Rs{displayTotalWithCod.toFixed(2)}</span>
               </div>
             </div>
 
