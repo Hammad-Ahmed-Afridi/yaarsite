@@ -9,7 +9,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Menu, X, ChevronLeft, ChevronRight, Zap, Smartphone, Package, DollarSign, Share2 } from 'lucide-react'; // Replaced specific social icons with Share2
+import { Menu, X, ChevronLeft, ChevronRight, Zap, Smartphone, Package, DollarSign, Share2, Star } from 'lucide-react'; // Added Star icon
+import useEmblaCarousel from 'embla-carousel-react'; // Import Embla Carousel
 
 const sliderImages = [
   { src: "https://res.cloudinary.com/ddplxy4nd/image/upload/c_limit,h_186,w_195/Capture_jatcqb", alt: "Premium and professional website design" },
@@ -24,6 +25,14 @@ const teamMembers = [
   { name: "Emily White", title: "Marketing Specialist", description: "Emily ensures our message reaches the right audience, driving growth and engagement.", imageUrl: "https://res.cloudinary.com/ddplxy4nd/image/upload/t_hello/WIN_20250917_12_08_30_Pro_gmys9h" },
 ];
 
+const testimonials = [
+  { quote: "Yaarsite was a game-changer for my small business. The setup was incredibly easy, and my online store looks amazing. I couldn't be happier!", author: "Jane Doe", title: "Founder, Jane's Crafts", imageUrl: "https://placehold.co/48x48/1a202d/94a3b8?text=JD" },
+  { quote: "I had zero experience with websites, but YaarSite made the entire process so simple. Highly recommend for anyone looking to get online fast.", author: "Mike Johnson", title: "Owner, Mike's Gadgets", imageUrl: "https://placehold.co/48x48/1a202d/94a3b8?text=MJ" },
+  { quote: "The customer support is fantastic, and the platform is so intuitive. It's the best decision I've made for my online business.", author: "Lisa Periz", title: "Creator, The Art Shop", imageUrl: "https://placehold.co/48x48/1a202d/94a3b8?text=LP" },
+  { quote: "Finally, a platform that truly understands the needs of small businesses. Yaarsite helped me reach more customers than I ever thought possible.", author: "David Lee", title: "Entrepreneur, Tech Solutions", imageUrl: "https://placehold.co/48x48/1a202d/94a3b8?text=DL" },
+  { quote: "Setting up my store was a breeze, and the results speak for themselves. Professional, beautiful, and incredibly easy to manage.", author: "Sarah Chen", title: "Owner, Sarah's Boutique", imageUrl: "https://placehold.co/48x48/1a202d/94a3b8?text=SC" },
+];
+
 export default function LandingPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -34,7 +43,9 @@ export default function LandingPage() {
   const featureRefs = useRef<(HTMLDivElement | null)[]>([]);
   const testimonialRefs = useRef<(HTMLDivElement | null)[]>([]);
   const pricingRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const faqRefs = useRef<(HTMLDivElement | null)[]>([]); // Changed from HTMLDetailsElement to HTMLDivElement
+  const faqRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' });
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -259,37 +270,44 @@ export default function LandingPage() {
             </h2>
             <p className="text-lg text-text-secondary max-w-2xl mx-auto">Hear from people who have successfully launched their business with YaarSite.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div ref={(el) => { if (el) testimonialRefs.current[1] = el; }} className="bg-bg-card p-8 rounded-2xl shadow-lg border border-border-subtle card-tilt opacity-0 translate-y-5">
-              <p className="text-xl italic text-text-primary mb-4">"Yaarsite was a game-changer for my small business. The setup was incredibly easy, and my online store looks amazing. I couldn't be happier!"</p>
-              <div className="flex items-center">
-                <Image src="https://placehold.co/48x48/1a202d/94a3b8?text=JD" alt="Jane Doe profile" width={48} height={48} className="w-12 h-12 rounded-full mr-4" />
-                <div>
-                  <p className="font-semibold text-text-primary">Jane Doe</p>
-                  <p className="text-sm text-text-secondary">Founder, Jane's Crafts</p>
-                </div>
+          <div className="relative">
+            <div className="embla" ref={emblaRef}>
+              <div className="embla__container flex -ml-4"> {/* Added negative margin to counteract slide padding */}
+                {testimonials.map((testimonial, index) => (
+                  <div key={index} className="embla__slide flex-[0_0_100%] min-w-0 pl-4 md:flex-[0_0_50%] lg:flex-[0_0_33.333%]"> {/* Adjusted flex basis for responsiveness */}
+                    <div ref={(el) => { if (el) testimonialRefs.current[index + 1] = el; }} className="bg-bg-card p-8 rounded-2xl shadow-lg border border-border-subtle h-full flex flex-col justify-between opacity-0 translate-y-5">
+                      <div>
+                        <div className="flex mb-4">
+                          {[...Array(5)].map((_, i) => (
+                            <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+                          ))}
+                        </div>
+                        <p className="text-xl italic text-text-primary mb-4">"{testimonial.quote}"</p>
+                      </div>
+                      <div className="flex items-center mt-4">
+                        <Image src={testimonial.imageUrl} alt={testimonial.author} width={48} height={48} className="w-12 h-12 rounded-full mr-4 object-cover" />
+                        <div>
+                          <p className="font-semibold text-text-primary">{testimonial.author}</p>
+                          <p className="text-sm text-text-secondary">{testimonial.title}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-            <div ref={(el) => { if (el) testimonialRefs.current[2] = el; }} className="bg-bg-card p-8 rounded-2xl shadow-lg border border-border-subtle card-tilt opacity-0 translate-y-5">
-              <p className="text-xl italic text-text-primary mb-4">"I had zero experience with websites, but YaarSite made the entire process so simple."</p>
-              <div className="flex items-center">
-                <Image src="https://placehold.co/48x48/1a202d/94a3b8?text=MJ" alt="Mike Johnson profile" width={48} height={48} className="w-12 h-12 rounded-full mr-4" />
-                <div>
-                  <p className="font-semibold text-text-primary">Mike Johnson</p>
-                  <p className="text-sm text-text-secondary">Owner, Mike's Gadgets</p>
-                </div>
-              </div>
-            </div>
-            <div ref={(el) => { if (el) testimonialRefs.current[3] = el; }} className="bg-bg-card p-8 rounded-2xl shadow-lg border border-border-subtle card-tilt opacity-0 translate-y-5">
-              <p className="text-xl italic text-text-primary mb-4">"The customer support is fantastic, and the platform is so intuitive. It's the best decision I've made for my online business."</p>
-              <div className="flex items-center">
-                <Image src="https://placehold.co/48x48/1a202d/94a3b8?text=LP" alt="Lisa Periz profile" width={48} height={48} className="w-12 h-12 rounded-full mr-4" />
-                <div>
-                  <p className="font-semibold text-text-primary">Lisa Periz</p>
-                  <p className="text-sm text-text-secondary">Creator, The Art Shop</p>
-                </div>
-              </div>
-            </div>
+            <button
+              className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 transition-colors duration-200 z-10"
+              onClick={() => emblaApi && emblaApi.scrollPrev()}
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button
+              className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 transition-colors duration-200 z-10"
+              onClick={() => emblaApi && emblaApi.scrollNext()}
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
           </div>
         </div>
       </section>
@@ -309,15 +327,30 @@ export default function LandingPage() {
               <h3 className="text-2xl font-bold mb-4 text-text-primary">Starter</h3>
               <p className="text-5xl font-extrabold text-accent-1 mb-4">Free</p>
               <p className="text-text-secondary mb-8">For new businesses just getting started online.</p>
+              <ul className="text-text-secondary space-y-2 mb-8">
+                <li>✓ Up to 3 Products</li>
+                <li>✓ Basic Store Customization</li>
+                <li>✓ Mobile-Responsive Design</li>
+                <li>✓ Secure Hosting</li>
+                <li>✓ 24/7 Email Support</li>
+              </ul>
               <Link href="/signup" className="block text-center rounded-full bg-accent-1 px-8 py-4 text-lg font-bold text-white shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-accent-1/20">
                 Get Started
               </Link>
             </div>
             {/* Pro Plan */}
-            <div ref={(el) => { if (el) pricingRefs.current[2] = el; }} className="bg-bg-deep p-10 rounded-2xl shadow-2xl border-4 border-accent-1 transition-transform duration-300 hover:scale-105 transform scale-105 opacity-0 translate-y-5">
+            <div ref={(el) => { if (el) pricingRefs.current[2] = el; }} className="relative bg-bg-deep p-10 rounded-2xl shadow-2xl border-4 border-accent-1 transition-transform duration-300 hover:scale-105 transform scale-105 opacity-0 translate-y-5">
+              <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-accent-2 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">Most Popular</span>
               <h3 className="text-2xl font-bold mb-4 text-text-primary">Pro</h3>
-              <p className="text-5xl font-extrabold text-accent-1 mb-4">Rs 2000</p>
+              <p className="text-5xl font-extrabold text-accent-1 mb-4">Rs 2000<span className="text-lg text-text-secondary">/month</span></p>
               <p className="text-text-secondary mb-8">Unlock advanced features and scale your business.</p>
+              <ul className="text-text-secondary space-y-2 mb-8">
+                <li>✓ Unlimited Products</li>
+                <li>✓ Advanced Store Customization</li>
+                <li>✓ Priority Support</li>
+                <li>✓ Analytics & Reporting</li>
+                <li>✓ Custom Domain Support</li>
+              </ul>
               <Link href="/signup" className="block text-center rounded-full bg-accent-1 px-8 py-4 text-lg font-bold text-white shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-accent-1/20">
                 Choose Pro
               </Link>
@@ -325,8 +358,15 @@ export default function LandingPage() {
             {/* Business Plan */}
             <div ref={(el) => { if (el) pricingRefs.current[3] = el; }} className="bg-bg-card p-8 rounded-2xl shadow-xl border border-border-subtle transition-transform duration-300 hover:scale-105 opacity-0 translate-y-5">
               <h3 className="text-2xl font-bold mb-4 text-text-primary">Business</h3>
-              <p className="text-5xl font-extrabold text-accent-1 mb-4">Rs 30000</p>
+              <p className="text-5xl font-extrabold text-accent-1 mb-4">Rs 30000<span className="text-lg text-text-secondary">/year</span></p>
               <p className="text-text-secondary mb-8">For growing stores with more control and power.</p>
+              <ul className="text-text-secondary space-y-2 mb-8">
+                <li>✓ All Pro Features</li>
+                <li>✓ Dedicated Account Manager</li>
+                <li>✓ Advanced Marketing Tools</li>
+                <li>✓ API Access</li>
+                <li>✓ Custom Integrations</li>
+              </ul>
               <Link href="/signup" className="block text-center rounded-full bg-accent-1 px-8 py-4 text-lg font-bold text-white shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-accent-1/20">
                 Choose Business
               </Link>
@@ -395,7 +435,7 @@ export default function LandingPage() {
               <div key={index} ref={(el) => { if (el) featureRefs.current[6 + index] = el; }} className="relative bg-bg-deep/50 rounded-xl p-6 shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden group opacity-0 translate-y-5">
                 <div className="absolute inset-0 bg-gradient-to-r from-accent-1 to-accent-2 opacity-0 transition-opacity duration-300 group-hover:opacity-10 blur-xl"></div>
                 <div className="relative z-10 flex flex-col items-center text-center">
-                  <Image src={member.imageUrl} alt={member.name} width={96} height={96} className="w-24 h-24 rounded-full border-2 border-accent-1 mb-4 shadow-md object-cover" />
+                  <Image src={member.imageUrl} alt={member.name} width={96} height={96} className="w-24 h-24 rounded-full border-2 border-accent-1 mb-4 shadow-md object-cover group-hover:scale-105 transition-transform duration-300" />
                   <h3 className="text-xl font-bold text-text-primary">{member.name}</h3>
                   <p className="text-sm text-text-secondary">{member.title}</p>
                   <p className="mt-4 text-sm text-text-subtle">

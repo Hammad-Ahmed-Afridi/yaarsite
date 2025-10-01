@@ -172,7 +172,15 @@ body {
         radial-gradient(at 85% 85%, #164e63 0, transparent 40%),
         radial-gradient(at 0% 100%, #1e293b 0, transparent 50%),
         radial-gradient(at 100% 0%, #1e293b 0, transparent 50%);
+    background-size: 200% 200%; /* Make background larger than viewport */
+    animation: moveBackground 20s ease infinite alternate; /* Animate background position */
 }
+
+@keyframes moveBackground {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+}
+
 .shimmer-text {
     background: linear-gradient(90deg, #e2e8f0, #94a3b8, #e2e8f0);
     background-size: 200% auto;
