@@ -59,7 +59,16 @@ export default {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
-  			}
+  			},
+            // Custom colors from landing page HTML
+            'bg-deep': '#0c0f17',
+            'bg-card': '#1a202d',
+            'text-primary': '#e2e8f0',
+            'text-secondary': '#94a3b8',
+            'accent-1': '#3b82f6',
+            'accent-2': '#14b8a6',
+            'border-subtle': '#2d3340',
+            'text-subtle': '#94a3b8', // Added for team section description
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -87,7 +96,7 @@ export default {
                 '0%': { transform: 'translateX(100%)' },
                 '100%': { transform: 'translateX(-100%)' },
             },
-            'bounce-down': { // New keyframe for bouncing arrow
+            'bounce-down': { // Slower bounce for the main icon
                 '0%, 100%': { transform: 'translateY(0)' },
                 '50%': { transform: 'translateY(10px)' },
             },
@@ -99,6 +108,19 @@ export default {
                 from: { transform: 'rotate(0deg)' },
                 to: { transform: 'rotate(-360deg)' }, // Spin in opposite direction
             },
+            // Custom keyframes from landing page HTML
+            'fade-in-up': {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            'shimmer': {
+                '0%': { backgroundPosition: 'left' },
+                '100%': { backgroundPosition: 'right' },
+            },
+            'pulse-glow': {
+                '0%, 100%': { transform: 'scale(1)', opacity: '0.6' },
+                '50%': { transform: 'scale(1.05)', opacity: '1' },
+            }
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
@@ -107,6 +129,10 @@ export default {
             'bounce-down': 'bounce-down 1.5s infinite', // New animation
             'spin-slow': 'spin-slow 8s linear infinite',
             'spin-fast': 'spin-fast 3s linear infinite',
+            // Custom animations from landing page HTML
+            'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
+            'shimmer': 'shimmer 2s linear infinite',
+            'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
   		}
   	}
   },

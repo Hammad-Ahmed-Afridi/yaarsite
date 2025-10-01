@@ -151,3 +151,53 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom styles from landing page HTML */
+html {
+    scroll-behavior: smooth;
+}
+body {
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #0c0f17; /* This will be overridden by Tailwind's bg-bg-deep */
+    color: #e2e8f0; /* This will be overridden by Tailwind's text-text-primary */
+    overflow-x: hidden;
+}
+.hero-bg {
+    position: relative;
+    background: #0c0f17;
+    background-image:
+        radial-gradient(at 15% 15%, #1e3a8a 0, transparent 40%),
+        radial-gradient(at 85% 85%, #164e63 0, transparent 40%),
+        radial-gradient(at 0% 100%, #1e293b 0, transparent 50%),
+        radial-gradient(at 100% 0%, #1e293b 0, transparent 50%);
+}
+.shimmer-text {
+    background: linear-gradient(90deg, #e2e8f0, #94a3b8, #e2e8f0);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+     background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 2s linear infinite;
+}
+.card-tilt {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+    transition: transform 0.3s ease-out;
+}
+.card-tilt:hover {
+    transform: perspective(1000px) rotateY(5deg) rotateX(5deg);
+}
+.hidden-element {
+    opacity: 0;
+    transform: translateY(20px);
+}
+.icon-container {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.icon-container:hover {
+    transform: scale(1.1);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+}
