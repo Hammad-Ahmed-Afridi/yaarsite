@@ -11,44 +11,41 @@ import { ArrowLeft, Trash2, ShoppingCart, Minus, Plus } from 'lucide-react';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
 
 export default function CartPage() {
   const router = useRouter();
   const { cartItems, removeFromCart, updateQuantity, cartTotal, itemCount } = useCart();
   const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null);
-  const [deliveryCharge, setDeliveryCharge] = useState<number>(0); // New state for delivery charge
-  const [isLoadingStoreData, setIsLoadingStoreData] = useState(true); // Combined loading state
-  const isMobile = useIsMobile();
+  const [isLoadingStoreSlug, setIsLoadingStoreSlug] = useState(true);
+  const isMobile = useIsMobile(); // Use the hook
 
   useEffect(() => {
-    async function fetchStoreData() {
-      setIsLoadingStoreData(true);
+    async function fetchStoreSlug() {
+      setIsLoadingStoreSlug(true);
       if (cartItems.length > 0) {
+        // Assuming all items in the cart belong to the same store owner
         const storeOwnerId = cartItems[0].storeOwnerId;
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('tenant_slug, delivery_charge')
+          .select('tenant_slug')
           .eq('id', storeOwnerId)
           .single();
 
-        if (profileError || !profileData) {
-          console.error("Error fetching store tenant slug and delivery charge:", profileError);
-          setStoreTenantSlug(null);
-          setDeliveryCharge(0); // Default to 0 if not found
+        if (profileError || !profileData?.tenant_slug) {
+          console.error("Error fetching store tenant slug:", profileError);
+          setStoreTenantSlug(null); // Fallback to generic store if error
         } else {
           setStoreTenantSlug(profileData.tenant_slug);
-          setDeliveryCharge(profileData.delivery_charge || 0); // Use fetched charge or default to 0
         }
       } else {
-        setStoreTenantSlug(null);
-        setDeliveryCharge(0);
+        setStoreTenantSlug(null); // No items, no specific store slug
       }
-      setIsLoadingStoreData(false);
+      setIsLoadingStoreSlug(false);
     }
 
-    fetchStoreData();
-  }, [cartItems]);
+    fetchStoreSlug();
+  }, [cartItems]); // Re-fetch when cartItems change
 
   const handleUpdateQuantity = (productId: string, newQuantity: number) => {
     if (newQuantity < 1) {
@@ -59,10 +56,10 @@ export default function CartPage() {
   };
 
   const continueShoppingPath = storeTenantSlug ? `/store/${storeTenantSlug}` : '/store';
-  const displayTotalWithDelivery = cartTotal + deliveryCharge;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
+      {/* Header */}
       <header className="flex items-center p-4 border-b border-border bg-card">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="h-5 w-5" />
@@ -70,6 +67,7 @@ export default function CartPage() {
         <h1 className="text-xl font-bold ml-4">Your Shopping Cart ({itemCount} items)</h1>
       </header>
 
+      {/* Main Content */}
       <main className="flex-1 p-8">
         {cartItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-lg p-8">
@@ -78,6 +76,7 @@ export default function CartPage() {
             <p className="text-sm text-muted-foreground mb-6">
               Looks like you haven't added anything to your cart yet.
             </p>
+            {/* Removed the "Start Shopping" button */}
           </div>
         ) : (
           <div className="grid gap-8 lg:grid-cols-3">
@@ -228,16 +227,8 @@ export default function CartPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between text-lg font-semibold">
-                    <span>Items Total:</span>
-                    <span>Rs{cartTotal.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-lg font-semibold">
-                    <span>Delivery Charge:</span>
-                    <span>Rs{deliveryCharge.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-2xl font-bold">
                     <span>Total:</span>
-                    <span>Rs{displayTotalWithDelivery.toFixed(2)}</span>
+                    <span>Rs{cartTotal.toFixed(2)}</span>
                   </div>
                   <Button className="w-full" onClick={() => router.push('/checkout')}>
                     Proceed to Checkout
