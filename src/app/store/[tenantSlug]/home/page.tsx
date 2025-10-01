@@ -5,14 +5,6 @@ import { Store, Package } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-// Define component-specific props directly
-interface StoreHomePageProps {
-  params: {
-    tenantSlug: string;
-  };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
-
 interface Profile {
   id: string;
   email: string | null;
@@ -26,7 +18,7 @@ interface Profile {
   home_page_description: string | null;
 }
 
-export default async function StoreHomePage({ params }: StoreHomePageProps) {
+export default async function StoreHomePage({ params }: { params: { tenantSlug: string } }) {
   const tenantSlug = params.tenantSlug;
 
   if (!tenantSlug) {

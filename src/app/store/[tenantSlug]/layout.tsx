@@ -14,18 +14,13 @@ import { StoreNavbar } from '@/components/store-navbar';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-// Define component-specific props directly
-interface StoreLayoutProps {
-  children: React.ReactNode;
-  params: {
-    tenantSlug: string;
-  };
-}
-
 export default function StoreLayout({
   children,
   params,
-}: StoreLayoutProps) {
+}: {
+  children: React.ReactNode;
+  params: { tenantSlug: string };
+}) {
   const router = useRouter();
   const tenantSlug = params.tenantSlug;
   const [profile, setProfile] = useState<Profile | null>(null);

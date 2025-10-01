@@ -2,14 +2,6 @@ import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Info } from 'lucide-react';
 
-// Define component-specific props directly
-interface StoreAboutPageProps {
-  params: {
-    tenantSlug: string;
-  };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
-
 interface Profile {
   id: string;
   tenant_name: string | null;
@@ -17,7 +9,7 @@ interface Profile {
   about_page_content: string | null;
 }
 
-export default async function StoreAboutPage({ params }: StoreAboutPageProps) {
+export default async function StoreAboutPage({ params }: { params: { tenantSlug: string } }) {
   const tenantSlug = params.tenantSlug;
 
   if (!tenantSlug) {
