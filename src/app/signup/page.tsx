@@ -26,9 +26,7 @@ const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
   email: z.string().email({ message: "Enter a valid email address." }),
   phoneNumber: z.string()
-    .regex(/^03\d{9}$/, { message: "Must start with 03 and be 11 digits long." })
-    .optional()
-    .or(z.literal('')),
+    .regex(/^03\d{9}$/, { message: "Phone number must start with 03 and be 11 digits long." }), // Removed .optional().or(z.literal(''))
   password: z.string().min(6, { message: "Password must be at least 6 characters long." }),
   confirmPassword: z.string(),
   terms: z.boolean().refine(val => val === true, { message: "You must accept the terms and conditions." }),
@@ -53,7 +51,7 @@ export default function SignupPage() {
     defaultValues: {
       name: "",
       email: "",
-      phoneNumber: "",
+      phoneNumber: "", // Now mandatory
       password: "",
       confirmPassword: "",
       terms: false,
@@ -85,7 +83,7 @@ export default function SignupPage() {
     setIsLoading(true);
     try {
       // Check for existing phone number
-      if (values.phoneNumber) {
+      if (values.phoneNumber) { // This check will now always run as phoneNumber is mandatory
         const { data: existingPhone, error: phoneCheckError } = await supabase
           .from('profiles')
           .select('id')
@@ -109,7 +107,7 @@ export default function SignupPage() {
         options: {
           data: {
             name: values.name,
-            phone_number: values.phoneNumber || null,
+            phone_number: values.phoneNumber, // Now mandatory, so no need for || null
           },
         },
       });
