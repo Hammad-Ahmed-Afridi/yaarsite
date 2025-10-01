@@ -6,11 +6,7 @@ const nextConfig: NextConfig = {
     return config;
   },
   images: {
-    domains: [
-      'vpfrtytxeimezwxhhtuf.supabase.co', // Existing Supabase domain
-      'res.cloudinary.com', // Added for landing page images
-      'placehold.co' // Added for landing page placeholder images
-    ], 
+    domains: ['vpfrtytxeimezwxhhtuf.supabase.co'], // Allow images from your Supabase storage
   },
 };
 
