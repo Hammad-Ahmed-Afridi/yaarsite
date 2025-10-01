@@ -14,7 +14,7 @@ import { Profile } from '@/components/session-context-provider';
 import { StoreNavbar } from '@/components/store-navbar';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'; // Import Sheet components
 import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
-import { ThemeProvider } from "@/components/theme-provider"; // Import ThemeProvider for store
+// Removed ThemeProvider import as it's no longer needed here
 
 export default function StoreLayout({
   children,
@@ -90,78 +90,70 @@ export default function StoreLayout({
   }
 
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="light" 
-      enableSystem
-      disableTransitionOnChange
-      // Added storageKey for store theme
-      storageKey="store-theme" 
-    >
-      <div className="min-h-screen bg-background text-foreground flex flex-col">
-        {/* Header */}
-        <header className="flex items-center justify-between p-4 border-b border-border bg-card">
-          <div className="flex items-center space-x-4">
-            {isMobile && (
-              <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Menu className="h-5 w-5" />
-                    <span className="sr-only">Toggle menu</span>
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-64 p-4">
-                  <h2 className="text-xl font-bold mb-6">Navigation</h2>
-                  <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
-                </SheetContent>
-              </Sheet>
-            )}
-            {profile?.avatar_url ? (
-              <div className="relative h-8 w-8 rounded-full overflow-hidden">
-                <Image
-                  src={profile.avatar_url}
-                  alt="Store Logo"
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  className="rounded-full"
-                />
-              </div>
-            ) : (
-              <Store className="h-6 w-6 text-primary" />
-            )}
-            <h1 className="text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
-          </div>
-
-          {/* Center Section: Desktop Navigation */}
-          {!isMobile && (
-            <div className="flex-grow flex justify-center"> {/* This will center the navbar */}
-              <StoreNavbar tenantSlug={tenantSlug} direction="horizontal" />
-            </div>
+    // Removed ThemeProvider wrapper here. The store will now inherit the theme from the root layout.
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+      {/* Header */}
+      <header className="flex items-center justify-between p-4 border-b border-border bg-card">
+        <div className="flex items-center space-x-4">
+          {isMobile && (
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64 p-4">
+                <h2 className="text-xl font-bold mb-6">Navigation</h2>
+                <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
+              </SheetContent>
+            </Sheet>
           )}
+          {profile?.avatar_url ? (
+            <div className="relative h-8 w-8 rounded-full overflow-hidden">
+              <Image
+                src={profile.avatar_url}
+                alt="Store Logo"
+                fill
+                style={{ objectFit: 'cover' }}
+                className="rounded-full"
+              />
+            </div>
+          ) : (
+            <Store className="h-6 w-6 text-primary" />
+          )}
+          <h1 className="text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
+        </div>
 
-          {/* Right Section: Theme Toggle, Cart Button */}
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <Button onClick={() => router.push('/cart')} variant="outline" className="relative">
-              <ShoppingCart className="h-5 w-5" />
-              {itemCount > 0 && (
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 rounded-full">
-                  {itemCount}
-                </Badge>
-              )}
-            </Button>
+        {/* Center Section: Desktop Navigation */}
+        {!isMobile && (
+          <div className="flex-grow flex justify-center"> {/* This will center the navbar */}
+            <StoreNavbar tenantSlug={tenantSlug} direction="horizontal" />
           </div>
-        </header>
+        )}
 
-        {/* Main Content */}
-        <main className="flex-1 p-8">
-          {children}
-        </main>
+        {/* Right Section: Theme Toggle, Cart Button */}
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <Button onClick={() => router.push('/cart')} variant="outline" className="relative">
+            <ShoppingCart className="h-5 w-5" />
+            {itemCount > 0 && (
+              <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 rounded-full">
+                {itemCount}
+              </Badge>
+            )}
+          </Button>
+        </div>
+      </header>
 
-        <footer className="w-full py-4 text-center text-muted-foreground text-sm border-t border-border bg-card">
-          Made with Yaarsite
-        </footer>
-      </div>
-    </ThemeProvider>
+      {/* Main Content */}
+      <main className="flex-1 p-8">
+        {children}
+      </main>
+
+      <footer className="w-full py-4 text-center text-muted-foreground text-sm border-t border-border bg-card">
+        Made with Yaarsite
+      </footer>
+    </div>
   );
 }
