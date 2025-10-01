@@ -9,13 +9,7 @@ interface Profile {
   about_page_content: string | null;
 }
 
-// Define PageProps for server components
-interface PageProps {
-  params: { tenantSlug: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
-
-export default async function StoreAboutPage({ params }: PageProps) {
+export default async function StoreAboutPage({ params }: { params: any }) { // Changed params type to any
   const tenantSlug = params.tenantSlug;
 
   if (!tenantSlug) {
