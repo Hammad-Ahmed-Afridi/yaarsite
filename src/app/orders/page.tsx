@@ -20,7 +20,12 @@ import { AppLoader } from '@/components/app-loader'; // Import AppLoader
 interface Order {
   id: string;
   user_id: string;
+  customer_name: string; // New field
   customer_email: string;
+  customer_phone: string; // New field
+  shipping_province: string; // New field
+  shipping_city: string; // New field
+  shipping_address_line: string; // New field
   total_amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   items_json: any[];
@@ -144,9 +149,20 @@ export default function OrdersPage() {
                   <Card key={order.id} className="bg-card text-card-foreground shadow-md">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg">Order ID: {order.id.substring(0, 8)}...</CardTitle>
-                      <p className="text-sm text-muted-foreground">Customer: {order.customer_email}</p>
+                      <p className="text-sm text-muted-foreground">Customer: {order.customer_name} ({order.customer_email})</p>
                     </CardHeader>
                     <CardContent className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">Phone:</span>
+                        <span>{order.customer_phone}</span>
+                      </div>
+                      <div className="flex justify-between items-start">
+                        <span className="font-medium">Address:</span>
+                        <div className="text-right">
+                          <span>{order.shipping_address_line},</span><br/>
+                          <span>{order.shipping_city}, {order.shipping_province}</span>
+                        </div>
+                      </div>
                       <div className="flex justify-between items-center">
                         <span className="font-medium">Total:</span>
                         <span>Rs{order.total_amount.toFixed(2)}</span>
@@ -174,7 +190,33 @@ export default function OrdersPage() {
                         <span className="font-medium">Date:</span>
                         <span>{new Date(order.created_at).toLocaleDateString()}</span>
                       </div>
-                      {/* Removed Edit and Delete buttons for mobile view */}
+                      <div className="flex justify-end mt-4">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="destructive" size="sm">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete this order.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteOrder(order.id)}
+                                disabled={isDeletingOrder}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                {isDeletingOrder ? "Deleting..." : "Delete"}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
@@ -190,18 +232,26 @@ export default function OrdersPage() {
                       <TableHeader>
                         <TableRow>
                           <TableHead>Order ID</TableHead>
-                          <TableHead>Customer Email</TableHead>
+                          <TableHead>Customer Name</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Phone</TableHead>
+                          <TableHead>Address</TableHead>
                           <TableHead>Total Amount</TableHead>
                           <TableHead>Status</TableHead>
                           <TableHead>Order Date</TableHead>
-                          {/* Removed TableHead for Actions */}
+                          <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {orders.map((order) => (
                           <TableRow key={order.id}>
                             <TableCell className="font-medium">{order.id.substring(0, 8)}...</TableCell>
+                            <TableCell>{order.customer_name}</TableCell>
                             <TableCell>{order.customer_email}</TableCell>
+                            <TableCell>{order.customer_phone}</TableCell>
+                            <TableCell>
+                              {order.shipping_address_line}, {order.shipping_city}, {order.shipping_province}
+                            </TableCell>
                             <TableCell>Rs{order.total_amount.toFixed(2)}</TableCell>
                             <TableCell>
                               <Select
@@ -222,7 +272,33 @@ export default function OrdersPage() {
                               </Select>
                             </TableCell>
                             <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
-                            {/* Removed TableCell for Actions */}
+                            <TableCell className="text-right">
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="destructive" size="sm">
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      This action cannot be undone. This will permanently delete this order.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDeleteOrder(order.id)}
+                                      disabled={isDeletingOrder}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      {isDeletingOrder ? "Deleting..." : "Delete"}
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>

@@ -2,9 +2,19 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const { customerEmail, totalAmount, items, storeOwnerId } = await request.json();
+    const { 
+      customerName, 
+      customerEmail, 
+      customerPhone, 
+      shippingProvince, 
+      shippingCity, 
+      shippingAddressLine, 
+      totalAmount, 
+      items, 
+      storeOwnerId 
+    } = await request.json();
 
-    if (!customerEmail || !totalAmount || !items || !storeOwnerId) {
+    if (!customerName || !customerEmail || !customerPhone || !shippingProvince || !shippingCity || !shippingAddressLine || !totalAmount || !items || !storeOwnerId) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
 
@@ -27,7 +37,12 @@ export async function POST(request: Request) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        customer_name: customerName,
         customer_email: customerEmail,
+        customer_phone: customerPhone,
+        shipping_province: shippingProvince,
+        shipping_city: shippingCity,
+        shipping_address_line: shippingAddressLine,
         total_amount: totalAmount,
         items_json: items,
         user_id: storeOwnerId,

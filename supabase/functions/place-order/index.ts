@@ -12,17 +12,25 @@ serve(async (req) => {
   }
 
   try {
-    const { customer_email, total_amount, items_json, user_id } = await req.json();
+    const { 
+      customer_name, 
+      customer_email, 
+      customer_phone, 
+      shipping_province, 
+      shipping_city, 
+      shipping_address_line, 
+      total_amount, 
+      items_json, 
+      user_id 
+    } = await req.json();
 
-    if (!customer_email || !total_amount || !items_json || !user_id) {
+    if (!customer_name || !customer_email || !customer_phone || !shipping_province || !shipping_city || !shipping_address_line || !total_amount || !items_json || !user_id) {
       return new Response(JSON.stringify({ message: 'Missing required fields' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Create a Supabase client with the service role key
-    // This allows bypassing RLS for this specific operation
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -31,11 +39,16 @@ serve(async (req) => {
     const { data, error } = await supabaseAdmin
       .from('orders')
       .insert({
+        customer_name,
         customer_email,
+        customer_phone,
+        shipping_province,
+        shipping_city,
+        shipping_address_line,
         total_amount,
         items_json,
-        user_id, // This is the store owner's user_id
-        status: 'pending', // Default status for new orders
+        user_id,
+        status: 'pending',
       })
       .select()
       .single();

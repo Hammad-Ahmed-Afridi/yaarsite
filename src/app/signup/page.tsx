@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,8 +14,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff, Mail, Lock, Phone, User, Store } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, Phone, User, Store, RefreshCcw } from 'lucide-react';
 import Link from 'next/link';
+
+// Function to generate a random 4-character alphanumeric code
+const generateRandomCode = () => {
+  return Math.random().toString(36).substring(2, 6).toUpperCase();
+};
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
@@ -27,6 +32,7 @@ const formSchema = z.object({
   password: z.string().min(6, { message: "Password must be at least 6 characters long." }),
   confirmPassword: z.string(),
   terms: z.boolean().refine(val => val === true, { message: "You must accept the terms and conditions." }),
+  humanVerificationCode: z.string(), // Will be refined later
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match.",
   path: ["confirmPassword"],
@@ -37,9 +43,13 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [currentVerificationCode, setCurrentVerificationCode] = useState('');
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema.refine((data) => data.humanVerificationCode === currentVerificationCode, {
+      message: "Incorrect verification code.",
+      path: ["humanVerificationCode"],
+    })),
     defaultValues: {
       name: "",
       email: "",
@@ -47,8 +57,21 @@ export default function SignupPage() {
       password: "",
       confirmPassword: "",
       terms: false,
+      humanVerificationCode: "",
     },
   });
+
+  // Generate initial verification code on component mount
+  useEffect(() => {
+    setCurrentVerificationCode(generateRandomCode());
+  }, []);
+
+  // Re-generate code on refresh button click
+  const refreshVerificationCode = useCallback(() => {
+    setCurrentVerificationCode(generateRandomCode());
+    form.setValue("humanVerificationCode", ""); // Clear input field
+    form.clearErrors("humanVerificationCode"); // Clear error
+  }, [form]);
 
   // Log form validation errors for debugging
   React.useEffect(() => {
@@ -75,21 +98,19 @@ export default function SignupPage() {
       if (signUpError) {
         console.error("Signup Page: Supabase signup error:", signUpError);
         toast.error(getAuthErrorMessage(signUpError));
+        refreshVerificationCode(); // Refresh code on error
       } else {
-        // Account created successfully.
-        // Explicitly sign out the user if they were automatically signed in by Supabase
-        // This ensures they go through the login page.
         const { error: signOutError } = await supabase.auth.signOut();
         if (signOutError) {
           console.warn("Signup Page: Error during sign out after signup (might be already signed out):", signOutError);
         }
         toast.success("Account created! Please sign in to continue.", { duration: 3000 });
         console.log("Signup Page: Account created. User remains on signup page.");
-        // Removed router.push('/login');
       }
     } catch (submitError) {
       console.error("Signup Page: Unexpected error during form submission:", submitError);
       toast.error("An unexpected error occurred during signup.");
+      refreshVerificationCode(); // Refresh code on error
     } finally {
       setIsLoading(false);
       console.log("Signup Page: Submission finished, isLoading set to false.");
@@ -207,6 +228,30 @@ export default function SignupPage() {
               </div>
               {form.formState.errors.confirmPassword && (
                 <p className="text-destructive text-sm">{form.formState.errors.confirmPassword.message}</p>
+              )}
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="humanVerificationCode">Human Verification</Label>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 relative">
+                  <Input
+                    id="humanVerificationCode"
+                    type="text"
+                    placeholder="Enter code"
+                    className="pr-16"
+                    {...form.register("humanVerificationCode")}
+                  />
+                  <div className="absolute right-0 top-0 h-full flex items-center bg-muted px-3 rounded-r-md border-l border-border">
+                    <span className="font-mono text-lg font-bold text-primary">{currentVerificationCode}</span>
+                  </div>
+                </div>
+                <Button type="button" variant="outline" size="icon" onClick={refreshVerificationCode}>
+                  <RefreshCcw className="h-4 w-4" />
+                </Button>
+              </div>
+              {form.formState.errors.humanVerificationCode && (
+                <p className="text-destructive text-sm">{form.formState.errors.humanVerificationCode.message}</p>
               )}
             </div>
 
