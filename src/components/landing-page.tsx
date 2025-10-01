@@ -34,7 +34,7 @@ export default function LandingPage() {
   const featureRefs = useRef<(HTMLDivElement | null)[]>([]);
   const testimonialRefs = useRef<(HTMLDivElement | null)[]>([]);
   const pricingRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const faqRefs = useRef<(HTMLDetailsElement | null)[]>([]); // Keep as HTMLDetailsElement for now, will update to Accordion
+  const faqRefs = useRef<(HTMLDivElement | null)[]>([]); // Changed from HTMLDetailsElement to HTMLDivElement
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -346,28 +346,28 @@ export default function LandingPage() {
           </div>
           <div className="max-w-3xl mx-auto space-y-4">
             <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="item-1" ref={(el) => { if (el) faqRefs.current[1] = el; }} className="bg-bg-deep p-6 rounded-2xl shadow-lg border border-border-subtle cursor-pointer transition-transform duration-200 hover:scale-[1.02] opacity-0 translate-y-5">
+              <AccordionItem value="item-1" ref={(el) => { if (el) faqRefs.current[1] = el as HTMLDivElement; }} className="bg-bg-deep p-6 rounded-2xl shadow-lg border border-border-subtle cursor-pointer transition-transform duration-200 hover:scale-[1.02] opacity-0 translate-y-5">
                 <AccordionTrigger className="text-lg font-semibold text-text-primary hover:no-underline">How fast can I set up my store?</AccordionTrigger>
                 <AccordionContent className="mt-4 text-text-secondary leading-relaxed">
                   With Yaarsite, you can launch your store in seconds, literally! Our intuitive interface guides you through the process step-by-step to get you online quickly.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-2" ref={(el) => { if (el) faqRefs.current[2] = el; }} className="bg-bg-deep p-6 rounded-2xl shadow-lg border border-border-subtle cursor-pointer transition-transform duration-200 hover:scale-[1.02] opacity-0 translate-y-5">
+              <AccordionItem value="item-2" ref={(el) => { if (el) faqRefs.current[2] = el as HTMLDivElement; }} className="bg-bg-deep p-6 rounded-2xl shadow-lg border border-border-subtle cursor-pointer transition-transform duration-200 hover:scale-[1.02] opacity-0 translate-y-5">
                 <AccordionTrigger className="text-lg font-semibold text-text-primary hover:no-underline">Do I need coding knowledge?</AccordionTrigger>
                 <AccordionContent className="mt-4 text-text-secondary leading-relaxed">
                   No coding required! Yaarsite is built for everyone, from beginners to seasoned business owners. You can easily build your store with our powerful tools.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-3" ref={(el) => { if (el) faqRefs.current[3] = el; }} className="bg-bg-deep p-6 rounded-2xl shadow-lg border border-border-subtle cursor-pointer transition-transform duration-200 hover:scale-[1.02] opacity-0 translate-y-5">
+              <AccordionItem value="item-3" ref={(el) => { if (el) faqRefs.current[3] = el as HTMLDivElement; }} className="bg-bg-deep p-6 rounded-2xl shadow-lg border border-border-subtle cursor-pointer transition-transform duration-200 hover:scale-[1.02] opacity-0 translate-y-5">
                 <AccordionTrigger className="text-lg font-semibold text-text-primary hover:no-underline">Is it mobile friendly?</AccordionTrigger>
                 <AccordionContent className="mt-4 text-text-secondary leading-relaxed">
                   Yes, your store will look beautiful and function perfectly on all devices, from desktops to tablets and smartphones. Our designs are optimized for responsiveness right out of the box.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-4" ref={(el) => { if (el) faqRefs.current[4] = el; }} className="bg-bg-deep p-6 rounded-2xl shadow-lg border border-border-subtle cursor-pointer transition-transform duration-200 hover:scale-[1.02] opacity-0 translate-y-5">
+              <AccordionItem value="item-4" ref={(el) => { if (el) faqRefs.current[4] = el as HTMLDivElement; }} className="bg-bg-deep p-6 rounded-2xl shadow-lg border border-border-subtle cursor-pointer transition-transform duration-200 hover:scale-[1.02] opacity-0 translate-y-5">
                 <AccordionTrigger className="text-lg font-semibold text-text-primary hover:no-underline">How much does it cost to launch a website?</AccordionTrigger>
                 <AccordionContent className="mt-4 text-text-secondary leading-relaxed">
                   With Yaarsite, you can get started completely free of charge. Choose our Starter plan and launch your store without any costs.
