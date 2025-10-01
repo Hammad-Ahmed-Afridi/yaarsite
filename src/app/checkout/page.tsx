@@ -14,12 +14,13 @@ import { Label } from '@/components/ui/label';
 import { ArrowLeft, Loader2, CheckCircle, RefreshCcw } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/integrations/supabase/client'; // Import supabase client
-import { AppLoader } from '@/components/app-loader'; // Import AppLoader
 
 // Function to generate a random 4-character alphanumeric code
 const generateRandomCode = () => {
   return Math.random().toString(36).substring(2, 6).toUpperCase();
 };
+
+const COD_CHARGE = 200; // Define COD charge here
 
 const formSchema = z.object({
   customerName: z.string().min(1, { message: "Name is required." }),
@@ -37,8 +38,7 @@ export default function CheckoutPage() {
   const { cartItems, cartTotal, clearCart } = useCart();
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
-  const [deliveryCharge, setDeliveryCharge] = useState<number | null>(null);
-  const [isLoadingStoreData, setIsLoadingStoreData] = useState(true);
+  const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null); // Used for initial "Continue Shopping" link before order
   const [finalRedirectPath, setFinalRedirectPath] = useState<string | null>(null); // New state for post-order redirect
   const [currentVerificationCode, setCurrentVerificationCode] = useState('');
 
@@ -70,34 +70,29 @@ export default function CheckoutPage() {
     form.clearErrors("humanVerificationCode"); // Clear error
   }, [form]);
 
-  // Effect to fetch store slug and delivery charge
+  // Effect to fetch store slug for initial "Continue Shopping" link (before order is placed)
   useEffect(() => {
-    async function fetchStoreData() {
-      setIsLoadingStoreData(true);
+    async function fetchStoreSlugForInitialLink() {
       if (cartItems.length > 0) {
         const storeOwnerId = cartItems[0].storeOwnerId;
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('tenant_slug, delivery_charge')
+          .select('tenant_slug')
           .eq('id', storeOwnerId)
           .single();
 
-        if (profileError || !profileData) {
-          console.error("Error fetching store profile for checkout:", profileError);
-          setDeliveryCharge(200); // Fallback to default
-          setFinalRedirectPath('/store'); // Fallback redirect
+        if (profileError || !profileData?.tenant_slug) {
+          console.error("Error fetching store tenant slug for initial link:", profileError);
+          setStoreTenantSlug(null);
         } else {
-          setDeliveryCharge(profileData.delivery_charge || 200); // Use profile's charge or fallback
-          setFinalRedirectPath(`/store/${profileData.tenant_slug}`);
+          setStoreTenantSlug(profileData.tenant_slug);
         }
       } else {
-        setDeliveryCharge(200); // Default if cart is empty
-        setFinalRedirectPath('/store');
+        setStoreTenantSlug(null);
       }
-      setIsLoadingStoreData(false);
     }
 
-    fetchStoreData();
+    fetchStoreSlugForInitialLink();
   }, [cartItems]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -117,7 +112,23 @@ export default function CheckoutPage() {
         throw new Error("Store owner information missing for cart items.");
       }
 
-      const totalAmountWithDelivery = cartTotal + (deliveryCharge || 0); // Calculate total including delivery
+      // Fetch the tenant slug for redirection *before* clearing the cart
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('tenant_slug')
+        .eq('id', currentStoreOwnerId)
+        .single();
+
+      let determinedTenantSlug: string | null = null;
+      if (profileError || !profileData?.tenant_slug) {
+        console.error("Error fetching store tenant slug for redirection:", profileError);
+        // Fallback to generic store if specific slug not found
+        determinedTenantSlug = null;
+      } else {
+        determinedTenantSlug = profileData.tenant_slug;
+      }
+
+      const totalAmountWithCod = cartTotal + COD_CHARGE; // Calculate total including COD
 
       const response = await fetch('/api/place-order', {
         method: 'POST',
@@ -131,7 +142,7 @@ export default function CheckoutPage() {
           shippingProvince: values.shippingProvince,
           shippingCity: values.shippingCity,
           shippingAddressLine: values.shippingAddressLine,
-          totalAmount: totalAmountWithDelivery, // Send total with delivery charge
+          totalAmount: totalAmountWithCod, // Send total with COD charge
           items: cartItems,
           storeOwnerId: currentStoreOwnerId,
         }),
@@ -148,6 +159,9 @@ export default function CheckoutPage() {
       toast.success("Thank you for your purchase. We will contact you soon.", { duration: 5000 });
       clearCart();
       
+      // Set the final redirect path here, after successful order and before setting orderPlaced
+      const path = determinedTenantSlug ? `/store/${determinedTenantSlug}` : '/store';
+      setFinalRedirectPath(path); // Set the new state
       setOrderPlaced(true);
 
     } catch (error: any) {
@@ -158,10 +172,6 @@ export default function CheckoutPage() {
       setIsPlacingOrder(false);
     }
   };
-
-  if (isLoadingStoreData) {
-    return <AppLoader message="Loading checkout details..." isFullScreen={true} />;
-  }
 
   if (orderPlaced) {
     const redirectPath = finalRedirectPath || '/store'; // Use finalRedirectPath, with a fallback
@@ -178,7 +188,7 @@ export default function CheckoutPage() {
   }
 
   const displayCartTotal = cartTotal;
-  const displayTotalWithDelivery = cartTotal + (deliveryCharge || 0);
+  const displayTotalWithCod = cartTotal + COD_CHARGE;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -204,12 +214,12 @@ export default function CheckoutPage() {
                 <span>Rs{displayCartTotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-lg font-semibold">
-                <span>Delivery Charges:</span>
-                <span>Rs{(deliveryCharge || 0).toFixed(2)}</span>
+                <span>COD Charges:</span>
+                <span>Rs{COD_CHARGE.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-2xl font-bold">
                 <span>Order Total:</span>
-                <span>Rs{displayTotalWithDelivery.toFixed(2)}</span>
+                <span>Rs{displayTotalWithCod.toFixed(2)}</span>
               </div>
             </div>
 

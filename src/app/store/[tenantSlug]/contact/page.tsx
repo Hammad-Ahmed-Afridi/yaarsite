@@ -1,5 +1,9 @@
-import React from 'react';
+"use client";
+
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
+import { AppLoader } from '@/components/app-loader';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
 interface Profile {
@@ -9,35 +13,48 @@ interface Profile {
   phone_number: string | null;
 }
 
-export default async function StoreContactPage({ params }: { params: any }) { // Changed params type to any
-  const tenantSlug = params.tenantSlug;
+export default function StoreContactPage() {
+  const params = useParams();
+  const tenantSlug = params.tenantSlug as string;
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!tenantSlug) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <h1 className="text-3xl font-bold text-destructive mb-4">Error</h1>
-        <p className="text-lg text-muted-foreground">Store not found: Missing tenant slug.</p>
-      </div>
-    );
-  }
+  useEffect(() => {
+    async function fetchStoreProfile() {
+      setIsLoading(true);
+      setError(null);
+      if (!tenantSlug) {
+        setError("Store not found: Missing tenant slug.");
+        setIsLoading(false);
+        return;
+      }
 
-  let profile: Profile | null = null;
-  let error: string | null = null;
+      try {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('id, tenant_name, email, phone_number') // Added 'id' here
+          .eq('tenant_slug', tenantSlug)
+          .single();
 
-  try {
-    const { data: profileData, error: profileError } = await supabase
-      .from('profiles')
-      .select('id, tenant_name, email, phone_number')
-      .eq('tenant_slug', tenantSlug)
-      .single();
-
-    if (profileError || !profileData) {
-      error = "Store not found or an error occurred.";
-    } else {
-      profile = profileData;
+        if (profileError || !profileData) {
+          setError("Store not found or an error occurred.");
+          setIsLoading(false);
+          return;
+        }
+        setProfile(profileData);
+      } catch (err: any) {
+        setError(err.message || "An unexpected error occurred.");
+      } finally {
+        setIsLoading(false);
+      }
     }
-  } catch (err: any) {
-    error = err.message || "An unexpected error occurred.";
+
+    fetchStoreProfile();
+  }, [tenantSlug]);
+
+  if (isLoading) {
+    return <AppLoader message="Loading contact page..." isFullScreen={false} />;
   }
 
   if (error) {

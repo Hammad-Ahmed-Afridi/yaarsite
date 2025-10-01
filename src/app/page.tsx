@@ -11,14 +11,14 @@ import { Package, ShoppingCart, DollarSign, Store, Settings } from "lucide-react
 import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
 import { InactivityWarningBanner } from "@/components/inactivity-warning-banner";
-import { DashboardHeader } from "@/components/dashboard-header";
-import { ScrollHintArrow } from "@/components/scroll-hint-arrow";
-import { AppLoader } from "@/components/app-loader";
+import { DashboardHeader } from "@/components/dashboard-header"; // Import DashboardHeader
+import { ScrollHintArrow } from "@/components/scroll-hint-arrow"; // Import ScrollHintArrow
+import { AppLoader } from "@/components/app-loader"; // Import AppLoader
 
 export default function DashboardPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname = usePathname(); // Get current pathname
 
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
@@ -120,8 +120,9 @@ export default function DashboardPage() {
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
 
-      <main className="flex-1 px-8 pt-4 pb-8">
-        <div className="flex justify-center mb-4">
+      <main className="flex-1 px-8 pt-4 pb-8"> {/* Adjusted padding here */}
+        {/* ScrollHintArrow placed here, aligned to the center */}
+        <div className="flex justify-center mb-4"> {/* Changed justify-end to justify-center, added mb-4 */}
           <ScrollHintArrow />
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -191,11 +192,11 @@ export default function DashboardPage() {
           <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Settings className="h-6 w-6 text-yellow-500" />
-              <CardTitle className="text-lg font-semibold">Store Customization</CardTitle>
+              <CardTitle className="text-lg font-semibold">Store Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">Update your store information</p>
-              <Button onClick={() => router.push('/store-customization')} className="w-full" disabled={profile?.tenant_name === null}>Customization</Button>
+              <Button onClick={() => router.push('/settings')} className="w-full" disabled={profile?.tenant_name === null}>Settings</Button>
             </CardContent>
           </Card>
         </div>

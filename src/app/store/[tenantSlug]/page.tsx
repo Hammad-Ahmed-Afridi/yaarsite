@@ -19,7 +19,7 @@ interface Product {
   description: string | null;
   price: number;
   stock: number;
-  user_id: string; // Owner of the product
+  user_id: string;
   image_urls: string[] | null;
 }
 
@@ -31,13 +31,12 @@ interface Profile {
   tenant_slug: string | null;
   store_url: string | null;
   avatar_url: string | null;
-  store_page_welcome_message: string | null; // New field
 }
 
 export default function StoreProductsPage() {
   const params = useParams();
   const tenantSlug = params.tenantSlug as string;
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null); // Keep profile state for product detail dialog
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,9 +55,10 @@ export default function StoreProductsPage() {
       }
 
       try {
+        // Fetch profile to get user_id for products and pass to ProductDetailDialog
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('*, store_page_welcome_message')
+          .select('*')
           .eq('tenant_slug', tenantSlug)
           .single();
 
@@ -113,11 +113,6 @@ export default function StoreProductsPage() {
 
   return (
     <>
-      {profile?.store_page_welcome_message && (
-        <div className="mb-8 p-4 bg-muted rounded-lg text-center">
-          <p className="text-lg text-muted-foreground">{profile.store_page_welcome_message}</p>
-        </div>
-      )}
       <h2 className="text-2xl font-bold mb-6">Our Products</h2>
       {products.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center">

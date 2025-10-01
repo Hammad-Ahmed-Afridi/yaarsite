@@ -19,7 +19,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Yaarsite - Easy Store Builder",
   description: "Yaarsite helps you launch professional, beautiful websites in seconds. Easy, fast, and perfect for any e-commerce seller.",
-  keywords: ["Yaarsite", "store builder", "e-commerce", "online store", "SaaS", "product management", "small business", "online shop"],
   robots: "index, follow",
   authors: [{ name: "Hammad Ahmed Afridi" }],
   icons: {
@@ -38,17 +37,6 @@ export const metadata: Metadata = {
         alt: "Yaarsite - Easy Store Builder",
       },
     ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@yaarsite", // Replace with your actual Twitter handle if you have one
-    creator: "@yaarsite", // Replace with your actual Twitter handle if you have one
-    title: "Yaarsite - Easy Store Builder",
-    description: "Launch your store in seconds, manage products, and grow online with Yaarsite.",
-    images: ["https://placehold.co/1200x630/1e293b/cbd5e1?text=Ys"],
-  },
-  alternates: {
-    canonical: "https://yaarsite.vercel.app",
   },
   verification: {
     google: "google72f769dc7b33038e.html",
