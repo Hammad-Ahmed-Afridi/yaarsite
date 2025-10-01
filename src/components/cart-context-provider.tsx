@@ -42,6 +42,12 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
 
   const addToCart = useCallback((item: Omit<CartItem, 'quantity'>, quantityToAdd: number = 1) => {
     setCartItems(prevItems => {
+      // If cart is not empty, check if the new item belongs to the same store
+      if (prevItems.length > 0 && prevItems[0].storeOwnerId !== item.storeOwnerId) {
+        toast.error("You can only add items from one store at a time. Please clear your cart first to add items from a different store.");
+        return prevItems; // Do not add the item
+      }
+
       const existingItemIndex = prevItems.findIndex(cartItem => cartItem.id === item.id);
 
       if (existingItemIndex > -1) {
