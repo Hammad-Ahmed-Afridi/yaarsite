@@ -18,9 +18,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Yaarsite - Easy Store Builder",
-  description: "Yaarsite helps you launch professional, beautiful stores in seconds. Easy, fast, and perfect for any e-commerce seller.",
+  description: "Yaarsite helps you launch professional, beautiful websites in seconds. Easy, fast, and perfect for any e-commerce seller.",
   robots: "index, follow",
-  authors: [{ name: "Yaarsite" }],
+  authors: [{ name: "Hammad Ahmed Afridi" }],
+  icons: {
+    icon: "https://placehold.co/32x32/1e293b/cbd5e1?text=Ys",
+  },
   openGraph: {
     title: "Yaarsite - Easy Store Builder",
     description: "Launch your store in seconds, manage products, and grow online with Yaarsite.",
@@ -47,9 +50,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" type="image/x-icon" href="https://placehold.co/32x32/1e293b/cbd5e1?text=Ys" />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
