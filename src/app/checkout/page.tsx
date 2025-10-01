@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Loader2, CheckCircle, RefreshCcw } from 'lucide-react';
+import { ArrowLeft, Loader2, CheckCircle, RefreshCcw, ShoppingCart } from 'lucide-react'; // Added ShoppingCart
 import Link from 'next/link';
 import { supabase } from '@/integrations/supabase/client'; // Import supabase client
 import { AppLoader } from '@/components/app-loader'; // Import AppLoader
