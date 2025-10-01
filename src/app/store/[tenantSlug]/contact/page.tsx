@@ -9,7 +9,6 @@ interface Profile {
   phone_number: string | null;
 }
 
-// @ts-expect-error
 export default async function StoreContactPage({ params }: { params: { tenantSlug: string } }) {
   const tenantSlug = params.tenantSlug;
 

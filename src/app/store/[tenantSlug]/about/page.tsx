@@ -9,7 +9,7 @@ interface Profile {
   about_page_content: string | null;
 }
 
-export default async function StoreAboutPage({ params }) { // Removed explicit type annotation for params
+export default async function StoreAboutPage({ params }: { params: { tenantSlug: string } }) {
   const tenantSlug = params.tenantSlug;
 
   if (!tenantSlug) {
