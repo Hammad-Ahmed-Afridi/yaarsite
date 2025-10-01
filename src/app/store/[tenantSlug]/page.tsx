@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Package, Store, ShoppingCart, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
-import { MadeWithDyad } from '@/components/made-with-dyad';
 import Image from 'next/image';
 import { useCart } from '@/components/cart-context-provider';
 import { ProductDetailDialog } from '@/components/product-detail-dialog';
@@ -208,7 +207,6 @@ export default function PublicStorePage() {
           </div>
         )}
       </main>
-      <MadeWithDyad message="Made with Yaarsite" />
 
       {selectedProduct && profile && (
         <ProductDetailDialog

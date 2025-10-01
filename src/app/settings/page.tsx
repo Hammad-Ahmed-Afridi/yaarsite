@@ -19,7 +19,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2 } from 'lucide-react'; // Import Loader2
-import { MadeWithDyad } from '@/components/made-with-dyad';
 import Image from 'next/image';
 import { DashboardHeader } from '@/components/dashboard-header'; // Import DashboardHeader
 import { AppLoader } from '@/components/app-loader'; // Import AppLoader
@@ -377,7 +376,6 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
       </main>
-      <MadeWithDyad />
     </div>
   );
 }

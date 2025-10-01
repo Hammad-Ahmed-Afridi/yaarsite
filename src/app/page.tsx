@@ -1,6 +1,5 @@
 "use client";
 
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { useSession } from "@/components/session-context-provider";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
@@ -204,7 +203,6 @@ export default function DashboardPage() {
           </Card>
         </div>
       </main>
-      <MadeWithDyad />
     </div>
   );
 }
