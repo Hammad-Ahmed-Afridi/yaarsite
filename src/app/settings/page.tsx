@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation'; // Import usePathname
+import { useRouter, usePathname } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
-import { compressImage } from '@/lib/utils'; // Removed generateSlug as it's no longer used for tenant_slug
+import { compressImage } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from '@/components/ui/button';
@@ -18,10 +18,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2 } from 'lucide-react'; // Import Loader2
+import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import { DashboardHeader } from '@/components/dashboard-header'; // Import DashboardHeader
-import { AppLoader } from '@/components/app-loader'; // Import AppLoader
+import { DashboardHeader } from '@/components/dashboard-header';
+import { AppLoader } from '@/components/app-loader';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const MAX_LOGO_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_LOGO_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -30,11 +31,12 @@ const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
   storeDescription: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
   logo: z.instanceof(File).optional(),
+  deliveryCharge: z.coerce.number().min(0).max(400).step(100, { message: "Delivery charge must be 0, 100, 200, 300, or 400." }),
 });
 
 export default function SettingsPage() {
   const router = useRouter();
-  const pathname = usePathname(); // Get current pathname
+  const pathname = usePathname();
   const { user, profile, isLoading: isSessionLoading, refreshProfile } = useSession();
   const [isUpdatingStore, setIsUpdatingStore] = useState(false);
   const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
@@ -46,6 +48,7 @@ export default function SettingsPage() {
       storeName: "",
       storeDescription: "",
       logo: undefined,
+      deliveryCharge: 200, // Default value
     },
   });
 
@@ -55,6 +58,7 @@ export default function SettingsPage() {
         storeName: profile.tenant_name || "",
         storeDescription: profile.store_description || "",
         logo: undefined,
+        deliveryCharge: profile.delivery_charge || 200, // Set from profile or default
       });
       setLogoPreview(profile.avatar_url || null);
     }
@@ -188,8 +192,6 @@ export default function SettingsPage() {
         }
       }
 
-      // The tenant_slug is now a fixed random ID, so it should not be updated here.
-      // The store_url should be constructed using the existing tenant_slug.
       const appBaseUrl = window.location.origin;
       const newStoreUrl = `${appBaseUrl}/store/${profile?.tenant_slug}`;
 
@@ -197,10 +199,10 @@ export default function SettingsPage() {
         .from('profiles')
         .update({
           tenant_name: values.storeName,
-          // tenant_slug is intentionally not updated here as it's a fixed ID
           store_url: newStoreUrl,
           store_description: values.storeDescription || null,
           avatar_url: newAvatarUrl,
+          delivery_charge: values.deliveryCharge, // Update delivery charge
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -295,7 +297,7 @@ export default function SettingsPage() {
                   <br />
                   Supported formats: JPG, PNG, WebP. Image will be compressed for faster loading.
                 </p>
-                <div className="flex items-center gap-4 mt-2 flex-wrap"> {/* Added flex-wrap */}
+                <div className="flex items-center gap-4 mt-2 flex-wrap">
                   {(logoPreview || profile?.avatar_url) ? (
                     <div className="relative w-24 h-24 border rounded-md overflow-hidden">
                       <Image
@@ -336,6 +338,29 @@ export default function SettingsPage() {
                 </div>
                 {form.formState.errors.logo && (
                   <p className="text-destructive text-sm">{form.formState.errors.logo.message}</p>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="deliveryCharge">Delivery Charge (Rs)</Label>
+                <Select
+                  onValueChange={(value) => form.setValue("deliveryCharge", parseInt(value))}
+                  value={form.watch("deliveryCharge")?.toString()}
+                  disabled={isUpdatingStore}
+                >
+                  <SelectTrigger id="deliveryCharge">
+                    <SelectValue placeholder="Select delivery charge" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">0 Rs</SelectItem>
+                    <SelectItem value="100">100 Rs</SelectItem>
+                    <SelectItem value="200">200 Rs</SelectItem>
+                    <SelectItem value="300">300 Rs</SelectItem>
+                    <SelectItem value="400">400 Rs</SelectItem>
+                  </SelectContent>
+                </Select>
+                {form.formState.errors.deliveryCharge && (
+                  <p className="text-destructive text-sm">{form.formState.errors.deliveryCharge.message}</p>
                 )}
               </div>
 
