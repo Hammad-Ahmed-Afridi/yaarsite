@@ -37,7 +37,7 @@ interface Profile {
 export default function StoreProductsPage() {
   const params = useParams();
   const tenantSlug = params.tenantSlug as string;
-  const [profile, setProfile] = useState<Profile | null>(null); // Keep profile state for product detail dialog
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,10 +56,9 @@ export default function StoreProductsPage() {
       }
 
       try {
-        // Fetch profile to get user_id for products and pass to ProductDetailDialog
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('*, store_page_welcome_message') // Select new field
+          .select('*, store_page_welcome_message')
           .eq('tenant_slug', tenantSlug)
           .single();
 

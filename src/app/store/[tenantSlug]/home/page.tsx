@@ -1,9 +1,5 @@
-"use client";
-
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { AppLoader } from '@/components/app-loader';
 import { Button } from '@/components/ui/button';
 import { Store, Package } from 'lucide-react';
 import Image from 'next/image';
@@ -18,52 +14,39 @@ interface Profile {
   store_url: string | null;
   store_description: string | null;
   avatar_url: string | null;
-  home_page_heading: string | null; // New field
-  home_page_description: string | null; // New field
+  home_page_heading: string | null;
+  home_page_description: string | null;
 }
 
-export default function StoreHomePage() {
-  const params = useParams();
-  const tenantSlug = params.tenantSlug as string;
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default async function StoreHomePage({ params }: { params: { tenantSlug: string } }) {
+  const tenantSlug = params.tenantSlug;
 
-  useEffect(() => {
-    async function fetchStoreProfile() {
-      setIsLoading(true);
-      setError(null);
-      if (!tenantSlug) {
-        setError("Store not found: Missing tenant slug.");
-        setIsLoading(false);
-        return;
-      }
+  if (!tenantSlug) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <h1 className="text-3xl font-bold text-destructive mb-4">Error</h1>
+        <p className="text-lg text-muted-foreground">Store not found: Missing tenant slug.</p>
+      </div>
+    );
+  }
 
-      try {
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('id, email, first_name, tenant_name, tenant_slug, store_url, store_description, avatar_url, home_page_heading, home_page_description')
-          .eq('tenant_slug', tenantSlug)
-          .single();
+  let profile: Profile | null = null;
+  let error: string | null = null;
 
-        if (profileError || !profileData) {
-          setError("Store not found or an error occurred.");
-          setIsLoading(false);
-          return;
-        }
-        setProfile(profileData);
-      } catch (err: any) {
-        setError(err.message || "An unexpected error occurred.");
-      } finally {
-        setIsLoading(false);
-      }
+  try {
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('id, email, first_name, tenant_name, tenant_slug, store_url, store_description, avatar_url, home_page_heading, home_page_description')
+      .eq('tenant_slug', tenantSlug)
+      .single();
+
+    if (profileError || !profileData) {
+      error = "Store not found or an error occurred.";
+    } else {
+      profile = profileData;
     }
-
-    fetchStoreProfile();
-  }, [tenantSlug]);
-
-  if (isLoading) {
-    return <AppLoader message="Loading store home..." isFullScreen={false} />;
+  } catch (err: any) {
+    error = err.message || "An unexpected error occurred.";
   }
 
   if (error) {
