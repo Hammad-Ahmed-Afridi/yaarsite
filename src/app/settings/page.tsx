@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation'; // Import usePathname
+import { useRouter, usePathname } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
-import { generateSlug, compressImage } from '@/lib/utils';
+import { generateRandomAlphanumericCode, compressImage } from '@/lib/utils'; // Updated import
 import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from '@/components/ui/button';
@@ -18,10 +18,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2 } from 'lucide-react'; // Import Loader2
+import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import { DashboardHeader } from '@/components/dashboard-header'; // Import DashboardHeader
-import { AppLoader } from '@/components/app-loader'; // Import AppLoader
+import { DashboardHeader } from '@/components/dashboard-header';
+import { AppLoader } from '@/components/app-loader';
 
 const MAX_LOGO_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_LOGO_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -34,7 +34,7 @@ const formSchema = z.object({
 
 export default function SettingsPage() {
   const router = useRouter();
-  const pathname = usePathname(); // Get current pathname
+  const pathname = usePathname();
   const { user, profile, isLoading: isSessionLoading, refreshProfile } = useSession();
   const [isUpdatingStore, setIsUpdatingStore] = useState(false);
   const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
@@ -188,15 +188,16 @@ export default function SettingsPage() {
         }
       }
 
-      const newTenantSlug = generateSlug(values.storeName);
+      // The tenant_slug is generated once during store setup and should not be changed here.
+      // If the store name changes, the slug remains the original random one.
       const appBaseUrl = window.location.origin;
-      const newStoreUrl = `${appBaseUrl}/store/${newTenantSlug}`;
+      const newStoreUrl = profile?.tenant_slug ? `${appBaseUrl}/store/${profile.tenant_slug}` : null;
 
       const { error } = await supabase
         .from('profiles')
         .update({
           tenant_name: values.storeName,
-          tenant_slug: newTenantSlug,
+          // tenant_slug: newTenantSlug, // Removed: tenant_slug should not be updated here
           store_url: newStoreUrl,
           store_description: values.storeDescription || null,
           avatar_url: newAvatarUrl,
@@ -294,7 +295,7 @@ export default function SettingsPage() {
                   <br />
                   Supported formats: JPG, PNG, WebP. Image will be compressed for faster loading.
                 </p>
-                <div className="flex items-center gap-4 mt-2 flex-wrap"> {/* Added flex-wrap */}
+                <div className="flex items-center gap-4 mt-2 flex-wrap">
                   {(logoPreview || profile?.avatar_url) ? (
                     <div className="relative w-24 h-24 border rounded-md overflow-hidden">
                       <Image
