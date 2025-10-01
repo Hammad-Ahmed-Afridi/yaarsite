@@ -4,7 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Store, Package } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { PageProps } from '@/types/next-page-props'; // Explicit import
+
+// Define component-specific props directly
+interface StoreHomePageProps {
+  params: {
+    tenantSlug: string;
+  };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
 
 interface Profile {
   id: string;
@@ -19,7 +26,7 @@ interface Profile {
   home_page_description: string | null;
 }
 
-export default async function StoreHomePage({ params }: PageProps) {
+export default async function StoreHomePage({ params }: StoreHomePageProps) {
   const tenantSlug = params.tenantSlug;
 
   if (!tenantSlug) {

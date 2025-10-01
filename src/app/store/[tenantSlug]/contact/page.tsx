@@ -1,7 +1,14 @@
 import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Mail, Phone, MapPin } from 'lucide-react';
-import { PageProps } from '@/types/next-page-props'; // Explicit import
+
+// Define component-specific props directly
+interface StoreContactPageProps {
+  params: {
+    tenantSlug: string;
+  };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
 
 interface Profile {
   id: string;
@@ -10,7 +17,7 @@ interface Profile {
   phone_number: string | null;
 }
 
-export default async function StoreContactPage({ params }: PageProps) {
+export default async function StoreContactPage({ params }: StoreContactPageProps) {
   const tenantSlug = params.tenantSlug;
 
   if (!tenantSlug) {

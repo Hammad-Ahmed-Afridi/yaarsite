@@ -13,12 +13,19 @@ import { Profile } from '@/components/session-context-provider';
 import { StoreNavbar } from '@/components/store-navbar';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { LayoutProps } from '@/types/next-page-props'; // Explicit import
+
+// Define component-specific props directly
+interface StoreLayoutProps {
+  children: React.ReactNode;
+  params: {
+    tenantSlug: string;
+  };
+}
 
 export default function StoreLayout({
   children,
   params,
-}: LayoutProps) {
+}: StoreLayoutProps) {
   const router = useRouter();
   const tenantSlug = params.tenantSlug;
   const [profile, setProfile] = useState<Profile | null>(null);
