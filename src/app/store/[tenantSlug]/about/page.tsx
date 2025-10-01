@@ -9,7 +9,7 @@ interface Profile {
   about_page_content: string | null;
 }
 
-export default async function StoreAboutPage({ params }: { params: { tenantSlug: string } }) {
+export default async function StoreAboutPage({ params }: PageProps) {
   const tenantSlug = params.tenantSlug;
 
   if (!tenantSlug) {

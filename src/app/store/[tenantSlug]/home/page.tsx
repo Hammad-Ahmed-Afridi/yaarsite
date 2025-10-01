@@ -18,7 +18,7 @@ interface Profile {
   home_page_description: string | null;
 }
 
-export default async function StoreHomePage({ params }: { params: { tenantSlug: string } }) {
+export default async function StoreHomePage({ params }: PageProps) {
   const tenantSlug = params.tenantSlug;
 
   if (!tenantSlug) {

@@ -17,10 +17,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 export default function StoreLayout({
   children,
   params,
-}: {
-  children: React.ReactNode;
-  params: { tenantSlug: string };
-}) {
+}: LayoutProps) {
   const router = useRouter();
   const tenantSlug = params.tenantSlug;
   const [profile, setProfile] = useState<Profile | null>(null);
