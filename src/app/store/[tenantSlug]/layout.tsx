@@ -28,7 +28,7 @@ export default function StoreLayout({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false); // State for mobile menu
-  const { itemCount, clearCart } = useCart(); // Destructure clearCart
+  const { itemCount } = useCart();
   const isMobile = useIsMobile(); // Use the hook to detect mobile
 
   useEffect(() => {
@@ -63,11 +63,6 @@ export default function StoreLayout({
 
     fetchStoreProfile();
   }, [tenantSlug]);
-
-  // Clear cart when the store layout mounts or tenantSlug changes
-  useEffect(() => {
-    clearCart();
-  }, [tenantSlug, clearCart]); // Depend on tenantSlug and clearCart
 
   if (isLoading) {
     return <AppLoader message="Loading store..." />;
@@ -150,6 +145,9 @@ export default function StoreLayout({
           </Button>
         </div>
       </header>
+
+      {/* Store Navigation (Desktop only) - Removed as it's now in the header */}
+      {/* {!isMobile && <StoreNavbar tenantSlug={tenantSlug} direction="horizontal" />} */}
 
       {/* Main Content */}
       <main className="flex-1 p-8">
