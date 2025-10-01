@@ -11,17 +11,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Loader2, CheckCircle, RefreshCcw, ShoppingCart } from 'lucide-react'; // Added ShoppingCart
+import { ArrowLeft, Loader2, CheckCircle, RefreshCcw } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/integrations/supabase/client'; // Import supabase client
-import { AppLoader } from '@/components/app-loader'; // Import AppLoader
 
 // Function to generate a random 4-character alphanumeric code
 const generateRandomCode = () => {
   return Math.random().toString(36).substring(2, 6).toUpperCase();
 };
-
-const COD_CHARGE = 200; // Define COD charge here
 
 const formSchema = z.object({
   customerName: z.string().min(1, { message: "Name is required." }),
@@ -36,20 +33,12 @@ const formSchema = z.object({
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cartItems, clearCart, getStoreIdsInCart, getStoreCartTotal } = useCart(); // Get new functions
+  const { cartItems, cartTotal, clearCart } = useCart();
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
-  const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null);
-  const [finalRedirectPath, setFinalRedirectPath] = useState<string | null>(null);
+  const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null); // Used for initial "Continue Shopping" link before order
+  const [finalRedirectPath, setFinalRedirectPath] = useState<string | null>(null); // New state for post-order redirect
   const [currentVerificationCode, setCurrentVerificationCode] = useState('');
-  const [isLoadingCheckout, setIsLoadingCheckout] = useState(true); // New loading state for initial checks
-
-  const storeOwnerIdsInCart = getStoreIdsInCart();
-  const hasMultipleStores = storeOwnerIdsInCart.length > 1;
-  const hasNoItems = storeOwnerIdsInCart.length === 0;
-  const singleStoreOwnerId = storeOwnerIdsInCart.length === 1 ? storeOwnerIdsInCart[0] : null;
-  const singleStoreCartItems = singleStoreOwnerId ? cartItems[singleStoreOwnerId] : [];
-  const singleStoreCartTotal = singleStoreOwnerId ? getStoreCartTotal(singleStoreOwnerId) : 0;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema.refine((data) => data.humanVerificationCode === currentVerificationCode, {
@@ -70,7 +59,6 @@ export default function CheckoutPage() {
   // Generate initial verification code on component mount
   useEffect(() => {
     setCurrentVerificationCode(generateRandomCode());
-    setIsLoadingCheckout(false); // Mark initial checks as complete
   }, []);
 
   // Re-generate code on refresh button click
@@ -83,11 +71,12 @@ export default function CheckoutPage() {
   // Effect to fetch store slug for initial "Continue Shopping" link (before order is placed)
   useEffect(() => {
     async function fetchStoreSlugForInitialLink() {
-      if (singleStoreOwnerId) {
+      if (cartItems.length > 0) {
+        const storeOwnerId = cartItems[0].storeOwnerId;
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('tenant_slug')
-          .eq('id', singleStoreOwnerId)
+          .eq('id', storeOwnerId)
           .single();
 
         if (profileError || !profileData?.tenant_slug) {
@@ -101,25 +90,13 @@ export default function CheckoutPage() {
       }
     }
 
-    if (!hasNoItems && !hasMultipleStores) { // Only fetch if there's exactly one store
-      fetchStoreSlugForInitialLink();
-    } else {
-      setStoreTenantSlug(null);
-    }
-  }, [singleStoreOwnerId, hasNoItems, hasMultipleStores]);
+    fetchStoreSlugForInitialLink();
+  }, [cartItems]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (hasNoItems) {
+    if (cartItems.length === 0) {
       toast.error("Your cart is empty. Please add items before checking out.");
       router.push('/cart');
-      return;
-    }
-    if (hasMultipleStores) {
-      toast.error("You can only checkout one store at a time. Please go back to cart to manage your items.");
-      return;
-    }
-    if (!singleStoreOwnerId) {
-      toast.error("Store information missing for checkout.");
       return;
     }
 
@@ -127,22 +104,27 @@ export default function CheckoutPage() {
     toast.info("Placing your order...", { duration: 3000 });
 
     try {
+      const currentStoreOwnerId = cartItems[0]?.storeOwnerId;
+
+      if (!currentStoreOwnerId) {
+        throw new Error("Store owner information missing for cart items.");
+      }
+
       // Fetch the tenant slug for redirection *before* clearing the cart
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('tenant_slug')
-        .eq('id', singleStoreOwnerId)
+        .eq('id', currentStoreOwnerId)
         .single();
 
       let determinedTenantSlug: string | null = null;
       if (profileError || !profileData?.tenant_slug) {
         console.error("Error fetching store tenant slug for redirection:", profileError);
+        // Fallback to generic store if specific slug not found
         determinedTenantSlug = null;
       } else {
         determinedTenantSlug = profileData.tenant_slug;
       }
-
-      const totalAmountWithCod = singleStoreCartTotal + COD_CHARGE;
 
       const response = await fetch('/api/place-order', {
         method: 'POST',
@@ -156,9 +138,9 @@ export default function CheckoutPage() {
           shippingProvince: values.shippingProvince,
           shippingCity: values.shippingCity,
           shippingAddressLine: values.shippingAddressLine,
-          totalAmount: totalAmountWithCod,
-          items: singleStoreCartItems, // Pass items for the single store
-          storeOwnerId: singleStoreOwnerId,
+          totalAmount: cartTotal,
+          items: cartItems,
+          storeOwnerId: currentStoreOwnerId,
         }),
       });
 
@@ -171,27 +153,24 @@ export default function CheckoutPage() {
       console.log("Order placed successfully:", result);
 
       toast.success("Thank you for your purchase. We will contact you soon.", { duration: 5000 });
-      clearCart(); // Clear all carts after successful checkout of one
+      clearCart();
       
+      // Set the final redirect path here, after successful order and before setting orderPlaced
       const path = determinedTenantSlug ? `/store/${determinedTenantSlug}` : '/store';
-      setFinalRedirectPath(path);
+      setFinalRedirectPath(path); // Set the new state
       setOrderPlaced(true);
 
     } catch (error: any) {
       console.error("Error placing order:", error);
       toast.error(error.message || "Failed to place order. Please try again.");
-      refreshVerificationCode();
+      refreshVerificationCode(); // Refresh code on error
     } finally {
       setIsPlacingOrder(false);
     }
   };
 
-  if (isLoadingCheckout) {
-    return <AppLoader message="Preparing checkout..." />;
-  }
-
   if (orderPlaced) {
-    const redirectPath = finalRedirectPath || '/store';
+    const redirectPath = finalRedirectPath || '/store'; // Use finalRedirectPath, with a fallback
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
         <CheckCircle className="h-20 w-20 text-green-500 mb-6" />
@@ -203,38 +182,6 @@ export default function CheckoutPage() {
       </div>
     );
   }
-
-  if (hasNoItems) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
-        <ShoppingCart className="h-20 w-20 text-muted-foreground mb-6" />
-        <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
-        <p className="text-lg text-muted-foreground mb-8">Please add items to your cart before checking out.</p>
-        <Button asChild>
-          <Link href="/store">Start Shopping</Link>
-        </Button>
-      </div>
-    );
-  }
-
-  if (hasMultipleStores) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
-        <ShoppingCart className="h-20 w-20 text-red-500 mb-6" />
-        <h1 className="text-3xl font-bold mb-4">Multiple Stores in Cart</h1>
-        <p className="text-lg text-muted-foreground mb-8">
-          You can only checkout items from one store at a time. Please go back to your cart to manage your items.
-        </p>
-        <div className="flex gap-4">
-          <Button onClick={() => router.push('/cart')}>Go to Cart</Button>
-          <Button variant="destructive" onClick={clearCart}>Clear All Carts</Button>
-        </div>
-      </div>
-    );
-  }
-
-  const displayCartTotal = singleStoreCartTotal;
-  const displayTotalWithCod = singleStoreCartTotal + COD_CHARGE;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -256,16 +203,12 @@ export default function CheckoutPage() {
           <CardContent>
             <div className="space-y-4 mb-6">
               <div className="flex justify-between text-lg font-semibold">
-                <span>Items Total:</span>
-                <span>Rs{displayCartTotal.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between text-lg font-semibold">
-                <span>COD Charges:</span>
-                <span>Rs{COD_CHARGE.toFixed(2)}</span>
+                <span>Total Items:</span>
+                <span>{cartItems.reduce((count, item) => count + item.quantity, 0)}</span>
               </div>
               <div className="flex justify-between text-2xl font-bold">
                 <span>Order Total:</span>
-                <span>Rs{displayTotalWithCod.toFixed(2)}</span>
+                <span>Rs{cartTotal.toFixed(2)}</span>
               </div>
             </div>
 
@@ -373,7 +316,7 @@ export default function CheckoutPage() {
                 )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={isPlacingOrder || hasNoItems || hasMultipleStores}>
+              <Button type="submit" className="w-full" disabled={isPlacingOrder || cartItems.length === 0}>
                 {isPlacingOrder ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

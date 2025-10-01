@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Store, LogOut, LayoutDashboard } from 'lucide-react';
 import { Profile } from '@/components/session-context-provider'; // Import Profile type
-// Removed import { ThemeToggle } from '@/components/theme-toggle'; // Import ThemeToggle
+import { ThemeToggle } from '@/components/theme-toggle'; // Import ThemeToggle
 
 interface DashboardHeaderProps {
   profile: Profile | null;
@@ -46,7 +46,7 @@ export function DashboardHeader({ profile, onSignOut, showBackButton = true, cur
         {/* Removed the Badge displaying profile?.tenant_slug */}
       </div>
       <div className="flex items-center gap-2">
-        {/* Removed <ThemeToggle /> */}
+        <ThemeToggle />
         <Button onClick={onSignOut} variant="outline" className="flex items-center gap-2">
           <LogOut className="h-4 w-4" />
           Sign Out
