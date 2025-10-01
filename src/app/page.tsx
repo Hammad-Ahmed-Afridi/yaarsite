@@ -192,11 +192,11 @@ export default function DashboardPage() {
           <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Settings className="h-6 w-6 text-yellow-500" />
-              <CardTitle className="text-lg font-semibold">Store Customization</CardTitle>
+              <CardTitle className="text-lg font-semibold">Store Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">Update your store information and appearance</p>
-              <Button onClick={() => router.push('/settings')} className="w-full" disabled={profile?.tenant_name === null}>Customize Store</Button>
+              <p className="text-sm text-muted-foreground">Update your store information</p>
+              <Button onClick={() => router.push('/settings')} className="w-full" disabled={profile?.tenant_name === null}>Settings</Button>
             </CardContent>
           </Card>
         </div>
