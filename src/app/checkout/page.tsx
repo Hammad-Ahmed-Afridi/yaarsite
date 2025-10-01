@@ -20,7 +20,7 @@ const generateRandomCode = () => {
   return Math.random().toString(36).substring(2, 6).toUpperCase();
 };
 
-const COD_CHARGE = 200; // Define COD charge here
+const DELIVERY_CHARGE = 200; // Define delivery charge here
 
 const formSchema = z.object({
   customerName: z.string().min(1, { message: "Name is required." }),
@@ -128,7 +128,7 @@ export default function CheckoutPage() {
         determinedTenantSlug = profileData.tenant_slug;
       }
 
-      const totalAmountWithCod = cartTotal + COD_CHARGE; // Calculate total including COD
+      const totalAmountWithDelivery = cartTotal + DELIVERY_CHARGE; // Calculate total including delivery
 
       const response = await fetch('/api/place-order', {
         method: 'POST',
@@ -142,7 +142,7 @@ export default function CheckoutPage() {
           shippingProvince: values.shippingProvince,
           shippingCity: values.shippingCity,
           shippingAddressLine: values.shippingAddressLine,
-          totalAmount: totalAmountWithCod, // Send total with COD charge
+          totalAmount: totalAmountWithDelivery, // Send total with delivery charge
           items: cartItems,
           storeOwnerId: currentStoreOwnerId,
         }),
@@ -188,7 +188,7 @@ export default function CheckoutPage() {
   }
 
   const displayCartTotal = cartTotal;
-  const displayTotalWithCod = cartTotal + COD_CHARGE;
+  const displayTotalWithDelivery = cartTotal + DELIVERY_CHARGE;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -214,12 +214,12 @@ export default function CheckoutPage() {
                 <span>Rs{displayCartTotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-lg font-semibold">
-                <span>COD Charges:</span>
-                <span>Rs{COD_CHARGE.toFixed(2)}</span>
+                <span>Delivery Charges:</span>
+                <span>Rs{DELIVERY_CHARGE.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-2xl font-bold">
                 <span>Order Total:</span>
-                <span>Rs{displayTotalWithCod.toFixed(2)}</span>
+                <span>Rs{displayTotalWithDelivery.toFixed(2)}</span>
               </div>
             </div>
 

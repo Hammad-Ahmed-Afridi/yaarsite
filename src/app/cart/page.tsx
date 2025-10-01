@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
 
-const COD_CHARGE = 200; // Define COD charge here
+const DELIVERY_CHARGE = 200; // Define delivery charge here
 
 export default function CartPage() {
   const router = useRouter();
@@ -58,7 +58,7 @@ export default function CartPage() {
   };
 
   const continueShoppingPath = storeTenantSlug ? `/store/${storeTenantSlug}` : '/store';
-  const totalWithCod = cartTotal + COD_CHARGE; // Calculate total including COD
+  const totalWithDelivery = cartTotal + DELIVERY_CHARGE; // Calculate total including delivery charge
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -234,12 +234,12 @@ export default function CartPage() {
                     <span>Rs{cartTotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-lg font-semibold">
-                    <span>COD Charges:</span>
-                    <span>Rs{COD_CHARGE.toFixed(2)}</span>
+                    <span>Delivery Charges:</span>
+                    <span>Rs{DELIVERY_CHARGE.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-2xl font-bold">
                     <span>Order Total:</span>
-                    <span>Rs{totalWithCod.toFixed(2)}</span>
+                    <span>Rs{totalWithDelivery.toFixed(2)}</span>
                   </div>
                   <Button className="w-full" onClick={() => router.push('/checkout')}>
                     Proceed to Checkout
