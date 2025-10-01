@@ -9,7 +9,13 @@ interface Profile {
   phone_number: string | null;
 }
 
-export default async function StoreContactPage({ params }: { params: { tenantSlug: string } }) {
+// Define PageProps for server components
+interface PageProps {
+  params: { tenantSlug: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
+export default async function StoreContactPage({ params }: PageProps) {
   const tenantSlug = params.tenantSlug;
 
   if (!tenantSlug) {
