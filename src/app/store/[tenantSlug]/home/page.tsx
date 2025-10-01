@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Store, Package } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { PageProps } from '@/types/next-page-props'; // Explicit import
 
 interface Profile {
   id: string;

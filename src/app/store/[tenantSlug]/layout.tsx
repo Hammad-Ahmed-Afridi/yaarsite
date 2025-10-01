@@ -13,6 +13,7 @@ import { Profile } from '@/components/session-context-provider';
 import { StoreNavbar } from '@/components/store-navbar';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { LayoutProps } from '@/types/next-page-props'; // Explicit import
 
 export default function StoreLayout({
   children,

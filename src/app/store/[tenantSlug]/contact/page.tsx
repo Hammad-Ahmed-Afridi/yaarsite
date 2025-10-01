@@ -1,6 +1,7 @@
 import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { PageProps } from '@/types/next-page-props'; // Explicit import
 
 interface Profile {
   id: string;
