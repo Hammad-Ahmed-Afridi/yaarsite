@@ -9,7 +9,6 @@ import { Store, ShoppingCart, Menu } from 'lucide-react'; // Import Menu icon
 import Image from 'next/image';
 import { useCart } from '@/components/cart-context-provider';
 import { AppLoader } from '@/components/app-loader';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { Profile } from '@/components/session-context-provider';
 import { StoreNavbar } from '@/components/store-navbar';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'; // Import Sheet components
@@ -100,22 +99,8 @@ export default function StoreLayout({
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-border bg-card">
-        {/* Left section: Mobile menu OR Logo + Store Name */}
+        {/* Left section: Logo + Store Name */}
         <div className="flex items-center space-x-4">
-          {isMobile && (
-            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Toggle menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-64 p-4">
-                <h2 className="text-xl font-bold mb-6">Navigation</h2>
-                <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
-              </SheetContent>
-            </Sheet>
-          )}
           {profile?.avatar_url ? (
             <div className="relative h-8 w-8 rounded-full overflow-hidden">
               <Image
@@ -134,23 +119,35 @@ export default function StoreLayout({
 
         {/* Center section: Desktop Navigation */}
         {!isMobile && (
-          <div className="flex-1 flex justify-center"> {/* This div will take available space and center its content */}
+          <div className="flex-1 flex justify-center">
             <StoreNavbar tenantSlug={tenantSlug} direction="horizontal" />
           </div>
         )}
 
-        {/* Right section: Theme Toggle + Cart */}
+        {/* Right section: Cart + Mobile Menu (if mobile) */}
         <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <Button onClick={() => router.push('/cart')} variant="outline" className="relative">
+          <Button onClick={() => router.push('/cart')} variant="outline" size="icon" className="relative">
             <ShoppingCart className="h-5 w-5" />
             {itemCount > 0 && (
               <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 rounded-full">
                 {itemCount}
               </Badge>
             )}
-            <span className="ml-2">Cart</span>
           </Button>
+          {isMobile && (
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-64 p-4">
+                <h2 className="text-xl font-bold mb-6">Navigation</h2>
+                <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
+              </SheetContent>
+            </Sheet>
+          )}
         </div>
       </header>
 
