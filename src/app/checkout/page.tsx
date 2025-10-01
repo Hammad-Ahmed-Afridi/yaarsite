@@ -36,7 +36,8 @@ export default function CheckoutPage() {
   const { cartItems, cartTotal, clearCart } = useCart();
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
-  const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null);
+  const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null); // Used for initial "Continue Shopping" link before order
+  const [finalRedirectPath, setFinalRedirectPath] = useState<string | null>(null); // New state for post-order redirect
   const [currentVerificationCode, setCurrentVerificationCode] = useState('');
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -67,8 +68,9 @@ export default function CheckoutPage() {
     form.clearErrors("humanVerificationCode"); // Clear error
   }, [form]);
 
+  // Effect to fetch store slug for initial "Continue Shopping" link (before order is placed)
   useEffect(() => {
-    async function fetchStoreSlug() {
+    async function fetchStoreSlugForInitialLink() {
       if (cartItems.length > 0) {
         const storeOwnerId = cartItems[0].storeOwnerId;
         const { data: profileData, error: profileError } = await supabase
@@ -78,7 +80,7 @@ export default function CheckoutPage() {
           .single();
 
         if (profileError || !profileData?.tenant_slug) {
-          console.error("Error fetching store tenant slug:", profileError);
+          console.error("Error fetching store tenant slug for initial link:", profileError);
           setStoreTenantSlug(null);
         } else {
           setStoreTenantSlug(profileData.tenant_slug);
@@ -88,7 +90,7 @@ export default function CheckoutPage() {
       }
     }
 
-    fetchStoreSlug();
+    fetchStoreSlugForInitialLink();
   }, [cartItems]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -115,10 +117,13 @@ export default function CheckoutPage() {
         .eq('id', currentStoreOwnerId)
         .single();
 
+      let determinedTenantSlug: string | null = null;
       if (profileError || !profileData?.tenant_slug) {
         console.error("Error fetching store tenant slug for redirection:", profileError);
+        // Fallback to generic store if specific slug not found
+        determinedTenantSlug = null;
       } else {
-        setStoreTenantSlug(profileData.tenant_slug);
+        determinedTenantSlug = profileData.tenant_slug;
       }
 
       const response = await fetch('/api/place-order', {
@@ -149,6 +154,10 @@ export default function CheckoutPage() {
 
       toast.success("Thank you for your purchase. We will contact you soon.", { duration: 5000 });
       clearCart();
+      
+      // Set the final redirect path here, after successful order and before setting orderPlaced
+      const path = determinedTenantSlug ? `/store/${determinedTenantSlug}` : '/store';
+      setFinalRedirectPath(path); // Set the new state
       setOrderPlaced(true);
 
     } catch (error: any) {
@@ -161,7 +170,7 @@ export default function CheckoutPage() {
   };
 
   if (orderPlaced) {
-    const redirectPath = storeTenantSlug ? `/store/${storeTenantSlug}` : '/store';
+    const redirectPath = finalRedirectPath || '/store'; // Use finalRedirectPath, with a fallback
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
         <CheckCircle className="h-20 w-20 text-green-500 mb-6" />
