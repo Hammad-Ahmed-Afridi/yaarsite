@@ -14,6 +14,7 @@ import { Profile } from '@/components/session-context-provider';
 import { StoreNavbar } from '@/components/store-navbar';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'; // Import Sheet components
 import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
+import { toast } from 'sonner'; // Import toast
 
 export default function StoreLayout({
   children,
@@ -28,7 +29,7 @@ export default function StoreLayout({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false); // State for mobile menu
-  const { itemCount } = useCart();
+  const { cartItems, itemCount, clearCart } = useCart(); // Get clearCart from context
   const isMobile = useIsMobile(); // Use the hook to detect mobile
 
   useEffect(() => {
@@ -54,6 +55,13 @@ export default function StoreLayout({
           return;
         }
         setProfile(profileData);
+
+        // Check if cart needs to be cleared
+        if (cartItems.length > 0 && cartItems[0].storeOwnerId !== profileData.id) {
+          clearCart();
+          toast.info(`Your cart was cleared because you are now shopping at ${profileData.tenant_name || 'a new store'}.`);
+        }
+
       } catch (err: any) {
         setError(err.message || "An unexpected error occurred.");
       } finally {
@@ -62,7 +70,7 @@ export default function StoreLayout({
     }
 
     fetchStoreProfile();
-  }, [tenantSlug]);
+  }, [tenantSlug, cartItems, clearCart]); // Added cartItems and clearCart to dependencies
 
   if (isLoading) {
     return <AppLoader message="Loading store..." />;
@@ -145,9 +153,6 @@ export default function StoreLayout({
           </Button>
         </div>
       </header>
-
-      {/* Store Navigation (Desktop only) - Removed as it's now in the header */}
-      {/* {!isMobile && <StoreNavbar tenantSlug={tenantSlug} direction="horizontal" />} */}
 
       {/* Main Content */}
       <main className="flex-1 p-8">
