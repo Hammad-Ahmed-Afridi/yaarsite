@@ -12,6 +12,7 @@ import Image from 'next/image';
 import { useCart } from '@/components/cart-context-provider';
 import { ProductDetailDialog } from '@/components/product-detail-dialog';
 import { AppLoader } from '@/components/app-loader'; // Import AppLoader
+import { ThemeToggle } from '@/components/theme-toggle'; // Import ThemeToggle
 
 interface Product {
   id: string;
@@ -153,15 +154,18 @@ export default function PublicStorePage() {
           )}
           <h1 className="text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
         </div>
-        <Button onClick={() => router.push('/cart')} variant="outline" className="relative">
-          <ShoppingCart className="h-5 w-5" />
-          {itemCount > 0 && (
-            <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 rounded-full">
-              {itemCount}
-            </Badge>
-          )}
-          <span className="ml-2">Cart</span>
-        </Button>
+        <div className="flex items-center gap-2"> {/* Added a div to group buttons */}
+          <ThemeToggle /> {/* Theme Toggle button */}
+          <Button onClick={() => router.push('/cart')} variant="outline" className="relative">
+            <ShoppingCart className="h-5 w-5" />
+            {itemCount > 0 && (
+              <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 rounded-full">
+                {itemCount}
+              </Badge>
+            )}
+            <span className="ml-2">Cart</span>
+          </Button>
+        </div>
       </header>
 
       {/* Main Content - Product Grid */}
@@ -216,6 +220,10 @@ export default function PublicStorePage() {
           storeOwnerId={profile.id}
         />
       )}
+
+      <footer className="w-full py-4 text-center text-muted-foreground text-sm border-t border-border bg-card">
+        Made with Yaarsite
+      </footer>
     </div>
   );
 }

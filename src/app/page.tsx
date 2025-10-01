@@ -163,9 +163,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">See how your store looks to customers</p>
-              <Button onClick={handleOpenStore} className="w-full" disabled={profile?.tenant_name === null}>
-                Open Store
-              </Button>
+              <Button onClick={handleOpenStore} className="w-full" disabled={profile?.tenant_name === null}>Open Store</Button>
             </CardContent>
           </Card>
 
@@ -203,6 +201,10 @@ export default function DashboardPage() {
           </Card>
         </div>
       </main>
+
+      <footer className="w-full py-4 text-center text-muted-foreground text-sm border-t border-border bg-card">
+        Yaarsite for Entrepreneurs
+      </footer>
     </div>
   );
 }
