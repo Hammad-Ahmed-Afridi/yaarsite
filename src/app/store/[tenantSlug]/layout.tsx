@@ -93,20 +93,6 @@ export default function StoreLayout({
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-border bg-card">
         <div className="flex items-center space-x-4">
-          {isMobile && (
-            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Toggle menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-64 p-4">
-                <h2 className="text-xl font-bold mb-6">Navigation</h2>
-                <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
-              </SheetContent>
-            </Sheet>
-          )}
           {profile?.avatar_url ? (
             <div className="relative h-8 w-8 rounded-full overflow-hidden">
               <Image
@@ -130,8 +116,22 @@ export default function StoreLayout({
           </div>
         )}
 
-        {/* Right Section: Cart Button (ThemeToggle removed from here) */}
+        {/* Right Section: Hamburger Menu (Mobile), Cart Button */}
         <div className="flex items-center gap-2">
+          {isMobile && (
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64 p-4">
+                <h2 className="text-xl font-bold mb-6">Navigation</h2>
+                <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
+              </SheetContent>
+            </Sheet>
+          )}
           <Button onClick={() => router.push('/cart')} variant="outline" className="relative">
             <ShoppingCart className="h-5 w-5" />
             {itemCount > 0 && (
