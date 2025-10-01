@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/label';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
@@ -29,7 +29,7 @@ const ACCEPTED_LOGO_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "imag
 const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
   storeDescription: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
-  deliveryCharge: z.coerce.number().min(0, { message: "Delivery charge cannot be negative." }),
+  deliveryCharge: z.coerce.number().min(0, { message: "Delivery charge cannot be negative." }).optional().nullable(),
   logo: z.instanceof(File).optional(),
 });
 
