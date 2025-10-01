@@ -92,7 +92,6 @@ export default function StoreLayout({
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-border bg-card">
-        {/* Left section: Mobile menu OR Logo + Store Name */}
         <div className="flex items-center space-x-4">
           {isMobile && (
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -123,15 +122,6 @@ export default function StoreLayout({
           )}
           <h1 className="text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
         </div>
-
-        {/* Center section: Desktop Navigation */}
-        {!isMobile && (
-          <div className="flex-1 flex justify-center"> {/* This div will take available space and center its content */}
-            <StoreNavbar tenantSlug={tenantSlug} direction="horizontal" />
-          </div>
-        )}
-
-        {/* Right section: Theme Toggle + Cart */}
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Button onClick={() => router.push('/cart')} variant="outline" className="relative">
@@ -141,13 +131,13 @@ export default function StoreLayout({
                 {itemCount}
               </Badge>
             )}
-            <span className="ml-2">Cart</span>
+            {/* Removed the 'Cart' text from here */}
           </Button>
         </div>
       </header>
 
-      {/* Store Navigation (Desktop only) - Removed as it's now in the header */}
-      {/* {!isMobile && <StoreNavbar tenantSlug={tenantSlug} direction="horizontal" />} */}
+      {/* Store Navigation (Desktop only) */}
+      {!isMobile && <StoreNavbar tenantSlug={tenantSlug} direction="horizontal" />}
 
       {/* Main Content */}
       <main className="flex-1 p-8">
