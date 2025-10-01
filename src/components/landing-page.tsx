@@ -9,7 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Menu, X, ChevronLeft, ChevronRight, Zap, Smartphone, Package, DollarSign, Whatsapp, Instagram, Facebook, Tiktok } from 'lucide-react';
+import { Menu, X, ChevronLeft, ChevronRight, Zap, Smartphone, Package, DollarSign, Share2 } from 'lucide-react'; // Replaced specific social icons with Share2
 
 const sliderImages = [
   { src: "https://res.cloudinary.com/ddplxy4nd/image/upload/c_limit,h_186,w_195/Capture_jatcqb", alt: "Premium and professional website design" },
@@ -411,16 +411,16 @@ export default function LandingPage() {
       {/* Social Media Buttons - Fixed Position */}
       <div className="fixed bottom-4 right-4 flex flex-col space-y-2 z-40">
         <a href="https://wa.me/yourphonenumber" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full flex items-center justify-center bg-white icon-container">
-          <Whatsapp className="text-green-500 w-8 h-8" />
+          <Share2 className="text-green-500 w-8 h-8" /> {/* Replaced Whatsapp with Share2 */}
         </a>
         <a href="https://www.instagram.com/yourusername" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full flex items-center justify-center bg-white icon-container">
-          <Instagram className="w-8 h-8" style={{ background: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }} />
+          <Share2 className="w-8 h-8" style={{ background: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }} /> {/* Replaced Instagram with Share2 */}
         </a>
         <a href="https://www.tiktok.com/@yourusername" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full flex items-center justify-center bg-white icon-container">
-          <Tiktok className="text-black w-8 h-8" />
+          <Share2 className="text-black w-8 h-8" /> {/* Replaced Tiktok with Share2 */}
         </a>
         <a href="https://www.facebook.com/yourpagename" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full flex items-center justify-center bg-white icon-container">
-          <Facebook className="text-blue-700 w-8 h-8" />
+          <Share2 className="text-blue-700 w-8 h-8" /> {/* Replaced Facebook with Share2 */}
         </a>
       </div>
 
