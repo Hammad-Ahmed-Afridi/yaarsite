@@ -5,7 +5,6 @@ import { SessionContextProvider } from "@/components/session-context-provider";
 import { CartContextProvider } from "@/components/cart-context-provider";
 import { AuthWrapper } from '@/components/auth-wrapper';
 import { Toaster } from 'sonner'; // Import Toaster
-import { ThemeProvider } from "@/components/theme-provider"; // Import ThemeProvider
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,16 +49,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
           <SessionContextProvider>
             <CartContextProvider>
               <AuthWrapper>
@@ -68,7 +61,6 @@ export default function RootLayout({
             </CartContextProvider>
           </SessionContextProvider>
           <Toaster richColors />
-        </ThemeProvider>
       </body>
     </html>
   );

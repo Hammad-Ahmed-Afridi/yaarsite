@@ -9,7 +9,7 @@ import { Store, ShoppingCart, Menu } from 'lucide-react'; // Import Menu icon
 import Image from 'next/image';
 import { useCart } from '@/components/cart-context-provider';
 import { AppLoader } from '@/components/app-loader';
-import { ThemeToggle } from '@/components/theme-toggle';
+// Removed import { ThemeToggle } from '@/components/theme-toggle';
 import { Profile } from '@/components/session-context-provider';
 import { StoreNavbar } from '@/components/store-navbar';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'; // Import Sheet components
@@ -133,7 +133,7 @@ export default function StoreLayout({
 
         {/* Right section: Theme Toggle + Cart */}
         <div className="flex items-center gap-2">
-          <ThemeToggle />
+          {/* Removed <ThemeToggle /> */}
           <Button onClick={() => router.push('/cart')} variant="outline" className="relative">
             <ShoppingCart className="h-5 w-5" />
             {itemCount > 0 && (
