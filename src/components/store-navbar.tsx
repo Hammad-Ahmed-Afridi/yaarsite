@@ -24,11 +24,13 @@ export function StoreNavbar({ tenantSlug, direction = 'horizontal', onLinkClick 
 
   const containerClasses = cn(
     "flex",
-    direction === 'horizontal' ? "space-x-2 overflow-x-auto pb-1" : "flex-col space-y-2 items-start w-full"
+    direction === 'horizontal' ? "space-x-2" : "flex-col space-y-2 items-start w-full" // Removed pb-1 here
   );
 
   return (
-    <nav className={cn("bg-card border-b border-border p-2", direction === 'vertical' && "border-none p-0")}>
+    <nav className={cn(
+      direction === 'vertical' ? "border-none p-0" : "bg-transparent border-none p-0", // Ensure no background/border for horizontal
+    )}>
       <div className={containerClasses}>
         {navItems.map((item) => (
           <Button
