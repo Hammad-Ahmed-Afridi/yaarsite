@@ -84,6 +84,25 @@ export default function SignupPage() {
     console.log("Signup Page: Attempting form submission with values:", values);
     setIsLoading(true);
     try {
+      // Check for existing phone number
+      if (values.phoneNumber) {
+        const { data: existingPhone, error: phoneCheckError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('phone_number', values.phoneNumber)
+          .single();
+
+        if (existingPhone) {
+          toast.error("This phone number is already registered. Please use a different one.");
+          setIsLoading(false);
+          refreshVerificationCode();
+          return;
+        }
+        if (phoneCheckError && phoneCheckError.code !== 'PGRST116') { // PGRST116 means "no rows found"
+          throw new Error(`Error checking phone number uniqueness: ${phoneCheckError.message}`);
+        }
+      }
+
       const { error: signUpError } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
@@ -107,9 +126,9 @@ export default function SignupPage() {
         toast.success("Account created! Please sign in to continue.", { duration: 3000 });
         console.log("Signup Page: Account created. User remains on signup page.");
       }
-    } catch (submitError) {
+    } catch (submitError: any) {
       console.error("Signup Page: Unexpected error during form submission:", submitError);
-      toast.error("An unexpected error occurred during signup.");
+      toast.error(submitError.message || "An unexpected error occurred during signup.");
       refreshVerificationCode(); // Refresh code on error
     } finally {
       setIsLoading(false);
