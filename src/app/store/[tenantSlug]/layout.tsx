@@ -121,6 +121,8 @@ export default function StoreLayout({
             <Store className="h-6 w-6 text-primary" />
           )}
           <h1 className="text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
+          {/* Store Navigation (Desktop only) - Moved inside header */}
+          {!isMobile && <StoreNavbar tenantSlug={tenantSlug} direction="horizontal" />}
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
@@ -131,13 +133,9 @@ export default function StoreLayout({
                 {itemCount}
               </Badge>
             )}
-            {/* Removed the 'Cart' text from here */}
           </Button>
         </div>
       </header>
-
-      {/* Store Navigation (Desktop only) */}
-      {!isMobile && <StoreNavbar tenantSlug={tenantSlug} direction="horizontal" />}
 
       {/* Main Content */}
       <main className="flex-1 p-8">
