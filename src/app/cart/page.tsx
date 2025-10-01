@@ -12,41 +12,43 @@ import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
-
-const DELIVERY_CHARGE = 200; // Define delivery charge here
+import { AppLoader } from '@/components/app-loader'; // Import AppLoader
 
 export default function CartPage() {
   const router = useRouter();
   const { cartItems, removeFromCart, updateQuantity, cartTotal, itemCount } = useCart();
   const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null);
-  const [isLoadingStoreSlug, setIsLoadingStoreSlug] = useState(true);
+  const [deliveryCharge, setDeliveryCharge] = useState<number | null>(null);
+  const [isLoadingStoreData, setIsLoadingStoreData] = useState(true);
   const isMobile = useIsMobile(); // Use the hook
 
   useEffect(() => {
-    async function fetchStoreSlug() {
-      setIsLoadingStoreSlug(true);
+    async function fetchStoreData() {
+      setIsLoadingStoreData(true);
       if (cartItems.length > 0) {
-        // Assuming all items in the cart belong to the same store owner
         const storeOwnerId = cartItems[0].storeOwnerId;
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('tenant_slug')
+          .select('tenant_slug, delivery_charge')
           .eq('id', storeOwnerId)
           .single();
 
-        if (profileError || !profileData?.tenant_slug) {
-          console.error("Error fetching store tenant slug:", profileError);
-          setStoreTenantSlug(null); // Fallback to generic store if error
+        if (profileError || !profileData) {
+          console.error("Error fetching store profile for cart:", profileError);
+          setStoreTenantSlug(null);
+          setDeliveryCharge(200); // Fallback to default delivery charge
         } else {
           setStoreTenantSlug(profileData.tenant_slug);
+          setDeliveryCharge(profileData.delivery_charge || 200); // Use profile's charge or fallback
         }
       } else {
-        setStoreTenantSlug(null); // No items, no specific store slug
+        setStoreTenantSlug(null);
+        setDeliveryCharge(200); // Default if cart is empty
       }
-      setIsLoadingStoreSlug(false);
+      setIsLoadingStoreData(false);
     }
 
-    fetchStoreSlug();
+    fetchStoreData();
   }, [cartItems]); // Re-fetch when cartItems change
 
   const handleUpdateQuantity = (productId: string, newQuantity: number) => {
@@ -58,7 +60,11 @@ export default function CartPage() {
   };
 
   const continueShoppingPath = storeTenantSlug ? `/store/${storeTenantSlug}` : '/store';
-  const totalWithDelivery = cartTotal + DELIVERY_CHARGE; // Calculate total including delivery charge
+  const totalWithDelivery = cartTotal + (deliveryCharge || 0); // Calculate total including delivery charge
+
+  if (isLoadingStoreData) {
+    return <AppLoader message="Loading cart details..." isFullScreen={true} />;
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -235,7 +241,7 @@ export default function CartPage() {
                   </div>
                   <div className="flex justify-between text-lg font-semibold">
                     <span>Delivery Charges:</span>
-                    <span>Rs{DELIVERY_CHARGE.toFixed(2)}</span>
+                    <span>Rs{(deliveryCharge || 0).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-2xl font-bold">
                     <span>Order Total:</span>

@@ -29,6 +29,7 @@ const ACCEPTED_LOGO_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "imag
 const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
   storeDescription: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
+  deliveryCharge: z.coerce.number().min(0, { message: "Delivery charge cannot be negative." }),
   logo: z.instanceof(File).optional(),
 });
 
@@ -45,6 +46,7 @@ export default function SettingsPage() {
     defaultValues: {
       storeName: "",
       storeDescription: "",
+      deliveryCharge: 0, // Default value for delivery charge
       logo: undefined,
     },
   });
@@ -54,6 +56,7 @@ export default function SettingsPage() {
       form.reset({
         storeName: profile.tenant_name || "",
         storeDescription: profile.store_description || "",
+        deliveryCharge: profile.delivery_charge || 0, // Populate with existing delivery charge
         logo: undefined,
       });
       setLogoPreview(profile.avatar_url || null);
@@ -201,6 +204,7 @@ export default function SettingsPage() {
           store_url: newStoreUrl,
           store_description: values.storeDescription || null,
           avatar_url: newAvatarUrl,
+          delivery_charge: values.deliveryCharge, // Save the new delivery charge
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -285,6 +289,20 @@ export default function SettingsPage() {
                 />
                 {form.formState.errors.storeDescription && (
                   <p className="text-destructive text-sm">{form.formState.errors.storeDescription.message}</p>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="deliveryCharge">Delivery Charge (Rs) *</Label>
+                <Input
+                  id="deliveryCharge"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  {...form.register("deliveryCharge", { valueAsNumber: true })}
+                />
+                {form.formState.errors.deliveryCharge && (
+                  <p className="text-destructive text-sm">{form.formState.errors.deliveryCharge.message}</p>
                 )}
               </div>
 
