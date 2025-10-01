@@ -174,37 +174,7 @@ export default function OrdersPage() {
                         <span className="font-medium">Date:</span>
                         <span>{new Date(order.created_at).toLocaleDateString()}</span>
                       </div>
-                      <div className="flex justify-end gap-2 pt-4">
-                        <Button variant="outline" size="sm" onClick={() => toast.info("Edit order details coming soon!")}>
-                          <Edit className="mr-2 h-4 w-4" /> Edit
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="destructive" size="sm">
-                              <Trash2 className="mr-2 h-4 w-4" /> Delete
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete this order
-                                and remove its data from our servers.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleDeleteOrder(order.id)}
-                                disabled={isDeletingOrder}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                              >
-                                {isDeletingOrder ? "Deleting..." : "Delete"}
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
+                      {/* Removed Edit and Delete buttons for mobile view */}
                     </CardContent>
                   </Card>
                 ))}
@@ -224,7 +194,7 @@ export default function OrdersPage() {
                           <TableHead>Total Amount</TableHead>
                           <TableHead>Status</TableHead>
                           <TableHead>Order Date</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                          {/* Removed TableHead for Actions */}
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -252,49 +222,7 @@ export default function OrdersPage() {
                               </Select>
                             </TableCell>
                             <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
-                            <TableCell className="text-right">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <span className="sr-only">Open menu</span>
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                  <DropdownMenuItem onClick={() => toast.info("Edit order details coming soon!")}>
-                                    <Edit className="mr-2 h-4 w-4" /> Edit Order
-                                  </DropdownMenuItem>
-                                  <DropdownMenuSeparator />
-                                  <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                      <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
-                                        <Trash2 className="mr-2 h-4 w-4" /> Delete Order
-                                      </DropdownMenuItem>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                      <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                          This action cannot be undone. This will permanently delete this order
-                                          and remove its data from our servers.
-                                        </AlertDialogDescription>
-                                      </AlertDialogHeader>
-                                      <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction
-                                          onClick={() => handleDeleteOrder(order.id)}
-                                          disabled={isDeletingOrder}
-                                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                        >
-                                          {isDeletingOrder ? "Deleting..." : "Delete"}
-                                        </AlertDialogAction>
-                                      </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                  </AlertDialog>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </TableCell>
+                            {/* Removed TableCell for Actions */}
                           </TableRow>
                         ))}
                       </TableBody>
