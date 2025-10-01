@@ -14,14 +14,15 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input'; // Corrected import path
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2 } from 'lucide-react';
+import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2, Home, Info, Phone, Package } from 'lucide-react';
 import Image from 'next/image';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { AppLoader } from '@/components/app-loader';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'; // Import Tabs components
 
 const MAX_LOGO_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_LOGO_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -31,6 +32,10 @@ const formSchema = z.object({
   storeDescription: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
   deliveryCharge: z.coerce.number().min(0, { message: "Delivery charge cannot be negative." }).optional().nullable(),
   logo: z.instanceof(File).optional(),
+  homePageHeading: z.string().max(100, { message: "Heading cannot exceed 100 characters." }).optional(),
+  homePageDescription: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
+  aboutPageContent: z.string().max(1000, { message: "Content cannot exceed 1000 characters." }).optional(),
+  storePageWelcomeMessage: z.string().max(500, { message: "Welcome message cannot exceed 500 characters." }).optional(),
 });
 
 export default function StoreCustomizationPage() {
@@ -48,6 +53,10 @@ export default function StoreCustomizationPage() {
       storeDescription: "",
       deliveryCharge: 0,
       logo: undefined,
+      homePageHeading: "",
+      homePageDescription: "",
+      aboutPageContent: "",
+      storePageWelcomeMessage: "",
     },
   });
 
@@ -58,6 +67,10 @@ export default function StoreCustomizationPage() {
         storeDescription: profile.store_description || "",
         deliveryCharge: profile.delivery_charge || 0,
         logo: undefined,
+        homePageHeading: profile.home_page_heading || "",
+        homePageDescription: profile.home_page_description || "",
+        aboutPageContent: profile.about_page_content || "",
+        storePageWelcomeMessage: profile.store_page_welcome_message || "",
       });
       setLogoPreview(profile.avatar_url || null);
     }
@@ -202,6 +215,10 @@ export default function StoreCustomizationPage() {
           store_description: values.storeDescription || null,
           avatar_url: newAvatarUrl,
           delivery_charge: values.deliveryCharge,
+          home_page_heading: values.homePageHeading || null,
+          home_page_description: values.homePageDescription || null,
+          about_page_content: values.aboutPageContent || null,
+          store_page_welcome_message: values.storePageWelcomeMessage || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -258,113 +275,203 @@ export default function StoreCustomizationPage() {
       <DashboardHeader profile={profile} onSignOut={handleSignOut} currentPath={pathname} />
 
       <main className="flex-1 p-8 flex justify-center">
-        <Card className="w-full max-w-2xl bg-card text-card-foreground shadow-lg">
+        <Card className="w-full max-w-3xl bg-card text-card-foreground shadow-lg"> {/* Increased max-w */}
           <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">
             <Settings className="h-6 w-6 text-primary" />
             <CardTitle className="text-2xl font-bold">Store Customization</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid gap-2">
-                <Label htmlFor="storeName">Store Name *</Label>
-                <Input
-                  id="storeName"
-                  placeholder="Enter your store name"
-                  {...form.register("storeName")}
-                />
-                {form.formState.errors.storeName && (
-                  <p className="text-destructive text-sm">{form.formState.errors.storeName.message}</p>
-                )}
-              </div>
+            <Tabs defaultValue="general" className="w-full">
+              <TabsList className="grid w-full grid-cols-5"> {/* Adjusted grid-cols */}
+                <TabsTrigger value="general">
+                  <Settings className="h-4 w-4 mr-2" /> General
+                </TabsTrigger>
+                <TabsTrigger value="home">
+                  <Home className="h-4 w-4 mr-2" /> Home
+                </TabsTrigger>
+                <TabsTrigger value="about">
+                  <Info className="h-4 w-4 mr-2" /> About Us
+                </TabsTrigger>
+                <TabsTrigger value="contact">
+                  <Phone className="h-4 w-4 mr-2" /> Contact Us
+                </TabsTrigger>
+                <TabsTrigger value="store">
+                  <Package className="h-4 w-4 mr-2" /> Store
+                </TabsTrigger>
+              </TabsList>
 
-              <div className="grid gap-2">
-                <Label htmlFor="storeDescription">Store Description</Label>
-                <Textarea
-                  id="storeDescription"
-                  placeholder="A brief description of what your store offers."
-                  {...form.register("storeDescription")}
-                />
-                {form.formState.errors.storeDescription && (
-                  <p className="text-destructive text-sm">{form.formState.errors.storeDescription.message}</p>
-                )}
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="deliveryCharge">Delivery Charge (Rs) *</Label>
-                <Input
-                  id="deliveryCharge"
-                  type="number"
-                  step="0.01"
-                  placeholder="0.00"
-                  {...form.register("deliveryCharge", { valueAsNumber: true })}
-                />
-                {form.formState.errors.deliveryCharge && (
-                  <p className="text-destructive text-sm">{form.formState.errors.deliveryCharge.message}</p>
-                )}
-              </div>
-
-              <div className="grid gap-2">
-                <Label>Store Logo</Label>
-                <p className="text-xs text-muted-foreground">
-                  Upload your store logo. Recommended: Square aspect ratio (e.g., 200x200px), max 2MB.
-                  <br />
-                  Supported formats: JPG, PNG, WebP. Image will be compressed for faster loading.
-                </p>
-                <div className="flex items-center gap-4 mt-2 flex-wrap">
-                  {(logoPreview || profile?.avatar_url) ? (
-                    <div className="relative w-24 h-24 border rounded-md overflow-hidden">
-                      <Image
-                        src={logoPreview || profile!.avatar_url!}
-                        alt="Store Logo Preview"
-                        fill
-                        style={{ objectFit: 'cover' }}
-                      />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="icon"
-                        className="absolute top-1 right-1 h-6 w-6 rounded-full"
-                        onClick={handleRemoveLogo}
-                        disabled={isUpdatingStore}
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center w-24 h-24 border-2 border-dashed rounded-md bg-muted">
-                      <ImageIcon className="h-10 w-10 text-muted-foreground" />
-                    </div>
-                  )}
-                  <Label htmlFor="logo-upload" className="flex-1">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-6">
+                <TabsContent value="general" className="space-y-6">
+                  <div className="grid gap-2">
+                    <Label htmlFor="storeName">Store Name *</Label>
                     <Input
-                      id="logo-upload"
-                      type="file"
-                      accept="image/jpeg,image/jpg,image/png,image/webp"
-                      className="hidden"
-                      onChange={handleLogoChange}
-                      disabled={isUpdatingStore}
+                      id="storeName"
+                      placeholder="Enter your store name"
+                      {...form.register("storeName")}
                     />
-                    <Button asChild variant="outline" className="w-full" disabled={isUpdatingStore}>
-                      <span>{logoPreview || profile?.avatar_url ? "Change Logo" : "Upload Logo"}</span>
-                    </Button>
-                  </Label>
-                </div>
-                {form.formState.errors.logo && (
-                  <p className="text-destructive text-sm">{form.formState.errors.logo.message}</p>
-                )}
-              </div>
+                    {form.formState.errors.storeName && (
+                      <p className="text-destructive text-sm">{form.formState.errors.storeName.message}</p>
+                    )}
+                  </div>
 
-              <Button type="submit" className="w-full" disabled={isUpdatingStore}>
-                {isUpdatingStore ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Updating Store...
-                  </>
-                ) : (
-                  "Update Store"
-                )}
-              </Button>
-            </form>
+                  <div className="grid gap-2">
+                    <Label htmlFor="storeDescription">Store Description</Label>
+                    <Textarea
+                      id="storeDescription"
+                      placeholder="A brief description of what your store offers."
+                      {...form.register("storeDescription")}
+                    />
+                    {form.formState.errors.storeDescription && (
+                      <p className="text-destructive text-sm">{form.formState.errors.storeDescription.message}</p>
+                    )}
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="deliveryCharge">Delivery Charge (Rs) *</Label>
+                    <Input
+                      id="deliveryCharge"
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      {...form.register("deliveryCharge", { valueAsNumber: true })}
+                    />
+                    {form.formState.errors.deliveryCharge && (
+                      <p className="text-destructive text-sm">{form.formState.errors.deliveryCharge.message}</p>
+                    )}
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label>Store Logo</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Upload your store logo. Recommended: Square aspect ratio (e.g., 200x200px), max 2MB.
+                      <br />
+                      Supported formats: JPG, PNG, WebP. Image will be compressed for faster loading.
+                    </p>
+                    <div className="flex items-center gap-4 mt-2 flex-wrap">
+                      {(logoPreview || profile?.avatar_url) ? (
+                        <div className="relative w-24 h-24 border rounded-md overflow-hidden">
+                          <Image
+                            src={logoPreview || profile!.avatar_url!}
+                            alt="Store Logo Preview"
+                            fill
+                            style={{ objectFit: 'cover' }}
+                          />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-1 right-1 h-6 w-6 rounded-full"
+                            onClick={handleRemoveLogo}
+                            disabled={isUpdatingStore}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center w-24 h-24 border-2 border-dashed rounded-md bg-muted">
+                          <ImageIcon className="h-10 w-10 text-muted-foreground" />
+                        </div>
+                      )}
+                      <Label htmlFor="logo-upload" className="flex-1">
+                        <Input
+                          id="logo-upload"
+                          type="file"
+                          accept="image/jpeg,image/jpg,image/png,image/webp"
+                          className="hidden"
+                          onChange={handleLogoChange}
+                          disabled={isUpdatingStore}
+                        />
+                        <Button asChild variant="outline" className="w-full" disabled={isUpdatingStore}>
+                          <span>{logoPreview || profile?.avatar_url ? "Change Logo" : "Upload Logo"}</span>
+                        </Button>
+                      </Label>
+                    </div>
+                    {form.formState.errors.logo && (
+                      <p className="text-destructive text-sm">{form.formState.errors.logo.message}</p>
+                    )}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="home" className="space-y-6">
+                  <div className="grid gap-2">
+                    <Label htmlFor="homePageHeading">Home Page Heading</Label>
+                    <Input
+                      id="homePageHeading"
+                      placeholder="Welcome to Our Store!"
+                      {...form.register("homePageHeading")}
+                    />
+                    {form.formState.errors.homePageHeading && (
+                      <p className="text-destructive text-sm">{form.formState.errors.homePageHeading.message}</p>
+                    )}
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="homePageDescription">Home Page Description</Label>
+                    <Textarea
+                      id="homePageDescription"
+                      placeholder="Discover a wide range of products hand-picked just for you."
+                      {...form.register("homePageDescription")}
+                    />
+                    {form.formState.errors.homePageDescription && (
+                      <p className="text-destructive text-sm">{form.formState.errors.homePageDescription.message}</p>
+                    )}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="about" className="space-y-6">
+                  <div className="grid gap-2">
+                    <Label htmlFor="aboutPageContent">About Us Page Content</Label>
+                    <Textarea
+                      id="aboutPageContent"
+                      placeholder="Tell your customers about your store, its mission, and values."
+                      rows={8}
+                      {...form.register("aboutPageContent")}
+                    />
+                    {form.formState.errors.aboutPageContent && (
+                      <p className="text-destructive text-sm">{form.formState.errors.aboutPageContent.message}</p>
+                    )}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="contact" className="space-y-6">
+                  <p className="text-muted-foreground">
+                    Your contact email and phone number are managed in your profile.
+                    You can update them by editing your profile details.
+                  </p>
+                  <div className="grid gap-2">
+                    <Label>Email</Label>
+                    <Input value={profile?.email || "N/A"} readOnly />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>Phone Number</Label>
+                    <Input value={profile?.phone_number || "N/A"} readOnly />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="store" className="space-y-6">
+                  <div className="grid gap-2">
+                    <Label htmlFor="storePageWelcomeMessage">Store (Products) Page Welcome Message</Label>
+                    <Textarea
+                      id="storePageWelcomeMessage"
+                      placeholder="A warm welcome message for your products page."
+                      {...form.register("storePageWelcomeMessage")}
+                    />
+                    {form.formState.errors.storePageWelcomeMessage && (
+                      <p className="text-destructive text-sm">{form.formState.errors.storePageWelcomeMessage.message}</p>
+                    )}
+                  </div>
+                </TabsContent>
+
+                <Button type="submit" className="w-full mt-6" disabled={isUpdatingStore}>
+                  {isUpdatingStore ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Updating Store...
+                    </>
+                  ) : (
+                    "Update Store"
+                  )}
+                </Button>
+              </form>
 
             <div className="mt-8 space-y-4">
               <h3 className="text-lg font-semibold">Store Status</h3>

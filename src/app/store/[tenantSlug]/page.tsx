@@ -19,7 +19,7 @@ interface Product {
   description: string | null;
   price: number;
   stock: number;
-  user_id: string;
+  user_id: string; // Owner of the product
   image_urls: string[] | null;
 }
 
@@ -31,6 +31,7 @@ interface Profile {
   tenant_slug: string | null;
   store_url: string | null;
   avatar_url: string | null;
+  store_page_welcome_message: string | null; // New field
 }
 
 export default function StoreProductsPage() {
@@ -58,7 +59,7 @@ export default function StoreProductsPage() {
         // Fetch profile to get user_id for products and pass to ProductDetailDialog
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('*')
+          .select('*, store_page_welcome_message') // Select new field
           .eq('tenant_slug', tenantSlug)
           .single();
 
@@ -113,6 +114,11 @@ export default function StoreProductsPage() {
 
   return (
     <>
+      {profile?.store_page_welcome_message && (
+        <div className="mb-8 p-4 bg-muted rounded-lg text-center">
+          <p className="text-lg text-muted-foreground">{profile.store_page_welcome_message}</p>
+        </div>
+      )}
       <h2 className="text-2xl font-bold mb-6">Our Products</h2>
       {products.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center">
