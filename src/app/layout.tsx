@@ -59,7 +59,7 @@ export default function RootLayout({
           defaultTheme="light" 
           enableSystem
           disableTransitionOnChange
-          {/* Added storageKey for dashboard theme */}
+          // Added storageKey for dashboard theme
           storageKey="dashboard-theme" 
         >
           <SessionContextProvider>
