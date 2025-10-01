@@ -32,7 +32,7 @@ export default function StoreAboutPage() {
       try {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('tenant_name, store_description')
+          .select('id, tenant_name, store_description') // Added 'id' here
           .eq('tenant_slug', tenantSlug)
           .single();
 

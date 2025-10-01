@@ -33,7 +33,7 @@ export default function StoreContactPage() {
       try {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('tenant_name, email, phone_number')
+          .select('id, tenant_name, email, phone_number') // Added 'id' here
           .eq('tenant_slug', tenantSlug)
           .single();
 
