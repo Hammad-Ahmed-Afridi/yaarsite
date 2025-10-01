@@ -8,9 +8,11 @@ import { cn } from '@/lib/utils';
 
 interface StoreNavbarProps {
   tenantSlug: string;
+  direction?: 'horizontal' | 'vertical'; // New prop for layout direction
+  onLinkClick?: () => void; // New prop to handle closing the menu on link click
 }
 
-export function StoreNavbar({ tenantSlug }: StoreNavbarProps) {
+export function StoreNavbar({ tenantSlug, direction = 'horizontal', onLinkClick }: StoreNavbarProps) {
   const pathname = usePathname();
 
   const navItems = [
@@ -20,9 +22,14 @@ export function StoreNavbar({ tenantSlug }: StoreNavbarProps) {
     { name: 'Contact Us', href: `/store/${tenantSlug}/contact` },
   ];
 
+  const containerClasses = cn(
+    "flex",
+    direction === 'horizontal' ? "space-x-2 overflow-x-auto pb-1" : "flex-col space-y-2 items-start w-full"
+  );
+
   return (
-    <nav className="bg-card border-b border-border p-2 flex justify-center">
-      <div className="flex space-x-2 overflow-x-auto pb-1">
+    <nav className={cn("bg-card border-b border-border p-2", direction === 'vertical' && "border-none p-0")}>
+      <div className={containerClasses}>
         {navItems.map((item) => (
           <Button
             key={item.name}
@@ -30,8 +37,10 @@ export function StoreNavbar({ tenantSlug }: StoreNavbarProps) {
             asChild
             className={cn(
               "text-base font-medium",
-              pathname === item.href ? "text-primary underline underline-offset-4" : "text-muted-foreground hover:text-foreground"
+              pathname === item.href ? "text-primary underline underline-offset-4" : "text-muted-foreground hover:text-foreground",
+              direction === 'vertical' && "w-full justify-start" // Full width for vertical items
             )}
+            onClick={onLinkClick} // Close sheet on click
           >
             <Link href={item.href}>
               {item.name}

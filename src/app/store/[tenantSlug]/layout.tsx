@@ -5,13 +5,15 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Store, ShoppingCart } from 'lucide-react';
+import { Store, ShoppingCart, Menu } from 'lucide-react'; // Import Menu icon
 import Image from 'next/image';
 import { useCart } from '@/components/cart-context-provider';
 import { AppLoader } from '@/components/app-loader';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Profile } from '@/components/session-context-provider'; // Assuming Profile is exported
-import { StoreNavbar } from '@/components/store-navbar'; // Import the new navbar
+import { Profile } from '@/components/session-context-provider';
+import { StoreNavbar } from '@/components/store-navbar';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'; // Import Sheet components
+import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
 
 export default function StoreLayout({
   children,
@@ -25,7 +27,9 @@ export default function StoreLayout({
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false); // State for mobile menu
   const { itemCount } = useCart();
+  const isMobile = useIsMobile(); // Use the hook to detect mobile
 
   useEffect(() => {
     async function fetchStoreProfile() {
@@ -89,6 +93,20 @@ export default function StoreLayout({
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-border bg-card">
         <div className="flex items-center space-x-4">
+          {isMobile && (
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64 p-4">
+                <h2 className="text-xl font-bold mb-6">Navigation</h2>
+                <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
+              </SheetContent>
+            </Sheet>
+          )}
           {profile?.avatar_url ? (
             <div className="relative h-8 w-8 rounded-full overflow-hidden">
               <Image
@@ -118,8 +136,8 @@ export default function StoreLayout({
         </div>
       </header>
 
-      {/* Store Navigation */}
-      <StoreNavbar tenantSlug={tenantSlug} />
+      {/* Store Navigation (Desktop only) */}
+      {!isMobile && <StoreNavbar tenantSlug={tenantSlug} direction="horizontal" />}
 
       {/* Main Content */}
       <main className="flex-1 p-8">
