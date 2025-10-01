@@ -9,20 +9,21 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Menu, X, ChevronLeft, ChevronRight, Zap, Smartphone, Package, DollarSign, Share2, Star } from 'lucide-react'; // Added Star icon
+import { Menu, X, ChevronLeft, ChevronRight, Zap, Smartphone, Package, DollarSign, Star } from 'lucide-react'; // Removed Share2, kept Star
 import useEmblaCarousel from 'embla-carousel-react'; // Import Embla Carousel
+import { WhatsappIcon, InstagramIcon, FacebookIcon, TiktokIcon } from '@/components/social-icons'; // Import custom social icons
 
 const sliderImages = [
-  { src: "https://res.cloudinary.com/ddplxy4nd/image/upload/c_limit,h_186,w_195/Capture_jatcqb", alt: "Premium and professional website design" },
-  { src: "https://placehold.co/1000x562/334155/e2e8f0?text=Modern+User+Interface", alt: "Modern user interface for easy management" },
-  { src: "https://placehold.co/1000x562/475569/e2e8f0?text=Flawless+on+any+Device", alt: "Responsive design for all devices" },
+  { src: "https://placehold.co/1000x562/334155/e2e8f0?text=Your+Store+Design", alt: "Premium and professional website design" }, // Placeholder
+  { src: "https://placehold.co/1000x562/475569/e2e8f0?text=Modern+User+Interface", alt: "Modern user interface for easy management" }, // Placeholder
+  { src: "https://placehold.co/1000x562/64748b/e2e8f0?text=Flawless+on+any+Device", alt: "Responsive design for all devices" }, // Placeholder
 ];
 
 const teamMembers = [
-  { name: "John Doe", title: "Founder & CEO", description: "John leads our vision and strategy with a passion for innovation and a decade of experience in the industry.", imageUrl: "https://res.cloudinary.com/ddplxy4nd/image/upload/t_hello/WIN_20250917_12_08_30_Pro_gmys9h" },
-  { name: "Jane Smith", title: "Lead Designer", description: "Jane is the creative force behind our designs, crafting beautiful and intuitive user experiences.", imageUrl: "https://res.cloudinary.com/ddplxy4nd/image/upload/t_hello/WIN_20250917_12_08_30_Pro_gmys9h" },
-  { name: "Peter Jones", title: "Senior Developer", description: "Peter is a coding wizard who turns our designs into a seamless and robust reality.", imageUrl: "https://res.cloudinary.com/ddplxy4nd/image/upload/t_hello/WIN_20250917_12_08_30_Pro_gmys9h" },
-  { name: "Emily White", title: "Marketing Specialist", description: "Emily ensures our message reaches the right audience, driving growth and engagement.", imageUrl: "https://res.cloudinary.com/ddplxy4nd/image/upload/t_hello/WIN_20250917_12_08_30_Pro_gmys9h" },
+  { name: "John Doe", title: "Founder & CEO", description: "John leads our vision and strategy with a passion for innovation and a decade of experience in the industry.", imageUrl: "https://placehold.co/96x96/1a202d/94a3b8?text=JD" }, // Placeholder
+  { name: "Jane Smith", title: "Lead Designer", description: "Jane is the creative force behind our designs, crafting beautiful and intuitive user experiences.", imageUrl: "https://placehold.co/96x96/1a202d/94a3b8?text=JS" }, // Placeholder
+  { name: "Peter Jones", title: "Senior Developer", description: "Peter is a coding wizard who turns our designs into a seamless and robust reality.", imageUrl: "https://placehold.co/96x96/1a202d/94a3b8?text=PJ" }, // Placeholder
+  { name: "Emily White", title: "Marketing Specialist", description: "Emily ensures our message reaches the right audience, driving growth and engagement.", imageUrl: "https://placehold.co/96x96/1a202d/94a3b8?text=EW" }, // Placeholder
 ];
 
 const testimonials = [
@@ -451,16 +452,16 @@ export default function LandingPage() {
       {/* Social Media Buttons - Fixed Position */}
       <div className="fixed bottom-4 right-4 flex flex-col space-y-2 z-40">
         <a href="https://wa.me/yourphonenumber" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full flex items-center justify-center bg-white icon-container">
-          <Share2 className="text-green-500 w-8 h-8" /> {/* Replaced Whatsapp with Share2 */}
+          <WhatsappIcon size={32} color="#25D366" />
         </a>
         <a href="https://www.instagram.com/yourusername" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full flex items-center justify-center bg-white icon-container">
-          <Share2 className="w-8 h-8" style={{ background: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }} /> {/* Replaced Instagram with Share2 */}
+          <InstagramIcon size={32} style={{ background: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }} />
         </a>
         <a href="https://www.tiktok.com/@yourusername" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full flex items-center justify-center bg-white icon-container">
-          <Share2 className="text-black w-8 h-8" /> {/* Replaced Tiktok with Share2 */}
+          <TiktokIcon size={32} color="#000000" />
         </a>
         <a href="https://www.facebook.com/yourpagename" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full flex items-center justify-center bg-white icon-container">
-          <Share2 className="text-blue-700 w-8 h-8" /> {/* Replaced Facebook with Share2 */}
+          <FacebookIcon size={32} color="#1877F2" />
         </a>
       </div>
 

@@ -132,7 +132,7 @@ export default {
             // Custom animations from landing page HTML
             'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
             'shimmer': 'shimmer 2s linear infinite',
-            'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'pulse-glow': 'pulse-glow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite', // Changed from 2s to 4s
   		}
   	}
   },
