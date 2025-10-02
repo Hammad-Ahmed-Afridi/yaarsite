@@ -16,7 +16,7 @@ export default function LandingPage() {
       {/* Header/Navbar for Landing Page */}
       <header className="flex items-center justify-between p-4 border-b border-border bg-card shadow-sm">
         <div className="flex items-center space-x-2">
-          <span className="text-xl font-bold">
+          <span className="text-xl font-bold hover:animate-hover-pulse">
             {animatedYaarsite}
           </span>
         </div>
