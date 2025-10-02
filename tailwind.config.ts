@@ -117,6 +117,10 @@ export default {
                 '25%': { transform: 'translateX(5px)' },
                 '75%': { transform: 'translateX(-5px)' },
             },
+            'pop-in-out': { // New keyframe for popping effect
+                '0%, 100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.05)' },
+            },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
@@ -129,6 +133,7 @@ export default {
             'pulse-slow': 'pulse-slow 10s ease-in-out infinite', // Animation for slow background pulse
             'pulse-fast': 'pulse-fast 5s ease-in-out infinite', // Animation for fast background pulse
             'jump-horizontal': 'jump-horizontal 2s ease-in-out infinite', // New animation
+            'pop-in-out': 'pop-in-out 1.5s ease-in-out infinite', // New animation
   		}
   	}
   },
