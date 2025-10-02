@@ -123,13 +123,11 @@ export default {
                 '33%': { transform: 'translate(-50px, 70px) scale(0.95)' },
                 '66%': { transform: 'translate(60px, -40px) scale(1.05)' },
             },
-            'jump-up-down': { // Adjusted keyframe for more noticeable jumping effect
-                '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-8px)' },
-            },
-            'pop-effect': { // New keyframe for popping effect
-                '0%, 100%': { transform: 'scale(1)' },
-                '50%': { transform: 'scale(1.1)' },
+            'jump-and-pop': { // Combined jump and pop animation
+                '0%, 100%': { transform: 'translateY(0) scale(1)' },
+                '25%': { transform: 'translateY(-10px) scale(1.05)' }, /* Jump up and slightly pop */
+                '50%': { transform: 'translateY(0) scale(1.1)' },    /* Land and pop more */
+                '75%': { transform: 'translateY(-5px) scale(1.02)' }, /* Small rebound */
             },
   		},
   		animation: {
@@ -144,8 +142,7 @@ export default {
             'pulse-fast': 'pulse-fast 5s ease-in-out infinite', // Animation for fast background pulse
             'blob-1': 'blob-1 14s ease-in-out infinite alternate', // New blob animation
             'blob-2': 'blob-2 17s ease-in-out infinite alternate-reverse', // New blob animation
-            'jump-up-down': 'jump-up-down 1s ease-in-out infinite', // New animation
-            'pop-effect': 'pop-effect 1s ease-in-out infinite', // New animation
+            'jump-and-pop': 'jump-and-pop 1s ease-in-out infinite', // New combined animation
   		}
   	}
   },

@@ -8,7 +8,7 @@ import { LayoutDashboard, ShoppingCart, Settings, ArrowRight, Package, Monitor, 
 
 export default function LandingPage() {
   const animatedYaarsite = (
-    <span className="text-primary animate-jump-up-down animate-pop-effect animate-text-gradient">Yaarsite</span>
+    <span className="text-primary animate-jump-and-pop animate-text-gradient">Yaarsite</span>
   );
 
   return (
