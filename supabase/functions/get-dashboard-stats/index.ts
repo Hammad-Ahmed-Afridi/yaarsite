@@ -13,27 +13,27 @@ serve(async (req) => {
   }
 
   try {
-    // 1. Extract JWT from Authorization header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log('DEBUG: Missing or invalid Authorization header.');
       return new Response(JSON.stringify({ message: 'Unauthorized: Missing or invalid Authorization header' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-    const token = authHeader.substring(7); // Remove 'Bearer '
+    const token = authHeader.substring(7);
+    console.log('DEBUG: Received JWT token (first 10 chars):', token.substring(0, 10) + '...');
 
-    // 2. Get Supabase JWT Secret from environment variables
     const SUPABASE_JWT_SECRET = Deno.env.get('APP_JWT_SECRET');
     if (!SUPABASE_JWT_SECRET) {
-      console.error('APP_JWT_SECRET is not set in environment variables.');
+      console.error('DEBUG: APP_JWT_SECRET is NOT set in environment variables.');
       return new Response(JSON.stringify({ message: 'Server configuration error: JWT secret missing. Please ensure APP_JWT_SECRET is set in Supabase Edge Function secrets.' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+    console.log('DEBUG: APP_JWT_SECRET is loaded (length):', SUPABASE_JWT_SECRET.length);
 
-    // 3. Verify the JWT and extract the user ID
     let authenticatedUserId: string;
     try {
       const { payload } = await verify(token, SUPABASE_JWT_SECRET, 'HS256');
@@ -41,21 +41,20 @@ serve(async (req) => {
         throw new Error('Invalid JWT payload: Missing user ID (sub)');
       }
       authenticatedUserId = payload.sub;
+      console.log('DEBUG: JWT verified successfully. Authenticated User ID:', authenticatedUserId);
     } catch (jwtError) {
-      console.error('JWT verification failed:', jwtError);
+      console.error('DEBUG: JWT verification failed:', jwtError);
       return new Response(JSON.stringify({ message: 'Unauthorized: Invalid token' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Use the authenticatedUserId for database queries
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Fetch total products
     const { count: productsCount, error: productsError } = await supabaseAdmin
       .from('products')
       .select('id', { count: 'exact', head: true })
@@ -63,7 +62,6 @@ serve(async (req) => {
 
     if (productsError) throw productsError;
 
-    // Fetch total orders
     const { count: ordersCount, error: ordersError } = await supabaseAdmin
       .from('orders')
       .select('id', { count: 'exact', head: true })
@@ -71,7 +69,6 @@ serve(async (req) => {
 
     if (ordersError) throw ordersError;
 
-    // Fetch total profit (sum of delivered orders)
     const { data: profitData, error: profitError } = await supabaseAdmin
       .from('orders')
       .select('total_amount')
@@ -92,7 +89,7 @@ serve(async (req) => {
     });
 
   } catch (error: any) {
-    console.error("Edge Function caught error:", error);
+    console.error("DEBUG: Edge Function caught error:", error);
     return new Response(JSON.stringify({ message: error.message || 'Internal Server Error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
