@@ -133,7 +133,7 @@ export default function OrdersPage() {
         </div>
 
         {orders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-lg p-8">
+          <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-3xl p-8">
             <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
             <p className="text-xl text-muted-foreground mb-4">No Orders Yet</p>
             <p className="text-sm text-muted-foreground mb-6">
@@ -146,7 +146,7 @@ export default function OrdersPage() {
             {isMobile ? (
               <div className="grid gap-4">
                 {orders.map((order) => (
-                  <Card key={order.id} className="bg-card text-card-foreground shadow-md">
+                  <Card key={order.id} className="bg-card text-card-foreground shadow-md rounded-3xl">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg">Order ID: {order.id.substring(0, 8)}...</CardTitle>
                       <p className="text-sm text-muted-foreground">Customer: {order.customer_name} ({order.customer_email})</p>
@@ -222,7 +222,7 @@ export default function OrdersPage() {
                 ))}
               </div>
             ) : (
-              <Card className="bg-card text-card-foreground shadow-md">
+              <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
                 <CardHeader>
                   <CardTitle>All Orders</CardTitle>
                 </CardHeader>

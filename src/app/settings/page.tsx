@@ -290,7 +290,7 @@ export default function SettingsPage() {
       <DashboardHeader profile={profile} onSignOut={handleSignOut} currentPath={pathname} />
 
       <main className="flex-1 p-8 flex justify-center">
-        <Card className="w-full max-w-2xl bg-card text-card-foreground shadow-lg">
+        <Card className="w-full max-w-2xl bg-card text-card-foreground shadow-lg rounded-3xl">
           <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">
             <Settings className="h-6 w-6 text-primary" />
             <CardTitle className="text-2xl font-bold">Store Customization</CardTitle>

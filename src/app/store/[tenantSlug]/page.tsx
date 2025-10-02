@@ -116,9 +116,9 @@ export default function StoreProductsPage() {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => (
-            <Card key={product.id} className="bg-card text-card-foreground shadow-md cursor-pointer" onClick={() => handleProductClick(product)}>
+            <Card key={product.id} className="bg-card text-card-foreground shadow-md cursor-pointer rounded-3xl" onClick={() => handleProductClick(product)}>
               {product.image_urls && product.image_urls.length > 0 ? (
-                <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
+                <div className="relative h-48 w-full overflow-hidden rounded-t-3xl">
                   <Image
                     src={product.image_urls[0]}
                     alt={product.name}
@@ -128,7 +128,7 @@ export default function StoreProductsPage() {
                   />
                 </div>
               ) : (
-                <div className="relative h-48 w-full overflow-hidden rounded-t-lg bg-muted flex items-center justify-center">
+                <div className="relative h-48 w-full overflow-hidden rounded-t-3xl bg-muted flex items-center justify-center">
                   <ImageIcon className="h-16 w-16 text-muted-foreground" />
                 </div>
               )}

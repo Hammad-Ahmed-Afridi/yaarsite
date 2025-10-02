@@ -8,7 +8,7 @@ import { LayoutDashboard, ShoppingCart, Settings, ArrowRight, Package, Monitor, 
 
 export default function LandingPage() {
   const animatedYaarsite = (
-    <span className="inline-block text-primary">Yaarsite</span>
+    <span className="inline-block text-primary font-bold">Yaarsite</span>
   );
 
   return (

@@ -195,7 +195,7 @@ export default function CheckoutPage() {
       </header>
 
       <main className="flex-1 p-8 flex items-center justify-center">
-        <Card className="w-full max-w-lg bg-card text-card-foreground shadow-lg">
+        <Card className="w-full max-w-lg bg-card text-card-foreground shadow-lg rounded-3xl">
           <CardHeader className="text-center space-y-2">
             <CardTitle className="text-2xl font-bold">Confirm Your Order</CardTitle>
             <CardDescription className="text-muted-foreground">

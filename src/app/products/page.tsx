@@ -150,7 +150,7 @@ export default function ProductsPage() {
         </p>
 
         {products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-lg p-8">
+          <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-3xl p-8">
             <Package className="h-16 w-16 text-muted-foreground mb-4" />
             <p className="text-xl text-muted-foreground mb-4">No Products Yet</p>
             <p className="text-sm text-muted-foreground mb-6">
@@ -161,9 +161,9 @@ export default function ProductsPage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products.map((product) => (
-              <Card key={product.id} className="bg-card text-card-foreground shadow-md">
+              <Card key={product.id} className="bg-card text-card-foreground shadow-md rounded-3xl">
                 {product.image_urls && product.image_urls.length > 0 && (
-                  <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
+                  <div className="relative h-48 w-full overflow-hidden rounded-t-3xl">
                     <Image
                       src={product.image_urls[0]}
                       alt={product.name}

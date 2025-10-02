@@ -115,7 +115,7 @@ export default function DashboardPage() {
           <ScrollHintArrow />
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <Card className="bg-card text-card-foreground shadow-md">
+          <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Products</CardTitle>
               <Package className="h-4 w-4 text-muted-foreground" />
@@ -125,7 +125,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card text-card-foreground shadow-md">
+          <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
               <ShoppingCart className="h-4 w-4 text-muted-foreground" />
@@ -135,7 +135,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card text-card-foreground shadow-md">
+          <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Profit (Rs)</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -145,7 +145,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
+          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1 rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Store className="h-6 w-6 text-primary" />
               <CardTitle className="text-lg font-semibold">View Your Store</CardTitle>
@@ -156,7 +156,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
+          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1 rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Package className="h-6 w-6 text-green-500" />
               <CardTitle className="text-lg font-semibold">Manage Products</CardTitle>
@@ -167,7 +167,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
+          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1 rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <ShoppingCart className="h-6 w-6 text-purple-500" />
               <CardTitle className="text-lg font-semibold">View Orders</CardTitle>
@@ -178,7 +178,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
+          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1 rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Settings className="h-6 w-6 text-yellow-500" />
               <CardTitle className="text-lg font-semibold">Store Customization</CardTitle>

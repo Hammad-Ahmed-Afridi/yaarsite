@@ -71,7 +71,7 @@ export default function CartPage() {
       {/* Main Content */}
       <main className="flex-1 p-8">
         {cartItems.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-lg p-8">
+          <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-3xl p-8">
             <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
             <p className="text-xl text-muted-foreground mb-4">Your cart is empty.</p>
             <p className="text-sm text-muted-foreground mb-6">
@@ -85,7 +85,7 @@ export default function CartPage() {
               {isMobile ? (
                 <div className="grid gap-4">
                   {cartItems.map((item) => (
-                    <Card key={item.id} className="bg-card text-card-foreground shadow-md">
+                    <Card key={item.id} className="bg-card text-card-foreground shadow-md rounded-3xl">
                       <CardContent className="p-4 flex items-center gap-4">
                         {item.image_url && (
                           <Image
@@ -140,7 +140,7 @@ export default function CartPage() {
                   ))}
                 </div>
               ) : (
-                <Card className="bg-card text-card-foreground shadow-md">
+                <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
                   <CardHeader>
                     <CardTitle>Cart Items</CardTitle>
                   </CardHeader>
@@ -222,7 +222,7 @@ export default function CartPage() {
             </div>
 
             <div className="lg:col-span-1">
-              <Card className="bg-card text-card-foreground shadow-md">
+              <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
                 <CardHeader>
                   <CardTitle>Order Summary</CardTitle>
                 </CardHeader>
