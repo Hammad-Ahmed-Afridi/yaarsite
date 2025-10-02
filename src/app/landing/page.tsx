@@ -6,14 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Rocket,
-  LayoutDashboard,
   Package,
   ShoppingCart,
   Settings,
   ArrowRight,
-  CheckCircle,
   Users,
-  Handshake,
   ShieldCheck,
   Sparkles,
 } from 'lucide-react';
@@ -74,21 +71,30 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative w-full py-20 md:py-32 lg:py-40 bg-gradient-to-br from-primary to-primary-foreground/10 text-center flex items-center justify-center">
-        <div className="container max-w-4xl px-4 md:px-6 space-y-6">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white drop-shadow-lg">
-            Launch Your Online Store in Minutes
+      <section className="relative w-full py-20 md:py-32 lg:py-40 bg-gradient-to-br from-blue-600 to-purple-700 text-center flex items-center justify-center overflow-hidden">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+          <svg className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <pattern id="pattern-circles" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="10" cy="10" r="1" fill="white" />
+            </pattern>
+            <rect x="0" y="0" width="100%" height="100%" fill="url(#pattern-circles)" />
+          </svg>
+        </div>
+        <div className="container max-w-4xl px-4 md:px-6 space-y-8 relative z-10">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight drop-shadow-lg">
+            Launch Your Online Store in <span className="text-yellow-300">Minutes</span>
           </h1>
-          <p className="text-lg md:text-xl text-primary-foreground/90 max-w-2xl mx-auto">
-            Yaarsite makes it easy for entrepreneurs to build, manage, and grow their e-commerce business with a beautiful, customizable storefront.
+          <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed">
+            Yaarsite makes it incredibly easy for entrepreneurs to build, manage, and grow their e-commerce business with a beautiful, customizable storefront.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
-            <Button asChild size="lg" className="bg-white text-primary hover:bg-gray-100 shadow-lg">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 pt-6">
+            <Button asChild size="lg" className="bg-yellow-400 text-blue-900 hover:bg-yellow-300 shadow-lg font-semibold text-lg px-8 py-6">
               <Link href="/signup">
-                Get Started Free <ArrowRight className="ml-2 h-4 w-4" />
+                Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white/20">
+            <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white/20 font-semibold text-lg px-8 py-6">
               <Link href="/store">
                 Explore Demo Store
               </Link>
@@ -108,7 +114,7 @@ export default function LandingPage() {
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, index) => (
-              <Card key={index} className="flex flex-col items-center text-center p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+              <Card key={index} className="flex flex-col items-center text-center p-6 shadow-md hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1">
                 <CardHeader className="pb-4">
                   {feature.icon}
                 </CardHeader>
@@ -129,9 +135,9 @@ export default function LandingPage() {
           <p className="text-lg md:text-xl opacity-90">
             Join hundreds of entrepreneurs who are growing their business with Yaarsite.
           </p>
-          <Button asChild size="lg" className="bg-white text-primary hover:bg-gray-100 shadow-lg">
+          <Button asChild size="lg" className="bg-yellow-400 text-blue-900 hover:bg-yellow-300 shadow-lg font-semibold text-lg px-8 py-6">
             <Link href="/signup">
-              Start Your Free Store Today <ArrowRight className="ml-2 h-4 w-4" />
+              Start Your Free Store Today <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
         </div>
