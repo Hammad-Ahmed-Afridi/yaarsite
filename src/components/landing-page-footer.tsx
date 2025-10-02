@@ -3,19 +3,15 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import Image from 'next/image'; // Import Image component
+import { Rocket } from 'lucide-react'; // Import Rocket icon
 
 export function LandingPageFooter() {
   return (
     <footer className="w-full py-8 text-center text-muted-foreground text-sm border-t border-border bg-card flex flex-col items-center justify-center p-4">
       <div className="flex flex-col items-center gap-4 mb-6">
         <Link href="/" className="flex items-center gap-2">
-          <Image 
-            src="/rocket-logo.png" 
-            alt="Yaarsite Logo" 
-            width={28} // Adjust size as needed
-            height={28} // Adjust size as needed
-            className="text-primary animate-hero-rocket-bounce" 
+          <Rocket 
+            className="h-7 w-7 text-primary animate-hero-rocket-bounce" // Use Rocket icon with animation
           />
           <span className="text-xl font-bold text-foreground">Yaarsite</span>
         </Link>
