@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   robots: "index, follow",
   authors: [{ name: "Hammad Ahmed Afridi" }],
   icons: {
-    icon: "https://placehold.co/32x32/1e293b/cbd5e1?text=Ys", // Updated favicon URL
+    icon: "https://placehold.co/32x32/1e293b/cbd5e1?text=Ys",
   },
   openGraph: {
     title: "Yaarsite - Easy Store Builder",

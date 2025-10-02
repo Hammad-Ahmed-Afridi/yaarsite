@@ -101,14 +101,14 @@ export default function StoreProductsPage() {
 
   return (
     <>
-      <h2 className="text-3xl font-bold mb-4 text-center">Our Products</h2>
+      <h2 className="text-2xl font-bold mb-4">Our Products</h2>
       {profile?.store_page_welcome_message && (
-        <p className="text-lg text-muted-foreground mb-8 text-center max-w-prose mx-auto">
+        <p className="text-lg text-muted-foreground mb-6 text-center max-w-prose mx-auto">
           {profile.store_page_welcome_message}
         </p>
       )}
       {products.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-lg p-8">
+        <div className="flex flex-col items-center justify-center py-12 text-center">
           <Package className="h-16 w-16 text-muted-foreground mb-4" />
           <p className="text-xl text-muted-foreground mb-4">No products available yet.</p>
           <p className="text-sm text-muted-foreground">Check back later or contact the store owner.</p>
@@ -116,30 +116,30 @@ export default function StoreProductsPage() {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => (
-            <Card key={product.id} className="group bg-card text-card-foreground shadow-md rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:border-primary" onClick={() => handleProductClick(product)}>
+            <Card key={product.id} className="bg-card text-card-foreground shadow-md cursor-pointer" onClick={() => handleProductClick(product)}>
               {product.image_urls && product.image_urls.length > 0 ? (
-                <div className="relative h-48 w-full overflow-hidden rounded-t-xl">
+                <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
                   <Image
                     src={product.image_urls[0]}
                     alt={product.name}
                     fill
                     style={{ objectFit: 'cover' }}
-                    className="transition-transform duration-300 group-hover:scale-105"
+                    className="transition-transform duration-300 hover:scale-105"
                   />
                 </div>
               ) : (
-                <div className="relative h-48 w-full overflow-hidden rounded-t-xl bg-muted flex items-center justify-center">
+                <div className="relative h-48 w-full overflow-hidden rounded-t-lg bg-muted flex items-center justify-center">
                   <ImageIcon className="h-16 w-16 text-muted-foreground" />
                 </div>
               )}
-              <CardHeader className="pt-4 pb-2">
-                <CardTitle className="text-lg font-semibold">{product.name}</CardTitle>
+              <CardHeader>
+                <CardTitle className="text-lg">{product.name}</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 pb-4">
+              <CardContent className="space-y-2">
                 <p className="text-sm text-muted-foreground line-clamp-2">{product.description || "No description available."}</p>
-                <div className="flex items-center justify-between pt-2">
-                  <span className="text-xl font-bold text-primary">Rs{product.price.toFixed(2)}</span>
-                  <Badge variant="secondary" className="text-sm">{product.stock} in stock</Badge>
+                <div className="flex items-center justify-between">
+                  <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
+                  <Badge variant="secondary">{product.stock} in stock</Badge>
                 </div>
               </CardContent>
             </Card>

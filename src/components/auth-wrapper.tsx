@@ -11,7 +11,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   // Define paths that are publicly accessible (no login required)
-  const publicPaths = ['/', '/login', '/signup', '/store', '/cart', '/checkout']; 
+  const publicPaths = ['/login', '/signup', '/store', '/cart', '/checkout']; 
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
 
   useEffect(() => {
@@ -22,9 +22,9 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
     if (user) {
       // User is authenticated
-      if (pathname === '/login' || pathname === '/signup' || pathname === '/') { // Added '/' here
-        // If authenticated user tries to access login/signup or the landing page, redirect to dashboard
-        router.push('/dashboard');
+      if (pathname === '/login' || pathname === '/signup') {
+        // If authenticated user tries to access login/signup, redirect to dashboard
+        router.push('/');
       }
     } else {
       // User is NOT authenticated

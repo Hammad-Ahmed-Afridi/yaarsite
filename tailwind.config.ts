@@ -87,15 +87,9 @@ export default {
                 '0%': { transform: 'translateX(100%)' },
                 '100%': { transform: 'translateX(-100%)' },
             },
-            'bounce-down': { // This is for the scroll hint arrow in dashboard
+            'bounce-down': { // New keyframe for bouncing arrow
                 '0%, 100%': { transform: 'translateY(0)' },
                 '50%': { transform: 'translateY(10px)' },
-            },
-            'hero-rocket-bounce': { // New animation for the landing page rocket
-                '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
-                '25%': { transform: 'translateY(-10px) rotate(-5deg)' },
-                '50%': { transform: 'translateY(0) rotate(0deg)' },
-                '75%': { transform: 'translateY(-10px) rotate(5deg)' },
             },
             'spin-slow': { // Slower spin for the main icon
                 from: { transform: 'rotate(0deg)' },
@@ -105,20 +99,14 @@ export default {
                 from: { transform: 'rotate(0deg)' },
                 to: { transform: 'rotate(-360deg)' }, // Spin in opposite direction
             },
-            'fade-in': { // New keyframe for fade-in effect
-                '0%': { opacity: '0', transform: 'translateY(10px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' },
-            },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
-            'marquee': 'marquee 15s linear infinite',
-            'bounce-down': 'bounce-down 1.5s infinite',
-            'hero-rocket-bounce': 'hero-rocket-bounce 2s infinite ease-in-out', // Apply new animation
+            'marquee': 'marquee 15s linear infinite', // Adjusted duration for faster scroll
+            'bounce-down': 'bounce-down 1.5s infinite', // New animation
             'spin-slow': 'spin-slow 8s linear infinite',
             'spin-fast': 'spin-fast 3s linear infinite',
-            'fade-in': 'fade-in 0.6s ease-out forwards', // New animation
   		}
   	}
   },

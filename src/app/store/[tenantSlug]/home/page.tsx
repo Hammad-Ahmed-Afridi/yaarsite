@@ -53,9 +53,9 @@ export default function StoreHomePage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center text-center py-16 px-4 bg-gradient-to-b from-muted/10 to-background rounded-lg shadow-inner">
+    <div className="flex flex-col items-center justify-center text-center py-12 px-4">
       {profile.avatar_url ? (
-        <div className="relative h-40 w-40 rounded-full overflow-hidden mb-8 border-4 border-primary shadow-lg">
+        <div className="relative h-32 w-32 rounded-full overflow-hidden mb-6 border-2 border-primary">
           <Image
             src={profile.avatar_url}
             alt="Store Logo"
@@ -65,15 +65,15 @@ export default function StoreHomePage() {
           />
         </div>
       ) : (
-        <Store className="h-32 w-32 text-primary mb-8" />
+        <Store className="h-24 w-24 text-primary mb-6" />
       )}
-      <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground">
+      <h1 className="text-4xl font-bold mb-4">
         {profile.home_page_heading || `Welcome to ${profile.tenant_name}!`}
       </h1>
-      <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-prose">
+      <p className="text-lg text-muted-foreground mb-8 max-w-prose">
         {profile.home_page_description || "Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
       </p>
-      <Button asChild size="lg" className="px-8 py-6 text-lg">
+      <Button asChild size="lg">
         <Link href={`/store/${tenantSlug}`}>
           <Package className="mr-2 h-5 w-5" /> View Our Products
         </Link>

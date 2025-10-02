@@ -133,7 +133,8 @@ export function StoreSetupDialog() {
 
       setIsBuildingStore(false);
       setIsDialogOpen(false); // Close the dialog
-      router.push('/dashboard'); // Redirect to dashboard
+      router.push('/'); // Redirect to dashboard (already there, but ensures state consistency)
+
     } catch (err: any) {
       console.error("Unexpected error during store creation:", err);
       toast.error(err.message || "An unexpected error occurred during store creation.");

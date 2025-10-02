@@ -100,11 +100,11 @@ export default function StoreLayout({
     <StoreProfileProvider initialProfile={profile}>
       <div className="min-h-screen bg-background text-foreground flex flex-col">
         {/* Header */}
-        <header className="flex items-center justify-between p-4 border-b border-border bg-card shadow-sm">
+        <header className="flex items-center justify-between p-4 border-b border-border bg-card">
           {/* Left section: Logo + Store Name */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
             {profile?.avatar_url ? (
-              <div className="relative h-10 w-10 rounded-full overflow-hidden border border-border">
+              <div className="relative h-8 w-8 rounded-full overflow-hidden">
                 <Image
                   src={profile.avatar_url}
                   alt="Store Logo"
@@ -114,9 +114,9 @@ export default function StoreLayout({
                 />
               </div>
             ) : (
-              <Store className="h-8 w-8 text-primary" />
+              <Store className="h-6 w-6 text-primary" />
             )}
-            <h1 className="text-2xl font-bold text-foreground">{profile.tenant_name || "Public Store"}</h1>
+            <h1 className="text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
           </div>
 
           {/* Center section: Desktop Navigation */}
@@ -131,7 +131,7 @@ export default function StoreLayout({
             <Button onClick={() => router.push('/cart')} variant="outline" size="icon" className="relative">
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 rounded-full animate-bounce-down">
+                <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 rounded-full">
                   {itemCount}
                 </Badge>
               )}
@@ -154,7 +154,7 @@ export default function StoreLayout({
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 p-8 bg-gradient-to-b from-muted/10 to-background">
+        <main className="flex-1 p-8">
           {children}
         </main>
 
