@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
-import { verify } from 'https://deno.land/x/djwt@v2.9/mod.ts'; // Import verify from djwt
+import { verify } from 'https://deno.land/x/djwt@v2.9/mod.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -24,10 +24,11 @@ serve(async (req) => {
     const token = authHeader.substring(7); // Remove 'Bearer '
 
     // 2. Get Supabase JWT Secret from environment variables
-    const SUPABASE_JWT_SECRET = Deno.env.get('SUPABASE_JWT_SECRET');
+    // IMPORTANT: Using APP_JWT_SECRET as per project configuration
+    const SUPABASE_JWT_SECRET = Deno.env.get('APP_JWT_SECRET'); // Changed from SUPABASE_JWT_SECRET
     if (!SUPABASE_JWT_SECRET) {
-      console.error('SUPABASE_JWT_SECRET is not set in environment variables.');
-      return new Response(JSON.stringify({ message: 'Server configuration error: JWT secret missing' }), {
+      console.error('APP_JWT_SECRET is not set in environment variables.');
+      return new Response(JSON.stringify({ message: 'Server configuration error: JWT secret missing. Please ensure APP_JWT_SECRET is set in Supabase Edge Function secrets.' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
