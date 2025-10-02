@@ -109,45 +109,45 @@ export default function DashboardPage() {
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
 
-      <main className="flex-1 px-8 pt-4 pb-8"> {/* Adjusted padding here */}
+      <main className="flex-1 px-8 pt-4 pb-8 bg-gradient-to-b from-muted/10 to-background"> {/* Adjusted padding and added gradient */}
         {/* ScrollHintArrow placed here, aligned to the center */}
-        <div className="flex justify-center mb-4"> {/* Changed justify-end to justify-center, added mb-4 */}
+        <div className="flex justify-center mb-4">
           <ScrollHintArrow />
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <Card className="bg-card text-card-foreground shadow-md">
+          <Card className="group bg-card text-card-foreground shadow-md rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:border-primary">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Products</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
+              <Package className="h-4 w-4 text-muted-foreground transition-colors duration-300 group-hover:text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalProducts}</div>
             </CardContent>
           </Card>
 
-          <Card className="bg-card text-card-foreground shadow-md">
+          <Card className="group bg-card text-card-foreground shadow-md rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:border-primary">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+              <ShoppingCart className="h-4 w-4 text-muted-foreground transition-colors duration-300 group-hover:text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalOrders}</div>
             </CardContent>
           </Card>
 
-          <Card className="bg-card text-card-foreground shadow-md">
+          <Card className="group bg-card text-card-foreground shadow-md rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:border-primary">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Profit (Rs)</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <DollarSign className="h-4 w-4 text-muted-foreground transition-colors duration-300 group-hover:text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">Rs{totalProfit.toFixed(2)}</div>
             </CardContent>
           </Card>
 
-          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
+          <Card className="group bg-card text-card-foreground shadow-md rounded-xl col-span-full md:col-span-1 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:border-primary">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
-              <Store className="h-6 w-6 text-primary" />
+              <Store className="h-6 w-6 text-primary transition-colors duration-300 group-hover:text-primary-foreground" />
               <CardTitle className="text-lg font-semibold">View Your Store</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -156,9 +156,9 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
+          <Card className="group bg-card text-card-foreground shadow-md rounded-xl col-span-full md:col-span-1 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:border-primary">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
-              <Package className="h-6 w-6 text-green-500" />
+              <Package className="h-6 w-6 text-green-500 transition-colors duration-300 group-hover:text-green-600" />
               <CardTitle className="text-lg font-semibold">Manage Products</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -167,9 +167,9 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
+          <Card className="group bg-card text-card-foreground shadow-md rounded-xl col-span-full md:col-span-1 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:border-primary">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
-              <ShoppingCart className="h-6 w-6 text-purple-500" />
+              <ShoppingCart className="h-6 w-6 text-purple-500 transition-colors duration-300 group-hover:text-purple-600" />
               <CardTitle className="text-lg font-semibold">View Orders</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -178,9 +178,9 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1">
+          <Card className="group bg-card text-card-foreground shadow-md rounded-xl col-span-full md:col-span-1 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:border-primary">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
-              <Settings className="h-6 w-6 text-yellow-500" />
+              <Settings className="h-6 w-6 text-yellow-500 transition-colors duration-300 group-hover:text-yellow-600" />
               <CardTitle className="text-lg font-semibold">Store Customization</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">

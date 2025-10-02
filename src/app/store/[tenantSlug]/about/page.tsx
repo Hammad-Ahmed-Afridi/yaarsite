@@ -47,10 +47,10 @@ export default function StoreAboutPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center text-center py-12 px-4">
+    <div className="flex flex-col items-center justify-center text-center py-16 px-4 bg-card rounded-xl shadow-lg border border-border">
       <Info className="h-24 w-24 text-primary mb-6" />
-      <h1 className="text-4xl font-bold mb-4">About {profile.tenant_name}</h1>
-      <p className="text-lg text-muted-foreground mb-8 max-w-prose">
+      <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground">About {profile.tenant_name}</h1>
+      <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-prose leading-relaxed">
         {profile.about_page_content || "We are dedicated to providing you with the best products and an exceptional shopping experience. Our mission is to bring quality and value directly to you."}
       </p>
     </div>

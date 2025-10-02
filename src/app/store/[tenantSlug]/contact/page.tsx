@@ -48,39 +48,39 @@ export default function StoreContactPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center text-center py-12 px-4">
+    <div className="flex flex-col items-center justify-center text-center py-16 px-4">
       <Mail className="h-24 w-24 text-primary mb-6" />
-      <h1 className="text-4xl font-bold mb-4">
+      <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground">
         {profile.contact_page_heading || `Contact ${profile.tenant_name}`}
       </h1>
-      <p className="text-lg text-muted-foreground mb-8 max-w-prose">
+      <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-prose leading-relaxed">
         {profile.contact_page_description || "Have questions or need assistance? Reach out to us!"}
       </p>
 
-      <div className="space-y-4 text-left w-full max-w-md">
+      <div className="space-y-6 text-left w-full max-w-md">
         {profile.email && (
-          <div className="flex items-center gap-4 p-4 border rounded-lg bg-card shadow-sm">
-            <Mail className="h-6 w-6 text-muted-foreground" />
+          <div className="flex items-center gap-4 p-5 border rounded-xl bg-card shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:border-primary">
+            <Mail className="h-7 w-7 text-muted-foreground" />
             <div>
-              <p className="font-semibold">Email Us</p>
-              <a href={`mailto:${profile.email}`} className="text-primary hover:underline">{profile.email}</a>
+              <p className="font-semibold text-lg">Email Us</p>
+              <a href={`mailto:${profile.email}`} className="text-primary hover:underline text-base">{profile.email}</a>
             </div>
           </div>
         )}
         {profile.phone_number && (
-          <div className="flex items-center gap-4 p-4 border rounded-lg bg-card shadow-sm">
-            <Phone className="h-6 w-6 text-muted-foreground" />
+          <div className="flex items-center gap-4 p-5 border rounded-xl bg-card shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:border-primary">
+            <Phone className="h-7 w-7 text-muted-foreground" />
             <div>
-              <p className="font-semibold">Call Us</p>
-              <a href={`tel:${profile.phone_number}`} className="text-primary hover:underline">{profile.phone_number}</a>
+              <p className="font-semibold text-lg">Call Us</p>
+              <a href={`tel:${profile.phone_number}`} className="text-primary hover:underline text-base">{profile.phone_number}</a>
             </div>
           </div>
         )}
-        <div className="flex items-center gap-4 p-4 border rounded-lg bg-card shadow-sm">
-          <MapPin className="h-6 w-6 text-muted-foreground" />
+        <div className="flex items-center gap-4 p-5 border rounded-xl bg-card shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:border-primary">
+          <MapPin className="h-7 w-7 text-muted-foreground" />
           <div>
-            <p className="font-semibold">Visit Us</p>
-            <p className="text-muted-foreground">Online Only</p>
+            <p className="font-semibold text-lg">Visit Us</p>
+            <p className="text-muted-foreground text-base">Online Only</p>
           </div>
         </div>
       </div>
