@@ -90,7 +90,7 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4 pt-6">
             <Button asChild size="lg" className="bg-yellow-400 text-blue-900 hover:bg-yellow-300 shadow-lg font-semibold text-lg px-8 py-6">
-              <Link href="/signup">
+              <Link href="/signup" target="_blank" rel="noopener noreferrer"> {/* Added target="_blank" and rel */}
                 Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
@@ -136,7 +136,7 @@ export default function LandingPage() {
             Join hundreds of entrepreneurs who are growing their business with Yaarsite.
           </p>
           <Button asChild size="lg" className="bg-yellow-400 text-blue-900 hover:bg-yellow-300 shadow-lg font-semibold text-lg px-8 py-6">
-            <Link href="/signup">
+            <Link href="/signup" target="_blank" rel="noopener noreferrer"> {/* Added target="_blank" and rel */}
               Start Your Free Store Today <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
