@@ -139,18 +139,19 @@ export function StoreSetupDialog() {
         </div>,
         { duration: 5000 }
       );
+      
+      setIsDialogOpen(false); // Immediately close the dialog
+      setIsBuildingStore(false); // Reset building state
       setShowConfetti(true); // Trigger confetti
 
-      // Delay closing the dialog and redirecting to allow confetti to be seen
+      // Delay redirecting to allow confetti to be seen
       setTimeout(async () => {
         // Refresh profile data in context
         if (refreshProfile) {
           await refreshProfile();
         }
-        setIsBuildingStore(false);
-        setIsDialogOpen(false); // Close the dialog
         router.push('/'); // Redirect to dashboard (already there, but ensures state consistency)
-      }, 3000); // Keep dialog open for 3 seconds
+      }, 3000); // Keep confetti visible for 3 seconds before redirect
 
     } catch (err: any) {
       console.error("Unexpected error during store creation:", err);
