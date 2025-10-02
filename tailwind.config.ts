@@ -64,7 +64,8 @@ export default {
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
+  			sm: 'calc(var(--radius) - 4px)',
+            '3xl': '1.5rem', // Added for more rounded corners
   		},
   		keyframes: {
   			'accordion-down': {
@@ -121,6 +122,16 @@ export default {
                 '0%, 100%': { transform: 'scale(1)' },
                 '50%': { transform: 'scale(1.05)' },
             },
+            'blob-1': { // New keyframe for blob animation 1
+                '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+            },
+            'blob-2': { // New keyframe for blob animation 2
+                '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+                '33%': { transform: 'translate(-40px, 60px) scale(0.95)' },
+                '66%': { transform: 'translate(50px, -30px) scale(1.05)' },
+            },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
@@ -134,6 +145,8 @@ export default {
             'pulse-fast': 'pulse-fast 5s ease-in-out infinite', // Animation for fast background pulse
             'jump-horizontal': 'jump-horizontal 2s ease-in-out infinite', // New animation
             'pop-in-out': 'pop-in-out 1.5s ease-in-out infinite', // New animation
+            'blob-1': 'blob-1 12s ease-in-out infinite alternate', // New blob animation
+            'blob-2': 'blob-2 15s ease-in-out infinite alternate-reverse', // New blob animation
   		}
   	}
   },
