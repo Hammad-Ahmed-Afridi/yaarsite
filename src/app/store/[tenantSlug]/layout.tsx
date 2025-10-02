@@ -24,7 +24,7 @@ interface StoreLayoutProps {
 }
 
 // generateMetadata function for dynamic store pages
-export async function generateMetadata({ params }: StoreLayoutProps): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { tenantSlug: string } }): Promise<Metadata> {
   const supabaseServer = createPublicServerSupabaseClient();
   const tenantSlug = params.tenantSlug;
 
