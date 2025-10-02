@@ -118,9 +118,9 @@ export default {
                 '25%': { transform: 'translateX(5px)' },
                 '75%': { transform: 'translateX(-5px)' },
             },
-            'pop-in-out': { // New keyframe for popping effect
+            'pop-in-out': { // Adjusted for a more noticeable pop
                 '0%, 100%': { transform: 'scale(1)' },
-                '50%': { transform: 'scale(1.05)' },
+                '50%': { transform: 'scale(1.1)' },
             },
             'blob-1': { // New keyframe for blob animation 1
                 '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
