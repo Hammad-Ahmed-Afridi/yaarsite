@@ -3,14 +3,20 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-// Removed Store import as it's no longer used
+import Image from 'next/image'; // Import Image component
 
 export function LandingPageFooter() {
   return (
     <footer className="w-full py-8 text-center text-muted-foreground text-sm border-t border-border bg-card flex flex-col items-center justify-center p-4">
       <div className="flex flex-col items-center gap-4 mb-6">
         <Link href="/" className="flex items-center gap-2">
-          {/* Removed Store icon */}
+          <Image 
+            src="/rocket-logo.png" 
+            alt="Yaarsite Logo" 
+            width={28} // Adjust size as needed
+            height={28} // Adjust size as needed
+            className="text-primary animate-hero-rocket-bounce" 
+          />
           <span className="text-xl font-bold text-foreground">Yaarsite</span>
         </Link>
         <Button asChild size="lg" variant="secondary" className="px-10 py-7 text-xl font-semibold">
