@@ -33,12 +33,6 @@ export function ConfettiEffect({ run, duration = 5000 }: ConfettiEffectProps) {
       numberOfPieces={500} // Increased number of pieces for fuller coverage
       gravity={0.05} // Reduced gravity to make confetti fall slower
       initialVelocityY={-10} // Increased upward velocity for higher spread
-      confettiSource={{
-        x: width / 2,
-        y: height / 2,
-        w: width,
-        h: height,
-      }}
       colors={['#6366F1', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981']} // Tailwind-inspired colors
     />
   );

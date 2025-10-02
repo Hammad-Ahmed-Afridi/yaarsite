@@ -37,8 +37,8 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     } else {
       // User is NOT authenticated
       if (!isPublicPath) {
-        // Unauthenticated user on a protected path, redirect to landing
-        router.push('/landing'); // Redirect to landing page
+        // Unauthenticated user on a protected path, redirect to login
+        router.push('/login'); // Redirect to login page
         setIsReadyToRender(false); // Keep loader visible until redirect completes
       } else {
         // Unauthenticated user on a public path (including landing)
