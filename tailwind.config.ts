@@ -123,11 +123,11 @@ export default {
                 '33%': { transform: 'translate(-50px, 70px) scale(0.95)' },
                 '66%': { transform: 'translate(60px, -40px) scale(1.05)' },
             },
-            'jump-and-pop': { // Combined jump and pop animation
+            'jump-and-pop': { // Combined jump and pop animation - made more aggressive
                 '0%, 100%': { transform: 'translateY(0) scale(1)' },
-                '25%': { transform: 'translateY(-10px) scale(1.05)' }, /* Jump up and slightly pop */
-                '50%': { transform: 'translateY(0) scale(1.1)' },    /* Land and pop more */
-                '75%': { transform: 'translateY(-5px) scale(1.02)' }, /* Small rebound */
+                '25%': { transform: 'translateY(-15px) scale(1.1)' }, /* Jump higher and pop more */
+                '50%': { transform: 'translateY(0) scale(1.2)' },    /* Land and pop even more */
+                '75%': { transform: 'translateY(-8px) scale(1.05)' }, /* Small rebound */
             },
   		},
   		animation: {
