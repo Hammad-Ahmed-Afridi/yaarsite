@@ -7,7 +7,6 @@ import { AppLoader } from '@/components/app-loader';
 import { Info } from 'lucide-react';
 import { useStoreProfile } from '@/components/store-profile-context-provider'; // Import useStoreProfile
 
-
 export default function StoreAboutPage() {
   const params = useParams();
   const tenantSlug = params.tenantSlug as string;

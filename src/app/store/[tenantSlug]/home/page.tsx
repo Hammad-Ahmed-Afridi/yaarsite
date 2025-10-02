@@ -10,7 +10,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useStoreProfile } from '@/components/store-profile-context-provider'; // Import useStoreProfile
 
-
 export default function StoreHomePage() {
   const params = useParams();
   const tenantSlug = params.tenantSlug as string;

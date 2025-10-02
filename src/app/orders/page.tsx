@@ -17,7 +17,6 @@ import { DashboardHeader } from '@/components/dashboard-header';
 import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
 import { AppLoader } from '@/components/app-loader'; // Import AppLoader
 
-
 interface Order {
   id: string;
   user_id: string;

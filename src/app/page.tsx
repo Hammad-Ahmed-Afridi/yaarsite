@@ -15,7 +15,6 @@ import { DashboardHeader } from "@/components/dashboard-header"; // Import Dashb
 import { ScrollHintArrow } from "@/components/scroll-hint-arrow"; // Import ScrollHintArrow
 import { AppLoader } from "@/components/app-loader"; // Import AppLoader
 
-
 export default function DashboardPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
   const router = useRouter();

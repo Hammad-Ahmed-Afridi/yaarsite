@@ -13,7 +13,6 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
 
-
 export default function CartPage() {
   const router = useRouter();
   const { cartItems, removeFromCart, updateQuantity, cartTotal, itemCount, deliveryCharge, isLoadingDeliveryCharge } = useCart();

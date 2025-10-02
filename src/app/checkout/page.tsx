@@ -15,7 +15,6 @@ import { ArrowLeft, Loader2, CheckCircle, RefreshCcw } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/integrations/supabase/client'; // Import supabase client
 
-
 // Function to generate a random 4-character alphanumeric code
 const generateRandomCode = () => {
   return Math.random().toString(36).substring(2, 6).toUpperCase();

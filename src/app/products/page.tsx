@@ -26,7 +26,6 @@ import {
 import { DashboardHeader } from '@/components/dashboard-header'; // Import DashboardHeader
 import { AppLoader } from '@/components/app-loader'; // Import AppLoader
 
-
 interface Product {
   id: string;
   name: string;

@@ -7,7 +7,6 @@ import { Mail, Phone, MapPin } from 'lucide-react';
 import { useStoreProfile } from '@/components/store-profile-context-provider'; // Import useStoreProfile
 import { Profile } from '@/components/session-context-provider'; // Import shared Profile type
 
-
 export default function StoreContactPage() {
   const params = useParams();
   const tenantSlug = params.tenantSlug as string;

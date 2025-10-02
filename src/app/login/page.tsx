@@ -16,7 +16,6 @@ import { Button } from '@/components/ui/button';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import Link from 'next/link';
 
-
 const formSchema = z.object({
   email: z.string().email({ message: "Enter a valid email address." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),

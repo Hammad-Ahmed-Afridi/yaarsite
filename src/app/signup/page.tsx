@@ -17,7 +17,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff, Mail, Lock, Phone, User, Store, RefreshCcw } from 'lucide-react';
 import Link from 'next/link';
 
-
 // Function to generate a random 4-character alphanumeric code
 const generateRandomCode = () => {
   return Math.random().toString(36).substring(2, 6).toUpperCase();
