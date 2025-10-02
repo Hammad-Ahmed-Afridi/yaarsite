@@ -143,8 +143,13 @@ export function StoreSetupDialog() {
   };
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogContent className="w-full max-w-md p-6 font-sans"> {/* Adjusted DialogContent styling */}
+    <Dialog open={isDialogOpen}> {/* Removed onOpenChange to prevent closing on outside click */}
+      <DialogContent 
+        className="w-full max-w-md p-6 font-sans" 
+        overlayClassName="backdrop-blur-md" // Apply blur to the overlay
+        onPointerDownOutside={(e) => e.preventDefault()} // Prevent closing on outside click
+        onEscapeKeyDown={(e) => e.preventDefault()} // Prevent closing on escape key
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl font-bold tracking-tight">
             <Store className="h-6 w-6 text-primary" />
