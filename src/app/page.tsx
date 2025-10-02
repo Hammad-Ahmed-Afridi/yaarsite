@@ -195,8 +195,8 @@ export default function DashboardPage() {
               <CardTitle className="text-lg font-semibold">Store Customization</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">Update your store information</p>
-              <Button onClick={() => router.push('/settings')} className="w-full" disabled={profile?.tenant_name === null}>Settings</Button>
+              <p className="text-sm text-muted-foreground">Customize your store</p>
+              <Button onClick={() => router.push('/settings')} className="w-full" disabled={profile?.tenant_name === null}>Customize</Button>
             </CardContent>
           </Card>
         </div>
