@@ -118,7 +118,7 @@ export default {
             },
             'continuous-pulse': { // New keyframe for continuous pulse
                 '0%, 100%': { transform: 'scale(1)' },
-                '50%': { transform: 'scale(1.02)' },
+                '50%': { transform: 'scale(1.05)' },
             },
             'blob-1': { // New keyframe for blob animation 1
                 '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
