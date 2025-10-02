@@ -163,5 +163,6 @@
 
 /* Custom class for jump-and-pop animation */
 .yaarsite-jump-pop {
+  display: inline-block; /* Ensure transform works reliably */
   animation: jump-and-pop 1s ease-in-out infinite;
 }
