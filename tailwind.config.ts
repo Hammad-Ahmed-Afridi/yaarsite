@@ -123,12 +123,6 @@ export default {
                 '33%': { transform: 'translate(-50px, 70px) scale(0.95)' },
                 '66%': { transform: 'translate(60px, -40px) scale(1.05)' },
             },
-            'jump-and-pop': { // Aggressive jump and pop
-                '0%, 100%': { transform: 'translateY(0) scale(1)' },
-                '25%': { transform: 'translateY(-40px) scale(1.4)' }, // Much higher jump, larger pop
-                '50%': { transform: 'translateY(0) scale(1.6)' },    // Land and even bigger pop
-                '75%': { transform: 'translateY(-20px) scale(1.2)' }, // More noticeable rebound
-            },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
@@ -142,7 +136,6 @@ export default {
             'pulse-fast': 'pulse-fast 5s ease-in-out infinite', // Animation for fast background pulse
             'blob-1': 'blob-1 14s ease-in-out infinite alternate', // New blob animation
             'blob-2': 'blob-2 17s ease-in-out infinite alternate-reverse', // New blob animation
-            'jump-and-pop': 'jump-and-pop 1s ease-in-out infinite', // New combined animation
   		}
   	}
   },
