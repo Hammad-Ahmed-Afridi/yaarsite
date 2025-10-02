@@ -17,10 +17,10 @@ export async function generateMetadata({ params }: { params: { tenantSlug: strin
   const storeImageUrl = profileData?.avatar_url || "https://placehold.co/1200x630/1e293b/cbd5e1?text=Ys"; // Default OG image
 
   return {
-    title: storeName,
+    title: `${storeName} - Products`, // Changed title to reflect products page
     description: storeDescription,
     openGraph: {
-      title: storeName,
+      title: `${storeName} - Products`,
       description: storeDescription,
       url: `https://yaarsite.vercel.app/store/${tenantSlug}`,
       images: [
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: { params: { tenantSlug: strin
     },
     twitter: {
       card: "summary_large_image",
-      title: storeName,
+      title: `${storeName} - Products`,
       description: storeDescription,
       images: [storeImageUrl],
     },
