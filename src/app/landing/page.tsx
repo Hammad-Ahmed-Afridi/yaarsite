@@ -8,7 +8,7 @@ import { LayoutDashboard, ShoppingCart, Settings, ArrowRight, Package, Monitor, 
 
 export default function LandingPage() {
   const animatedYaarsite = (
-    <span className="text-primary animate-jump-horizontal animate-pop-in-out">Yaarsite</span>
+    <span className="text-primary">Yaarsite</span>
   );
 
   return (
