@@ -23,6 +23,8 @@ export interface Profile { // Exported for use in DashboardHeader
   home_page_description: string | null; // Added for store customization
   about_page_content: string | null; // Added for store customization
   store_page_welcome_message: string | null; // Added for store customization
+  contact_page_heading: string | null; // Added for contact page customization
+  contact_page_description: string | null; // Added for contact page customization
 }
 
 interface SessionContextType {
