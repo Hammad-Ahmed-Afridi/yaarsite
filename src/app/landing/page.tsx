@@ -8,7 +8,7 @@ import { LayoutDashboard, ShoppingCart, Settings, ArrowRight, Package, Monitor, 
 
 export default function LandingPage() {
   const animatedYaarsite = (
-    <span className="animate-text-gradient animate-jump-horizontal animate-pop-in-out">Yaarsite</span>
+    <span className="text-primary animate-jump-horizontal animate-pop-in-out">Yaarsite</span>
   );
 
   return (
@@ -41,7 +41,7 @@ export default function LandingPage() {
         </div>
 
         <h1 className="relative z-10 text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">
-          Launch Your Store in <span className="animate-text-gradient">Seconds</span> with {animatedYaarsite}.
+          Launch Your Store in <span className="text-primary">Seconds</span> with {animatedYaarsite}.
         </h1>
         <p className="relative z-10 text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl">
           {animatedYaarsite} helps entrepreneurs build beautiful, professional e-commerce websites effortlessly. Focus on your products, we handle the tech.
