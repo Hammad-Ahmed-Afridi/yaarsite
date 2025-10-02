@@ -141,19 +141,22 @@ export function StoreSetupDialog() {
       );
       setShowConfetti(true); // Trigger confetti
 
-      // Refresh profile data in context
-      if (refreshProfile) {
-        await refreshProfile();
-      }
-
-      setIsBuildingStore(false);
-      setIsDialogOpen(false); // Close the dialog
-      router.push('/'); // Redirect to dashboard (already there, but ensures state consistency)
+      // Delay closing the dialog and redirecting to allow confetti to be seen
+      setTimeout(async () => {
+        // Refresh profile data in context
+        if (refreshProfile) {
+          await refreshProfile();
+        }
+        setIsBuildingStore(false);
+        setIsDialogOpen(false); // Close the dialog
+        router.push('/'); // Redirect to dashboard (already there, but ensures state consistency)
+      }, 3000); // Keep dialog open for 3 seconds
 
     } catch (err: any) {
       console.error("Unexpected error during store creation:", err);
       toast.error(err.message || "An unexpected error occurred during store creation.");
       setIsBuildingStore(false);
+      setShowConfetti(false); // Ensure confetti is not shown on error
     }
   };
 
