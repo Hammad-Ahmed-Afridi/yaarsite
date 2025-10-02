@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   robots: "index, follow",
   authors: [{ name: "Hammad Ahmed Afridi" }],
   icons: {
-    icon: "/static-rocket-logo.png", // Updated to your static rocket logo
+    icon: "/favicon.svg", // Updated to use the new SVG favicon
   },
   openGraph: {
     title: "Yaarsite - Easy Store Builder",
