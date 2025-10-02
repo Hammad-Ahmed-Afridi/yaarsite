@@ -17,14 +17,14 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ profile, onSignOut, showBackButton = true, currentPath }: DashboardHeaderProps) {
-  const isDashboardRoot = currentPath === '/';
+  const isDashboardRoot = currentPath === '/dashboard'; // Updated path check
 
   return (
     <header className="flex items-center justify-between p-4 border-b border-border bg-card">
       <div className="flex items-center space-x-4">
         {showBackButton && !isDashboardRoot && (
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/">
+            <Link href="/dashboard"> {/* Updated link */}
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
