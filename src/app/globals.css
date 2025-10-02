@@ -160,3 +160,8 @@
   /* Removed -webkit-text-fill-color: transparent; to make text visible */
   animation: gradient-shift 3s ease infinite;
 }
+
+/* Custom class for jump-and-pop animation */
+.yaarsite-jump-pop {
+  animation: jump-and-pop 1s ease-in-out infinite;
+}
