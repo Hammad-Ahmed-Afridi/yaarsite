@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Import Select components
 import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2 } from 'lucide-react'; // Import Loader2
 import Image from 'next/image';
 import { DashboardHeader } from '@/components/dashboard-header'; // Import DashboardHeader
@@ -29,8 +30,16 @@ const ACCEPTED_LOGO_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "imag
 const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
   storeDescription: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
+  deliveryCharge: z.coerce.number().min(0, { message: "Delivery charge cannot be negative." }), // New field
   logo: z.instanceof(File).optional(),
 });
+
+const DELIVERY_CHARGE_OPTIONS = [
+  { label: "Free Delivery", value: 0 },
+  { label: "Rs 100", value: 100 },
+  { label: "Rs 200", value: 200 },
+  { label: "Rs 300", value: 300 },
+];
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -45,6 +54,7 @@ export default function SettingsPage() {
     defaultValues: {
       storeName: "",
       storeDescription: "",
+      deliveryCharge: 200, // Default value for form
       logo: undefined,
     },
   });
@@ -54,6 +64,7 @@ export default function SettingsPage() {
       form.reset({
         storeName: profile.tenant_name || "",
         storeDescription: profile.store_description || "",
+        deliveryCharge: profile.delivery_charge !== null ? profile.delivery_charge : 200, // Use profile data or default
         logo: undefined,
       });
       setLogoPreview(profile.avatar_url || null);
@@ -201,6 +212,7 @@ export default function SettingsPage() {
           store_url: newStoreUrl,
           store_description: values.storeDescription || null,
           avatar_url: newAvatarUrl,
+          delivery_charge: values.deliveryCharge, // Update delivery charge
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -285,6 +297,29 @@ export default function SettingsPage() {
                 />
                 {form.formState.errors.storeDescription && (
                   <p className="text-destructive text-sm">{form.formState.errors.storeDescription.message}</p>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="deliveryCharge">Delivery Charge *</Label>
+                <Select
+                  onValueChange={(value) => form.setValue("deliveryCharge", parseFloat(value))}
+                  value={form.watch("deliveryCharge")?.toString()}
+                  disabled={isUpdatingStore}
+                >
+                  <SelectTrigger id="deliveryCharge">
+                    <SelectValue placeholder="Select delivery charge" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DELIVERY_CHARGE_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value.toString()}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {form.formState.errors.deliveryCharge && (
+                  <p className="text-destructive text-sm">{form.formState.errors.deliveryCharge.message}</p>
                 )}
               </div>
 

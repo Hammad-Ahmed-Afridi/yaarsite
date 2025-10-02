@@ -18,6 +18,7 @@ export interface Profile { // Exported for use in DashboardHeader
   store_description: string | null;
   avatar_url: string | null;
   updated_at: string | null;
+  delivery_charge: number | null; // Added delivery_charge
 }
 
 interface SessionContextType {

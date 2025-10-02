@@ -33,7 +33,7 @@ const formSchema = z.object({
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cartItems, cartTotal, clearCart } = useCart();
+  const { cartItems, cartTotal, clearCart, deliveryCharge, isLoadingDeliveryCharge } = useCart();
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null); // Used for initial "Continue Shopping" link before order
@@ -138,7 +138,7 @@ export default function CheckoutPage() {
           shippingProvince: values.shippingProvince,
           shippingCity: values.shippingCity,
           shippingAddressLine: values.shippingAddressLine,
-          totalAmount: cartTotal,
+          totalAmount: cartTotal, // This now includes delivery charge
           items: cartItems,
           storeOwnerId: currentStoreOwnerId,
         }),
@@ -146,7 +146,7 @@ export default function CheckoutPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to place order.");
+        throw new Error(errorData.message || "Failed to place order via Edge Function");
       }
 
       const result = await response.json();
@@ -183,6 +183,8 @@ export default function CheckoutPage() {
     );
   }
 
+  const subtotal = cartTotal - deliveryCharge;
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <header className="flex items-center p-4 border-b border-border bg-card">
@@ -202,13 +204,17 @@ export default function CheckoutPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4 mb-6">
-              <div className="flex justify-between text-lg font-semibold">
-                <span>Total Items:</span>
-                <span>{cartItems.reduce((count, item) => count + item.quantity, 0)}</span>
+              <div className="flex justify-between text-lg">
+                <span>Subtotal:</span>
+                <span>Rs{subtotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-2xl font-bold">
+              <div className="flex justify-between text-lg">
+                <span>Delivery Charge:</span>
+                <span>{isLoadingDeliveryCharge ? "Loading..." : `Rs${deliveryCharge.toFixed(2)}`}</span>
+              </div>
+              <div className="flex justify-between text-2xl font-bold border-t pt-4">
                 <span>Order Total:</span>
-                <span>Rs{cartTotal.toFixed(2)}</span>
+                <span>{isLoadingDeliveryCharge ? "Loading..." : `Rs${cartTotal.toFixed(2)}`}</span>
               </div>
             </div>
 

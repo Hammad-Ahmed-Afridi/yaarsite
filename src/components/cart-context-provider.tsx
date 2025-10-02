@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client'; // Import supabase client
 
 interface CartItem {
   id: string;
@@ -20,12 +21,16 @@ interface CartContextType {
   clearCart: () => void;
   cartTotal: number;
   itemCount: number;
+  deliveryCharge: number; // New: delivery charge
+  isLoadingDeliveryCharge: boolean; // New: loading state for delivery charge
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [deliveryCharge, setDeliveryCharge] = useState<number>(0);
+  const [isLoadingDeliveryCharge, setIsLoadingDeliveryCharge] = useState(true);
 
   // Load cart from localStorage on initial render
   useEffect(() => {
@@ -38,6 +43,32 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
   // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  // Fetch delivery charge when cart items change
+  useEffect(() => {
+    async function fetchDeliveryCharge() {
+      setIsLoadingDeliveryCharge(true);
+      if (cartItems.length > 0) {
+        const storeOwnerId = cartItems[0].storeOwnerId;
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('delivery_charge')
+          .eq('id', storeOwnerId)
+          .single();
+
+        if (error || !data) {
+          console.error("Error fetching delivery charge:", error);
+          setDeliveryCharge(0); // Default to 0 on error
+        } else {
+          setDeliveryCharge(data.delivery_charge || 0);
+        }
+      } else {
+        setDeliveryCharge(0);
+      }
+      setIsLoadingDeliveryCharge(false);
+    }
+    fetchDeliveryCharge();
   }, [cartItems]);
 
   const addToCart = useCallback((item: Omit<CartItem, 'quantity'>, quantityToAdd: number = 1) => {
@@ -86,7 +117,8 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
     toast.info("Cart cleared.");
   }, []);
 
-  const cartTotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const cartTotal = subtotal + deliveryCharge;
   const itemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
 
   return (
@@ -99,6 +131,8 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
         clearCart,
         cartTotal,
         itemCount,
+        deliveryCharge,
+        isLoadingDeliveryCharge,
       }}
     >
       {children}

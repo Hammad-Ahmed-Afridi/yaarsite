@@ -15,7 +15,7 @@ import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
 
 export default function CartPage() {
   const router = useRouter();
-  const { cartItems, removeFromCart, updateQuantity, cartTotal, itemCount } = useCart();
+  const { cartItems, removeFromCart, updateQuantity, cartTotal, itemCount, deliveryCharge, isLoadingDeliveryCharge } = useCart();
   const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null);
   const [isLoadingStoreSlug, setIsLoadingStoreSlug] = useState(true);
   const isMobile = useIsMobile(); // Use the hook
@@ -56,6 +56,7 @@ export default function CartPage() {
   };
 
   const continueShoppingPath = storeTenantSlug ? `/store/${storeTenantSlug}` : '/store';
+  const subtotal = cartTotal - deliveryCharge;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -226,9 +227,17 @@ export default function CartPage() {
                   <CardTitle>Order Summary</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex justify-between text-lg font-semibold">
+                  <div className="flex justify-between text-lg">
+                    <span>Subtotal:</span>
+                    <span>Rs{subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-lg">
+                    <span>Delivery Charge:</span>
+                    <span>{isLoadingDeliveryCharge ? "Loading..." : `Rs${deliveryCharge.toFixed(2)}`}</span>
+                  </div>
+                  <div className="flex justify-between text-lg font-semibold border-t pt-4">
                     <span>Total:</span>
-                    <span>Rs{cartTotal.toFixed(2)}</span>
+                    <span>{isLoadingDeliveryCharge ? "Loading..." : `Rs${cartTotal.toFixed(2)}`}</span>
                   </div>
                   <Button className="w-full" onClick={() => router.push('/checkout')}>
                     Proceed to Checkout
