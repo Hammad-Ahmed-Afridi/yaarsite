@@ -8,7 +8,7 @@ import { LayoutDashboard, ShoppingCart, Settings, ArrowRight, Package, Monitor, 
 
 export default function LandingPage() {
   const animatedYaarsite = (
-    <span className="inline-block text-primary font-bold">Yaarsite</span>
+    <span className="inline-block text-primary font-bold animate-continuous-pulse">Yaarsite</span>
   );
 
   return (
@@ -16,7 +16,7 @@ export default function LandingPage() {
       {/* Header/Navbar for Landing Page */}
       <header className="flex items-center justify-between p-4 border-b border-border bg-card shadow-sm">
         <div className="flex items-center space-x-2">
-          <span className="text-xl font-bold animate-continuous-pulse">
+          <span className="text-xl font-bold">
             {animatedYaarsite}
           </span>
         </div>
