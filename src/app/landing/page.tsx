@@ -41,7 +41,7 @@ export default function LandingPage() {
         </div>
 
         <h1 className="relative z-10 text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">
-          Launch Your Store in <span className="text-primary">Seconds</span> with {animatedYaarsite}.
+          Launch Your Store in <span className="text-primary">Seconds</span> with {animatedYaarsite}
         </h1>
         <p className="relative z-10 text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl leading-relaxed">
           {animatedYaarsite} helps entrepreneurs build beautiful, professional e-commerce stores effortlessly. Focus on your products, we handle the tech.
