@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
-import { useWindowSize } from '@/hooks/use-window-size'; // Assuming this hook exists or creating it
+import { useWindowSize } from '@/hooks/use-window-size';
 
 interface ConfettiEffectProps {
   run: boolean;
@@ -30,9 +30,9 @@ export function ConfettiEffect({ run, duration = 5000 }: ConfettiEffectProps) {
       width={width}
       height={height}
       recycle={false} // Only run once
-      numberOfPieces={200}
-      gravity={0.1}
-      initialVelocityY={-5}
+      numberOfPieces={500} // Increased number of pieces for fuller coverage
+      gravity={0.05} // Reduced gravity to make confetti fall slower
+      initialVelocityY={-10} // Increased upward velocity for higher spread
       confettiSource={{
         x: width / 2,
         y: height / 2,
