@@ -112,9 +112,13 @@ export default {
                 '0%, 100%': { transform: 'scale(1)' },
                 '50%': { transform: 'scale(1.05)' },
             },
-            'hover-pulse': { // New keyframe for subtle hover pulse
+            'hover-pulse': { // Keyframe for subtle hover pulse
                 '0%, 100%': { transform: 'scale(1)' },
                 '50%': { transform: 'scale(1.05)' },
+            },
+            'continuous-pulse': { // New keyframe for continuous pulse
+                '0%, 100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.02)' },
             },
             'blob-1': { // New keyframe for blob animation 1
                 '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
@@ -137,6 +141,7 @@ export default {
             'pulse-slow': 'pulse-slow 10s ease-in-out infinite', // Animation for slow background pulse
             'pulse-fast': 'pulse-fast 5s ease-in-out infinite', // Animation for fast background pulse
             'hover-pulse': 'hover-pulse 0.3s ease-in-out', // New animation for subtle hover pulse
+            'continuous-pulse': 'continuous-pulse 2s ease-in-out infinite', // New continuous pulse animation
             'blob-1': 'blob-1 14s ease-in-out infinite alternate', // New blob animation
             'blob-2': 'blob-2 17s ease-in-out infinite alternate-reverse', // New blob animation
   		}
