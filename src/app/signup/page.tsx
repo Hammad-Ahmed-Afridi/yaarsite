@@ -73,6 +73,27 @@ export default function SignupPage() {
     form.clearErrors("humanVerificationCode"); // Clear error
   }, [form]);
 
+  // Custom validation for phone number uniqueness
+  const validatePhoneNumberUniqueness = useCallback(async (phoneNumber: string | undefined) => {
+    if (!phoneNumber) return true; // Optional field, no validation if empty
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('phone_number', phoneNumber)
+      .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 means "no rows found"
+      console.error("Error checking phone number uniqueness:", error);
+      return "An error occurred while checking phone number. Please try again.";
+    }
+
+    if (data) {
+      return "This phone number is already registered. Please use a different one.";
+    }
+    return true;
+  }, []);
+
   // Log form validation errors for debugging
   React.useEffect(() => {
     if (Object.keys(form.formState.errors).length > 0) {
@@ -83,6 +104,18 @@ export default function SignupPage() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log("Signup Page: Attempting form submission with values:", values);
     setIsLoading(true);
+
+    // Perform client-side phone number uniqueness check before Supabase signup
+    if (values.phoneNumber) {
+      const phoneError = await validatePhoneNumberUniqueness(values.phoneNumber);
+      if (typeof phoneError === 'string') {
+        form.setError("phoneNumber", { type: "manual", message: phoneError });
+        setIsLoading(false);
+        refreshVerificationCode();
+        return;
+      }
+    }
+
     try {
       const { error: signUpError } = await supabase.auth.signUp({
         email: values.email,

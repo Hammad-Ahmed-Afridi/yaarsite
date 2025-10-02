@@ -8,7 +8,7 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
-import { generateRandomAlphanumeric } from '@/lib/utils'; // Import the new utility function
+import { generateRandomAlphanumeric } from '@/lib/utils';
 
 import {
   Dialog,
@@ -21,8 +21,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Store } from 'lucide-react';
-import { AppLoader } from '@/components/app-loader'; // Import AppLoader
+import { Store, Sparkles } from 'lucide-react'; // Import Sparkles for toast
+import { AppLoader } from '@/components/app-loader';
+import { ConfettiEffect } from '@/components/confetti-effect'; // Import ConfettiEffect
 
 const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
@@ -34,6 +35,7 @@ export function StoreSetupDialog() {
   const { user, profile, refreshProfile } = useSession();
   const [isBuildingStore, setIsBuildingStore] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false); // State to control confetti
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,7 +61,13 @@ export function StoreSetupDialog() {
     }
 
     setIsBuildingStore(true);
-    toast.info("Yaarsite AI is building your store. Wait for the magic to happen...", { duration: 9000 }); // Increased duration
+    toast.info(
+      <div className="flex items-center gap-2">
+        <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+        <span>Yaarsite AI is crafting your store. Get ready for magic!</span>
+      </div>,
+      { duration: 9000 }
+    );
 
     try {
       // 1. Check if a store with the same name already exists
@@ -122,10 +130,17 @@ export function StoreSetupDialog() {
       }
 
       // Simulate build time
-      await new Promise(resolve => setTimeout(resolve, 9000)); // Increased duration
+      await new Promise(resolve => setTimeout(resolve, 9000));
 
-      toast.success("Your store was created successfully!");
-      
+      toast.success(
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-green-500" />
+          <span>Your amazing store was created successfully!</span>
+        </div>,
+        { duration: 5000 }
+      );
+      setShowConfetti(true); // Trigger confetti
+
       // Refresh profile data in context
       if (refreshProfile) {
         await refreshProfile();
@@ -143,59 +158,62 @@ export function StoreSetupDialog() {
   };
 
   return (
-    <Dialog open={isDialogOpen}> {/* Removed onOpenChange to prevent closing on outside click */}
-      <DialogContent 
-        className="w-full max-w-md p-6 font-sans" 
-        // Removed overlayClassName="backdrop-blur-md" to use the default backdrop-blur-sm from DialogOverlay
-        onPointerDownOutside={(e) => e.preventDefault()} // Prevent closing on outside click
-        onEscapeKeyDown={(e) => e.preventDefault()} // Prevent closing on escape key
-      >
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-            <Store className="h-6 w-6 text-primary" />
-            Set Up Your Store
-          </DialogTitle>
-          <DialogDescription className="text-base leading-relaxed">
-            Welcome! Let's get your store ready. You can change these details later.
-          </DialogDescription>
-        </DialogHeader>
-        {isBuildingStore ? (
-          <AppLoader 
-            message="Yaarsite AI is building your store. Wait for the magic to happen..." 
-            size="lg" // Increased size for prominence
-            isFullScreen={false} // Not full screen when in dialog
-            className="py-12" // Added vertical padding
-          />
-        ) : (
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="storeName" className="text-sm font-medium">Store Name</Label>
-              <Input
-                id="storeName"
-                placeholder="My Awesome Store"
-                {...form.register("storeName")}
-              />
-              {form.formState.errors.storeName && (
-                <p className="text-destructive text-sm">{form.formState.errors.storeName.message}</p>
-              )}
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="storeDescription" className="text-sm font-medium">Store Description (Optional)</Label>
-              <Textarea
-                id="storeDescription"
-                placeholder="A brief description of what your store offers."
-                {...form.register("storeDescription")}
-              />
-              {form.formState.errors.storeDescription && (
-                <p className="text-destructive text-sm">{form.formState.errors.storeDescription.message}</p>
-              )}
-            </div>
-            <Button type="submit" className="w-full font-semibold" disabled={isBuildingStore}>
-              Create Store
-            </Button>
-          </form>
-        )}
-      </DialogContent>
-    </Dialog>
+    <>
+      <ConfettiEffect run={showConfetti} /> {/* Render confetti effect */}
+      <Dialog open={isDialogOpen}>
+        <DialogContent
+          className="w-full max-w-md p-6 font-sans"
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+              <Store className="h-6 w-6 text-primary" />
+              Set Up Your Store
+            </DialogTitle>
+            <DialogDescription className="text-base leading-relaxed">
+              Welcome! Let's get your store ready. You can change these details later.
+            </DialogDescription>
+          </DialogHeader>
+          {isBuildingStore ? (
+            <AppLoader
+              message="Yaarsite AI is building your store. Wait for the magic to happen..."
+              secondaryMessage="This might take a few moments as we set everything up for you." // Added secondary message
+              size="lg"
+              isFullScreen={false}
+              className="py-12"
+            />
+          ) : (
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="storeName" className="text-sm font-medium">Store Name</Label>
+                <Input
+                  id="storeName"
+                  placeholder="My Awesome Store"
+                  {...form.register("storeName")}
+                />
+                {form.formState.errors.storeName && (
+                  <p className="text-destructive text-sm">{form.formState.errors.storeName.message}</p>
+                )}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="storeDescription" className="text-sm font-medium">Store Description (Optional)</Label>
+                <Textarea
+                  id="storeDescription"
+                  placeholder="A brief description of what your store offers."
+                  {...form.register("storeDescription")}
+                />
+                {form.formState.errors.storeDescription && (
+                  <p className="text-destructive text-sm">{form.formState.errors.storeDescription.message}</p>
+                )}
+              </div>
+              <Button type="submit" className="w-full font-semibold" disabled={isBuildingStore}>
+                Create Store
+              </Button>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
