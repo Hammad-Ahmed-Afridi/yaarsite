@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LayoutDashboard, ShoppingCart, Settings, ArrowRight, Package } from 'lucide-react'; // Removed Rocket icon
+import { LayoutDashboard, ShoppingCart, Settings, ArrowRight, Package, Monitor, CreditCard } from 'lucide-react'; // Added Monitor and CreditCard icons
 
 export default function LandingPage() {
   return (
@@ -12,7 +12,6 @@ export default function LandingPage() {
       {/* Header/Navbar for Landing Page */}
       <header className="flex items-center justify-between p-4 border-b border-border bg-card">
         <div className="flex items-center space-x-2">
-          {/* Removed Rocket icon */}
           <span className="text-xl font-bold animate-text-gradient animate-jump-horizontal">Yaarsite</span>
         </div>
         <nav className="space-x-4">
@@ -51,7 +50,6 @@ export default function LandingPage() {
             </Link>
           </Button>
         </div>
-        {/* Removed the previous placeholder div */}
       </section>
 
       {/* Features Section */}
@@ -96,6 +94,24 @@ export default function LandingPage() {
               </CardHeader>
               <CardContent className="p-0">
                 Personalize your store's look and feel to match your brand.
+              </CardContent>
+            </Card>
+            <Card className="p-6 text-left shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
+                <Monitor className="h-8 w-8 text-primary" />
+                <CardTitle className="text-xl font-semibold">Fully Responsive Design</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                Your store looks stunning and works perfectly on any device, from desktops to mobile phones.
+              </CardContent>
+            </Card>
+            <Card className="p-6 text-left shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
+                <CreditCard className="h-8 w-8 text-primary" />
+                <CardTitle className="text-xl font-semibold">Secure Payment Processing</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                Offer your customers a safe and reliable checkout experience with integrated payment solutions.
               </CardContent>
             </Card>
           </div>
