@@ -64,8 +64,7 @@ export default {
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)',
-            '3xl': '2rem', // Defined 3xl for more rounded corners
+  			sm: 'calc(var(--radius) - 4px)'
   		},
   		keyframes: {
   			'accordion-down': {
@@ -100,6 +99,11 @@ export default {
                 from: { transform: 'rotate(0deg)' },
                 to: { transform: 'rotate(-360deg)' }, // Spin in opposite direction
             },
+            'gradient-shift': { // Keyframe for text gradient animation
+                '0%': { backgroundPosition: '0% 50%' },
+                '50%': { backgroundPosition: '100% 50%' },
+                '100%': { backgroundPosition: '0% 50%' },
+            },
             'pulse-slow': { // Keyframe for slow background pulse
                 '0%, 100%': { opacity: '0.2' },
                 '50%': { opacity: '0.4' },
@@ -115,7 +119,7 @@ export default {
             },
             'pop-in-out': { // New keyframe for popping effect
                 '0%, 100%': { transform: 'scale(1)' },
-                '50%': { transform: 'scale(1.25)' }, // Increased scale for a more dramatic pop
+                '50%': { transform: 'scale(1.05)' },
             },
   		},
   		animation: {
@@ -125,6 +129,7 @@ export default {
             'bounce-down': 'bounce-down 1.5s infinite', // New animation
             'spin-slow': 'spin-slow 8s linear infinite',
             'spin-fast': 'spin-fast 3s linear infinite',
+            'gradient-shift': 'gradient-shift 3s ease infinite', // Animation for text gradient
             'pulse-slow': 'pulse-slow 10s ease-in-out infinite', // Animation for slow background pulse
             'pulse-fast': 'pulse-fast 5s ease-in-out infinite', // Animation for fast background pulse
             'jump-horizontal': 'jump-horizontal 2s ease-in-out infinite', // New animation
