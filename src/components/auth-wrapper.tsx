@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from 'react'; // Import useState
+import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSession } from '@/components/session-context-provider';
-import { AppLoader } from '@/components/app-loader'; // Import AppLoader
+import { AppLoader } from '@/components/app-loader';
 
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { user, isLoading: isSessionLoading } = useSession();
@@ -13,12 +13,10 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const publicPaths = ['/login', '/signup', '/store', '/cart', '/checkout', '/landing'];
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
 
-  // State to track if the component is ready to render its children
   const [isReadyToRender, setIsReadyToRender] = useState(false);
 
   useEffect(() => {
     if (isSessionLoading) {
-      // Session is still loading, keep loader visible
       setIsReadyToRender(false);
       return;
     }
@@ -39,8 +37,8 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     } else {
       // User is NOT authenticated
       if (!isPublicPath) {
-        // Unauthenticated user on a protected path, redirect to login
-        router.push('/login'); // Changed from /landing to /login
+        // Unauthenticated user on a protected path, redirect to landing
+        router.push('/landing'); // Redirect to landing page
         setIsReadyToRender(false); // Keep loader visible until redirect completes
       } else {
         // Unauthenticated user on a public path (including landing)
