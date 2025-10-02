@@ -12,6 +12,7 @@ import Image from 'next/image';
 import { useCart } from '@/components/cart-context-provider';
 import { ProductDetailDialog } from '@/components/product-detail-dialog';
 import { AppLoader } from '@/components/app-loader';
+import { useStoreProfile } from '@/components/store-profile-context-provider'; // Import useStoreProfile
 
 interface Product {
   id: string;
@@ -23,21 +24,10 @@ interface Product {
   image_urls: string[] | null;
 }
 
-interface Profile {
-  id: string;
-  email: string | null;
-  first_name: string | null;
-  tenant_name: string | null;
-  tenant_slug: string | null;
-  store_url: string | null;
-  avatar_url: string | null;
-  store_page_welcome_message: string | null; // New field
-}
-
 export default function StoreProductsPage() {
   const params = useParams();
   const tenantSlug = params.tenantSlug as string;
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const { storeProfile: profile, setStoreProfile } = useStoreProfile(); // Use context
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,33 +36,22 @@ export default function StoreProductsPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    async function fetchStoreData() {
+    async function fetchStoreProducts() {
       setIsLoading(true);
       setError(null);
-      if (!tenantSlug) {
-        setError("Store not found: Missing tenant slug.");
+
+      if (!profile) {
+        // If profile is not yet available from context, wait for it or show error
+        setError("Store profile not found. Please try refreshing the page.");
         setIsLoading(false);
         return;
       }
 
       try {
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*, store_page_welcome_message') // Select new field
-          .eq('tenant_slug', tenantSlug)
-          .single();
-
-        if (profileError || !profileData) {
-          setError("Store not found or an error occurred.");
-          setIsLoading(false);
-          return;
-        }
-        setProfile(profileData);
-
         const { data: productsData, error: productsError } = await supabase
           .from('products')
           .select('*')
-          .eq('user_id', profileData.id);
+          .eq('user_id', profile.id); // Use profile.id from context
 
         if (productsError) {
           setError("Could not load products for this store.");
@@ -88,8 +67,8 @@ export default function StoreProductsPage() {
       }
     }
 
-    fetchStoreData();
-  }, [tenantSlug]);
+    fetchStoreProducts();
+  }, [profile]); // Depend on profile from context
 
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
@@ -107,6 +86,15 @@ export default function StoreProductsPage() {
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <h1 className="text-3xl font-bold text-destructive mb-4">Error</h1>
         <p className="text-lg text-muted-foreground">{error}</p>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <h1 className="text-3xl font-bold mb-4">Store Not Found</h1>
+        <p className="text-lg text-muted-foreground">The store you are looking for does not exist.</p>
       </div>
     );
   }

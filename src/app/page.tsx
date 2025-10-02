@@ -28,47 +28,36 @@ export default function DashboardPage() {
   const fetchDashboardData = useCallback(async () => {
     setIsLoadingDashboardData(true);
     try {
-      const { count: productsCount, error: productsError } = await supabase
-        .from('products')
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', user?.id);
-
-      if (productsError) {
-        console.error("Dashboard Page: Error fetching products count:", productsError);
-        toast.error("Failed to load total products.");
-      } else {
-        setTotalProducts(productsCount || 0);
+      if (!user?.id) {
+        setIsLoadingDashboardData(false);
+        return;
       }
 
-      const { count: ordersCount, error: ordersError } = await supabase
-        .from('orders')
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', user?.id);
+      const SUPABASE_PROJECT_ID = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID || "vpfrtytxeimezwxhhtuf"; // Use your project ID
+      const EDGE_FUNCTION_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/get-dashboard-stats`;
 
-      if (ordersError) {
-        console.error("Dashboard Page: Error fetching orders count:", ordersError);
-        toast.error("Failed to load total orders.");
-      } else {
-        setTotalOrders(ordersCount || 0);
+      const response = await fetch(EDGE_FUNCTION_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await supabase.auth.getSession().then(s => s.data.session?.access_token)}`,
+        },
+        body: JSON.stringify({ user_id: user.id }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch dashboard stats via Edge Function");
       }
 
-      const { data: profitData, error: profitError } = await supabase
-        .from('orders')
-        .select('total_amount')
-        .eq('user_id', user?.id)
-        .eq('status', 'delivered');
+      const data = await response.json();
+      setTotalProducts(data.totalProducts);
+      setTotalOrders(data.totalOrders);
+      setTotalProfit(data.totalProfit);
 
-      if (profitError) {
-        console.error("Dashboard Page: Error fetching profit data:", profitError);
-        toast.error("Failed to load total profit.");
-      } else {
-        const calculatedProfit = profitData?.reduce((sum, order) => sum + order.total_amount, 0) || 0;
-        setTotalProfit(calculatedProfit);
-      }
-
-    } catch (error) {
-      console.error("Dashboard Page: Unexpected error fetching dashboard data:", error);
-      toast.error("An unexpected error occurred while loading dashboard data.");
+    } catch (error: any) {
+      console.error("Dashboard Page: Error fetching dashboard data:", error);
+      toast.error(error.message || "An unexpected error occurred while loading dashboard data.");
     } finally {
       setIsLoadingDashboardData(false);
     }

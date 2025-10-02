@@ -36,6 +36,8 @@ const formSchema = z.object({
   homePageDescription: z.string().max(500, { message: "Home page description cannot exceed 500 characters." }).optional(),
   aboutPageContent: z.string().max(1000, { message: "About page content cannot exceed 1000 characters." }).optional(),
   storePageWelcomeMessage: z.string().max(500, { message: "Store page welcome message cannot exceed 500 characters." }).optional(),
+  contactPageHeading: z.string().max(100, { message: "Contact page heading cannot exceed 100 characters." }).optional(), // New field
+  contactPageDescription: z.string().max(500, { message: "Contact page description cannot exceed 500 characters." }).optional(), // New field
 });
 
 const DELIVERY_CHARGE_OPTIONS = [
@@ -64,6 +66,8 @@ export default function SettingsPage() {
       homePageDescription: "",
       aboutPageContent: "",
       storePageWelcomeMessage: "",
+      contactPageHeading: "", // Initialize new field
+      contactPageDescription: "", // Initialize new field
     },
   });
 
@@ -78,6 +82,8 @@ export default function SettingsPage() {
         homePageDescription: profile.home_page_description || "",
         aboutPageContent: profile.about_page_content || "",
         storePageWelcomeMessage: profile.store_page_welcome_message || "",
+        contactPageHeading: profile.contact_page_heading || "", // Set value for new field
+        contactPageDescription: profile.contact_page_description || "", // Set value for new field
       });
       setLogoPreview(profile.avatar_url || null);
     }
@@ -226,6 +232,8 @@ export default function SettingsPage() {
           home_page_description: values.homePageDescription || null,
           about_page_content: values.aboutPageContent || null,
           store_page_welcome_message: values.storePageWelcomeMessage || null,
+          contact_page_heading: values.contactPageHeading || null, // Save new field
+          contact_page_description: values.contactPageDescription || null, // Save new field
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -436,6 +444,32 @@ export default function SettingsPage() {
                 />
                 {form.formState.errors.storePageWelcomeMessage && (
                   <p className="text-destructive text-sm">{form.formState.errors.storePageWelcomeMessage.message}</p>
+                )}
+              </div>
+
+              {/* New fields for Contact Page Customization */}
+              <h3 className="text-lg font-semibold mt-8">Contact Us Page Content</h3>
+              <div className="grid gap-2">
+                <Label htmlFor="contactPageHeading">Contact Page Heading</Label>
+                <Input
+                  id="contactPageHeading"
+                  placeholder="Get in Touch with Us!"
+                  {...form.register("contactPageHeading")}
+                />
+                {form.formState.errors.contactPageHeading && (
+                  <p className="text-destructive text-sm">{form.formState.errors.contactPageHeading.message}</p>
+                )}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="contactPageDescription">Contact Page Description</Label>
+                <Textarea
+                  id="contactPageDescription"
+                  placeholder="We'd love to hear from you. Reach out with any questions or feedback."
+                  rows={3}
+                  {...form.register("contactPageDescription")}
+                />
+                {form.formState.errors.contactPageDescription && (
+                  <p className="text-destructive text-sm">{form.formState.errors.contactPageDescription.message}</p>
                 )}
               </div>
 

@@ -8,59 +8,27 @@ import { Button } from '@/components/ui/button';
 import { Store, Package } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-
-interface Profile {
-  id: string;
-  email: string | null;
-  first_name: string | null;
-  tenant_name: string | null;
-  tenant_slug: string | null;
-  store_url: string | null;
-  store_description: string | null;
-  avatar_url: string | null;
-  home_page_heading: string | null; // New field
-  home_page_description: string | null; // New field
-}
+import { useStoreProfile } from '@/components/store-profile-context-provider'; // Import useStoreProfile
 
 export default function StoreHomePage() {
   const params = useParams();
   const tenantSlug = params.tenantSlug as string;
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const { storeProfile: profile, setStoreProfile } = useStoreProfile(); // Use context
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // No need to fetch profile here, it comes from layout via context
   useEffect(() => {
-    async function fetchStoreProfile() {
-      setIsLoading(true);
-      setError(null);
-      if (!tenantSlug) {
-        setError("Store not found: Missing tenant slug.");
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*, home_page_heading, home_page_description') // Select new fields
-          .eq('tenant_slug', tenantSlug)
-          .single();
-
-        if (profileError || !profileData) {
-          setError("Store not found or an error occurred.");
-          setIsLoading(false);
-          return;
-        }
-        setProfile(profileData);
-      } catch (err: any) {
-        setError(err.message || "An unexpected error occurred.");
-      } finally {
-        setIsLoading(false);
-      }
+    if (profile) {
+      setIsLoading(false);
+    } else {
+      // This case should ideally not happen if layout fetches correctly,
+      // but as a fallback, we can re-fetch or show an error.
+      // For now, we'll just show an error if profile is unexpectedly null.
+      setError("Store profile not found. Please try refreshing the page.");
+      setIsLoading(false);
     }
-
-    fetchStoreProfile();
-  }, [tenantSlug]);
+  }, [profile]);
 
   if (isLoading) {
     return <AppLoader message="Loading store home..." isFullScreen={false} />;

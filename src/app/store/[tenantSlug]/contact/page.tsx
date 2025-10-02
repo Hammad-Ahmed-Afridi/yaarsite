@@ -5,53 +5,24 @@ import { useParams } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { AppLoader } from '@/components/app-loader';
 import { Mail, Phone, MapPin } from 'lucide-react';
-
-interface Profile {
-  id: string;
-  tenant_name: string | null;
-  email: string | null;
-  phone_number: string | null;
-}
+import { useStoreProfile } from '@/components/store-profile-context-provider'; // Import useStoreProfile
 
 export default function StoreContactPage() {
   const params = useParams();
   const tenantSlug = params.tenantSlug as string;
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const { storeProfile: profile, setStoreProfile } = useStoreProfile(); // Use context
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // No need to fetch profile here, it comes from layout via context
   useEffect(() => {
-    async function fetchStoreProfile() {
-      setIsLoading(true);
-      setError(null);
-      if (!tenantSlug) {
-        setError("Store not found: Missing tenant slug.");
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('id, tenant_name, email, phone_number') // Added 'id' here
-          .eq('tenant_slug', tenantSlug)
-          .single();
-
-        if (profileError || !profileData) {
-          setError("Store not found or an error occurred.");
-          setIsLoading(false);
-          return;
-        }
-        setProfile(profileData);
-      } catch (err: any) {
-        setError(err.message || "An unexpected error occurred.");
-      } finally {
-        setIsLoading(false);
-      }
+    if (profile) {
+      setIsLoading(false);
+    } else {
+      setError("Store profile not found. Please try refreshing the page.");
+      setIsLoading(false);
     }
-
-    fetchStoreProfile();
-  }, [tenantSlug]);
+  }, [profile]);
 
   if (isLoading) {
     return <AppLoader message="Loading contact page..." isFullScreen={false} />;
@@ -78,9 +49,11 @@ export default function StoreContactPage() {
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-4">
       <Mail className="h-24 w-24 text-primary mb-6" />
-      <h1 className="text-4xl font-bold mb-4">Contact {profile.tenant_name}</h1>
+      <h1 className="text-4xl font-bold mb-4">
+        {profile.contact_page_heading || `Contact ${profile.tenant_name}`}
+      </h1>
       <p className="text-lg text-muted-foreground mb-8 max-w-prose">
-        Have questions or need assistance? Reach out to us!
+        {profile.contact_page_description || "Have questions or need assistance? Reach out to us!"}
       </p>
 
       <div className="space-y-4 text-left w-full max-w-md">
