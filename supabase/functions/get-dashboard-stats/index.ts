@@ -15,35 +15,33 @@ serve(async (req) => {
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.log('DEBUG: Missing or invalid Authorization header.');
       return new Response(JSON.stringify({ message: 'Unauthorized: Missing or invalid Authorization header' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
     const token = authHeader.substring(7);
-    console.log('DEBUG: Received JWT token (first 10 chars):', token.substring(0, 10) + '...');
 
     const SUPABASE_JWT_SECRET = Deno.env.get('APP_JWT_SECRET');
     if (!SUPABASE_JWT_SECRET) {
-      console.error('DEBUG: APP_JWT_SECRET is NOT set in environment variables.');
       return new Response(JSON.stringify({ message: 'Server configuration error: JWT secret missing. Please ensure APP_JWT_SECRET is set in Supabase Edge Function secrets.' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-    console.log('DEBUG: APP_JWT_SECRET is loaded (length):', SUPABASE_JWT_SECRET.length);
+
+    // Convert the string secret to a Uint8Array for the verify function
+    const secretKey = new TextEncoder().encode(SUPABASE_JWT_SECRET);
 
     let authenticatedUserId: string;
     try {
-      const { payload } = await verify(token, SUPABASE_JWT_SECRET, 'HS256');
+      const { payload } = await verify(token, secretKey, 'HS256'); // Use the converted secretKey
       if (!payload || !payload.sub) {
         throw new Error('Invalid JWT payload: Missing user ID (sub)');
       }
       authenticatedUserId = payload.sub;
-      console.log('DEBUG: JWT verified successfully. Authenticated User ID:', authenticatedUserId);
     } catch (jwtError) {
-      console.error('DEBUG: JWT verification failed:', jwtError);
+      console.error('JWT verification failed:', jwtError); // Keep this error log for actual verification failures
       return new Response(JSON.stringify({ message: 'Unauthorized: Invalid token' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -89,7 +87,7 @@ serve(async (req) => {
     });
 
   } catch (error: any) {
-    console.error("DEBUG: Edge Function caught error:", error);
+    console.error("Edge Function caught error:", error);
     return new Response(JSON.stringify({ message: error.message || 'Internal Server Error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
