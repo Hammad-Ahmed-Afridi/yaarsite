@@ -8,7 +8,7 @@ import { LayoutDashboard, ShoppingCart, Settings, ArrowRight, Package, Monitor, 
 
 export default function LandingPage() {
   const animatedYaarsite = (
-    <span className="text-primary animate-text-gradient">Yaarsite</span>
+    <span className="text-primary animate-jump-up-down">Yaarsite</span>
   );
 
   return (
@@ -38,10 +38,9 @@ export default function LandingPage() {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 to-transparent animate-pulse-fast"></div>
             <div className="absolute top-1/4 left-1/4 w-48 h-48 bg-primary/5 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob-1"></div>
             <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-accent/5 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob-2"></div>
-            <div className="absolute top-1/2 left-1/2 w-56 h-56 bg-secondary/5 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob-3"></div> {/* Added a third blob */}
         </div>
 
-        <h1 className="relative z-10 text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight animate-text-gradient">
+        <h1 className="relative z-10 text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">
           Launch Your Store in <span className="text-primary">Seconds</span> with {animatedYaarsite}.
         </h1>
         <p className="relative z-10 text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl">

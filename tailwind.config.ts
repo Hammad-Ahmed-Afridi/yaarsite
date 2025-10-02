@@ -123,10 +123,9 @@ export default {
                 '33%': { transform: 'translate(-50px, 70px) scale(0.95)' },
                 '66%': { transform: 'translate(60px, -40px) scale(1.05)' },
             },
-            'blob-3': { // New keyframe for blob animation 3
-                '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-                '33%': { transform: 'translate(20px, 80px) scale(1.15)' },
-                '66%': { transform: 'translate(-70px, -10px) scale(0.85)' },
+            'jump-up-down': { // New keyframe for jumping effect
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-5px)' },
             },
   		},
   		animation: {
@@ -141,7 +140,7 @@ export default {
             'pulse-fast': 'pulse-fast 5s ease-in-out infinite', // Animation for fast background pulse
             'blob-1': 'blob-1 14s ease-in-out infinite alternate', // New blob animation
             'blob-2': 'blob-2 17s ease-in-out infinite alternate-reverse', // New blob animation
-            'blob-3': 'blob-3 16s ease-in-out infinite alternate', // New blob animation
+            'jump-up-down': 'jump-up-down 1s ease-in-out infinite', // New animation
   		}
   	}
   },

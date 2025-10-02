@@ -157,6 +157,6 @@
   background-size: 200% auto;
   background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--primary)));
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  /* Removed -webkit-text-fill-color: transparent; to make text visible */
   animation: gradient-shift 3s ease infinite;
 }
