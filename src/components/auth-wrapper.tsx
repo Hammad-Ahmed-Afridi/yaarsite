@@ -25,7 +25,10 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
     if (user) {
       // User is authenticated
-      if (pathname === '/login' || pathname === '/signup' || pathname === '/landing') {
+      // Special case: If on signup page, allow it to render (to show success message and then sign out)
+      if (pathname === '/signup') {
+        setIsReadyToRender(true);
+      } else if (pathname === '/login' || pathname === '/landing') {
         // Authenticated user on a public auth/landing page, redirect to dashboard
         router.push('/');
         setIsReadyToRender(false); // Keep loader visible until redirect completes

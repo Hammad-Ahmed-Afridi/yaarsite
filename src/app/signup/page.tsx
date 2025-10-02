@@ -100,12 +100,15 @@ export default function SignupPage() {
         toast.error(getAuthErrorMessage(signUpError));
         refreshVerificationCode(); // Refresh code on error
       } else {
+        // IMPORTANT: Sign out immediately after successful signup so the user is not logged in
+        // and can manually navigate to the login page.
         const { error: signOutError } = await supabase.auth.signOut();
         if (signOutError) {
           console.warn("Signup Page: Error during sign out after signup (might be already signed out):", signOutError);
         }
         toast.success("Account created! Please sign in to continue.", { duration: 3000 });
-        console.log("Signup Page: Account created. User remains on signup page.");
+        console.log("Signup Page: Account created. User remains on signup page, unauthenticated.");
+        // No router.push here, user stays on this page as requested.
       }
     } catch (submitError) {
       console.error("Signup Page: Unexpected error during form submission:", submitError);
