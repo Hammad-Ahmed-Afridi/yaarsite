@@ -44,7 +44,7 @@ export default function LandingPage() {
           Launch Your Store in <span className="text-primary">Seconds</span> with {animatedYaarsite}.
         </h1>
         <p className="relative z-10 text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl">
-          {animatedYaarsite} helps entrepreneurs build beautiful, professional e-commerce websites effortlessly. Focus on your products, we handle the tech.
+          {animatedYaarsite} helps entrepreneurs build beautiful, professional e-commerce stores effortlessly. Focus on your products, we handle the tech.
         </p>
         <div className="relative z-10 flex flex-col sm:flex-row gap-4">
           <Button asChild size="lg" className="px-8 py-6 text-lg">
