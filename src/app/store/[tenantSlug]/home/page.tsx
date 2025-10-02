@@ -18,6 +18,8 @@ interface Profile {
   store_url: string | null;
   store_description: string | null;
   avatar_url: string | null;
+  home_page_heading: string | null; // New field
+  home_page_description: string | null; // New field
 }
 
 export default function StoreHomePage() {
@@ -40,7 +42,7 @@ export default function StoreHomePage() {
       try {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('*')
+          .select('*, home_page_heading, home_page_description') // Select new fields
           .eq('tenant_slug', tenantSlug)
           .single();
 
@@ -97,9 +99,11 @@ export default function StoreHomePage() {
       ) : (
         <Store className="h-24 w-24 text-primary mb-6" />
       )}
-      <h1 className="text-4xl font-bold mb-4">Welcome to {profile.tenant_name}!</h1>
+      <h1 className="text-4xl font-bold mb-4">
+        {profile.home_page_heading || `Welcome to ${profile.tenant_name}!`}
+      </h1>
       <p className="text-lg text-muted-foreground mb-8 max-w-prose">
-        {profile.store_description || "Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
+        {profile.home_page_description || "Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
       </p>
       <Button asChild size="lg">
         <Link href={`/store/${tenantSlug}`}>

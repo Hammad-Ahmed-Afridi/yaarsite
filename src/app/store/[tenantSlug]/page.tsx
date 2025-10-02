@@ -31,12 +31,13 @@ interface Profile {
   tenant_slug: string | null;
   store_url: string | null;
   avatar_url: string | null;
+  store_page_welcome_message: string | null; // New field
 }
 
 export default function StoreProductsPage() {
   const params = useParams();
   const tenantSlug = params.tenantSlug as string;
-  const [profile, setProfile] = useState<Profile | null>(null); // Keep profile state for product detail dialog
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,10 +56,9 @@ export default function StoreProductsPage() {
       }
 
       try {
-        // Fetch profile to get user_id for products and pass to ProductDetailDialog
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('*')
+          .select('*, store_page_welcome_message') // Select new field
           .eq('tenant_slug', tenantSlug)
           .single();
 
@@ -113,7 +113,12 @@ export default function StoreProductsPage() {
 
   return (
     <>
-      <h2 className="text-2xl font-bold mb-6">Our Products</h2>
+      <h2 className="text-2xl font-bold mb-4">Our Products</h2>
+      {profile?.store_page_welcome_message && (
+        <p className="text-lg text-muted-foreground mb-6 text-center max-w-prose mx-auto">
+          {profile.store_page_welcome_message}
+        </p>
+      )}
       {products.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <Package className="h-16 w-16 text-muted-foreground mb-4" />

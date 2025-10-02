@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation'; // Import usePathname
+import { useRouter, usePathname } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
-import { compressImage } from '@/lib/utils'; // Removed generateSlug as it's no longer used for tenant_slug
+import { compressImage } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from '@/components/ui/button';
@@ -18,11 +18,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Import Select components
-import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2 } from 'lucide-react'; // Import Loader2
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import { DashboardHeader } from '@/components/dashboard-header'; // Import DashboardHeader
-import { AppLoader } from '@/components/app-loader'; // Import AppLoader
+import { DashboardHeader } from '@/components/dashboard-header';
+import { AppLoader } from '@/components/app-loader';
 
 const MAX_LOGO_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_LOGO_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -30,8 +30,12 @@ const ACCEPTED_LOGO_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "imag
 const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
   storeDescription: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
-  deliveryCharge: z.coerce.number().min(0, { message: "Delivery charge cannot be negative." }), // New field
+  deliveryCharge: z.coerce.number().min(0, { message: "Delivery charge cannot be negative." }),
   logo: z.instanceof(File).optional(),
+  homePageHeading: z.string().max(100, { message: "Home page heading cannot exceed 100 characters." }).optional(),
+  homePageDescription: z.string().max(500, { message: "Home page description cannot exceed 500 characters." }).optional(),
+  aboutPageContent: z.string().max(1000, { message: "About page content cannot exceed 1000 characters." }).optional(),
+  storePageWelcomeMessage: z.string().max(500, { message: "Store page welcome message cannot exceed 500 characters." }).optional(),
 });
 
 const DELIVERY_CHARGE_OPTIONS = [
@@ -43,7 +47,7 @@ const DELIVERY_CHARGE_OPTIONS = [
 
 export default function SettingsPage() {
   const router = useRouter();
-  const pathname = usePathname(); // Get current pathname
+  const pathname = usePathname();
   const { user, profile, isLoading: isSessionLoading, refreshProfile } = useSession();
   const [isUpdatingStore, setIsUpdatingStore] = useState(false);
   const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
@@ -54,8 +58,12 @@ export default function SettingsPage() {
     defaultValues: {
       storeName: "",
       storeDescription: "",
-      deliveryCharge: 200, // Default value for form
+      deliveryCharge: 200,
       logo: undefined,
+      homePageHeading: "",
+      homePageDescription: "",
+      aboutPageContent: "",
+      storePageWelcomeMessage: "",
     },
   });
 
@@ -64,8 +72,12 @@ export default function SettingsPage() {
       form.reset({
         storeName: profile.tenant_name || "",
         storeDescription: profile.store_description || "",
-        deliveryCharge: profile.delivery_charge !== null ? profile.delivery_charge : 200, // Use profile data or default
+        deliveryCharge: profile.delivery_charge !== null ? profile.delivery_charge : 200,
         logo: undefined,
+        homePageHeading: profile.home_page_heading || "",
+        homePageDescription: profile.home_page_description || "",
+        aboutPageContent: profile.about_page_content || "",
+        storePageWelcomeMessage: profile.store_page_welcome_message || "",
       });
       setLogoPreview(profile.avatar_url || null);
     }
@@ -199,8 +211,6 @@ export default function SettingsPage() {
         }
       }
 
-      // The tenant_slug is now a fixed random ID, so it should not be updated here.
-      // The store_url should be constructed using the existing tenant_slug.
       const appBaseUrl = window.location.origin;
       const newStoreUrl = `${appBaseUrl}/store/${profile?.tenant_slug}`;
 
@@ -208,11 +218,14 @@ export default function SettingsPage() {
         .from('profiles')
         .update({
           tenant_name: values.storeName,
-          // tenant_slug is intentionally not updated here as it's a fixed ID
           store_url: newStoreUrl,
           store_description: values.storeDescription || null,
           avatar_url: newAvatarUrl,
-          delivery_charge: values.deliveryCharge, // Update delivery charge
+          delivery_charge: values.deliveryCharge,
+          home_page_heading: values.homePageHeading || null,
+          home_page_description: values.homePageDescription || null,
+          about_page_content: values.aboutPageContent || null,
+          store_page_welcome_message: values.storePageWelcomeMessage || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -330,7 +343,7 @@ export default function SettingsPage() {
                   <br />
                   Supported formats: JPG, PNG, WebP. Image will be compressed for faster loading.
                 </p>
-                <div className="flex items-center gap-4 mt-2 flex-wrap"> {/* Added flex-wrap */}
+                <div className="flex items-center gap-4 mt-2 flex-wrap">
                   {(logoPreview || profile?.avatar_url) ? (
                     <div className="relative w-24 h-24 border rounded-md overflow-hidden">
                       <Image
@@ -371,6 +384,58 @@ export default function SettingsPage() {
                 </div>
                 {form.formState.errors.logo && (
                   <p className="text-destructive text-sm">{form.formState.errors.logo.message}</p>
+                )}
+              </div>
+
+              <h3 className="text-lg font-semibold mt-8">Home Page Content</h3>
+              <div className="grid gap-2">
+                <Label htmlFor="homePageHeading">Home Page Heading</Label>
+                <Input
+                  id="homePageHeading"
+                  placeholder="Welcome to our store!"
+                  {...form.register("homePageHeading")}
+                />
+                {form.formState.errors.homePageHeading && (
+                  <p className="text-destructive text-sm">{form.formState.errors.homePageHeading.message}</p>
+                )}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="homePageDescription">Home Page Description</Label>
+                <Textarea
+                  id="homePageDescription"
+                  placeholder="Discover a wide range of products hand-picked just for you."
+                  {...form.register("homePageDescription")}
+                />
+                {form.formState.errors.homePageDescription && (
+                  <p className="text-destructive text-sm">{form.formState.errors.homePageDescription.message}</p>
+                )}
+              </div>
+
+              <h3 className="text-lg font-semibold mt-8">About Us Page Content</h3>
+              <div className="grid gap-2">
+                <Label htmlFor="aboutPageContent">About Us Content</Label>
+                <Textarea
+                  id="aboutPageContent"
+                  placeholder="We are dedicated to providing you with the best products and an exceptional shopping experience."
+                  rows={5}
+                  {...form.register("aboutPageContent")}
+                />
+                {form.formState.errors.aboutPageContent && (
+                  <p className="text-destructive text-sm">{form.formState.errors.aboutPageContent.message}</p>
+                )}
+              </div>
+
+              <h3 className="text-lg font-semibold mt-8">Store Page Welcome Message</h3>
+              <div className="grid gap-2">
+                <Label htmlFor="storePageWelcomeMessage">Welcome Message (above products)</Label>
+                <Textarea
+                  id="storePageWelcomeMessage"
+                  placeholder="Browse our latest collection and find something you'll love!"
+                  rows={3}
+                  {...form.register("storePageWelcomeMessage")}
+                />
+                {form.formState.errors.storePageWelcomeMessage && (
+                  <p className="text-destructive text-sm">{form.formState.errors.storePageWelcomeMessage.message}</p>
                 )}
               </div>
 

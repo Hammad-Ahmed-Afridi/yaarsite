@@ -10,6 +10,7 @@ interface Profile {
   id: string;
   tenant_name: string | null;
   store_description: string | null;
+  about_page_content: string | null; // New field
 }
 
 export default function StoreAboutPage() {
@@ -32,7 +33,7 @@ export default function StoreAboutPage() {
       try {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('id, tenant_name, store_description') // Added 'id' here
+          .select('id, tenant_name, store_description, about_page_content') // Select new field
           .eq('tenant_slug', tenantSlug)
           .single();
 
@@ -79,11 +80,9 @@ export default function StoreAboutPage() {
       <Info className="h-24 w-24 text-primary mb-6" />
       <h1 className="text-4xl font-bold mb-4">About {profile.tenant_name}</h1>
       <p className="text-lg text-muted-foreground mb-8 max-w-prose">
-        {profile.store_description || "We are dedicated to providing you with the best products and an exceptional shopping experience. Our mission is to bring quality and value directly to you."}
+        {profile.about_page_content || "We are dedicated to providing you with the best products and an exceptional shopping experience. Our mission is to bring quality and value directly to you."}
       </p>
-      <p className="text-md text-muted-foreground max-w-prose">
-        Founded with a passion for excellence, we strive to offer unique items and outstanding customer service. Thank you for being a part of our journey!
-      </p>
+      {/* Removed the second static paragraph as it's now covered by the customizable content */}
     </div>
   );
 }
