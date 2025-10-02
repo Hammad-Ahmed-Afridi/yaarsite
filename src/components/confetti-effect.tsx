@@ -9,7 +9,7 @@ interface ConfettiEffectProps {
   duration?: number; // Duration in milliseconds for how long confetti runs
 }
 
-export function ConfettiEffect({ run, duration = 5000 }: ConfettiEffectProps) {
+export function ConfettiEffect({ run, duration = 15000 }: ConfettiEffectProps) { // Increased duration to 15 seconds
   const { width, height } = useWindowSize();
   const [showConfetti, setShowConfetti] = useState(false);
 
