@@ -7,18 +7,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, ShoppingCart, DollarSign, Store, Settings } from "lucide-react";
+import { Package, ShoppingCart, DollarSign, Store, Settings, Globe } from "lucide-react"; // Import Globe icon
 import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
 import { InactivityWarningBanner } from "@/components/inactivity-warning-banner";
-import { DashboardHeader } from "@/components/dashboard-header"; // Import DashboardHeader
-import { ScrollHintArrow } from "@/components/scroll-hint-arrow"; // Import ScrollHintArrow
-import { AppLoader } from "@/components/app-loader"; // Import AppLoader
+import { DashboardHeader } from "@/components/dashboard-header";
+import { ScrollHintArrow } from "@/components/scroll-hint-arrow";
+import { AppLoader } from "@/components/app-loader";
 
 export default function DashboardPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
   const router = useRouter();
-  const pathname = usePathname(); // Get current pathname
+  const pathname = usePathname();
 
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
@@ -111,9 +111,8 @@ export default function DashboardPage() {
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
 
-      <main className="flex-1 px-8 pt-4 pb-8"> {/* Adjusted padding here */}
-        {/* ScrollHintArrow placed here, aligned to the center */}
-        <div className="flex justify-center mb-4"> {/* Changed justify-end to justify-center, added mb-4 */}
+      <main className="flex-1 px-8 pt-4 pb-8">
+        <div className="flex justify-center mb-4">
           <ScrollHintArrow />
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -177,6 +176,18 @@ export default function DashboardPage() {
             <CardContent className="space-y-4">
               <p className="text-base text-muted-foreground leading-relaxed">Track and manage customer orders</p>
               <Button onClick={() => router.push('/orders')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>View Orders</Button>
+            </CardContent>
+          </Card>
+          
+          {/* New Card for Get Free Domain */}
+          <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1 rounded-3xl">
+            <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
+              <Globe className="h-6 w-6 text-blue-500" />
+              <CardTitle className="text-xl font-semibold">Get Free Domain</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-base text-muted-foreground leading-relaxed">Claim a custom domain for your store</p>
+              <Button onClick={() => router.push('/free-domain')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Get Domain</Button>
             </CardContent>
           </Card>
 
