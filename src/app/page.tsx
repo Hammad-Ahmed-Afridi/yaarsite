@@ -47,6 +47,8 @@ export default function DashboardPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
+        // console.error("Dashboard Page: Error fetching dashboard data:", errorData); // Keep console log for debugging
+        // toast.error(errorData.message || "An unexpected error occurred while loading dashboard data."); // Removed toast
         throw new Error(errorData.message || "Failed to fetch dashboard stats via Edge Function");
       }
 
@@ -56,8 +58,8 @@ export default function DashboardPage() {
       setTotalProfit(data.totalProfit);
 
     } catch (error: any) {
-      console.error("Dashboard Page: Error fetching dashboard data:", error);
-      toast.error(error.message || "An unexpected error occurred while loading dashboard data.");
+      console.error("Dashboard Page: Error fetching dashboard data:", error); // Keep console log for debugging
+      // toast.error(error.message || "An unexpected error occurred while loading dashboard data."); // Removed toast
     } finally {
       setIsLoadingDashboardData(false);
     }

@@ -97,7 +97,12 @@ export default function SignupPage() {
 
       if (signUpError) {
         console.error("Signup Page: Supabase signup error:", signUpError);
-        toast.error(getAuthErrorMessage(signUpError));
+        // Check for specific unique constraint error for phone number
+        if (signUpError.message.includes('duplicate key value violates unique constraint "unique_phone_number"')) {
+          toast.error("This phone number is already registered. Please use a different one or log in.");
+        } else {
+          toast.error(getAuthErrorMessage(signUpError));
+        }
         refreshVerificationCode(); // Refresh code on error
       } else {
         // IMPORTANT: Sign out immediately after successful signup so the user is not logged in
@@ -196,13 +201,6 @@ export default function SignupPage() {
                   className="pl-10 pr-10"
                   {...form.register("password")}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
               </div>
               <p className="text-muted-foreground text-xs">Must be at least 6 characters long</p>
               {form.formState.errors.password && (
