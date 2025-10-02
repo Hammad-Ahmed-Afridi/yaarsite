@@ -24,9 +24,10 @@ serve(async (req) => {
     const token = authHeader.substring(7); // Remove 'Bearer '
 
     // 2. Get Supabase JWT Secret from environment variables
-    const SUPABASE_JWT_SECRET = Deno.env.get('SUPABASE_JWT_SECRET');
-    if (!SUPABASE_JWT_SECRET) {
-      console.error('SUPABASE_JWT_SECRET is not set in environment variables.');
+    // Changed from SUPABASE_JWT_SECRET to JWT_SECRET
+    const JWT_SECRET = Deno.env.get('JWT_SECRET');
+    if (!JWT_SECRET) {
+      console.error('JWT_SECRET is not set in environment variables.');
       return new Response(JSON.stringify({ message: 'Server configuration error: JWT secret missing' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -36,7 +37,7 @@ serve(async (req) => {
     // 3. Verify the JWT and extract the user ID
     let authenticatedUserId: string;
     try {
-      const { payload } = await verify(token, SUPABASE_JWT_SECRET, 'HS256');
+      const { payload } = await verify(token, JWT_SECRET, 'HS256'); // Use JWT_SECRET
       if (!payload || !payload.sub) {
         throw new Error('Invalid JWT payload: Missing user ID (sub)');
       }
