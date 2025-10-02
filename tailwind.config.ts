@@ -141,7 +141,7 @@ export default {
             'pulse-slow': 'pulse-slow 10s ease-in-out infinite', // Animation for slow background pulse
             'pulse-fast': 'pulse-fast 5s ease-in-out infinite', // Animation for fast background pulse
             'hover-pulse': 'hover-pulse 0.3s ease-in-out', // New animation for subtle hover pulse
-            'continuous-pulse': 'continuous-pulse 2s ease-in-out infinite', // New continuous pulse animation
+            'continuous-pulse': 'continuous-pulse 1.5s ease-in-out infinite', // Increased scale and decreased duration
             'blob-1': 'blob-1 14s ease-in-out infinite alternate', // New blob animation
             'blob-2': 'blob-2 17s ease-in-out infinite alternate-reverse', // New blob animation
   		}
