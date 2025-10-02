@@ -25,6 +25,16 @@ import {
 } from '@/components/ui/alert-dialog';
 import { DashboardHeader } from '@/components/dashboard-header'; // Import DashboardHeader
 import { AppLoader } from '@/components/app-loader'; // Import AppLoader
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "Manage Products",
+  description: "Add, edit, and delete products for your Yaarsite store.",
+  robots: {
+    index: false, // Disallow indexing for authenticated page
+    follow: false,
+  },
+};
 
 interface Product {
   id: string;

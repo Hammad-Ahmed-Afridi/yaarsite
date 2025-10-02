@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /login
+Disallow: /signup
+Disallow: /cart
+Disallow: /checkout
+Disallow: /products
+Disallow: /orders
+Disallow: /settings
+Disallow: /api/
+
+Sitemap: https://yaarsite.vercel.app/sitemap.xml

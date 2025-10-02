@@ -4,8 +4,7 @@ import "./globals.css";
 import { SessionContextProvider } from "@/components/session-context-provider";
 import { CartContextProvider } from "@/components/cart-context-provider";
 import { AuthWrapper } from '@/components/auth-wrapper';
-import { Toaster } from 'sonner'; // Import Toaster
-
+import { Toaster } from 'sonner';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,29 +17,51 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Yaarsite - Easy Store Builder",
+  metadataBase: new URL('https://yaarsite.vercel.app'), // Set base URL for absolute URLs
+  title: {
+    default: "Yaarsite - Easy Store Builder",
+    template: "%s | Yaarsite", // Suffix for dynamic titles
+  },
   description: "Yaarsite helps you launch professional, beautiful websites in seconds. Easy, fast, and perfect for any e-commerce seller.",
-  robots: "index, follow",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   authors: [{ name: "Hammad Ahmed Afridi" }],
   icons: {
-    icon: "https://placehold.co/32x32/1e293b/cbd5e1?text=Ys",
+    icon: "https://placehold.co/32x32/1e293b/cbd5e1?text=Ys", // Consider replacing with a proper favicon
   },
   openGraph: {
     title: "Yaarsite - Easy Store Builder",
     description: "Launch your store in seconds, manage products, and grow online with Yaarsite.",
     url: "https://yaarsite.vercel.app",
-    type: "website",
+    siteName: "Yaarsite",
     images: [
       {
-        url: "https://placehold.co/1200x630/1e293b/cbd5e1?text=Ys",
+        url: "https://placehold.co/1200x630/1e293b/cbd5e1?text=Ys", // Replace with a proper OG image
         width: 1200,
         height: 630,
         alt: "Yaarsite - Easy Store Builder",
       },
     ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Yaarsite - Easy Store Builder",
+    description: "Launch your store in seconds, manage products, and grow online with Yaarsite.",
+    images: ["https://placehold.co/1200x630/1e293b/cbd5e1?text=Ys"], // Replace with a proper Twitter image
   },
   verification: {
-    google: "google72f769dc7b33038e.html",
+    google: "google72f769dc7b33038e.html", // Ensure this is correct for your Google Search Console
   },
 };
 

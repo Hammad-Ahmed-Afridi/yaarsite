@@ -13,6 +13,19 @@ import { useCart } from '@/components/cart-context-provider';
 import { ProductDetailDialog } from '@/components/product-detail-dialog';
 import { AppLoader } from '@/components/app-loader';
 import { useStoreProfile } from '@/components/store-profile-context-provider'; // Import useStoreProfile
+import type { Metadata } from 'next';
+
+// generateMetadata for the store products page, leveraging data from the layout's generateMetadata
+export async function generateMetadata({ params }: { params: { tenantSlug: string } }): Promise<Metadata> {
+  const tenantSlug = params.tenantSlug;
+  return {
+    title: `Products`, // This will be combined with the layout's title template
+    description: `Browse all products available at this Yaarsite store.`,
+    alternates: {
+      canonical: `https://yaarsite.vercel.app/store/${tenantSlug}`,
+    },
+  };
+}
 
 interface Product {
   id: string;

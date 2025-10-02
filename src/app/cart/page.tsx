@@ -12,6 +12,16 @@ import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "Your Cart",
+  description: "Review your shopping cart items before proceeding to checkout.",
+  robots: {
+    index: false, // Disallow indexing for cart page
+    follow: false,
+  },
+};
 
 export default function CartPage() {
   const router = useRouter();
