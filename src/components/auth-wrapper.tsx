@@ -10,35 +10,30 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
+  // Define paths that are publicly accessible (no login required)
+  const publicPaths = ['/login', '/signup', '/store', '/cart', '/checkout']; 
+  const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
+
   useEffect(() => {
     if (isSessionLoading) {
       // Still loading session, do nothing yet
       return;
     }
 
-    const isAuthPage = pathname === '/login' || pathname === '/signup';
-    const isLandingPage = pathname === '/landing';
-    const isStorePublicPage = pathname.startsWith('/store') || pathname === '/cart' || pathname === '/checkout';
-    const isDashboardRoot = pathname === '/';
-    // A route is considered a protected dashboard route if it's not the dashboard root,
-    // and not an auth page, landing page, or public store page.
-    const isProtectedDashboardRoute = !isDashboardRoot && !isAuthPage && !isLandingPage && !isStorePublicPage;
-
     if (user) {
       // User is authenticated
-      if (isAuthPage || isLandingPage) {
-        router.push('/'); // Redirect to dashboard
+      if (pathname === '/login' || pathname === '/signup') {
+        // If authenticated user tries to access login/signup, redirect to dashboard
+        router.push('/');
       }
     } else {
       // User is NOT authenticated
-      if (isDashboardRoot) {
-        router.push('/landing'); // Root path for unauthenticated goes to landing
-      } else if (isProtectedDashboardRoute) {
-        router.push('/login'); // Protected dashboard routes for unauthenticated go to login
+      if (!isPublicPath) {
+        // If unauthenticated user tries to access a protected path, redirect to login
+        router.push('/login');
       }
-      // Otherwise, if on login, signup, landing, or store public pages, stay there.
     }
-  }, [user, isSessionLoading, pathname, router]);
+  }, [user, isSessionLoading, pathname, router, isPublicPath]);
 
   // Show a loading spinner while session is being determined
   if (isSessionLoading) {
