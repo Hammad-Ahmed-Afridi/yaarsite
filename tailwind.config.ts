@@ -114,7 +114,7 @@ export default {
             },
             'pop-in-out': { // New keyframe for popping effect
                 '0%, 100%': { transform: 'scale(1)' },
-                '50%': { transform: 'scale(1.1)' }, // Increased scale for more prominence
+                '50%': { transform: 'scale(1.15)' }, // Increased scale for more prominence
             },
   		},
   		animation: {
