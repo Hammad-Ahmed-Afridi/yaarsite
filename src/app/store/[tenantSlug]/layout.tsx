@@ -35,10 +35,12 @@ export default function StoreLayout({
 
   useEffect(() => {
     async function fetchStoreProfile() {
+      console.log("StoreLayout: Attempting to fetch store profile for slug:", tenantSlug);
       setIsLoading(true);
       setError(null);
       if (!tenantSlug) {
-        setError("Store not found: Missing tenant slug.");
+        console.error("StoreLayout: Missing tenant slug.");
+        setError("Store not found: Missing tenant slug in URL.");
         setIsLoading(false);
         return;
       }
@@ -51,10 +53,21 @@ export default function StoreLayout({
           .single();
 
         if (profileError || !profileData) {
-          setError("Store not found or an error occurred.");
+          console.error("StoreLayout: Error fetching profile or profile not found:", profileError);
+          setError("Store not found or an error occurred. Please check the URL.");
           setIsLoading(false);
           return;
         }
+        
+        // Check if the store is actually set up (tenant_name is the key indicator)
+        if (!profileData.tenant_name) {
+          console.warn("StoreLayout: Profile found but tenant_name is null, store not fully set up.");
+          setError("This store is not fully set up. Please contact the owner.");
+          setIsLoading(false);
+          return;
+        }
+
+        console.log("StoreLayout: Profile fetched successfully:", profileData);
         setProfile(profileData);
 
         // Check if cart needs to be cleared
@@ -64,7 +77,8 @@ export default function StoreLayout({
         }
 
       } catch (err: any) {
-        setError(err.message || "An unexpected error occurred.");
+        console.error("StoreLayout: Unexpected error during profile fetch:", err);
+        setError(err.message || "An unexpected error occurred while loading the store.");
       } finally {
         setIsLoading(false);
       }

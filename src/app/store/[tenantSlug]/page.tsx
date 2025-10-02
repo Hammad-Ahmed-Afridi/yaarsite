@@ -31,13 +31,17 @@ export default function StoreProductsPage() {
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 
   const fetchProducts = useCallback(async () => {
+    console.log("StoreProductsPage: Attempting to fetch products.");
     if (!profile?.id) {
+      console.warn("StoreProductsPage: Profile ID is missing, cannot fetch products.");
       setIsLoadingProducts(false);
+      setError("Store owner information is missing. Cannot load products.");
       return;
     }
     setIsLoadingProducts(true);
     setError(null);
 
+    console.log("StoreProductsPage: Fetching products for user_id:", profile.id);
     const { data, error: fetchError } = await supabase
       .from('products')
       .select('*')
@@ -45,21 +49,24 @@ export default function StoreProductsPage() {
       .order('created_at', { ascending: false });
 
     if (fetchError) {
-      console.error("Error fetching products for public store:", fetchError);
-      setError("Failed to load products. Please try again.");
+      console.error("StoreProductsPage: Error fetching products:", fetchError);
+      setError(`Failed to load products: ${fetchError.message}.`);
       setProducts([]);
     } else {
+      console.log("StoreProductsPage: Products fetched:", data);
       setProducts(data || []);
     }
     setIsLoadingProducts(false);
   }, [profile]);
 
   useEffect(() => {
+    console.log("StoreProductsPage: useEffect triggered. Profile:", profile, "isLoadingProducts:", isLoadingProducts);
     if (profile) {
       fetchProducts();
     } else if (!profile && !isLoadingProducts) {
       // If profile is null and we're not loading, it means the layout couldn't find the store
-      setError("Store profile not found. Please try refreshing the page.");
+      console.error("StoreProductsPage: Profile is null after layout loading, indicating store not found or error.");
+      setError("Store profile not found. Please ensure the store slug is correct and the store exists.");
     }
   }, [profile, fetchProducts, isLoadingProducts]);
 
