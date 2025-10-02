@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -21,8 +21,8 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { DashboardHeader } from '@/components/dashboard-header';
 import { AppLoader } from '@/components/app-loader';
-import { DashboardLayout } from '@/components/dashboard-layout'; // Import DashboardLayout
 
 const MAX_LOGO_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_LOGO_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -36,8 +36,8 @@ const formSchema = z.object({
   homePageDescription: z.string().max(500, { message: "Home page description cannot exceed 500 characters." }).optional(),
   aboutPageContent: z.string().max(1000, { message: "About page content cannot exceed 1000 characters." }).optional(),
   storePageWelcomeMessage: z.string().max(500, { message: "Store page welcome message cannot exceed 500 characters." }).optional(),
-  contactPageHeading: z.string().max(100, { message: "Contact page heading cannot exceed 100 characters." }).optional(),
-  contactPageDescription: z.string().max(500, { message: "Contact page description cannot exceed 500 characters." }).optional(),
+  contactPageHeading: z.string().max(100, { message: "Contact page heading cannot exceed 100 characters." }).optional(), // New field
+  contactPageDescription: z.string().max(500, { message: "Contact page description cannot exceed 500 characters." }).optional(), // New field
 });
 
 const DELIVERY_CHARGE_OPTIONS = [
@@ -49,6 +49,7 @@ const DELIVERY_CHARGE_OPTIONS = [
 
 export default function SettingsPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, profile, isLoading: isSessionLoading, refreshProfile } = useSession();
   const [isUpdatingStore, setIsUpdatingStore] = useState(false);
   const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
@@ -65,8 +66,8 @@ export default function SettingsPage() {
       homePageDescription: "",
       aboutPageContent: "",
       storePageWelcomeMessage: "",
-      contactPageHeading: "",
-      contactPageDescription: "",
+      contactPageHeading: "", // Initialize new field
+      contactPageDescription: "", // Initialize new field
     },
   });
 
@@ -81,12 +82,22 @@ export default function SettingsPage() {
         homePageDescription: profile.home_page_description || "",
         aboutPageContent: profile.about_page_content || "",
         storePageWelcomeMessage: profile.store_page_welcome_message || "",
-        contactPageHeading: profile.contact_page_heading || "",
-        contactPageDescription: profile.contact_page_description || "",
+        contactPageHeading: profile.contact_page_heading || "", // Set value for new field
+        contactPageDescription: profile.contact_page_description || "", // Set value for new field
       });
       setLogoPreview(profile.avatar_url || null);
     }
   }, [profile, form]);
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Failed to sign out.");
+    } else {
+      toast.success("Signed out successfully!");
+      router.push('/login');
+    }
+  };
 
   const handleLogoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -221,8 +232,8 @@ export default function SettingsPage() {
           home_page_description: values.homePageDescription || null,
           about_page_content: values.aboutPageContent || null,
           store_page_welcome_message: values.storePageWelcomeMessage || null,
-          contact_page_heading: values.contactPageHeading || null,
-          contact_page_description: values.contactPageDescription || null,
+          contact_page_heading: values.contactPageHeading || null, // Save new field
+          contact_page_description: values.contactPageDescription || null, // Save new field
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -275,8 +286,10 @@ export default function SettingsPage() {
   }
 
   return (
-    <DashboardLayout>
-      <div className="flex justify-center">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} currentPath={pathname} />
+
+      <main className="flex-1 p-8 flex justify-center">
         <Card className="w-full max-w-2xl bg-card text-card-foreground shadow-lg">
           <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">
             <Settings className="h-6 w-6 text-primary" />
@@ -434,6 +447,7 @@ export default function SettingsPage() {
                 )}
               </div>
 
+              {/* New fields for Contact Page Customization */}
               <h3 className="text-lg font-semibold mt-8">Contact Us Page Content</h3>
               <div className="grid gap-2">
                 <Label htmlFor="contactPageHeading">Contact Page Heading</Label>
@@ -496,7 +510,7 @@ export default function SettingsPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </DashboardLayout>
+      </main>
+    </div>
   );
 }
