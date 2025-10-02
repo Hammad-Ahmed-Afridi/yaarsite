@@ -64,7 +64,8 @@ export default {
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
+  			sm: 'calc(var(--radius) - 4px)',
+            '3xl': '2rem', // Defined 3xl for more rounded corners
   		},
   		keyframes: {
   			'accordion-down': {
@@ -114,7 +115,7 @@ export default {
             },
             'pop-in-out': { // New keyframe for popping effect
                 '0%, 100%': { transform: 'scale(1)' },
-                '50%': { transform: 'scale(1.15)' }, // Increased scale for more prominence
+                '50%': { transform: 'scale(1.25)' }, // Increased scale for a more dramatic pop
             },
   		},
   		animation: {
