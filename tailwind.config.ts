@@ -118,9 +118,9 @@ export default {
                 '25%': { transform: 'translateX(5px)' },
                 '75%': { transform: 'translateX(-5px)' },
             },
-            'pop-in-out': { // Adjusted for a more noticeable pop
+            'pop-in-out': { // New keyframe for popping effect
                 '0%, 100%': { transform: 'scale(1)' },
-                '50%': { transform: 'scale(1.5)' }, /* Increased scale significantly */
+                '50%': { transform: 'scale(1.05)' },
             },
             'blob-1': { // New keyframe for blob animation 1
                 '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
@@ -144,7 +144,7 @@ export default {
             'pulse-slow': 'pulse-slow 10s ease-in-out infinite', // Animation for slow background pulse
             'pulse-fast': 'pulse-fast 5s ease-in-out infinite', // Animation for fast background pulse
             'jump-horizontal': 'jump-horizontal 2s ease-in-out infinite', // New animation
-            'pop-in-out': 'pop-in-out 1s ease-in-out infinite', // Reduced duration for a snappier pop
+            'pop-in-out': 'pop-in-out 1.5s ease-in-out infinite', // New animation
             'blob-1': 'blob-1 12s ease-in-out infinite alternate', // New blob animation
             'blob-2': 'blob-2 15s ease-in-out infinite alternate-reverse', // New blob animation
   		}
