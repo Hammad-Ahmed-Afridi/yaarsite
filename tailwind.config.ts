@@ -99,11 +99,7 @@ export default {
                 from: { transform: 'rotate(0deg)' },
                 to: { transform: 'rotate(-360deg)' }, // Spin in opposite direction
             },
-            'gradient-shift': { // Keyframe for text gradient animation
-                '0%': { backgroundPosition: '0% 50%' },
-                '50%': { backgroundPosition: '100% 50%' },
-                '100%': { backgroundPosition: '0% 50%' },
-            },
+            // Removed 'gradient-shift' keyframe
             'pulse-slow': { // Keyframe for slow background pulse
                 '0%, 100%': { opacity: '0.2' },
                 '50%': { opacity: '0.4' },
@@ -129,7 +125,7 @@ export default {
             'bounce-down': 'bounce-down 1.5s infinite', // New animation
             'spin-slow': 'spin-slow 8s linear infinite',
             'spin-fast': 'spin-fast 3s linear infinite',
-            'gradient-shift': 'gradient-shift 3s ease infinite', // Animation for text gradient
+            // Removed 'gradient-shift' from animations
             'pulse-slow': 'pulse-slow 10s ease-in-out infinite', // Animation for slow background pulse
             'pulse-fast': 'pulse-fast 5s ease-in-out infinite', // Animation for fast background pulse
             'jump-horizontal': 'jump-horizontal 2s ease-in-out infinite', // New animation
