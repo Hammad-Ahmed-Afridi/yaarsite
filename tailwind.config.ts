@@ -48,7 +48,7 @@ export default {
   				'2': 'hsl(var(--chart-2))',
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
+  				'5': 'hsl(var(--chart-5)')
   			},
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
@@ -87,24 +87,24 @@ export default {
                 '0%': { transform: 'translateX(100%)' },
                 '100%': { transform: 'translateX(-100%)' },
             },
-            'bounce-down': { // New keyframe for bouncing arrow
+            'bounce-down': {
                 '0%, 100%': { transform: 'translateY(0)' },
                 '50%': { transform: 'translateY(10px)' },
             },
-            'spin-slow': { // Slower spin for the main icon
+            'spin-slow': {
                 from: { transform: 'rotate(0deg)' },
                 to: { transform: 'rotate(360deg)' },
             },
-            'spin-fast': { // Faster spin for the overlay icon
+            'spin-fast': {
                 from: { transform: 'rotate(0deg)' },
-                to: { transform: 'rotate(-360deg)' }, // Spin in opposite direction
+                to: { transform: 'rotate(-360deg)' },
             },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
-            'marquee': 'marquee 15s linear infinite', // Adjusted duration for faster scroll
-            'bounce-down': 'bounce-down 1.5s infinite', // New animation
+            'marquee': 'marquee 15s linear infinite',
+            'bounce-down': 'bounce-down 1.5s infinite',
             'spin-slow': 'spin-slow 8s linear infinite',
             'spin-fast': 'spin-fast 3s linear infinite',
   		}

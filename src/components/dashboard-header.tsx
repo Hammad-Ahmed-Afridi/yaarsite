@@ -4,23 +4,22 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Store, LogOut, LayoutDashboard } from 'lucide-react';
-import { Profile } from '@/components/session-context-provider'; // Import Profile type
+import { ArrowLeft, Store } from 'lucide-react';
+import { Profile } from '@/components/session-context-provider';
 
 
 interface DashboardHeaderProps {
   profile: Profile | null;
-  onSignOut: () => void;
-  showBackButton?: boolean;
+  onSignOut: () => void; // onSignOut is now passed from DashboardLayout
+  showBackButton?: boolean; // Optional: to control back button visibility
   currentPath?: string; // Optional: to determine if back button should go to dashboard
 }
 
-export function DashboardHeader({ profile, onSignOut, showBackButton = true, currentPath }: DashboardHeaderProps) {
+export function DashboardHeader({ profile, showBackButton = true, currentPath }: DashboardHeaderProps) {
   const isDashboardRoot = currentPath === '/';
 
   return (
-    <header className="flex items-center justify-between p-4 border-b border-border bg-card">
+    <div className="flex items-center justify-between w-full"> {/* Changed from header to div, removed padding */}
       <div className="flex items-center space-x-4">
         {showBackButton && !isDashboardRoot && (
           <Button variant="ghost" size="icon" asChild>
@@ -43,14 +42,8 @@ export function DashboardHeader({ profile, onSignOut, showBackButton = true, cur
           <Store className="h-6 w-6 text-primary" />
         )}
         <h1 className="text-xl font-bold">{profile?.tenant_name || "Dashboard"}</h1>
-        {/* Removed the Badge displaying profile?.tenant_slug */}
       </div>
-      <div className="flex items-center gap-2">
-        <Button onClick={onSignOut} variant="outline" className="flex items-center gap-2">
-          <LogOut className="h-4 w-4" />
-          Sign Out
-        </Button>
-      </div>
-    </header>
+      {/* Sign out button removed from here, now handled by sidebar/layout */}
+    </div>
   );
 }
