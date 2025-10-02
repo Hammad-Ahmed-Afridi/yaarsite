@@ -146,7 +146,7 @@ export function StoreSetupDialog() {
     <Dialog open={isDialogOpen}> {/* Removed onOpenChange to prevent closing on outside click */}
       <DialogContent 
         className="w-full max-w-md p-6 font-sans" 
-        overlayClassName="backdrop-blur-md" // Apply blur to the overlay
+        // Removed overlayClassName="backdrop-blur-md" to use the default backdrop-blur-sm from DialogOverlay
         onPointerDownOutside={(e) => e.preventDefault()} // Prevent closing on outside click
         onEscapeKeyDown={(e) => e.preventDefault()} // Prevent closing on escape key
       >

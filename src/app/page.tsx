@@ -183,7 +183,7 @@ export default function DashboardPage() {
           <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1 rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Globe className="h-6 w-6 text-blue-500" />
-              <CardTitle className="text-xl font-semibold">Get Free Domain</CardTitle>
+              <CardTitle className="text-xl font-semibold">Get a Free Domain</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-base text-muted-foreground leading-relaxed">Claim a custom domain for your store</p>

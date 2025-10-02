@@ -48,7 +48,7 @@ export function DashboardHeader({ profile, onSignOut, showBackButton = true, cur
         <Button asChild variant="outline" className="flex items-center gap-2 font-semibold" disabled={profile?.tenant_name === null}>
           <Link href="/free-domain">
             <Globe className="h-4 w-4" />
-            Free Domain
+            Get a Free Domain
           </Link>
         </Button>
         <Button onClick={onSignOut} variant="outline" className="flex items-center gap-2 font-semibold">
