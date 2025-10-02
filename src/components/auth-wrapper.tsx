@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react'; // Import useState
 import { useRouter, usePathname } from 'next/navigation';
 import { useSession } from '@/components/session-context-provider';
 import { AppLoader } from '@/components/app-loader'; // Import AppLoader
@@ -10,37 +10,47 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Define paths that are publicly accessible (no login required)
-  const publicPaths = ['/login', '/signup', '/store', '/cart', '/checkout', '/landing']; // Added /landing
+  const publicPaths = ['/login', '/signup', '/store', '/cart', '/checkout', '/landing'];
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
+
+  // State to track if the component is ready to render its children
+  const [isReadyToRender, setIsReadyToRender] = useState(false);
 
   useEffect(() => {
     if (isSessionLoading) {
-      // Still loading session, do nothing yet
+      // Session is still loading, keep loader visible
+      setIsReadyToRender(false);
       return;
     }
 
     if (user) {
       // User is authenticated
-      if (pathname === '/login' || pathname === '/signup' || pathname === '/landing') { // Also redirect from landing if logged in
-        // If authenticated user tries to access login/signup/landing, redirect to dashboard
+      if (pathname === '/login' || pathname === '/signup' || pathname === '/landing') {
+        // Authenticated user on a public auth/landing page, redirect to dashboard
         router.push('/');
+        setIsReadyToRender(false); // Keep loader visible until redirect completes
+      } else {
+        // Authenticated user on a protected page or already on dashboard
+        setIsReadyToRender(true);
       }
     } else {
       // User is NOT authenticated
       if (!isPublicPath) {
-        // If unauthenticated user tries to access a protected path, redirect to landing
-        router.push('/landing'); // Changed redirect to /landing
+        // Unauthenticated user on a protected path, redirect to landing
+        router.push('/landing');
+        setIsReadyToRender(false); // Keep loader visible until redirect completes
+      } else {
+        // Unauthenticated user on a public path (including landing)
+        setIsReadyToRender(true);
       }
     }
   }, [user, isSessionLoading, pathname, router, isPublicPath]);
 
-  // Show a loading spinner while session is being determined
-  if (isSessionLoading) {
-    return (
-      <AppLoader message="Initializing session..." />
-    );
+  // If not ready to render, show the full-screen loader
+  if (!isReadyToRender) {
+    return <AppLoader message="Loading..." isFullScreen={true} />;
   }
 
+  // If ready to render, show the children
   return <>{children}</>;
 }

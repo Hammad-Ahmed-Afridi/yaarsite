@@ -13,7 +13,7 @@ export default function LandingPage() {
       <header className="flex items-center justify-between p-4 border-b border-border bg-card">
         <div className="flex items-center space-x-2">
           {/* Removed Rocket icon */}
-          <span className="text-xl font-bold animate-text-gradient">Yaarsite</span>
+          <span className="text-xl font-bold animate-text-gradient animate-jump-horizontal">Yaarsite</span>
         </div>
         <nav className="space-x-4">
           <Button asChild variant="ghost">
@@ -34,7 +34,7 @@ export default function LandingPage() {
         </div>
 
         <h1 className="relative z-10 text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">
-          Launch Your Store in <span className="animate-text-gradient">Seconds</span> with <span className="animate-text-gradient">Yaarsite</span>.
+          Launch Your Store in <span className="animate-text-gradient">Seconds</span> with <span className="animate-text-gradient animate-jump-horizontal">Yaarsite</span>.
         </h1>
         <p className="relative z-10 text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl">
           Yaarsite helps entrepreneurs build beautiful, professional e-commerce websites effortlessly. Focus on your products, we handle the tech.
@@ -59,7 +59,7 @@ export default function LandingPage() {
         <div className="container mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Everything You Need to Sell Online</h2>
           <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
-            From product management to order tracking, <span className="animate-text-gradient">Yaarsite</span> provides a complete solution for your e-commerce business.
+            From product management to order tracking, <span className="animate-text-gradient animate-jump-horizontal">Yaarsite</span> provides a complete solution for your e-commerce business.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card className="p-6 text-left shadow-lg hover:shadow-xl transition-shadow duration-300">
@@ -105,9 +105,9 @@ export default function LandingPage() {
       {/* Call to Action Section */}
       <section className="py-20 px-4 bg-muted">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Start Selling with <span className="animate-text-gradient">Yaarsite</span>?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Start Selling with <span className="animate-text-gradient animate-jump-horizontal">Yaarsite</span>?</h2>
           <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Join <span className="animate-text-gradient">Yaarsite</span> today and transform your business idea into a thriving online store.
+            Join <span className="animate-text-gradient animate-jump-horizontal">Yaarsite</span> today and transform your business idea into a thriving online store.
           </p>
           <Button asChild size="lg" className="px-10 py-7 text-xl">
             <Link href="/signup" target="_blank" rel="noopener noreferrer">
@@ -119,7 +119,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="w-full py-8 text-center text-muted-foreground text-sm border-t border-border bg-card">
-        &copy; {new Date().getFullYear()} <span className="animate-text-gradient">Yaarsite</span>. All rights reserved.
+        &copy; {new Date().getFullYear()} <span className="animate-text-gradient animate-jump-horizontal">Yaarsite</span>. All rights reserved.
       </footer>
     </div>
   );
