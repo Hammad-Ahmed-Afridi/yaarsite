@@ -31,7 +31,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative flex flex-col items-center justify-center text-center py-20 px-4 md:py-32 bg-gradient-to-b from-background to-muted overflow-hidden rounded-b-3xl shadow-lg mx-4 mt-4">
+      <section className="relative flex flex-col items-center justify-center text-center py-20 px-4 md:py-32 bg-gradient-to-b from-background to-muted overflow-hidden rounded-b-4xl shadow-lg mx-4 mt-4">
         {/* Animated background elements for visual engagement */}
         <div className="absolute inset-0 z-0 opacity-20">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 animate-pulse-slow"></div>
@@ -68,7 +68,7 @@ export default function LandingPage() {
             From product management to order tracking, {animatedYaarsite} provides a complete solution for your e-commerce business.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="group p-6 text-left shadow-lg hover:shadow-xl transition-all duration-300 rounded-3xl border-2 border-border/50 hover:scale-[1.02]">
+            <Card className="group p-6 text-left shadow-lg hover:shadow-xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.03]">
               <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
                 <LayoutDashboard className="h-8 w-8 text-primary" />
                 <CardTitle className="text-xl font-semibold">Intuitive Dashboard</CardTitle>
@@ -77,7 +77,7 @@ export default function LandingPage() {
                 Manage your products, orders, and store settings with an easy-to-use interface.
               </CardContent>
             </Card>
-            <Card className="group p-6 text-left shadow-lg hover:shadow-xl transition-all duration-300 rounded-3xl border-2 border-border/50 hover:scale-[1.02]">
+            <Card className="group p-6 text-left shadow-lg hover:shadow-xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.03]">
               <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
                 <Package className="h-8 w-8 text-primary" />
                 <CardTitle className="text-xl font-semibold">Effortless Product Management</CardTitle>
@@ -86,7 +86,7 @@ export default function LandingPage() {
                 Add, edit, and organize your products with images and detailed descriptions.
               </CardContent>
             </Card>
-            <Card className="group p-6 text-left shadow-lg hover:shadow-xl transition-all duration-300 rounded-3xl border-2 border-border/50 hover:scale-[1.02]">
+            <Card className="group p-6 text-left shadow-lg hover:shadow-xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.03]">
               <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
                 <ShoppingCart className="h-8 w-8 text-primary" />
                 <CardTitle className="text-xl font-semibold">Seamless Order Management</CardTitle>
@@ -95,7 +95,7 @@ export default function LandingPage() {
                 Track customer orders from pending to delivered, all in one place.
               </CardContent>
             </Card>
-            <Card className="group p-6 text-left shadow-lg hover:shadow-xl transition-all duration-300 rounded-3xl border-2 border-border/50 hover:scale-[1.02]">
+            <Card className="group p-6 text-left shadow-lg hover:shadow-xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.03]">
               <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
                 <Settings className="h-8 w-8 text-primary" />
                 <CardTitle className="text-xl font-semibold">Customizable Storefront</CardTitle>
@@ -104,7 +104,7 @@ export default function LandingPage() {
                 Personalize your store's look and feel to match your brand.
               </CardContent>
             </Card>
-            <Card className="group p-6 text-left shadow-lg hover:shadow-xl transition-all duration-300 rounded-3xl border-2 border-border/50 hover:scale-[1.02]">
+            <Card className="group p-6 text-left shadow-lg hover:shadow-xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.03]">
               <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
                 <Monitor className="h-8 w-8 text-primary" />
                 <CardTitle className="text-xl font-semibold">Fully Responsive Design</CardTitle>
@@ -113,7 +113,7 @@ export default function LandingPage() {
                 Your store looks stunning and works perfectly on any device, from desktops to mobile phones.
               </CardContent>
             </Card>
-            <Card className="group p-6 text-left shadow-lg hover:shadow-xl transition-all duration-300 rounded-3xl border-2 border-border/50 hover:scale-[1.02]">
+            <Card className="group p-6 text-left shadow-lg hover:shadow-xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.03]">
               <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
                 <BarChart className="h-8 w-8 text-primary" />
                 <CardTitle className="text-xl font-semibold">Real-time Analytics</CardTitle>
@@ -127,7 +127,7 @@ export default function LandingPage() {
       </section>
 
       {/* Call to Action Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-muted to-background rounded-3xl shadow-lg mx-4 mb-4">
+      <section className="py-20 px-4 bg-gradient-to-br from-muted to-background rounded-4xl shadow-lg mx-4 mb-4">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Ready to Start Selling with {animatedYaarsite}</h2>
           <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
@@ -142,7 +142,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="w-full py-8 text-center text-muted-foreground text-sm border-t border-border bg-card rounded-t-3xl shadow-lg mx-4 mb-4">
+      <footer className="w-full py-8 text-center text-muted-foreground text-sm border-t border-border bg-card rounded-t-4xl shadow-lg mx-4 mb-4">
         &copy; {new Date().getFullYear()} {animatedYaarsite}. All rights reserved.
       </footer>
     </div>

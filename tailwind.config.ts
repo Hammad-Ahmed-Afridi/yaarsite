@@ -52,7 +52,7 @@ export default {
   				'2': 'hsl(var(--chart-2))',
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
+  				'5': 'hsl(var(--chart-5)'
   			},
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
@@ -69,7 +69,8 @@ export default {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)',
-            '3xl': '1.5rem', // Added for more rounded corners
+            '3xl': '1.5rem', // Existing
+            '4xl': '2.5rem', // New: for more rounded corners
   		},
   		keyframes: {
   			'accordion-down': {
