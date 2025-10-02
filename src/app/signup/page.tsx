@@ -118,12 +118,12 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+    <div className="flex items-center justify-center min-h-screen bg-background p-4 font-sans">
       <Card className="w-full max-w-md bg-card text-card-foreground shadow-lg rounded-3xl">
         <CardHeader className="text-center space-y-2">
           <Store className="mx-auto h-10 w-10 text-primary" />
-          <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
-          <CardDescription className="text-muted-foreground">Sign up to get started with your store</CardDescription>
+          <CardTitle className="text-3xl font-bold tracking-tight">Create Account</CardTitle>
+          <CardDescription className="text-base text-muted-foreground leading-relaxed">Sign up to get started with your store</CardDescription>
           <p className="text-destructive text-sm font-semibold mt-2">
             Important: Kindly put in the correct credentials or your account will get banned and deleted.
           </p>
@@ -131,7 +131,7 @@ export default function SignupPage() {
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name" className="text-sm font-medium">Name</Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -148,7 +148,7 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-sm font-medium">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -165,7 +165,7 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phoneNumber">Phone Number</Label>
+              <Label htmlFor="phoneNumber" className="text-sm font-medium">Phone Number</Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -183,7 +183,7 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-sm font-medium">Password</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -208,7 +208,7 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -232,7 +232,7 @@ export default function SignupPage() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="humanVerificationCode">Human Verification</Label>
+              <Label htmlFor="humanVerificationCode" className="text-sm font-medium">Human Verification</Label>
               <div className="flex items-center gap-2">
                 <div className="flex-1 relative">
                   <Input
@@ -281,7 +281,7 @@ export default function SignupPage() {
               <p className="text-destructive text-sm">{form.formState.errors.terms.message}</p>
             )}
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full font-semibold" disabled={isLoading}>
               {isLoading ? "Creating Account..." : "Create Account"}
             </Button>
           </form>

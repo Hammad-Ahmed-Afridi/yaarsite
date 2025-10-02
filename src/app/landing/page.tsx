@@ -12,7 +12,7 @@ export default function LandingPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       {/* Header/Navbar for Landing Page */}
       <header className="flex items-center justify-between p-4 border-b border-border bg-card shadow-sm">
         <div className="flex items-center space-x-2">
@@ -43,16 +43,16 @@ export default function LandingPage() {
         <h1 className="relative z-10 text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">
           Launch Your Store in <span className="text-primary">Seconds</span> with {animatedYaarsite}.
         </h1>
-        <p className="relative z-10 text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl">
+        <p className="relative z-10 text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl leading-relaxed">
           {animatedYaarsite} helps entrepreneurs build beautiful, professional e-commerce stores effortlessly. Focus on your products, we handle the tech.
         </p>
         <div className="relative z-10 flex flex-col sm:flex-row gap-4">
-          <Button asChild size="lg" className="px-8 py-6 text-lg">
+          <Button asChild size="lg" className="px-8 py-6 text-lg font-semibold">
             <Link href="/signup">
               Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="px-8 py-6 text-lg">
+          <Button asChild variant="outline" size="lg" className="px-8 py-6 text-lg font-semibold">
             <Link href="/login">
               Log In
             </Link>
@@ -63,8 +63,8 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className="py-20 px-4 bg-background">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Everything You Need to Sell Online</h2>
-          <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Everything You Need to Sell Online</h2>
+          <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
             From product management to order tracking, {animatedYaarsite} provides a complete solution for your e-commerce business.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -73,7 +73,7 @@ export default function LandingPage() {
                 <LayoutDashboard className="h-8 w-8 text-primary" />
                 <CardTitle className="text-xl font-semibold">Intuitive Dashboard</CardTitle>
               </CardHeader>
-              <CardContent className="p-0 text-muted-foreground">
+              <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
                 Manage your products, orders, and store settings with an easy-to-use interface.
               </CardContent>
             </Card>
@@ -82,7 +82,7 @@ export default function LandingPage() {
                 <Package className="h-8 w-8 text-primary" />
                 <CardTitle className="text-xl font-semibold">Effortless Product Management</CardTitle>
               </CardHeader>
-              <CardContent className="p-0 text-muted-foreground">
+              <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
                 Add, edit, and organize your products with images and detailed descriptions.
               </CardContent>
             </Card>
@@ -91,7 +91,7 @@ export default function LandingPage() {
                 <ShoppingCart className="h-8 w-8 text-primary" />
                 <CardTitle className="text-xl font-semibold">Seamless Order Management</CardTitle>
               </CardHeader>
-              <CardContent className="p-0 text-muted-foreground">
+              <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
                 Track customer orders from pending to delivered, all in one place.
               </CardContent>
             </Card>
@@ -100,7 +100,7 @@ export default function LandingPage() {
                 <Settings className="h-8 w-8 text-primary" />
                 <CardTitle className="text-xl font-semibold">Customizable Storefront</CardTitle>
               </CardHeader>
-              <CardContent className="p-0 text-muted-foreground">
+              <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
                 Personalize your store's look and feel to match your brand.
               </CardContent>
             </Card>
@@ -109,7 +109,7 @@ export default function LandingPage() {
                 <Monitor className="h-8 w-8 text-primary" />
                 <CardTitle className="text-xl font-semibold">Fully Responsive Design</CardTitle>
               </CardHeader>
-              <CardContent className="p-0 text-muted-foreground">
+              <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
                 Your store looks stunning and works perfectly on any device, from desktops to mobile phones.
               </CardContent>
             </Card>
@@ -118,7 +118,7 @@ export default function LandingPage() {
                 <BarChart className="h-8 w-8 text-primary" />
                 <CardTitle className="text-xl font-semibold">Real-time Analytics</CardTitle>
               </CardHeader>
-              <CardContent className="p-0 text-muted-foreground">
+              <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
                 Track your sales with intuitive, real-time data.
               </CardContent>
             </Card>
@@ -129,11 +129,11 @@ export default function LandingPage() {
       {/* Call to Action Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-muted to-background rounded-3xl shadow-lg mx-4 mb-4">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Start Selling with {animatedYaarsite}?</h2>
-          <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Ready to Start Selling with {animatedYaarsite}?</h2>
+          <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
             Join {animatedYaarsite} today and transform your business idea into a thriving online store.
           </p>
-          <Button asChild size="lg" className="px-10 py-7 text-xl">
+          <Button asChild size="lg" className="px-10 py-7 text-xl font-semibold">
             <Link href="/signup">
               Sign Up Now <ArrowRight className="ml-3 h-6 w-6" />
             </Link>

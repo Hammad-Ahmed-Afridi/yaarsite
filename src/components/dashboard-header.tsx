@@ -20,7 +20,7 @@ export function DashboardHeader({ profile, onSignOut, showBackButton = true, cur
   const isDashboardRoot = currentPath === '/';
 
   return (
-    <header className="flex items-center justify-between p-4 border-b border-border bg-card">
+    <header className="flex items-center justify-between p-4 border-b border-border bg-card font-sans">
       <div className="flex items-center space-x-4">
         {showBackButton && !isDashboardRoot && (
           <Button variant="ghost" size="icon" asChild>
@@ -46,7 +46,7 @@ export function DashboardHeader({ profile, onSignOut, showBackButton = true, cur
         {/* Removed the Badge displaying profile?.tenant_slug */}
       </div>
       <div className="flex items-center gap-2">
-        <Button onClick={onSignOut} variant="outline" className="flex items-center gap-2">
+        <Button onClick={onSignOut} variant="outline" className="flex items-center gap-2 font-semibold">
           <LogOut className="h-4 w-4" />
           Sign Out
         </Button>

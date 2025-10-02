@@ -275,10 +275,10 @@ export default function SettingsPage() {
 
   if (!profile) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
-        <h1 className="text-3xl font-bold mb-4">Store Not Configured</h1>
-        <p className="text-lg text-muted-foreground mb-8">Please set up your store first from the dashboard.</p>
-        <Button asChild>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center font-sans">
+        <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Configured</h1>
+        <p className="text-lg text-muted-foreground mb-8 leading-relaxed">Please set up your store first from the dashboard.</p>
+        <Button asChild className="font-semibold">
           <Link href="/">Go to Dashboard</Link>
         </Button>
       </div>
@@ -286,19 +286,19 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       <DashboardHeader profile={profile} onSignOut={handleSignOut} currentPath={pathname} />
 
       <main className="flex-1 p-8 flex justify-center">
         <Card className="w-full max-w-2xl bg-card text-card-foreground shadow-lg rounded-3xl">
           <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">
             <Settings className="h-6 w-6 text-primary" />
-            <CardTitle className="text-2xl font-bold">Store Customization</CardTitle>
+            <CardTitle className="text-2xl font-bold tracking-tight">Store Customization</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid gap-2">
-                <Label htmlFor="storeName">Store Name *</Label>
+                <Label htmlFor="storeName" className="text-sm font-medium">Store Name *</Label>
                 <Input
                   id="storeName"
                   placeholder="Enter your store name"
@@ -310,7 +310,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="storeDescription">Store Description</Label>
+                <Label htmlFor="storeDescription" className="text-sm font-medium">Store Description</Label>
                 <Textarea
                   id="storeDescription"
                   placeholder="A brief description of what your store offers."
@@ -322,18 +322,18 @@ export default function SettingsPage() {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="deliveryCharge">Delivery Charge *</Label>
+                <Label htmlFor="deliveryCharge" className="text-sm font-medium">Delivery Charge *</Label>
                 <Select
                   onValueChange={(value) => form.setValue("deliveryCharge", parseFloat(value))}
                   value={form.watch("deliveryCharge")?.toString()}
                   disabled={isUpdatingStore}
                 >
-                  <SelectTrigger id="deliveryCharge">
+                  <SelectTrigger id="deliveryCharge" className="font-medium">
                     <SelectValue placeholder="Select delivery charge" />
                   </SelectTrigger>
                   <SelectContent>
                     {DELIVERY_CHARGE_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value.toString()}>
+                      <SelectItem key={option.value} value={option.value.toString()} className="font-medium">
                         {option.label}
                       </SelectItem>
                     ))}
@@ -345,8 +345,8 @@ export default function SettingsPage() {
               </div>
 
               <div className="grid gap-2">
-                <Label>Store Logo</Label>
-                <p className="text-xs text-muted-foreground">
+                <Label className="text-sm font-medium">Store Logo</Label>
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   Upload your store logo. Recommended: Square aspect ratio (e.g., 200x200px), max 2MB.
                   <br />
                   Supported formats: JPG, PNG, WebP. Image will be compressed for faster loading.
@@ -385,7 +385,7 @@ export default function SettingsPage() {
                       onChange={handleLogoChange}
                       disabled={isUpdatingStore}
                     />
-                    <Button asChild variant="outline" className="w-full" disabled={isUpdatingStore}>
+                    <Button asChild variant="outline" className="w-full font-semibold" disabled={isUpdatingStore}>
                       <span>{logoPreview || profile?.avatar_url ? "Change Logo" : "Upload Logo"}</span>
                     </Button>
                   </Label>
@@ -395,9 +395,9 @@ export default function SettingsPage() {
                 )}
               </div>
 
-              <h3 className="text-lg font-semibold mt-8">Home Page Content</h3>
+              <h3 className="text-xl font-semibold mt-8 tracking-tight">Home Page Content</h3>
               <div className="grid gap-2">
-                <Label htmlFor="homePageHeading">Home Page Heading</Label>
+                <Label htmlFor="homePageHeading" className="text-sm font-medium">Home Page Heading</Label>
                 <Input
                   id="homePageHeading"
                   placeholder="Welcome to our store!"
@@ -408,10 +408,11 @@ export default function SettingsPage() {
                 )}
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="homePageDescription">Home Page Description</Label>
+                <Label htmlFor="homePageDescription" className="text-sm font-medium">Home Page Description</Label>
                 <Textarea
                   id="homePageDescription"
                   placeholder="Discover a wide range of products hand-picked just for you."
+                  rows={3}
                   {...form.register("homePageDescription")}
                 />
                 {form.formState.errors.homePageDescription && (
@@ -419,9 +420,9 @@ export default function SettingsPage() {
                 )}
               </div>
 
-              <h3 className="text-lg font-semibold mt-8">About Us Page Content</h3>
+              <h3 className="text-xl font-semibold mt-8 tracking-tight">About Us Page Content</h3>
               <div className="grid gap-2">
-                <Label htmlFor="aboutPageContent">About Us Content</Label>
+                <Label htmlFor="aboutPageContent" className="text-sm font-medium">About Us Content</Label>
                 <Textarea
                   id="aboutPageContent"
                   placeholder="We are dedicated to providing you with the best products and an exceptional shopping experience."
@@ -433,9 +434,9 @@ export default function SettingsPage() {
                 )}
               </div>
 
-              <h3 className="text-lg font-semibold mt-8">Store Page Welcome Message</h3>
+              <h3 className="text-xl font-semibold mt-8 tracking-tight">Store Page Welcome Message</h3>
               <div className="grid gap-2">
-                <Label htmlFor="storePageWelcomeMessage">Welcome Message (above products)</Label>
+                <Label htmlFor="storePageWelcomeMessage" className="text-sm font-medium">Welcome Message (above products)</Label>
                 <Textarea
                   id="storePageWelcomeMessage"
                   placeholder="Browse our latest collection and find something you'll love!"
@@ -448,9 +449,9 @@ export default function SettingsPage() {
               </div>
 
               {/* New fields for Contact Page Customization */}
-              <h3 className="text-lg font-semibold mt-8">Contact Us Page Content</h3>
+              <h3 className="text-xl font-semibold mt-8 tracking-tight">Contact Us Page Content</h3>
               <div className="grid gap-2">
-                <Label htmlFor="contactPageHeading">Contact Page Heading</Label>
+                <Label htmlFor="contactPageHeading" className="text-sm font-medium">Contact Page Heading</Label>
                 <Input
                   id="contactPageHeading"
                   placeholder="Get in Touch with Us!"
@@ -461,7 +462,7 @@ export default function SettingsPage() {
                 )}
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="contactPageDescription">Contact Page Description</Label>
+                <Label htmlFor="contactPageDescription" className="text-sm font-medium">Contact Page Description</Label>
                 <Textarea
                   id="contactPageDescription"
                   placeholder="We'd love to hear from you. Reach out with any questions or feedback."
@@ -473,7 +474,7 @@ export default function SettingsPage() {
                 )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={isUpdatingStore}>
+              <Button type="submit" className="w-full font-semibold" disabled={isUpdatingStore}>
                 {isUpdatingStore ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -486,18 +487,18 @@ export default function SettingsPage() {
             </form>
 
             <div className="mt-8 space-y-4">
-              <h3 className="text-lg font-semibold">Store Status</h3>
-              <div className="flex items-center gap-2">
-                <Badge className="bg-green-500 text-white">Active</Badge>
+              <h3 className="text-xl font-semibold tracking-tight">Store Status</h3>
+              <div className="flex items-center gap-2 text-base">
+                <Badge className="bg-green-500 text-white font-medium">Active</Badge>
                 <span className="text-muted-foreground">Store ID: {profile.tenant_slug}</span>
               </div>
 
-              <h3 className="text-lg font-semibold mt-6">Store URL</h3>
+              <h3 className="text-xl font-semibold mt-6 tracking-tight">Store URL</h3>
               <div className="flex items-center gap-2">
                 <Input
                   value={profile.store_url || "Not available"}
                   readOnly
-                  className="flex-1"
+                  className="flex-1 text-base"
                 />
                 <Button variant="outline" size="icon" onClick={handleCopyStoreUrl} disabled={!profile.store_url}>
                   <Copy className="h-4 w-4" />
@@ -506,7 +507,7 @@ export default function SettingsPage() {
                   <ExternalLink className="h-4 w-4" />
                 </Button>
               </div>
-              <p className="text-sm text-muted-foreground">This URL works in any browser and doesn't require login</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">This URL works in any browser and doesn't require login</p>
             </div>
           </CardContent>
         </Card>

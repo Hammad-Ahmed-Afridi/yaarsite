@@ -55,16 +55,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+    <div className="flex items-center justify-center min-h-screen bg-background p-4 font-sans">
       <Card className="w-full max-w-md bg-card text-card-foreground shadow-lg rounded-3xl">
         <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-          <CardDescription className="text-muted-foreground">Sign in to your account to continue</CardDescription>
+          <CardTitle className="text-3xl font-bold tracking-tight">Welcome Back</CardTitle>
+          <CardDescription className="text-base text-muted-foreground leading-relaxed">Sign in to your account to continue</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-sm font-medium">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -81,7 +81,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-sm font-medium">Password</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -104,7 +104,7 @@ export default function LoginPage() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full font-semibold" disabled={isLoading}>
               {isLoading ? "Signing In..." : "Sign In"}
             </Button>
           </form>

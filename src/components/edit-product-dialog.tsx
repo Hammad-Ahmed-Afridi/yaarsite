@@ -241,20 +241,20 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="flex-1">
+        <Button variant="outline" size="sm" className="flex-1 font-semibold">
           <Edit className="mr-2 h-4 w-4" /> Edit
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto font-sans">
         <DialogHeader>
-          <DialogTitle>Edit Product</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-2xl font-bold tracking-tight">Edit Product</DialogTitle>
+          <DialogDescription className="text-base leading-relaxed">
             Update the details for your product.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="name">Product Name *</Label>
+            <Label htmlFor="name" className="text-sm font-medium">Product Name *</Label>
             <Input
               id="name"
               placeholder="Enter product name"
@@ -266,7 +266,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="text-sm font-medium">Description</Label>
             <Textarea
               id="description"
               placeholder="Enter product description"
@@ -279,7 +279,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
 
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="price">Price (Rs) *</Label>
+              <Label htmlFor="price" className="text-sm font-medium">Price (Rs) *</Label>
               <Input
                 id="price"
                 type="number"
@@ -292,7 +292,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
               )}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="stock">Stock Quantity *</Label>
+              <Label htmlFor="stock" className="text-sm font-medium">Stock Quantity *</Label>
               <Input
                 id="stock"
                 type="number"
@@ -307,8 +307,8 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
           </div>
 
           <div className="grid gap-2">
-            <Label>Product Images ({totalCurrentImages}/2)</Label>
-            <p className="text-xs text-muted-foreground">
+            <Label className="text-sm font-medium">Product Images ({totalCurrentImages}/2)</Label>
+            <p className="text-xs text-muted-foreground leading-relaxed">
               Upload up to 2 high-quality images. Recommended: 1000x1000px or higher square aspect ratio, max 5MB per image.
               <br />
               Supported formats: JPG, PNG, WebP. Images will be compressed for faster loading.
@@ -363,10 +363,10 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
           </div>
 
           <div className="flex justify-end gap-2 mt-6">
-            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} disabled={isSubmitting}>
+            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} disabled={isSubmitting} className="font-semibold">
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting} className="font-semibold">
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

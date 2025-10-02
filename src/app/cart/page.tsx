@@ -59,7 +59,7 @@ export default function CartPage() {
   const subtotal = cartTotal - deliveryCharge;
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       {/* Header */}
       <header className="flex items-center p-4 border-b border-border bg-card">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
@@ -73,8 +73,8 @@ export default function CartPage() {
         {cartItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-3xl p-8">
             <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
-            <p className="text-xl text-muted-foreground mb-4">Your cart is empty.</p>
-            <p className="text-sm text-muted-foreground mb-6">
+            <p className="text-xl text-muted-foreground mb-4 font-semibold">Your cart is empty.</p>
+            <p className="text-base text-muted-foreground mb-6 leading-relaxed">
               Looks like you haven't added anything to your cart yet.
             </p>
             {/* Removed the "Start Shopping" button */}
@@ -98,8 +98,8 @@ export default function CartPage() {
                           />
                         )}
                         <div className="flex-1 space-y-1">
-                          <CardTitle className="text-lg">{item.name}</CardTitle>
-                          <p className="text-muted-foreground">Price: Rs{item.price.toFixed(2)}</p>
+                          <CardTitle className="text-lg font-semibold">{item.name}</CardTitle>
+                          <p className="text-muted-foreground text-base">Price: Rs{item.price.toFixed(2)}</p>
                           <div className="flex items-center gap-2">
                             <Button
                               variant="outline"
@@ -113,7 +113,7 @@ export default function CartPage() {
                               type="number"
                               value={item.quantity}
                               onChange={(e) => handleUpdateQuantity(item.id, parseInt(e.target.value))}
-                              className="w-16 text-center"
+                              className="w-16 text-center text-base"
                               min="1"
                             />
                             <Button
@@ -125,7 +125,7 @@ export default function CartPage() {
                               <Plus className="h-4 w-4" />
                             </Button>
                           </div>
-                          <p className="font-semibold">Total: Rs{(item.price * item.quantity).toFixed(2)}</p>
+                          <p className="font-semibold text-base">Total: Rs{(item.price * item.quantity).toFixed(2)}</p>
                         </div>
                         <Button
                           variant="destructive"
@@ -142,19 +142,19 @@ export default function CartPage() {
               ) : (
                 <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
                   <CardHeader>
-                    <CardTitle>Cart Items</CardTitle>
+                    <CardTitle className="text-xl font-semibold">Cart Items</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="w-[100px]">Product</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Price</TableHead>
-                            <TableHead className="text-center">Quantity</TableHead>
-                            <TableHead className="text-right">Total</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead className="w-[100px] font-semibold">Product</TableHead>
+                            <TableHead className="font-semibold">Name</TableHead>
+                            <TableHead className="font-semibold">Price</TableHead>
+                            <TableHead className="text-center font-semibold">Quantity</TableHead>
+                            <TableHead className="text-right font-semibold">Total</TableHead>
+                            <TableHead className="text-right font-semibold">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -172,8 +172,8 @@ export default function CartPage() {
                                   />
                                 )}
                               </TableCell>
-                              <TableCell className="font-medium">{item.name}</TableCell>
-                              <TableCell>Rs{item.price.toFixed(2)}</TableCell>
+                              <TableCell className="font-medium text-base">{item.name}</TableCell>
+                              <TableCell className="text-base">Rs{item.price.toFixed(2)}</TableCell>
                               <TableCell className="text-center">
                                 <div className="flex items-center justify-center gap-2">
                                   <Button
@@ -188,7 +188,7 @@ export default function CartPage() {
                                     type="number"
                                     value={item.quantity}
                                     onChange={(e) => handleUpdateQuantity(item.id, parseInt(e.target.value))}
-                                    className="w-16 text-center"
+                                    className="w-16 text-center text-base"
                                     min="1"
                                   />
                                   <Button
@@ -201,7 +201,7 @@ export default function CartPage() {
                                   </Button>
                                 </div>
                               </TableCell>
-                              <TableCell className="text-right">Rs{(item.price * item.quantity).toFixed(2)}</TableCell>
+                              <TableCell className="text-right text-base">Rs{(item.price * item.quantity).toFixed(2)}</TableCell>
                               <TableCell className="text-right">
                                 <Button
                                   variant="destructive"
@@ -224,9 +224,9 @@ export default function CartPage() {
             <div className="lg:col-span-1">
               <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
                 <CardHeader>
-                  <CardTitle>Order Summary</CardTitle>
+                  <CardTitle className="text-xl font-semibold">Order Summary</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 text-base">
                   <div className="flex justify-between text-lg">
                     <span>Subtotal:</span>
                     <span>Rs{subtotal.toFixed(2)}</span>
@@ -239,7 +239,7 @@ export default function CartPage() {
                     <span>Total:</span>
                     <span>{isLoadingDeliveryCharge ? "Loading..." : `Rs${cartTotal.toFixed(2)}`}</span>
                   </div>
-                  <Button className="w-full" onClick={() => router.push('/checkout')}>
+                  <Button className="w-full font-semibold" onClick={() => router.push('/checkout')}>
                     Proceed to Checkout
                   </Button>
                 </CardContent>

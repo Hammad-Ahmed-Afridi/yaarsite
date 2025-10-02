@@ -78,10 +78,10 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto font-sans">
         <DialogHeader>
-          <DialogTitle>{product.name}</DialogTitle>
-          <DialogDescription>Product details</DialogDescription>
+          <DialogTitle className="text-2xl font-bold tracking-tight">{product.name}</DialogTitle>
+          <DialogDescription className="text-base leading-relaxed">Product details</DialogDescription>
         </DialogHeader>
         <div className="grid md:grid-cols-2 gap-6">
           {/* Image Slider */}
@@ -123,16 +123,16 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
           {/* Product Details */}
           <div className="space-y-4">
-            <h3 className="text-3xl font-bold">{product.name}</h3>
-            <p className="text-muted-foreground text-lg">{product.description || "No description available."}</p>
+            <h3 className="text-3xl font-bold tracking-tight">{product.name}</h3>
+            <p className="text-muted-foreground text-lg leading-relaxed">{product.description || "No description available."}</p>
             <div className="flex items-center justify-between">
               <span className="text-4xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span>
-              <Badge variant="secondary" className="text-lg px-4 py-2">
+              <Badge variant="secondary" className="text-lg px-4 py-2 font-medium">
                 {product.stock} in stock
               </Badge>
             </div>
             <Button
-              className="w-full py-6 text-lg flex items-center gap-2"
+              className="w-full py-6 text-lg flex items-center gap-2 font-semibold"
               onClick={handleAddToCart}
               disabled={product.stock <= 0}
             >

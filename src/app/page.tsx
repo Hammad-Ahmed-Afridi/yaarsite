@@ -103,7 +103,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       {profile?.tenant_name === null && <StoreSetupDialog />}
       <InactivityWarningBanner />
 
@@ -117,7 +117,7 @@ export default function DashboardPage() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+              <CardTitle className="text-base font-medium">Total Products</CardTitle>
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -127,7 +127,7 @@ export default function DashboardPage() {
 
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+              <CardTitle className="text-base font-medium">Total Orders</CardTitle>
               <ShoppingCart className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -137,7 +137,7 @@ export default function DashboardPage() {
 
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Profit (Rs)</CardTitle>
+              <CardTitle className="text-base font-medium">Total Profit (Rs)</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -148,44 +148,44 @@ export default function DashboardPage() {
           <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1 rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Store className="h-6 w-6 text-primary" />
-              <CardTitle className="text-lg font-semibold">View Your Store</CardTitle>
+              <CardTitle className="text-xl font-semibold">View Your Store</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">See how your store looks to customers</p>
-              <Button onClick={handleOpenStore} className="w-full" disabled={profile?.tenant_name === null}>Open Store</Button>
+              <p className="text-base text-muted-foreground leading-relaxed">See how your store looks to customers</p>
+              <Button onClick={handleOpenStore} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Open Store</Button>
             </CardContent>
           </Card>
 
           <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1 rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Package className="h-6 w-6 text-green-500" />
-              <CardTitle className="text-lg font-semibold">Manage Products</CardTitle>
+              <CardTitle className="text-xl font-semibold">Manage Products</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">Add, edit, and organize your products</p>
-              <Button onClick={() => router.push('/products')} className="w-full" disabled={profile?.tenant_name === null}>Manage Products</Button>
+              <p className="text-base text-muted-foreground leading-relaxed">Add, edit, and organize your products</p>
+              <Button onClick={() => router.push('/products')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Manage Products</Button>
             </CardContent>
           </Card>
 
           <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1 rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <ShoppingCart className="h-6 w-6 text-purple-500" />
-              <CardTitle className="text-lg font-semibold">View Orders</CardTitle>
+              <CardTitle className="text-xl font-semibold">View Orders</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">Track and manage customer orders</p>
-              <Button onClick={() => router.push('/orders')} className="w-full" disabled={profile?.tenant_name === null}>View Orders</Button>
+              <p className="text-base text-muted-foreground leading-relaxed">Track and manage customer orders</p>
+              <Button onClick={() => router.push('/orders')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>View Orders</Button>
             </CardContent>
           </Card>
 
           <Card className="bg-card text-card-foreground shadow-md col-span-full md:col-span-1 rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Settings className="h-6 w-6 text-yellow-500" />
-              <CardTitle className="text-lg font-semibold">Store Customization</CardTitle>
+              <CardTitle className="text-xl font-semibold">Store Customization</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">Customize your store</p>
-              <Button onClick={() => router.push('/settings')} className="w-full" disabled={profile?.tenant_name === null}>Customize</Button>
+              <p className="text-base text-muted-foreground leading-relaxed">Customize your store</p>
+              <Button onClick={() => router.push('/settings')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Customize</Button>
             </CardContent>
           </Card>
         </div>

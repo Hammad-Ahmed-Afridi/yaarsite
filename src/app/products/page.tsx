@@ -134,15 +134,15 @@ export default function ProductsPage() {
   const isAddProductDisabled = products.length >= PRODUCT_LIMIT;
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       <DashboardHeader profile={profile} onSignOut={handleSignOut} currentPath={pathname} />
 
       <main className="flex-1 p-8">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Product Management</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Product Management</h2>
           <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
         </div>
-        <p className="text-muted-foreground mb-6">
+        <p className="text-muted-foreground text-base leading-relaxed mb-6">
           {products.length}/{PRODUCT_LIMIT} products used
           {isAddProductDisabled && (
             <span className="ml-2 text-destructive"> (Maximum limit reached)</span>
@@ -152,8 +152,8 @@ export default function ProductsPage() {
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-3xl p-8">
             <Package className="h-16 w-16 text-muted-foreground mb-4" />
-            <p className="text-xl text-muted-foreground mb-4">No Products Yet</p>
-            <p className="text-sm text-muted-foreground mb-6">
+            <p className="text-xl text-muted-foreground mb-4 font-semibold">No Products Yet</p>
+            <p className="text-base text-muted-foreground mb-6 leading-relaxed">
               Add your first product to start selling! You can add up to {PRODUCT_LIMIT} products.
             </p>
             <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
@@ -174,36 +174,36 @@ export default function ProductsPage() {
                   </div>
                 )}
                 <CardHeader>
-                  <CardTitle className="text-lg">{product.name}</CardTitle>
+                  <CardTitle className="text-lg font-semibold">{product.name}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <p className="text-sm text-muted-foreground line-clamp-2">{product.description || "No description."}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{product.description || "No description."}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
-                    <Badge variant="secondary">{product.stock} in stock</Badge>
+                    <Badge variant="secondary" className="font-medium">{product.stock} in stock</Badge>
                   </div>
                   <div className="flex gap-2 mt-4">
                     <EditProductDialog product={product} onProductUpdated={fetchProducts} />
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="sm" className="flex-1">
+                        <Button variant="destructive" size="sm" className="flex-1 font-semibold">
                           <Trash2 className="mr-2 h-4 w-4" /> Delete
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
+                          <AlertDialogTitle className="text-lg font-semibold">Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription className="text-base leading-relaxed">
                             This action cannot be undone. This will permanently delete your product
                             and remove its data and images from our servers.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogCancel className="font-medium">Cancel</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => handleDeleteProduct(product.id, product.image_urls)}
                             disabled={isDeletingProduct}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-semibold"
                           >
                             {isDeletingProduct ? "Deleting..." : "Delete"}
                           </AlertDialogAction>

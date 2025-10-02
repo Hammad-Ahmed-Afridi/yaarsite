@@ -172,11 +172,11 @@ export default function CheckoutPage() {
   if (orderPlaced) {
     const redirectPath = finalRedirectPath || '/store'; // Use finalRedirectPath, with a fallback
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center font-sans">
         <CheckCircle className="h-20 w-20 text-green-500 mb-6" />
-        <h1 className="text-3xl font-bold mb-4">Order Placed!</h1>
-        <p className="text-lg text-muted-foreground mb-8">Thank you for your purchase. We will contact you soon.</p>
-        <Button asChild>
+        <h1 className="text-3xl font-bold mb-4 tracking-tight">Order Placed!</h1>
+        <p className="text-lg text-muted-foreground mb-8 leading-relaxed">Thank you for your purchase. We will contact you soon.</p>
+        <Button asChild className="font-semibold">
           <Link href={redirectPath}>Continue Shopping</Link>
         </Button>
       </div>
@@ -186,7 +186,7 @@ export default function CheckoutPage() {
   const subtotal = cartTotal - deliveryCharge;
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       <header className="flex items-center p-4 border-b border-border bg-card">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="h-5 w-5" />
@@ -197,8 +197,8 @@ export default function CheckoutPage() {
       <main className="flex-1 p-8 flex items-center justify-center">
         <Card className="w-full max-w-lg bg-card text-card-foreground shadow-lg rounded-3xl">
           <CardHeader className="text-center space-y-2">
-            <CardTitle className="text-2xl font-bold">Confirm Your Order</CardTitle>
-            <CardDescription className="text-muted-foreground">
+            <CardTitle className="text-2xl font-bold tracking-tight">Confirm Your Order</CardTitle>
+            <CardDescription className="text-base text-muted-foreground leading-relaxed">
               Enter your details to finalize your purchase.
             </CardDescription>
           </CardHeader>
@@ -220,7 +220,7 @@ export default function CheckoutPage() {
 
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid gap-2">
-                <Label htmlFor="customerName">Your Name</Label>
+                <Label htmlFor="customerName" className="text-sm font-medium">Your Name</Label>
                 <Input
                   id="customerName"
                   type="text"
@@ -233,7 +233,7 @@ export default function CheckoutPage() {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="customerEmail">Your Email</Label>
+                <Label htmlFor="customerEmail" className="text-sm font-medium">Your Email</Label>
                 <Input
                   id="customerEmail"
                   type="email"
@@ -246,7 +246,7 @@ export default function CheckoutPage() {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="customerPhone">Phone Number</Label>
+                <Label htmlFor="customerPhone" className="text-sm font-medium">Phone Number</Label>
                 <Input
                   id="customerPhone"
                   type="tel"
@@ -260,7 +260,7 @@ export default function CheckoutPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="shippingProvince">Province</Label>
+                  <Label htmlFor="shippingProvince" className="text-sm font-medium">Province</Label>
                   <Input
                     id="shippingProvince"
                     type="text"
@@ -272,7 +272,7 @@ export default function CheckoutPage() {
                   )}
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="shippingCity">City</Label>
+                  <Label htmlFor="shippingCity" className="text-sm font-medium">City</Label>
                   <Input
                     id="shippingCity"
                     type="text"
@@ -286,7 +286,7 @@ export default function CheckoutPage() {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="shippingAddressLine">Specific Location / Address</Label>
+                <Label htmlFor="shippingAddressLine" className="text-sm font-medium">Specific Location / Address</Label>
                 <Input
                   id="shippingAddressLine"
                   type="text"
@@ -299,7 +299,7 @@ export default function CheckoutPage() {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="humanVerificationCode">Human Verification</Label>
+                <Label htmlFor="humanVerificationCode" className="text-sm font-medium">Human Verification</Label>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 relative">
                     <Input
@@ -322,7 +322,7 @@ export default function CheckoutPage() {
                 )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={isPlacingOrder || cartItems.length === 0}>
+              <Button type="submit" className="w-full font-semibold" disabled={isPlacingOrder || cartItems.length === 0}>
                 {isPlacingOrder ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

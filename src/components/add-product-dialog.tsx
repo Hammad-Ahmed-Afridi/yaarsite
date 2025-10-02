@@ -192,20 +192,20 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2" disabled={isAddProductDisabled}>
+        <Button className="flex items-center gap-2 font-semibold" disabled={isAddProductDisabled}>
           <Plus className="h-4 w-4" /> Add Product
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto font-sans">
         <DialogHeader>
-          <DialogTitle>Add New Product</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-2xl font-bold tracking-tight">Add New Product</DialogTitle>
+          <DialogDescription className="text-base leading-relaxed">
             Fill in the details to add a new product to your store.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="name">Product Name *</Label>
+            <Label htmlFor="name" className="text-sm font-medium">Product Name *</Label>
             <Input
               id="name"
               placeholder="Enter product name"
@@ -217,7 +217,7 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="text-sm font-medium">Description</Label>
             <Textarea
               id="description"
               placeholder="Enter product description"
@@ -230,7 +230,7 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
 
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="price">Price (Rs) *</Label>
+              <Label htmlFor="price" className="text-sm font-medium">Price (Rs) *</Label>
               <Input
                 id="price"
                 type="number"
@@ -243,7 +243,7 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
               )}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="stock">Stock Quantity *</Label>
+              <Label htmlFor="stock" className="text-sm font-medium">Stock Quantity *</Label>
               <Input
                 id="stock"
                 type="number"
@@ -258,8 +258,8 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
           </div>
 
           <div className="grid gap-2">
-            <Label>Product Images ({selectedImageFiles.length}/2)</Label>
-            <p className="text-xs text-muted-foreground">
+            <Label className="text-sm font-medium">Product Images ({selectedImageFiles.length}/2)</Label>
+            <p className="text-xs text-muted-foreground leading-relaxed">
               Upload up to 2 high-quality images. Recommended: 1000x1000px or higher square aspect ratio, max 5MB per image.
               <br />
               Supported formats: JPG, PNG, WebP. Images will be compressed for faster loading.
@@ -300,10 +300,10 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
           </div>
 
           <div className="flex justify-end gap-2 mt-6">
-            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} disabled={isSubmitting}>
+            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} disabled={isSubmitting} className="font-semibold">
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting} className="font-semibold">
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -31,29 +31,29 @@ export default function StoreContactPage() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <h1 className="text-3xl font-bold text-destructive mb-4">Error</h1>
-        <p className="text-lg text-muted-foreground">{error}</p>
+      <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
+        <h1 className="text-3xl font-bold text-destructive mb-4 tracking-tight">Error</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">{error}</p>
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <h1 className="text-3xl font-bold mb-4">Store Not Found</h1>
-        <p className="text-lg text-muted-foreground">The store you are looking for does not exist.</p>
+      <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
+        <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center text-center py-12 px-4">
+    <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
       <Mail className="h-24 w-24 text-primary mb-6" />
-      <h1 className="text-4xl font-bold mb-4">
+      <h1 className="text-4xl font-bold mb-4 tracking-tight">
         {profile.contact_page_heading || `Contact ${profile.tenant_name}`}
       </h1>
-      <p className="text-lg text-muted-foreground mb-8 max-w-prose">
+      <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
         {profile.contact_page_description || "Have questions or need assistance? Reach out to us!"}
       </p>
 
@@ -62,8 +62,8 @@ export default function StoreContactPage() {
           <div className="flex items-center gap-4 p-4 border rounded-lg bg-card shadow-sm">
             <Mail className="h-6 w-6 text-muted-foreground" />
             <div>
-              <p className="font-semibold">Email Us</p>
-              <a href={`mailto:${profile.email}`} className="text-primary hover:underline">{profile.email}</a>
+              <p className="font-semibold text-base">Email Us</p>
+              <a href={`mailto:${profile.email}`} className="text-primary hover:underline text-base">{profile.email}</a>
             </div>
           </div>
         )}
@@ -71,16 +71,16 @@ export default function StoreContactPage() {
           <div className="flex items-center gap-4 p-4 border rounded-lg bg-card shadow-sm">
             <Phone className="h-6 w-6 text-muted-foreground" />
             <div>
-              <p className="font-semibold">Call Us</p>
-              <a href={`tel:${profile.phone_number}`} className="text-primary hover:underline">{profile.phone_number}</a>
+              <p className="font-semibold text-base">Call Us</p>
+              <a href={`tel:${profile.phone_number}`} className="text-primary hover:underline text-base">{profile.phone_number}</a>
             </div>
           </div>
         )}
         <div className="flex items-center gap-4 p-4 border rounded-lg bg-card shadow-sm">
           <MapPin className="h-6 w-6 text-muted-foreground" />
           <div>
-            <p className="font-semibold">Visit Us</p>
-            <p className="text-muted-foreground">Online Only</p>
+            <p className="font-semibold text-base">Visit Us</p>
+            <p className="text-muted-foreground text-base">Online Only</p>
           </div>
         </div>
       </div>

@@ -30,27 +30,27 @@ export default function StoreAboutPage() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <h1 className="text-3xl font-bold text-destructive mb-4">Error</h1>
-        <p className="text-lg text-muted-foreground">{error}</p>
+      <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
+        <h1 className="text-3xl font-bold text-destructive mb-4 tracking-tight">Error</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">{error}</p>
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <h1 className="text-3xl font-bold mb-4">Store Not Found</h1>
-        <p className="text-lg text-muted-foreground">The store you are looking for does not exist.</p>
+      <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
+        <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center text-center py-12 px-4">
+    <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
       <Info className="h-24 w-24 text-primary mb-6" />
-      <h1 className="text-4xl font-bold mb-4">About {profile.tenant_name}</h1>
-      <p className="text-lg text-muted-foreground mb-8 max-w-prose">
+      <h1 className="text-4xl font-bold mb-4 tracking-tight">About {profile.tenant_name}</h1>
+      <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
         {profile.about_page_content || "We are dedicated to providing you with the best products and an exceptional shopping experience. Our mission is to bring quality and value directly to you."}
       </p>
     </div>

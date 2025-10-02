@@ -144,13 +144,13 @@ export function StoreSetupDialog() {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogContent className="w-full max-w-md p-6"> {/* Adjusted DialogContent styling */}
+      <DialogContent className="w-full max-w-md p-6 font-sans"> {/* Adjusted DialogContent styling */}
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-2xl font-bold tracking-tight">
             <Store className="h-6 w-6 text-primary" />
             Set Up Your Store
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-base leading-relaxed">
             Welcome! Let's get your store ready. You can change these details later.
           </DialogDescription>
         </DialogHeader>
@@ -164,7 +164,7 @@ export function StoreSetupDialog() {
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="storeName">Store Name</Label>
+              <Label htmlFor="storeName" className="text-sm font-medium">Store Name</Label>
               <Input
                 id="storeName"
                 placeholder="My Awesome Store"
@@ -175,7 +175,7 @@ export function StoreSetupDialog() {
               )}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="storeDescription">Store Description (Optional)</Label>
+              <Label htmlFor="storeDescription" className="text-sm font-medium">Store Description (Optional)</Label>
               <Textarea
                 id="storeDescription"
                 placeholder="A brief description of what your store offers."
@@ -185,7 +185,7 @@ export function StoreSetupDialog() {
                 <p className="text-destructive text-sm">{form.formState.errors.storeDescription.message}</p>
               )}
             </div>
-            <Button type="submit" className="w-full" disabled={isBuildingStore}>
+            <Button type="submit" className="w-full font-semibold" disabled={isBuildingStore}>
               Create Store
             </Button>
           </form>

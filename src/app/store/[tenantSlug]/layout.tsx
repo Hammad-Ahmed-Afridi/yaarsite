@@ -78,27 +78,27 @@ export default function StoreLayout({
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
-        <h1 className="text-3xl font-bold text-destructive mb-4">Error</h1>
-        <p className="text-lg text-muted-foreground">{error}</p>
-        <Button onClick={() => router.push('/')} className="mt-6">Go to Dashboard</Button>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center font-sans">
+        <h1 className="text-3xl font-bold text-destructive mb-4 tracking-tight">Error</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">{error}</p>
+        <Button onClick={() => router.push('/')} className="mt-6 font-semibold">Go to Dashboard</Button>
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
-        <h1 className="text-3xl font-bold mb-4">Store Not Found</h1>
-        <p className="text-lg text-muted-foreground">The store you are looking for does not exist.</p>
-        <Button onClick={() => router.push('/')} className="mt-6">Go to Dashboard</Button>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center font-sans">
+        <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
+        <Button onClick={() => router.push('/')} className="mt-6 font-semibold">Go to Dashboard</Button>
       </div>
     );
   }
 
   return (
     <StoreProfileProvider initialProfile={profile}>
-      <div className="min-h-screen bg-background text-foreground flex flex-col">
+      <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
         {/* Header */}
         <header className="flex items-center justify-between p-4 border-b border-border bg-card">
           {/* Left section: Logo + Store Name */}
@@ -131,7 +131,7 @@ export default function StoreLayout({
             <Button onClick={() => router.push('/cart')} variant="outline" size="icon" className="relative">
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 rounded-full">
+                <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 rounded-full font-medium">
                   {itemCount}
                 </Badge>
               )}
@@ -145,7 +145,7 @@ export default function StoreLayout({
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-64 p-4">
-                  <h2 className="text-xl font-bold mb-6">Navigation</h2>
+                  <h2 className="text-xl font-bold mb-6 tracking-tight">Navigation</h2>
                   <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
                 </SheetContent>
               </Sheet>

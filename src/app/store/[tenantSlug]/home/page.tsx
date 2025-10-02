@@ -36,24 +36,24 @@ export default function StoreHomePage() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <h1 className="text-3xl font-bold text-destructive mb-4">Error</h1>
-        <p className="text-lg text-muted-foreground">{error}</p>
+      <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
+        <h1 className="text-3xl font-bold text-destructive mb-4 tracking-tight">Error</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">{error}</p>
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <h1 className="text-3xl font-bold mb-4">Store Not Found</h1>
-        <p className="text-lg text-muted-foreground">The store you are looking for does not exist.</p>
+      <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
+        <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center text-center py-12 px-4">
+    <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
       {profile.avatar_url ? (
         <div className="relative h-32 w-32 rounded-full overflow-hidden mb-6 border-2 border-primary">
           <Image
@@ -67,13 +67,13 @@ export default function StoreHomePage() {
       ) : (
         <Store className="h-24 w-24 text-primary mb-6" />
       )}
-      <h1 className="text-4xl font-bold mb-4">
+      <h1 className="text-4xl font-bold mb-4 tracking-tight">
         {profile.home_page_heading || `Welcome to ${profile.tenant_name}!`}
       </h1>
-      <p className="text-lg text-muted-foreground mb-8 max-w-prose">
+      <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
         {profile.home_page_description || "Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
       </p>
-      <Button asChild size="lg">
+      <Button asChild size="lg" className="font-semibold">
         <Link href={`/store/${tenantSlug}`}>
           <Package className="mr-2 h-5 w-5" /> View Our Products
         </Link>
