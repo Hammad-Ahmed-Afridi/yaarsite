@@ -1,6 +1,14 @@
 export const getAuthErrorMessage = (error: any): string => {
   if (!error) return "An unknown error occurred.";
 
+  // Check for Supabase database errors (e.g., unique constraint violations)
+  if (error.code === '23505') { // PostgreSQL unique_violation error code
+    if (error.message.includes('unique_phone_number')) {
+      return "This phone number is already registered. Please use a different one or log in.";
+    }
+    // Add other unique constraint checks if needed in the future
+  }
+
   if (error.message) {
     // Supabase AuthApiError messages
     if (error.message.includes("Email not confirmed")) {

@@ -97,12 +97,7 @@ export default function SignupPage() {
 
       if (signUpError) {
         console.error("Signup Page: Supabase signup error:", signUpError);
-        // Check for specific unique constraint error for phone number
-        if (signUpError.message.includes('duplicate key value violates unique constraint "unique_phone_number"')) {
-          toast.error("This phone number is already registered. Please use a different one or log in.");
-        } else {
-          toast.error(getAuthErrorMessage(signUpError));
-        }
+        toast.error(getAuthErrorMessage(signUpError)); // Use centralized error handling
         refreshVerificationCode(); // Refresh code on error
       } else {
         // IMPORTANT: Sign out immediately after successful signup so the user is not logged in
