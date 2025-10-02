@@ -16,16 +16,7 @@ import { toast } from 'sonner';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
 import { AppLoader } from '@/components/app-loader'; // Import AppLoader
-import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: "Manage Orders",
-  description: "View and manage customer orders for your Yaarsite store.",
-  robots: {
-    index: false, // Disallow indexing for authenticated page
-    follow: false,
-  },
-};
 
 interface Order {
   id: string;

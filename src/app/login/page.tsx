@@ -15,16 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: "Login",
-  description: "Sign in to your Yaarsite account to manage your store.",
-  robots: {
-    index: false, // Disallow indexing for login page
-    follow: false,
-  },
-};
 
 const formSchema = z.object({
   email: z.string().email({ message: "Enter a valid email address." }),

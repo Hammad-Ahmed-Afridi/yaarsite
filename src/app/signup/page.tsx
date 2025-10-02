@@ -16,16 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff, Mail, Lock, Phone, User, Store, RefreshCcw } from 'lucide-react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: "Sign Up",
-  description: "Create your Yaarsite account and start building your online store.",
-  robots: {
-    index: false, // Disallow indexing for signup page
-    follow: false,
-  },
-};
 
 // Function to generate a random 4-character alphanumeric code
 const generateRandomCode = () => {

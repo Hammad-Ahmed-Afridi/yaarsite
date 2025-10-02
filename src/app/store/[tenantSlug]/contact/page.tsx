@@ -6,19 +6,7 @@ import { AppLoader } from '@/components/app-loader';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { useStoreProfile } from '@/components/store-profile-context-provider'; // Import useStoreProfile
 import { Profile } from '@/components/session-context-provider'; // Import shared Profile type
-import type { Metadata } from 'next';
 
-// generateMetadata for the contact page, leveraging data from the layout's generateMetadata
-export async function generateMetadata({ params }: { params: { tenantSlug: string } }): Promise<Metadata> {
-  const tenantSlug = params.tenantSlug;
-  return {
-    title: `Contact Us`, // This will be combined with the layout's title template
-    description: `Get in touch with this Yaarsite store for inquiries and support.`,
-    alternates: {
-      canonical: `https://yaarsite.vercel.app/store/${tenantSlug}/contact`,
-    },
-  };
-}
 
 export default function StoreContactPage() {
   const params = useParams();

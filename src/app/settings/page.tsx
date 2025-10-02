@@ -23,16 +23,7 @@ import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2 } from 'lu
 import Image from 'next/image';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { AppLoader } from '@/components/app-loader';
-import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: "Store Customization",
-  description: "Customize your Yaarsite store's appearance, content, and settings.",
-  robots: {
-    index: false, // Disallow indexing for authenticated page
-    follow: false,
-  },
-};
 
 const MAX_LOGO_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_LOGO_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];

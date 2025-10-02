@@ -14,16 +14,7 @@ import { Label } from '@/components/ui/label';
 import { ArrowLeft, Loader2, CheckCircle, RefreshCcw } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/integrations/supabase/client'; // Import supabase client
-import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: "Checkout",
-  description: "Finalize your order and complete your purchase.",
-  robots: {
-    index: false, // Disallow indexing for checkout page
-    follow: false,
-  },
-};
 
 // Function to generate a random 4-character alphanumeric code
 const generateRandomCode = () => {

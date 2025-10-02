@@ -14,16 +14,7 @@ import { InactivityWarningBanner } from "@/components/inactivity-warning-banner"
 import { DashboardHeader } from "@/components/dashboard-header"; // Import DashboardHeader
 import { ScrollHintArrow } from "@/components/scroll-hint-arrow"; // Import ScrollHintArrow
 import { AppLoader } from "@/components/app-loader"; // Import AppLoader
-import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Manage your Yaarsite store: view products, orders, and customize settings.",
-  robots: {
-    index: false, // Disallow indexing for authenticated dashboard
-    follow: false,
-  },
-};
 
 export default function DashboardPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
