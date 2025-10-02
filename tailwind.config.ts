@@ -123,9 +123,13 @@ export default {
                 '33%': { transform: 'translate(-50px, 70px) scale(0.95)' },
                 '66%': { transform: 'translate(60px, -40px) scale(1.05)' },
             },
-            'jump-up-down': { // New keyframe for jumping effect
+            'jump-up-down': { // Adjusted keyframe for more noticeable jumping effect
                 '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-5px)' },
+                '50%': { transform: 'translateY(-8px)' },
+            },
+            'pop-effect': { // New keyframe for popping effect
+                '0%, 100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.1)' },
             },
   		},
   		animation: {
@@ -141,6 +145,7 @@ export default {
             'blob-1': 'blob-1 14s ease-in-out infinite alternate', // New blob animation
             'blob-2': 'blob-2 17s ease-in-out infinite alternate-reverse', // New blob animation
             'jump-up-down': 'jump-up-down 1s ease-in-out infinite', // New animation
+            'pop-effect': 'pop-effect 1s ease-in-out infinite', // New animation
   		}
   	}
   },
