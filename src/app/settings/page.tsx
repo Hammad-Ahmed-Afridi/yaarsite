@@ -272,7 +272,7 @@ export default function SettingsPage() {
         <Card className="w-full max-w-2xl bg-card text-card-foreground shadow-lg">
           <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">
             <Settings className="h-6 w-6 text-primary" />
-            <CardTitle className="text-2xl font-bold">Store Settings</CardTitle>
+            <CardTitle className="text-2xl font-bold">Store Customization</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
