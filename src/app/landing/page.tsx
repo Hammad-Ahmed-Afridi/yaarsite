@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LayoutDashboard, ShoppingCart, Settings, ArrowRight, Package, Monitor, CreditCard } from 'lucide-react'; // Added Monitor and CreditCard icons
+import { LayoutDashboard, ShoppingCart, Settings, ArrowRight, Package, Monitor, BarChart } from 'lucide-react'; // Changed CreditCard to BarChart icon
 
 export default function LandingPage() {
   return (
@@ -107,11 +107,11 @@ export default function LandingPage() {
             </Card>
             <Card className="p-6 text-left shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
-                <CreditCard className="h-8 w-8 text-primary" />
-                <CardTitle className="text-xl font-semibold">Secure Payment Processing</CardTitle>
+                <BarChart className="h-8 w-8 text-primary" /> {/* Changed icon to BarChart */}
+                <CardTitle className="text-xl font-semibold">Real-time Analytics</CardTitle> {/* Updated title */}
               </CardHeader>
               <CardContent className="p-0">
-                Offer your customers a safe and reliable checkout experience with integrated payment solutions.
+                Gain insights into your sales, customer behavior, and store performance with powerful analytics. {/* Updated description */}
               </CardContent>
             </Card>
           </div>
