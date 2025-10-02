@@ -40,7 +40,7 @@ export default function DashboardPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await supabase.auth.getSession().then(s => s.data.session?.access_token)}`,
+          'Authorization': `Bearer ${await supabase.auth.getSession().then(s => s.data.session?.access_token)}`, // Restored Authorization header
         },
         body: JSON.stringify({ user_id: user.id }),
       });

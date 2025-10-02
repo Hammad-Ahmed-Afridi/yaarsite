@@ -24,8 +24,7 @@ serve(async (req) => {
     const token = authHeader.substring(7); // Remove 'Bearer '
 
     // 2. Get Supabase JWT Secret from environment variables
-    // IMPORTANT: Using APP_JWT_SECRET as per project configuration
-    const SUPABASE_JWT_SECRET = Deno.env.get('APP_JWT_SECRET'); // Changed from SUPABASE_JWT_SECRET
+    const SUPABASE_JWT_SECRET = Deno.env.get('APP_JWT_SECRET');
     if (!SUPABASE_JWT_SECRET) {
       console.error('APP_JWT_SECRET is not set in environment variables.');
       return new Response(JSON.stringify({ message: 'Server configuration error: JWT secret missing. Please ensure APP_JWT_SECRET is set in Supabase Edge Function secrets.' }), {
@@ -50,7 +49,7 @@ serve(async (req) => {
       });
     }
 
-    // Use the authenticatedUserId for database queries, ignoring any user_id from the request body
+    // Use the authenticatedUserId for database queries
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -60,7 +59,7 @@ serve(async (req) => {
     const { count: productsCount, error: productsError } = await supabaseAdmin
       .from('products')
       .select('id', { count: 'exact', head: true })
-      .eq('user_id', authenticatedUserId); // Use verified user ID
+      .eq('user_id', authenticatedUserId);
 
     if (productsError) throw productsError;
 
@@ -68,7 +67,7 @@ serve(async (req) => {
     const { count: ordersCount, error: ordersError } = await supabaseAdmin
       .from('orders')
       .select('id', { count: 'exact', head: true })
-      .eq('user_id', authenticatedUserId); // Use verified user ID
+      .eq('user_id', authenticatedUserId);
 
     if (ordersError) throw ordersError;
 
@@ -76,7 +75,7 @@ serve(async (req) => {
     const { data: profitData, error: profitError } = await supabaseAdmin
       .from('orders')
       .select('total_amount')
-      .eq('user_id', authenticatedUserId) // Use verified user ID
+      .eq('user_id', authenticatedUserId)
       .eq('status', 'delivered');
 
     if (profitError) throw profitError;
