@@ -112,8 +112,8 @@ export default function SignupPage() {
           console.warn("Signup Page: Error during sign out after signup (might be already signed out):", signOutError);
         }
         toast.success("Account created! Please sign in to continue.", { duration: 3000 });
-        console.log("Signup Page: Account created. User remains on signup page, unauthenticated.");
-        // No router.push here, user stays on this page as requested.
+        console.log("Signup Page: Account created. Redirecting to /login.");
+        router.push('/login'); // Redirect to login page
       }
     } catch (submitError) {
       console.error("Signup Page: Unexpected error during form submission:", submitError);
