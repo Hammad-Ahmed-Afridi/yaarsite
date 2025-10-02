@@ -115,13 +115,18 @@ export default {
             },
             'blob-1': { // New keyframe for blob animation 1
                 '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                '33%': { transform: 'translate(40px, -60px) scale(1.1)' },
+                '66%': { transform: 'translate(-30px, 30px) scale(0.9)' },
             },
             'blob-2': { // New keyframe for blob animation 2
                 '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-                '33%': { transform: 'translate(-40px, 60px) scale(0.95)' },
-                '66%': { transform: 'translate(50px, -30px) scale(1.05)' },
+                '33%': { transform: 'translate(-50px, 70px) scale(0.95)' },
+                '66%': { transform: 'translate(60px, -40px) scale(1.05)' },
+            },
+            'blob-3': { // New keyframe for blob animation 3
+                '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+                '33%': { transform: 'translate(20px, 80px) scale(1.15)' },
+                '66%': { transform: 'translate(-70px, -10px) scale(0.85)' },
             },
   		},
   		animation: {
@@ -134,8 +139,9 @@ export default {
             'gradient-shift': 'gradient-shift 3s ease infinite', // Animation for text gradient
             'pulse-slow': 'pulse-slow 10s ease-in-out infinite', // Animation for slow background pulse
             'pulse-fast': 'pulse-fast 5s ease-in-out infinite', // Animation for fast background pulse
-            'blob-1': 'blob-1 12s ease-in-out infinite alternate', // New blob animation
-            'blob-2': 'blob-2 15s ease-in-out infinite alternate-reverse', // New blob animation
+            'blob-1': 'blob-1 14s ease-in-out infinite alternate', // New blob animation
+            'blob-2': 'blob-2 17s ease-in-out infinite alternate-reverse', // New blob animation
+            'blob-3': 'blob-3 16s ease-in-out infinite alternate', // New blob animation
   		}
   	}
   },
