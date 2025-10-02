@@ -119,7 +119,7 @@ export default function LandingPage() {
                 <CardTitle className="text-xl font-semibold">Real-time Analytics</CardTitle>
               </CardHeader>
               <CardContent className="p-0 text-muted-foreground">
-                Gain insights into your sales, customer behavior, and store performance with powerful analytics.
+                Track your sales, monitor customer engagement, and understand your store's performance with intuitive, real-time data.
               </CardContent>
             </Card>
           </div>
