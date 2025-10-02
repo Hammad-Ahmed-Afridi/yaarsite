@@ -129,7 +129,7 @@ export default function LandingPage() {
       {/* Call to Action Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-muted to-background rounded-3xl shadow-lg mx-4 mb-4">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Ready to Start Selling with {animatedYaarsite}?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Ready to Start Selling with {animatedYaarsite}</h2>
           <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
             Join {animatedYaarsite} today and transform your business idea into a thriving online store.
           </p>
