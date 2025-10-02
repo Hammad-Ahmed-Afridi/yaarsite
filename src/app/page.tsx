@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Store, Package, ShoppingCart, Settings, Rocket } from 'lucide-react';
+import { Store, Package, ShoppingCart, Settings } from 'lucide-react'; // Removed Rocket import
 import Image from 'next/image';
 import { LandingPageHeader } from '@/components/landing-page-header';
 import { LandingPageFooter } from '@/components/landing-page-footer';
@@ -16,9 +16,8 @@ export default function LandingPage() {
       <main className="flex-1 w-full flex flex-col items-center text-center">
         {/* Hero Section */}
         <section className="w-full max-w-4xl py-16 md:py-24 flex flex-col items-center justify-center space-y-8 bg-gradient-to-b from-background to-muted/20 rounded-b-3xl shadow-inner p-4 md:p-8">
-          <Rocket className="h-24 w-24 text-primary animate-hero-rocket-bounce" />
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight text-center">
-            Launch Your Dream Store in Seconds with <span className="text-primary">Yaarsite</span>
+            Launch Your Dream Store in Seconds with <span className="text-primary animate-hero-rocket-bounce inline-block">Yaarsite</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl text-center">
             Yaarsite helps entrepreneurs and small businesses create professional, beautiful online stores effortlessly. Focus on your products, we handle the rest.
