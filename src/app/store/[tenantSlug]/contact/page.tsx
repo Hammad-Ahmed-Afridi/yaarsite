@@ -2,27 +2,28 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { supabase } from '@/integrations/supabase/client';
 import { AppLoader } from '@/components/app-loader';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { useStoreProfile } from '@/components/store-profile-context-provider'; // Import useStoreProfile
+import { Profile } from '@/components/session-context-provider'; // Import shared Profile type
 
 export default function StoreContactPage() {
   const params = useParams();
   const tenantSlug = params.tenantSlug as string;
-  const { storeProfile: profile, setStoreProfile } = useStoreProfile(); // Use context
+  const { storeProfile: profile } = useStoreProfile(); // Use context to get profile
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // No need to fetch profile here, it comes from layout via context
   useEffect(() => {
     if (profile) {
       setIsLoading(false);
     } else {
+      // This case should ideally not happen if layout fetches correctly,
+      // but as a fallback, we can show an error.
       setError("Store profile not found. Please try refreshing the page.");
       setIsLoading(false);
     }
-  }, [profile]);
+  }, [profile]); // Depend on profile from context
 
   if (isLoading) {
     return <AppLoader message="Loading contact page..." isFullScreen={false} />;
