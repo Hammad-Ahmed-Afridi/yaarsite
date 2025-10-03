@@ -151,10 +151,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-@layer utilities {
-  /* Reduce the blur for dialog overlays */
-  .backdrop-blur-sm {
-    backdrop-filter: blur(2px) !important; /* Changed from default 4px to 2px */
-  }
-}

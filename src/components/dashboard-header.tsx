@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Store, LogOut, LayoutDashboard, Globe } from 'lucide-react';
+import { ArrowLeft, Store, LogOut, LayoutDashboard, Globe } from 'lucide-react'; // Import Globe icon
 import { Profile } from '@/components/session-context-provider';
 
 
@@ -17,14 +17,14 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ profile, onSignOut, showBackButton = true, currentPath }: DashboardHeaderProps) {
-  const isDashboardRoot = currentPath === '/dashboard'; // Updated to check for /dashboard
+  const isDashboardRoot = currentPath === '/';
 
   return (
     <header className="flex items-center justify-between p-4 border-b border-border bg-card font-sans">
       <div className="flex items-center space-x-4">
         {showBackButton && !isDashboardRoot && (
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/dashboard"> {/* Link back to /dashboard */}
+            <Link href="/">
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>

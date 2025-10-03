@@ -14,18 +14,18 @@ import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { DashboardHeader } from '@/components/dashboard-header';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { AppLoader } from '@/components/app-loader';
+import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
+import { AppLoader } from '@/components/app-loader'; // Import AppLoader
 
 interface Order {
   id: string;
   user_id: string;
-  customer_name: string;
+  customer_name: string; // New field
   customer_email: string;
-  customer_phone: string;
-  shipping_province: string;
-  shipping_city: string;
-  shipping_address_line: string;
+  customer_phone: string; // New field
+  shipping_province: string; // New field
+  shipping_city: string; // New field
+  shipping_address_line: string; // New field
   total_amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   items_json: any[];
@@ -39,7 +39,7 @@ export default function OrdersPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
   const router = useRouter();
   const pathname = usePathname();
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(); // Use the hook
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
@@ -139,7 +139,7 @@ export default function OrdersPage() {
             <p className="text-base text-muted-foreground mb-6 leading-relaxed">
               Customers will place orders through your public store.
             </p>
-            <Button onClick={() => router.push('/dashboard')} className="font-semibold">Go to Dashboard</Button> {/* Updated link */}
+            <Button onClick={() => router.push('/')} className="font-semibold">Go to Dashboard</Button>
           </div>
         ) : (
           <>
