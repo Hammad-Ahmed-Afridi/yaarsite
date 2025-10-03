@@ -19,7 +19,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2 } from 'lucide-react';
+import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2, Mail, Phone, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { AppLoader } from '@/components/app-loader';
@@ -36,8 +36,16 @@ const formSchema = z.object({
   homePageDescription: z.string().max(500, { message: "Home page description cannot exceed 500 characters." }).optional(),
   aboutPageContent: z.string().max(1000, { message: "About page content cannot exceed 1000 characters." }).optional(),
   storePageWelcomeMessage: z.string().max(500, { message: "Store page welcome message cannot exceed 500 characters." }).optional(),
-  contactPageHeading: z.string().max(100, { message: "Contact page heading cannot exceed 100 characters." }).optional(), // New field
-  contactPageDescription: z.string().max(500, { message: "Contact page description cannot exceed 500 characters." }).optional(), // New field
+  contactPageHeading: z.string().max(100, { message: "Contact page heading cannot exceed 100 characters." }).optional(),
+  contactPageDescription: z.string().max(500, { message: "Contact page description cannot exceed 500 characters." }).optional(),
+  email: z.string().email({ message: "Please enter a valid email address." }).optional().or(z.literal('')), // Added email
+  phoneNumber: z.string()
+    .regex(/^03\d{9}$/, { message: "Phone number must start with 03 and be 11 digits long." })
+    .optional()
+    .or(z.literal('')), // Added phone number
+  storeAddressLine: z.string().max(200, { message: "Address line cannot exceed 200 characters." }).optional().or(z.literal('')), // New address field
+  storeCity: z.string().max(100, { message: "City cannot exceed 100 characters." }).optional().or(z.literal('')), // New address field
+  storeProvince: z.string().max(100, { message: "Province cannot exceed 100 characters." }).optional().or(z.literal('')), // New address field
 });
 
 const DELIVERY_CHARGE_OPTIONS = [
@@ -66,8 +74,13 @@ export default function SettingsPage() {
       homePageDescription: "",
       aboutPageContent: "",
       storePageWelcomeMessage: "",
-      contactPageHeading: "", // Initialize new field
-      contactPageDescription: "", // Initialize new field
+      contactPageHeading: "",
+      contactPageDescription: "",
+      email: "", // Default for new field
+      phoneNumber: "", // Default for new field
+      storeAddressLine: "", // Default for new field
+      storeCity: "", // Default for new field
+      storeProvince: "", // Default for new field
     },
   });
 
@@ -82,8 +95,13 @@ export default function SettingsPage() {
         homePageDescription: profile.home_page_description || "",
         aboutPageContent: profile.about_page_content || "",
         storePageWelcomeMessage: profile.store_page_welcome_message || "",
-        contactPageHeading: profile.contact_page_heading || "", // Set value for new field
-        contactPageDescription: profile.contact_page_description || "", // Set value for new field
+        contactPageHeading: profile.contact_page_heading || "",
+        contactPageDescription: profile.contact_page_description || "",
+        email: profile.email || "", // Set value for new field
+        phoneNumber: profile.phone_number || "", // Set value for new field
+        storeAddressLine: profile.store_address_line || "", // Set value for new field
+        storeCity: profile.store_city || "", // Set value for new field
+        storeProvince: profile.store_province || "", // Set value for new field
       });
       setLogoPreview(profile.avatar_url || null);
     }
@@ -232,8 +250,13 @@ export default function SettingsPage() {
           home_page_description: values.homePageDescription || null,
           about_page_content: values.aboutPageContent || null,
           store_page_welcome_message: values.storePageWelcomeMessage || null,
-          contact_page_heading: values.contactPageHeading || null, // Save new field
-          contact_page_description: values.contactPageDescription || null, // Save new field
+          contact_page_heading: values.contactPageHeading || null,
+          contact_page_description: values.contactPageDescription || null,
+          email: values.email || null, // Save new field
+          phone_number: values.phoneNumber || null, // Save new field
+          store_address_line: values.storeAddressLine || null, // Save new field
+          store_city: values.storeCity || null, // Save new field
+          store_province: values.storeProvince || null, // Save new field
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -395,6 +418,86 @@ export default function SettingsPage() {
                 )}
               </div>
 
+              <h3 className="text-xl font-semibold mt-8 tracking-tight">Contact Information</h3>
+              <div className="grid gap-2">
+                <Label htmlFor="email" className="text-sm font-medium">Store Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="your.store@example.com"
+                    className="pl-10"
+                    {...form.register("email")}
+                  />
+                </div>
+                {form.formState.errors.email && (
+                  <p className="text-destructive text-sm">{form.formState.errors.email.message}</p>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="phoneNumber" className="text-sm font-medium">Store Phone Number</Label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="phoneNumber"
+                    type="tel"
+                    placeholder="03001234567"
+                    className="pl-10"
+                    {...form.register("phoneNumber")}
+                  />
+                </div>
+                {form.formState.errors.phoneNumber && (
+                  <p className="text-destructive text-sm">{form.formState.errors.phoneNumber.message}</p>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="storeAddressLine" className="text-sm font-medium">Store Address Line</Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="storeAddressLine"
+                    type="text"
+                    placeholder="House #123, Street 4"
+                    className="pl-10"
+                    {...form.register("storeAddressLine")}
+                  />
+                </div>
+                {form.formState.errors.storeAddressLine && (
+                  <p className="text-destructive text-sm">{form.formState.errors.storeAddressLine.message}</p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="storeCity" className="text-sm font-medium">Store City</Label>
+                  <Input
+                    id="storeCity"
+                    type="text"
+                    placeholder="Lahore"
+                    {...form.register("storeCity")}
+                  />
+                  {form.formState.errors.storeCity && (
+                    <p className="text-destructive text-sm">{form.formState.errors.storeCity.message}</p>
+                  )}
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="storeProvince" className="text-sm font-medium">Store Province</Label>
+                  <Input
+                    id="storeProvince"
+                    type="text"
+                    placeholder="Punjab"
+                    {...form.register("storeProvince")}
+                  />
+                  {form.formState.errors.storeProvince && (
+                    <p className="text-destructive text-sm">{form.formState.errors.storeProvince.message}</p>
+                  )}
+                </div>
+              </div>
+
+
               <h3 className="text-xl font-semibold mt-8 tracking-tight">Home Page Content</h3>
               <div className="grid gap-2">
                 <Label htmlFor="homePageHeading" className="text-sm font-medium">Home Page Heading</Label>
@@ -448,7 +551,6 @@ export default function SettingsPage() {
                 )}
               </div>
 
-              {/* New fields for Contact Page Customization */}
               <h3 className="text-xl font-semibold mt-8 tracking-tight">Contact Us Page Content</h3>
               <div className="grid gap-2">
                 <Label htmlFor="contactPageHeading" className="text-sm font-medium">Contact Page Heading</Label>

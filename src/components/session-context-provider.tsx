@@ -25,6 +25,9 @@ export interface Profile { // Exported for use in DashboardHeader
   store_page_welcome_message: string | null; // Added for store customization
   contact_page_heading: string | null; // Added for contact page customization
   contact_page_description: string | null; // Added for contact page customization
+  store_address_line: string | null; // New: Store physical address line
+  store_city: string | null; // New: Store city
+  store_province: string | null; // New: Store province
 }
 
 interface SessionContextType {

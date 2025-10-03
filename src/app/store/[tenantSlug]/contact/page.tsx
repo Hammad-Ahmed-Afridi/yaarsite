@@ -47,6 +47,8 @@ export default function StoreContactPage() {
     );
   }
 
+  const hasAddress = profile.store_address_line || profile.store_city || profile.store_province;
+
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
       <Mail className="h-24 w-24 text-primary mb-6" />
@@ -80,7 +82,15 @@ export default function StoreContactPage() {
           <MapPin className="h-6 w-6 text-muted-foreground" />
           <div>
             <p className="font-semibold text-base">Visit Us</p>
-            <p className="text-muted-foreground text-base">Online Only</p>
+            {hasAddress ? (
+              <p className="text-muted-foreground text-base">
+                {profile.store_address_line && <span>{profile.store_address_line}, </span>}
+                {profile.store_city && <span>{profile.store_city}, </span>}
+                {profile.store_province && <span>{profile.store_province}</span>}
+              </p>
+            ) : (
+              <p className="text-muted-foreground text-base">Online Only</p>
+            )}
           </div>
         </div>
       </div>
