@@ -18,16 +18,11 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ profile, onSignOut, showBackButton = true, currentPath }: DashboardHeaderProps) {
   const isDashboardRoot = currentPath === '/';
-  const isSettingsPage = currentPath?.startsWith('/settings');
-  const isPagesPage = currentPath === '/pages';
-
-  let backButtonHref = '/'; // Default back to dashboard
-  if (isSettingsPage || isPagesPage) {
-    backButtonHref = '/pages'; // If on any settings or pages sub-page, go back to /pages
-    if (currentPath === '/settings') { // If on general settings, go back to /pages
-      backButtonHref = '/pages';
-    }
-  }
+  
+  // The back button should always go to the main dashboard (/) unless explicitly hidden.
+  // The main dashboard itself (src/app/page.tsx) sets showBackButton={false},
+  // so this logic applies to all other pages where the back button is displayed.
+  const backButtonHref = '/'; 
 
   return (
     <header className="flex items-center justify-between p-4 border-b border-border bg-card font-sans">
