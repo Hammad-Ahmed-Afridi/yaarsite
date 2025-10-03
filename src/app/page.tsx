@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, ShoppingCart, DollarSign, Store, Settings, Globe } from "lucide-react"; // Import Globe icon
+import { Package, ShoppingCart, DollarSign, Store, Settings, Globe, BellRing } from "lucide-react"; // Import BellRing icon for new orders
 import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
 import { InactivityWarningBanner } from "@/components/inactivity-warning-banner";
@@ -24,6 +24,7 @@ export default function DashboardPage() {
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
+  const [newOrders, setNewOrders] = useState(0); // New state for new orders
   const [isLoadingDashboardData, setIsLoadingDashboardData] = useState(true);
   const [showConfetti, setShowConfetti] = useState(false); // State to control confetti
 
@@ -58,6 +59,7 @@ export default function DashboardPage() {
       setTotalProducts(data.totalProducts);
       setTotalOrders(data.totalOrders);
       setTotalProfit(data.totalProfit);
+      setNewOrders(data.newOrders); // Set new orders count from the response
 
     } catch (error: any) {
       console.error("Dashboard Page: Error fetching dashboard data:", error); // Keep console log for debugging
@@ -154,6 +156,17 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">Rs{totalProfit.toFixed(2)}</div>
+            </CardContent>
+          </Card>
+
+          {/* New Card for New Orders */}
+          <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-base font-medium">New Orders</CardTitle>
+              <BellRing className="h-4 w-4 text-red-500" /> {/* Using BellRing icon for new orders */}
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{newOrders}</div>
             </CardContent>
           </Card>
 

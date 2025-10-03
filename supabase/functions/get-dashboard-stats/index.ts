@@ -82,10 +82,20 @@ serve(async (req) => {
 
     const totalProfit = profitData?.reduce((sum, order) => sum + order.total_amount, 0) || 0;
 
+    // New: Fetch count of new orders (pending or processing)
+    const { count: newOrdersCount, error: newOrdersError } = await supabaseAdmin
+      .from('orders')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', authenticatedUserId)
+      .in('status', ['pending', 'processing']); // Filter for 'pending' or 'processing'
+
+    if (newOrdersError) throw newOrdersError;
+
     return new Response(JSON.stringify({
       totalProducts: productsCount || 0,
       totalOrders: ordersCount || 0,
       totalProfit: totalProfit,
+      newOrders: newOrdersCount || 0, // Add newOrders count to the response
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
