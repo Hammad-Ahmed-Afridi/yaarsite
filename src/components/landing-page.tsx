@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LayoutDashboard, ShoppingCart, Settings, ArrowRight, Package, Monitor, BarChart } from 'lucide-react';
 
-export default function LandingPage() {
+export function LandingPage() { // Changed to named export
   const animatedYaarsite = (
     <span className="inline-block text-primary font-bold animate-continuous-pulse">Yaarsite</span>
   );

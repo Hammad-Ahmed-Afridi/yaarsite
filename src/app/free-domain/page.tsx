@@ -42,7 +42,7 @@ export default function FreeDomainPage() {
           This feature is coming soon! Stay tuned for updates.
         </p>
         <Button asChild className="font-semibold">
-          <Link href="/">Back to Dashboard</Link>
+          <Link href="/dashboard">Back to Dashboard</Link> {/* Updated link */}
         </Button>
       </main>
     </div>

@@ -15,7 +15,7 @@ export default function StoreLandingPage() {
         If you know a specific store's address, you can visit it directly.
       </p>
       <Button asChild className="font-semibold">
-        <Link href="/login">Login to manage your own store</Link>
+        <Link href="/dashboard">Login to manage your own store</Link> {/* Updated link */}
       </Button>
     </div>
   );

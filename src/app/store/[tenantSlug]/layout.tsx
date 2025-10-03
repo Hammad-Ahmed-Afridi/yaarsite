@@ -5,16 +5,16 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Store, ShoppingCart, Menu } from 'lucide-react'; // Import Menu icon
+import { Store, ShoppingCart, Menu } from 'lucide-react';
 import Image from 'next/image';
 import { useCart } from '@/components/cart-context-provider';
 import { AppLoader } from '@/components/app-loader';
 import { Profile } from '@/components/session-context-provider';
 import { StoreNavbar } from '@/components/store-navbar';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'; // Import Sheet components
-import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
-import { toast } from 'sonner'; // Import toast
-import { StoreProfileProvider } from '@/components/store-profile-context-provider'; // Import new provider
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { toast } from 'sonner';
+import { StoreProfileProvider } from '@/components/store-profile-context-provider';
 
 export default function StoreLayout({
   children,
@@ -28,9 +28,9 @@ export default function StoreLayout({
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isSheetOpen, setIsSheetOpen] = useState(false); // State for mobile menu
-  const { cartItems, itemCount, clearCart } = useCart(); // Get clearCart from context
-  const isMobile = useIsMobile(); // Use the hook to detect mobile
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const { cartItems, itemCount, clearCart } = useCart();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     async function fetchStoreProfile() {
@@ -45,7 +45,7 @@ export default function StoreLayout({
       try {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('*, store_page_welcome_message, home_page_heading, home_page_description, about_page_content, contact_page_heading, contact_page_description') // Select all relevant fields
+          .select('*, store_page_welcome_message, home_page_heading, home_page_description, about_page_content, contact_page_heading, contact_page_description')
           .eq('tenant_slug', tenantSlug)
           .single();
 
@@ -56,7 +56,6 @@ export default function StoreLayout({
         }
         setProfile(profileData);
 
-        // Check if cart needs to be cleared
         if (cartItems.length > 0 && cartItems[0].storeOwnerId !== profileData.id) {
           clearCart();
           toast.info(`Your cart was cleared because you are now shopping at ${profileData.tenant_name || 'a new store'}.`);
@@ -70,7 +69,7 @@ export default function StoreLayout({
     }
 
     fetchStoreProfile();
-  }, [tenantSlug, cartItems, clearCart]); // Added cartItems and clearCart to dependencies
+  }, [tenantSlug, cartItems, clearCart]);
 
   if (isLoading) {
     return <AppLoader message="Loading store..." />;
@@ -81,7 +80,7 @@ export default function StoreLayout({
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center font-sans">
         <h1 className="text-3xl font-bold text-destructive mb-4 tracking-tight">Error</h1>
         <p className="text-lg text-muted-foreground leading-relaxed">{error}</p>
-        <Button onClick={() => router.push('/')} className="mt-6 font-semibold">Go to Dashboard</Button>
+        <Button onClick={() => router.push('/dashboard')} className="mt-6 font-semibold">Go to Dashboard</Button> {/* Updated link */}
       </div>
     );
   }
@@ -91,7 +90,7 @@ export default function StoreLayout({
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center font-sans">
         <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
         <p className="text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
-        <Button onClick={() => router.push('/')} className="mt-6 font-semibold">Go to Dashboard</Button>
+        <Button onClick={() => router.push('/dashboard')} className="mt-6 font-semibold">Go to Dashboard</Button> {/* Updated link */}
       </div>
     );
   }

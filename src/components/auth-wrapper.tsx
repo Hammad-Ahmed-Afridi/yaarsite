@@ -10,7 +10,8 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const publicPaths = ['/login', '/signup', '/store', '/cart', '/checkout', '/landing'];
+  // Define public paths. The root '/' is now explicitly a public path for the landing page.
+  const publicPaths = ['/', '/login', '/signup', '/store', '/cart', '/checkout'];
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
 
   const [isReadyToRender, setIsReadyToRender] = useState(false);
@@ -23,12 +24,9 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
     if (user) {
       // User is authenticated
-      // Special case: If on signup page, allow it to render (to show success message and then sign out)
-      if (pathname === '/signup') {
-        setIsReadyToRender(true);
-      } else if (pathname === '/login' || pathname === '/landing') {
-        // Authenticated user on a public auth/landing page, redirect to dashboard
-        router.push('/');
+      if (pathname === '/' || pathname === '/login' || pathname === '/signup') {
+        // Authenticated user on landing, login, or signup page, redirect to dashboard
+        router.push('/dashboard');
         setIsReadyToRender(false); // Keep loader visible until redirect completes
       } else {
         // Authenticated user on a protected page or already on dashboard
@@ -38,7 +36,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       // User is NOT authenticated
       if (!isPublicPath) {
         // Unauthenticated user on a protected path, redirect to login
-        router.push('/login'); // Redirect to login page
+        router.push('/login');
         setIsReadyToRender(false); // Keep loader visible until redirect completes
       } else {
         // Unauthenticated user on a public path (including landing)

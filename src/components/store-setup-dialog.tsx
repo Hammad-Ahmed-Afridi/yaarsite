@@ -21,9 +21,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Store, Sparkles } from 'lucide-react'; // Import Sparkles for toast
+import { Store, Sparkles } from 'lucide-react';
 import { AppLoader } from '@/components/app-loader';
-import { ConfettiEffect } from '@/components/confetti-effect'; // Import ConfettiEffect
+import { ConfettiEffect } from '@/components/confetti-effect';
 
 const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
@@ -35,18 +35,9 @@ export function StoreSetupDialog() {
   const { user, profile, refreshProfile } = useSession();
   const [isBuildingStore, setIsBuildingStore] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false); // State to control confetti
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      storeName: "",
-      storeDescription: "",
-    },
-  });
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
-    // Open the dialog if user is logged in and profile indicates store is not set up
     if (user && profile && profile.tenant_name === null) {
       setIsDialogOpen(true);
     } else {
@@ -77,7 +68,7 @@ export function StoreSetupDialog() {
         .eq('tenant_name', values.storeName)
         .single();
 
-      if (checkNameError && checkNameError.code !== 'PGRST116') { // PGRST116 means "no rows found"
+      if (checkNameError && checkNameError.code !== 'PGRST116') {
         throw new Error(`Error checking for existing store name: ${checkNameError.message}`);
       }
 
@@ -107,7 +98,7 @@ export function StoreSetupDialog() {
         }
       }
 
-      const appBaseUrl = window.location.origin; // Dynamically get base URL
+      const appBaseUrl = window.location.origin;
       const storeUrl = `${appBaseUrl}/store/${uniqueTenantSlug}`;
 
       // 3. Update the user's profile with store information
@@ -115,7 +106,7 @@ export function StoreSetupDialog() {
         .from('profiles')
         .update({
           tenant_name: values.storeName,
-          tenant_slug: uniqueTenantSlug, // Use the generated unique slug
+          tenant_slug: uniqueTenantSlug,
           store_url: storeUrl,
           store_description: values.storeDescription || null,
           updated_at: new Date().toISOString(),
@@ -140,30 +131,28 @@ export function StoreSetupDialog() {
         { duration: 5000 }
       );
       
-      setIsDialogOpen(false); // Immediately close the dialog
-      setIsBuildingStore(false); // Reset building state
-      setShowConfetti(true); // Trigger confetti
+      setIsDialogOpen(false);
+      setIsBuildingStore(false);
+      setShowConfetti(true);
 
-      // Delay redirecting to allow confetti to be seen
       setTimeout(async () => {
-        // Refresh profile data in context
         if (refreshProfile) {
           await refreshProfile();
         }
-        router.push('/'); // Redirect to dashboard (already there, but ensures state consistency)
-      }, 3000); // Keep confetti visible for 3 seconds before redirect
+        router.push('/dashboard'); // Redirect to the new dashboard route
+      }, 3000);
 
     } catch (err: any) {
       console.error("Unexpected error during store creation:", err);
       toast.error(err.message || "An unexpected error occurred during store creation.");
       setIsBuildingStore(false);
-      setShowConfetti(false); // Ensure confetti is not shown on error
+      setShowConfetti(false);
     }
   };
 
   return (
     <>
-      <ConfettiEffect run={showConfetti} /> {/* Render confetti effect */}
+      <ConfettiEffect run={showConfetti} />
       <Dialog open={isDialogOpen}>
         <DialogContent
           className="w-full max-w-md p-6 font-sans"
@@ -182,7 +171,7 @@ export function StoreSetupDialog() {
           {isBuildingStore ? (
             <AppLoader
               message="Yaarsite AI is building your store. Wait for the magic to happen..."
-              secondaryMessage="This might take a few moments as we set everything up for you." // Added secondary message
+              secondaryMessage="This might take a few moments as we set everything up for you."
               size="lg"
               isFullScreen={false}
               className="py-12"
