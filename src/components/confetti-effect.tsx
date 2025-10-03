@@ -9,7 +9,7 @@ interface ConfettiEffectProps {
   duration?: number; // Duration in milliseconds for how long confetti runs
 }
 
-export function ConfettiEffect({ run, duration = 5000 }: ConfettiEffectProps) {
+export function ConfettiEffect({ run, duration = 10000 }: ConfettiEffectProps) { // Increased default duration to 10 seconds
   const { width, height } = useWindowSize();
   const [shouldRenderConfetti, setShouldRenderConfetti] = useState(false);
 
@@ -34,9 +34,9 @@ export function ConfettiEffect({ run, duration = 5000 }: ConfettiEffectProps) {
         width={width}
         height={height}
         recycle={false}
-        numberOfPieces={1000} // Increased for maximum visibility
-        gravity={0.05} // Reduced gravity to make pieces fall slower
-        initialVelocityY={-15} // Increased initial upward velocity
+        numberOfPieces={1000} // Already high for maximum visibility
+        gravity={0.03} // Further reduced gravity to make pieces fall even slower
+        initialVelocityY={-20} // Increased initial upward velocity for a higher spread
         confettiSource={{
           x: width / 2,
           y: height / 2,
