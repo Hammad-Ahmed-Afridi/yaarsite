@@ -14,6 +14,12 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
 
   const [isReadyToRender, setIsReadyToRender] = useState(false);
+  const prevUserRef = useRef(user); // Track previous user state
+
+  useEffect(() => {
+    // Update prevUserRef *before* any state changes are processed in the next render
+    prevUserRef.current = user;
+  }, [user]);
 
   useEffect(() => {
     if (isSessionLoading) {
@@ -21,27 +27,41 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    // Determine if the user was authenticated in the *previous* render cycle
+    const wasUserPreviouslyAuthenticated = !!prevUserRef.current;
+
     if (user) {
       // User is currently authenticated
       if (pathname === '/signup') {
+        // Allow signup page to render for authenticated users (e.g., after successful signup before redirect)
         setIsReadyToRender(true);
       } else if (pathname === '/login' || pathname === '/landing') {
+        // Authenticated user on a public auth/landing page, redirect to dashboard
         router.push('/');
-        setIsReadyToRender(false);
+        setIsReadyToRender(false); // Keep loader visible until redirect completes
       } else {
+        // Authenticated user on a protected page or already on dashboard
         setIsReadyToRender(true);
       }
     } else {
       // User is NOT currently authenticated
       if (isSigningOut) {
-        // If a sign-out is in progress, always redirect to /login.
-        // This ensures the explicit sign-out redirect takes precedence.
-        router.push('/login');
+        // If a sign-out is in progress, keep loader visible.
+        // The DashboardPage's handleSignOut already calls router.push('/login').
+        // We just need to ensure no other redirects happen here.
         setIsReadyToRender(false);
       } else if (pathname === '/') {
-        // Initial unauthenticated access to root, redirect to landing page
-        router.push('/landing');
-        setIsReadyToRender(false);
+        // This is the critical block for sign-out from dashboard vs. initial unauthenticated visit.
+        if (wasUserPreviouslyAuthenticated) {
+          // User just signed out from the dashboard (pathname was '/' and user was previously authenticated).
+          // Explicitly redirect to login to ensure the correct behavior.
+          router.push('/login');
+          setIsReadyToRender(false);
+        } else {
+          // Initial unauthenticated access to root, redirect to landing page
+          router.push('/landing');
+          setIsReadyToRender(false);
+        }
       } else if (!isPublicPath) {
         // Unauthenticated user on any other protected path, redirect to login
         router.push('/login');
