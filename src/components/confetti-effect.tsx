@@ -43,7 +43,6 @@ export function ConfettiEffect({ run, duration = 5000 }: ConfettiEffectProps) {
         h: height,
       }}
       colors={['#6366F1', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981']}
-      zIndex={9999} // Explicitly set a very high z-index
     />
   );
 }
