@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { useSession } from '@/components/session-context-provider';
+import { useSession, ProfileImageKey } from '@/components/session-context-provider'; // Import ProfileImageKey
 import { compressImage } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -144,7 +144,7 @@ export default function SettingsPage() {
     setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>,
     bucketName: 'store-logos' | 'store-content-images',
     imageType: string,
-    dbFieldName: keyof typeof profile
+    dbFieldName: ProfileImageKey // Use the new type here
   ) => {
     if (!user) return;
 

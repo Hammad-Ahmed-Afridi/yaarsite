@@ -5,10 +5,10 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import *s z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { useSession } from '@/components/session-context-provider';
+import { useSession, ProfileImageKey } from '@/components/session-context-provider'; // Import ProfileImageKey
 import { compressImage } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -121,7 +121,7 @@ export default function HomePageSettingsPage() {
     setPreview: React.Dispatch<React.SetStateAction<string | null>>,
     setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>,
     imageType: string,
-    dbFieldName: keyof typeof profile
+    dbFieldName: ProfileImageKey // Use the new type here
   ) => {
     if (!user) return;
 

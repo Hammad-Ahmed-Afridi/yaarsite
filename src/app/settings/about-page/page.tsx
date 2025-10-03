@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { useSession } from '@/components/session-context-provider';
+import { useSession, ProfileImageKey } from '@/components/session-context-provider'; // Import ProfileImageKey
 import { compressImage } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -109,7 +109,7 @@ export default function AboutPageSettingsPage() {
     setPreview: React.Dispatch<React.SetStateAction<string | null>>,
     setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>,
     imageType: string,
-    dbFieldName: keyof typeof profile
+    dbFieldName: ProfileImageKey // Use the new type here
   ) => {
     if (!user) return;
 
@@ -288,7 +288,7 @@ export default function AboutPageSettingsPage() {
                         variant="destructive"
                         size="icon"
                         className="absolute top-1 right-1 h-6 w-6 rounded-full"
-                        onClick={() => handleRemoveImage(profile?.about_page_hero_image_url ?? null, setAboutPageHeroImagePreview, setSelectedAboutPageHeroImageFile, 'about page hero image', 'about_page_hero_image_url')}
+                        onClick={() => handleRemoveImage(profile?.about_page_hero_image_url ?? null, setAboutPageHeroImagePreview, setSelectedAboutPageHeroImageFile, 'store-content-images', 'about page hero image', 'about_page_hero_image_url')}
                         disabled={isUpdating}
                       >
                         <X className="h-3 w-3" />
@@ -305,7 +305,7 @@ export default function AboutPageSettingsPage() {
                       type="file"
                       accept="image/jpeg,image/jpg,image/png,image/webp"
                       className="hidden"
-                      onChange={(e) => handleImageChange(e, setSelectedAboutPageHeroImageFile, setAboutPageHeroImagePreview, "aboutPageHeroImage", 'about page hero image')}
+                      onChange={(e) => handleImageChange(e, setSelectedAboutPageHeroImageFile, setAboutPageHeroImagePreview, "aboutPageHeroImage", 'store-content-images', 'about page hero image')}
                       disabled={isUpdating}
                     />
                     <Button asChild variant="outline" className="w-full font-semibold" disabled={isUpdating}>

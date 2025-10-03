@@ -35,6 +35,14 @@ export interface Profile { // Exported for use in DashboardHeader
   store_province: string | null; // New: Store province
 }
 
+// Define a type for the specific profile keys that store image URLs
+export type ProfileImageKey =
+  'avatar_url' |
+  'home_page_hero_image_url' |
+  'home_page_content_image_url' |
+  'about_page_hero_image_url' |
+  'contact_page_hero_image_url';
+
 interface SessionContextType {
   session: Session | null;
   user: User | null;
