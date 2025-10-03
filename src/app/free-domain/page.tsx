@@ -36,7 +36,7 @@ export default function FreeDomainPage() {
 
       <main className="flex-1 p-8 flex flex-col items-center justify-center text-center">
         <Globe className="h-24 w-24 text-primary mb-6" />
-        <h1 className="text-4xl font-bold mb-4 tracking-tight">Get a Free Domain!</h1>
+        <h1 className="text-4xl font-bold mb-4 tracking-tight">Free Domain</h1>
         <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
           We're excited to offer you a free custom domain for your Yaarsite store.
           This feature is coming soon! Stay tuned for updates.
