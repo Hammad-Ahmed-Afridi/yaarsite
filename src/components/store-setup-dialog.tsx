@@ -23,7 +23,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Store, Sparkles } from 'lucide-react'; // Import Sparkles for toast
 import { AppLoader } from '@/components/app-loader';
-import { ConfettiEffect } from '@/components/confetti-effect'; // Import ConfettiEffect
+// Removed ConfettiEffect import as it's no longer rendered here
 
 const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
@@ -35,7 +35,7 @@ export function StoreSetupDialog() {
   const { user, profile, refreshProfile } = useSession();
   const [isBuildingStore, setIsBuildingStore] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false); // State to control confetti
+  // Removed showConfetti state
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -139,7 +139,9 @@ export function StoreSetupDialog() {
         </div>,
         { duration: 5000 }
       );
-      setShowConfetti(true); // Trigger confetti
+      
+      // Set flag in local storage to trigger confetti on dashboard
+      localStorage.setItem('showConfettiAfterStoreCreation', 'true');
 
       // Refresh profile data in context
       if (refreshProfile) {
@@ -159,7 +161,7 @@ export function StoreSetupDialog() {
 
   return (
     <>
-      <ConfettiEffect run={showConfetti} /> {/* Render confetti effect */}
+      {/* ConfettiEffect is no longer rendered here */}
       <Dialog open={isDialogOpen}>
         <DialogContent
           className="w-full max-w-md p-6 font-sans"

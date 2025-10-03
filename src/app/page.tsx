@@ -14,6 +14,7 @@ import { InactivityWarningBanner } from "@/components/inactivity-warning-banner"
 import { DashboardHeader } from "@/components/dashboard-header";
 import { ScrollHintArrow } from "@/components/scroll-hint-arrow";
 import { AppLoader } from "@/components/app-loader";
+import { ConfettiEffect } from '@/components/confetti-effect'; // Import ConfettiEffect
 
 export default function DashboardPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
@@ -24,6 +25,7 @@ export default function DashboardPage() {
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
   const [isLoadingDashboardData, setIsLoadingDashboardData] = useState(true);
+  const [showConfetti, setShowConfetti] = useState(false); // State to control confetti
 
   const fetchDashboardData = useCallback(async () => {
     setIsLoadingDashboardData(true);
@@ -73,6 +75,15 @@ export default function DashboardPage() {
     }
   }, [isSessionLoading, user, fetchDashboardData]);
 
+  // Effect to check for confetti trigger from local storage
+  useEffect(() => {
+    const confettiTrigger = localStorage.getItem('showConfettiAfterStoreCreation');
+    if (confettiTrigger === 'true') {
+      setShowConfetti(true);
+      localStorage.removeItem('showConfettiAfterStoreCreation'); // Clear the flag
+    }
+  }, []);
+
   if (isSessionLoading || isLoadingDashboardData) {
     return (
       <AppLoader
@@ -108,6 +119,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       {profile?.tenant_name === null && <StoreSetupDialog />}
       <InactivityWarningBanner />
+      <ConfettiEffect run={showConfetti} /> {/* Render confetti effect here */}
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
 
