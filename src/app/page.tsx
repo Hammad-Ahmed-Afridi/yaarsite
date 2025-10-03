@@ -96,10 +96,10 @@ export default function DashboardPage() {
   const handleSignOut = async () => {
     console.log("Dashboard Page: Attempting to sign out.");
     try {
-      await initiateSignOut(); // Use the new initiateSignOut function
-      console.log("Dashboard Page: Sign out successful. Explicitly redirecting to /login.");
+      await initiateSignOut(); // This sets isSigningOut to true and calls supabase.auth.signOut()
+      console.log("Dashboard Page: Sign out successful. AuthWrapper will handle redirection.");
       toast.success("Signed out successfully!");
-      router.push('/login'); // Still push to /login here
+      // Removed router.push('/login') here. AuthWrapper will now handle it.
     } catch (error) {
       console.error("Dashboard Page: Error during sign out:", error);
       toast.error("Failed to sign out. Please try again.");

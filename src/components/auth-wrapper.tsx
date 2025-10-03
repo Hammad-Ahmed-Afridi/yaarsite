@@ -22,52 +22,67 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   useEffect(() => {
+    console.log("AuthWrapper: useEffect triggered.");
+    console.log("AuthWrapper: Current user:", user?.id);
+    console.log("AuthWrapper: Previous user (prevUserRef.current):", prevUserRef.current?.id);
+    console.log("AuthWrapper: isSessionLoading:", isSessionLoading);
+    console.log("AuthWrapper: isSigningOut:", isSigningOut);
+    console.log("AuthWrapper: pathname:", pathname);
+
     if (isSessionLoading) {
+      console.log("AuthWrapper: Session loading, not ready to render.");
       setIsReadyToRender(false);
       return;
     }
 
-    // Determine if the user was authenticated in the *previous* render cycle
     const wasUserPreviouslyAuthenticated = !!prevUserRef.current;
+    console.log("AuthWrapper: wasUserPreviouslyAuthenticated:", wasUserPreviouslyAuthenticated);
 
     if (user) {
       // User is currently authenticated
+      console.log("AuthWrapper: User is authenticated.");
       if (pathname === '/signup') {
-        // Allow signup page to render for authenticated users (e.g., after successful signup before redirect)
+        console.log("AuthWrapper: Authenticated user on signup, allowing render.");
         setIsReadyToRender(true);
       } else if (pathname === '/login' || pathname === '/landing') {
-        // Authenticated user on a public auth/landing page, redirect to dashboard
+        console.log("AuthWrapper: Authenticated user on auth/landing page, redirecting to /.");
         router.push('/');
-        setIsReadyToRender(false); // Keep loader visible until redirect completes
+        setIsReadyToRender(false);
       } else {
-        // Authenticated user on a protected page or already on dashboard
+        console.log("AuthWrapper: Authenticated user on protected page, allowing render.");
         setIsReadyToRender(true);
       }
     } else {
       // User is NOT currently authenticated
+      console.log("AuthWrapper: User is NOT authenticated.");
       if (isSigningOut) {
-        // If a sign-out is in progress, keep loader visible.
-        // The DashboardPage's handleSignOut already calls router.push('/login').
-        // We just need to ensure no other redirects happen here.
+        // If a sign-out is in progress, this is the definitive redirect to /login.
+        console.log("AuthWrapper: Sign-out in progress, redirecting to /login.");
+        router.push('/login');
         setIsReadyToRender(false);
       } else if (pathname === '/') {
-        // This is the critical block for sign-out from dashboard vs. initial unauthenticated visit.
+        // User is unauthenticated, NOT signing out, and at the root.
+        // This means it's either an initial unauthenticated visit OR
+        // a completed sign-out where the `isSigningOut` flag has already reset.
         if (wasUserPreviouslyAuthenticated) {
-          // User just signed out from the dashboard (pathname was '/' and user was previously authenticated).
-          // Explicitly redirect to login to ensure the correct behavior.
+          // If there *was* a user in the previous render cycle, it means they just signed out.
+          console.log("AuthWrapper: User was previously authenticated (just signed out), redirecting to /login.");
           router.push('/login');
           setIsReadyToRender(false);
         } else {
-          // Initial unauthenticated access to root, redirect to landing page
+          // No previous user, so it's an initial unauthenticated visit to the root.
+          console.log("AuthWrapper: Initial unauthenticated visit to root, redirecting to /landing.");
           router.push('/landing');
           setIsReadyToRender(false);
         }
       } else if (!isPublicPath) {
-        // Unauthenticated user on any other protected path, redirect to login
+        // Unauthenticated user on a protected path (not root, not public), redirect to login.
+        console.log("AuthWrapper: Unauthenticated user on protected path, redirecting to /login.");
         router.push('/login');
         setIsReadyToRender(false);
       } else {
-        // Unauthenticated user on a public path (login, signup, store, cart, checkout, landing)
+        // Unauthenticated user on a public path (login, signup, store, cart, checkout, landing).
+        console.log("AuthWrapper: Unauthenticated user on public path, allowing render.");
         setIsReadyToRender(true);
       }
     }
