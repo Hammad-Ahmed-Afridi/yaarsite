@@ -194,11 +194,11 @@ export default function DashboardPage() {
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <LayoutDashboard className="h-6 w-6 text-yellow-500" />
-              <CardTitle className="text-xl font-semibold">Manage Pages</CardTitle>
+              <CardTitle className="text-xl font-semibold">Customize Store</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-base text-muted-foreground leading-relaxed">Customize your store's Home, About Us, and Contact Us pages.</p>
-              <Button onClick={() => router.push('/pages')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Manage Pages</Button>
+              <Button onClick={() => router.push('/pages')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Customize Store</Button>
             </CardContent>
           </Card>
 
