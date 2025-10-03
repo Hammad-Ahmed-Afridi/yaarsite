@@ -6,7 +6,7 @@ import { useSession } from '@/components/session-context-provider';
 import { AppLoader } from '@/components/app-loader';
 
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
-  const { user, isLoading: isSessionLoading } = useSession();
+  const { user, isLoading: isSessionLoading, isSigningOut } = useSession(); // Get isSigningOut
   const router = useRouter();
   const pathname = usePathname();
 
@@ -14,12 +14,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
 
   const [isReadyToRender, setIsReadyToRender] = useState(false);
-  const prevUserRef = useRef(user); // Track previous user state
-
-  useEffect(() => {
-    // Update prevUserRef *before* any state changes are processed in the next render
-    prevUserRef.current = user;
-  }, [user]);
+  // No longer need prevUserRef for this specific logic, as isSigningOut is more direct.
 
   useEffect(() => {
     if (isSessionLoading) {
@@ -27,35 +22,28 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // Determine if the user was authenticated in the *previous* render cycle
-    const wasUserPreviouslyAuthenticated = !!prevUserRef.current;
-
     if (user) {
       // User is currently authenticated
       if (pathname === '/signup') {
-        // Allow signup page to render for authenticated users (e.g., after successful signup before redirect)
         setIsReadyToRender(true);
       } else if (pathname === '/login' || pathname === '/landing') {
-        // Authenticated user on a public auth/landing page, redirect to dashboard
         router.push('/');
-        setIsReadyToRender(false); // Keep loader visible until redirect completes
+        setIsReadyToRender(false);
       } else {
-        // Authenticated user on a protected page or already on dashboard
         setIsReadyToRender(true);
       }
     } else {
       // User is NOT currently authenticated
-      if (pathname === '/') {
-        if (wasUserPreviouslyAuthenticated) {
-          // User just signed out from the dashboard (pathname was '/' and user was previously authenticated).
-          // Explicitly redirect to login to ensure the correct behavior.
-          router.push('/login');
-          setIsReadyToRender(false);
-        } else {
-          // Initial unauthenticated access to root, redirect to landing page
-          router.push('/landing');
-          setIsReadyToRender(false);
-        }
+      if (isSigningOut) {
+        // If a sign-out was just initiated, we are expecting a redirect to /login.
+        // Keep loader visible until that redirect completes.
+        setIsReadyToRender(false);
+        // The DashboardPage's handleSignOut already calls router.push('/login').
+        // We don't need to call it again here, just prevent rendering anything else.
+      } else if (pathname === '/') {
+        // Initial unauthenticated access to root, redirect to landing page
+        router.push('/landing');
+        setIsReadyToRender(false);
       } else if (!isPublicPath) {
         // Unauthenticated user on any other protected path, redirect to login
         router.push('/login');
@@ -65,7 +53,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         setIsReadyToRender(true);
       }
     }
-  }, [user, isSessionLoading, pathname, router, isPublicPath]);
+  }, [user, isSessionLoading, isSigningOut, pathname, router, isPublicPath]);
 
   // If not ready to render, show the full-screen loader
   if (!isReadyToRender) {

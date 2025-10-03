@@ -17,7 +17,7 @@ import { AppLoader } from "@/components/app-loader";
 import { ConfettiEffect } from '@/components/confetti-effect'; // Import ConfettiEffect
 
 export default function DashboardPage() {
-  const { user, profile, isLoading: isSessionLoading } = useSession();
+  const { user, profile, isLoading: isSessionLoading, initiateSignOut } = useSession(); // Get initiateSignOut
   const router = useRouter();
   const pathname = usePathname();
 
@@ -95,15 +95,14 @@ export default function DashboardPage() {
 
   const handleSignOut = async () => {
     console.log("Dashboard Page: Attempting to sign out.");
-    
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error("Dashboard Page: Error during sign out:", error);
-      toast.error("Failed to sign out. Please try again.");
-    } else {
+    try {
+      await initiateSignOut(); // Use the new initiateSignOut function
       console.log("Dashboard Page: Sign out successful. Explicitly redirecting to /login.");
       toast.success("Signed out successfully!");
-      router.push('/login');
+      router.push('/login'); // Still push to /login here
+    } catch (error) {
+      console.error("Dashboard Page: Error during sign out:", error);
+      toast.error("Failed to sign out. Please try again.");
     }
   };
 

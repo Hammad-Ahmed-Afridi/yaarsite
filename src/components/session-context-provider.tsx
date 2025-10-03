@@ -32,7 +32,9 @@ interface SessionContextType {
   user: User | null;
   profile: Profile | null;
   isLoading: boolean;
+  isSigningOut: boolean; // New: state to indicate if a sign-out is in progress
   refreshProfile: () => Promise<void>;
+  initiateSignOut: () => Promise<void>; // New: function to initiate sign-out
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
@@ -44,6 +46,7 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSigningOut, setIsSigningOut] = useState(false); // Initialize new state
 
   const fetchUserProfile = useCallback(async (userId: string) => {
     console.log("SessionContext: Fetching profile for user:", userId);
@@ -73,6 +76,11 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       setProfile(null);
     }
     setIsLoading(false);
+    // Reset isSigningOut when the SIGNED_OUT event is processed
+    if (event === 'SIGNED_OUT') {
+      setIsSigningOut(false);
+      console.log("SessionContext: SIGNED_OUT event processed, isSigningOut set to false.");
+    }
     console.log("SessionContext: isLoading set to false after auth state change.");
   }, [fetchUserProfile]);
 
@@ -82,6 +90,17 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       setProfile(updatedProfile);
     }
   }, [user, fetchUserProfile]);
+
+  const initiateSignOut = useCallback(async () => {
+    setIsSigningOut(true); // Set flag when sign-out is initiated
+    console.log("SessionContext: initiateSignOut called, isSigningOut set to true.");
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("SessionContext: Error during signOut:", error);
+      setIsSigningOut(false); // Reset on error
+      throw error; // Re-throw to be handled by caller
+    }
+  }, []);
 
   useEffect(() => {
     console.log("SessionContext: useEffect running.");
@@ -103,18 +122,18 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
     inactivityTimeoutMs: INACTIVITY_TIMEOUT_MS,
     onLogout: async () => {
       console.log("SessionContext: Inactivity detected, logging out...");
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error("SessionContext: Error during inactivity logout:", error);
-      } else {
+      try {
+        await initiateSignOut(); // Use the new initiateSignOut
         console.log("SessionContext: Successfully logged out due to inactivity.");
+      } catch (error) {
+        console.error("SessionContext: Error during inactivity logout:", error);
       }
     },
     enabled: !!user,
   });
 
   return (
-    <SessionContext.Provider value={{ session, user, profile, isLoading, refreshProfile }}>
+    <SessionContext.Provider value={{ session, user, profile, isLoading, isSigningOut, refreshProfile, initiateSignOut }}>
       {children}
     </SessionContext.Provider>
   );

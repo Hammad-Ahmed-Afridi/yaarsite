@@ -6,12 +6,12 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Store, LogOut, LayoutDashboard, Globe } from 'lucide-react'; // Import Globe icon
-import { Profile } from '@/components/session-context-provider';
+import { Profile, useSession } from '@/components/session-context-provider'; // Import useSession
 
 
 interface DashboardHeaderProps {
   profile: Profile | null;
-  onSignOut: () => void;
+  onSignOut: () => void; // This prop will now call the initiateSignOut from context
   showBackButton?: boolean;
   currentPath?: string; // Optional: to determine if back button should go to dashboard
 }
