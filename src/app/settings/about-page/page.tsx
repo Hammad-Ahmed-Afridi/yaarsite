@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { useSession, ProfileImageKey } from '@/components/session-context-provider'; // Import ProfileImageKey
+import { useSession, ProfileImageKey } from '@/components/session-context-provider';
 import { compressImage } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -72,6 +72,7 @@ export default function AboutPageSettingsPage() {
     setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>,
     setPreview: React.Dispatch<React.SetStateAction<string | null>>,
     formFieldName: keyof z.infer<typeof formSchema>,
+    bucketName: 'store-logos' | 'store-content-images', // Added bucketName
     imageType: string
   ) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -108,8 +109,9 @@ export default function AboutPageSettingsPage() {
     currentImageUrl: string | null,
     setPreview: React.Dispatch<React.SetStateAction<string | null>>,
     setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>,
+    bucketName: 'store-logos' | 'store-content-images', // Added bucketName
     imageType: string,
-    dbFieldName: ProfileImageKey // Use the new type here
+    dbFieldName: ProfileImageKey
   ) => {
     if (!user) return;
 
@@ -119,7 +121,7 @@ export default function AboutPageSettingsPage() {
         const path = currentImageUrl.split('store-content-images/')[1];
         if (path) {
           const { error: deleteStorageError } = await supabase.storage
-            .from('store-content-images')
+            .from(bucketName) // Use bucketName here
             .remove([path]);
 
           if (deleteStorageError) {

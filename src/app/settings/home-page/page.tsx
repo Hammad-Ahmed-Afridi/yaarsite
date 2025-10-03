@@ -5,10 +5,10 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import *s z from 'zod';
+import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { useSession, ProfileImageKey } from '@/components/session-context-provider'; // Import ProfileImageKey
+import { useSession, ProfileImageKey } from '@/components/session-context-provider';
 import { compressImage } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -84,6 +84,7 @@ export default function HomePageSettingsPage() {
     setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>,
     setPreview: React.Dispatch<React.SetStateAction<string | null>>,
     formFieldName: keyof z.infer<typeof formSchema>,
+    bucketName: 'store-logos' | 'store-content-images', // Added bucketName
     imageType: string
   ) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -120,8 +121,9 @@ export default function HomePageSettingsPage() {
     currentImageUrl: string | null,
     setPreview: React.Dispatch<React.SetStateAction<string | null>>,
     setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>,
+    bucketName: 'store-logos' | 'store-content-images', // Added bucketName
     imageType: string,
-    dbFieldName: ProfileImageKey // Use the new type here
+    dbFieldName: ProfileImageKey
   ) => {
     if (!user) return;
 
@@ -131,7 +133,7 @@ export default function HomePageSettingsPage() {
         const path = currentImageUrl.split('store-content-images/')[1];
         if (path) {
           const { error: deleteStorageError } = await supabase.storage
-            .from('store-content-images')
+            .from(bucketName) // Use bucketName here
             .remove([path]);
 
           if (deleteStorageError) {
@@ -330,7 +332,7 @@ export default function HomePageSettingsPage() {
                         variant="destructive"
                         size="icon"
                         className="absolute top-1 right-1 h-6 w-6 rounded-full"
-                        onClick={() => handleRemoveImage(profile?.home_page_hero_image_url ?? null, setHomePageHeroImagePreview, setSelectedHomePageHeroImageFile, 'home page hero image', 'home_page_hero_image_url')}
+                        onClick={() => handleRemoveImage(profile?.home_page_hero_image_url ?? null, setHomePageHeroImagePreview, setSelectedHomePageHeroImageFile, 'store-content-images', 'home page hero image', 'home_page_hero_image_url')}
                         disabled={isUpdating}
                       >
                         <X className="h-3 w-3" />
@@ -347,7 +349,7 @@ export default function HomePageSettingsPage() {
                       type="file"
                       accept="image/jpeg,image/jpg,image/png,image/webp"
                       className="hidden"
-                      onChange={(e) => handleImageChange(e, setSelectedHomePageHeroImageFile, setHomePageHeroImagePreview, "homePageHeroImage", 'home page hero image')}
+                      onChange={(e) => handleImageChange(e, setSelectedHomePageHeroImageFile, setHomePageHeroImagePreview, "homePageHeroImage", 'store-content-images', 'home page hero image')}
                       disabled={isUpdating}
                     />
                     <Button asChild variant="outline" className="w-full font-semibold" disabled={isUpdating}>
@@ -379,7 +381,7 @@ export default function HomePageSettingsPage() {
                         variant="destructive"
                         size="icon"
                         className="absolute top-1 right-1 h-6 w-6 rounded-full"
-                        onClick={() => handleRemoveImage(profile?.home_page_content_image_url ?? null, setHomePageContentImagePreview, setSelectedHomePageContentImageFile, 'home page content image', 'home_page_content_image_url')}
+                        onClick={() => handleRemoveImage(profile?.home_page_content_image_url ?? null, setHomePageContentImagePreview, setSelectedHomePageContentImageFile, 'store-content-images', 'home page content image', 'home_page_content_image_url')}
                         disabled={isUpdating}
                       >
                         <X className="h-3 w-3" />
@@ -396,7 +398,7 @@ export default function HomePageSettingsPage() {
                       type="file"
                       accept="image/jpeg,image/jpg,image/png,image/webp"
                       className="hidden"
-                      onChange={(e) => handleImageChange(e, setSelectedHomePageContentImageFile, setHomePageContentImagePreview, "homePageContentImage", 'home page content image')}
+                      onChange={(e) => handleImageChange(e, setSelectedHomePageContentImageFile, setHomePageContentImagePreview, "homePageContentImage", 'store-content-images', 'home page content image')}
                       disabled={isUpdating}
                     />
                     <Button asChild variant="outline" className="w-full font-semibold" disabled={isUpdating}>
