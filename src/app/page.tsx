@@ -128,7 +128,7 @@ export default function DashboardPage() {
         <div className="flex justify-center mb-4">
           <ScrollHintArrow />
         </div>
-        <div className="grid gap-6 grid-cols-2"> {/* Changed to grid-cols-2 for all screen sizes */}
+        <div className="grid gap-6 grid-cols-2"> {/* Analytics cards always 2 in a row */}
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-base font-medium">Total Products</CardTitle>
@@ -149,11 +149,10 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          {/* New Card for New Orders - moved before Total Profit */}
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-base font-medium">New Orders</CardTitle>
-              <BellRing className="h-4 w-4 text-muted-foreground" /> {/* Changed color to text-muted-foreground */}
+              <BellRing className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{newOrders}</div>
@@ -169,7 +168,10 @@ export default function DashboardPage() {
               <div className="text-2xl font-bold">Rs{totalProfit.toFixed(2)}</div>
             </CardContent>
           </Card>
+        </div>
 
+        {/* Action cards always 2 in a row */}
+        <div className="grid gap-6 grid-cols-2 mt-6">
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Store className="h-6 w-6 text-primary" />
@@ -203,18 +205,6 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
           
-          {/* New Card for Get Free Domain */}
-          <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
-            <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
-              <Globe className="h-6 w-6 text-blue-500" />
-              <CardTitle className="text-xl font-semibold">Free Domain</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-base text-muted-foreground leading-relaxed">Claim a custom domain for your store</p>
-              <Button onClick={() => router.push('/free-domain')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Free Domain</Button>
-            </CardContent>
-          </Card>
-
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Settings className="h-6 w-6 text-yellow-500" />
@@ -223,6 +213,17 @@ export default function DashboardPage() {
             <CardContent className="space-y-4">
               <p className="text-base text-muted-foreground leading-relaxed">Customize your store</p>
               <Button onClick={() => router.push('/settings')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Customize</Button>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
+            <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
+              <Globe className="h-6 w-6 text-blue-500" />
+              <CardTitle className="text-xl font-semibold">Free Domain</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-base text-muted-foreground leading-relaxed">Claim a custom domain for your store</p>
+              <Button onClick={() => router.push('/free-domain')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Free Domain</Button>
             </CardContent>
           </Card>
         </div>
