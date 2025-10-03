@@ -75,14 +75,14 @@ export default function DashboardPage() {
     }
   }, [isSessionLoading, user, fetchDashboardData]);
 
-  // Effect to check for confetti trigger from local storage
-  useEffect(() => {
-    const confettiTrigger = localStorage.getItem('showConfettiAfterStoreCreation');
-    if (confettiTrigger === 'true') {
-      setShowConfetti(true);
-      localStorage.removeItem('showConfettiAfterStoreCreation'); // Clear the flag
-    }
-  }, []);
+  // No longer checking local storage here, direct state update from dialog
+  // useEffect(() => {
+  //   const confettiTrigger = localStorage.getItem('showConfettiAfterStoreCreation');
+  //   if (confettiTrigger === 'true') {
+  //     setShowConfetti(true);
+  //     localStorage.removeItem('showConfettiAfterStoreCreation'); // Clear the flag
+  //   }
+  // }, []);
 
   if (isSessionLoading || isLoadingDashboardData) {
     return (
@@ -117,7 +117,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      {profile?.tenant_name === null && <StoreSetupDialog />}
+      {profile?.tenant_name === null && <StoreSetupDialog onStoreCreated={() => setShowConfetti(true)} />}
       <InactivityWarningBanner />
       <ConfettiEffect run={showConfetti} /> {/* Render confetti effect here */}
 

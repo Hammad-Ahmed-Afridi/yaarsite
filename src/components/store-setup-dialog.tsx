@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import *s z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
@@ -23,19 +23,21 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Store, Sparkles } from 'lucide-react'; // Import Sparkles for toast
 import { AppLoader } from '@/components/app-loader';
-// Removed ConfettiEffect import as it's no longer rendered here
 
 const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
   storeDescription: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
 });
 
-export function StoreSetupDialog() {
+interface StoreSetupDialogProps {
+  onStoreCreated: () => void; // New prop: callback to trigger confetti
+}
+
+export function StoreSetupDialog({ onStoreCreated }: StoreSetupDialogProps) {
   const router = useRouter();
   const { user, profile, refreshProfile } = useSession();
   const [isBuildingStore, setIsBuildingStore] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  // Removed showConfetti state
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -140,8 +142,8 @@ export function StoreSetupDialog() {
         { duration: 5000 }
       );
       
-      // Set flag in local storage to trigger confetti on dashboard
-      localStorage.setItem('showConfettiAfterStoreCreation', 'true');
+      // Trigger confetti on the dashboard
+      onStoreCreated();
 
       // Refresh profile data in context
       if (refreshProfile) {
@@ -161,7 +163,6 @@ export function StoreSetupDialog() {
 
   return (
     <>
-      {/* ConfettiEffect is no longer rendered here */}
       <Dialog open={isDialogOpen}>
         <DialogContent
           className="w-full max-w-md p-6 font-sans"
