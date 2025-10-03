@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSession } from '@/components/session-context-provider';
 import { AppLoader } from '@/components/app-loader';
@@ -14,6 +14,12 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
 
   const [isReadyToRender, setIsReadyToRender] = useState(false);
+  const prevUserRef = useRef(user); // Track previous user state
+
+  useEffect(() => {
+    // Update prevUserRef *before* any state changes are processed in the next render
+    prevUserRef.current = user;
+  }, [user]);
 
   useEffect(() => {
     if (isSessionLoading) {
@@ -21,10 +27,13 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    // Determine if the user was authenticated in the *previous* render cycle
+    const wasUserPreviouslyAuthenticated = !!prevUserRef.current;
+
     if (user) {
-      // User is authenticated
-      // Special case: If on signup page, allow it to render (to show success message and then sign out)
+      // User is currently authenticated
       if (pathname === '/signup') {
+        // Allow signup page to render for authenticated users (e.g., after successful signup before redirect)
         setIsReadyToRender(true);
       } else if (pathname === '/login' || pathname === '/landing') {
         // Authenticated user on a public auth/landing page, redirect to dashboard
@@ -35,13 +44,19 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         setIsReadyToRender(true);
       }
     } else {
-      // User is NOT authenticated
+      // User is NOT currently authenticated
       if (pathname === '/') {
-        // If unauthenticated user tries to access the root, redirect to landing page
-        router.push('/landing');
-        setIsReadyToRender(false);
+        if (wasUserPreviouslyAuthenticated) {
+          // User just signed out from the dashboard (pathname was '/' and user was previously authenticated)
+          router.push('/login');
+          setIsReadyToRender(false);
+        } else {
+          // Initial unauthenticated access to root, redirect to landing page
+          router.push('/landing');
+          setIsReadyToRender(false);
+        }
       } else if (!isPublicPath) {
-        // If unauthenticated user tries to access any other protected path, redirect to login
+        // Unauthenticated user on any other protected path, redirect to login
         router.push('/login');
         setIsReadyToRender(false);
       } else {
