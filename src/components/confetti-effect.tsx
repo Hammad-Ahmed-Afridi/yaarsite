@@ -29,21 +29,22 @@ export function ConfettiEffect({ run, duration = 5000 }: ConfettiEffectProps) {
   if (!shouldRenderConfetti) return null;
 
   return (
-    <Confetti
-      width={width}
-      height={height}
-      recycle={false}
-      numberOfPieces={1000} // Increased for maximum visibility
-      gravity={0.1}
-      initialVelocityY={-5}
-      confettiSource={{
-        x: width / 2,
-        y: height / 2,
-        w: width,
-        h: height,
-      }}
-      colors={['#6366F1', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981']}
-      canvasProps={{ style: { zIndex: 9999 } }} // Apply z-index directly to the canvas
-    />
+    <div className="fixed inset-0 z-[9999]"> {/* Wrapper div with high z-index */}
+      <Confetti
+        width={width}
+        height={height}
+        recycle={false}
+        numberOfPieces={1000} // Increased for maximum visibility
+        gravity={0.1}
+        initialVelocityY={-5}
+        confettiSource={{
+          x: width / 2,
+          y: height / 2,
+          w: width,
+          h: height,
+        }}
+        colors={['#6366F1', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981']}
+      />
+    </div>
   );
 }
