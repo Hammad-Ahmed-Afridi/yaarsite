@@ -47,9 +47,11 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       // User is NOT currently authenticated
       if (pathname === '/') {
         if (wasUserPreviouslyAuthenticated) {
-          // User just signed out from the dashboard (pathname was '/' and user was previously authenticated)
-          router.push('/login');
-          setIsReadyToRender(false);
+          // User just signed out from the dashboard (pathname was '/' and user was previously authenticated).
+          // The DashboardHeader's onSignOut already calls router.push('/login').
+          // We just need to ensure we don't render anything until that redirect takes effect,
+          // and crucially, we must NOT redirect to /landing here.
+          setIsReadyToRender(false); // Keep loader visible until redirect completes
         } else {
           // Initial unauthenticated access to root, redirect to landing page
           router.push('/landing');
