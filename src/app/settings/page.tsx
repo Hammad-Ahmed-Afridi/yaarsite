@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import *s z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
@@ -293,7 +293,7 @@ export default function SettingsPage() {
         <Card className="w-full max-w-2xl bg-card text-card-foreground shadow-lg rounded-3xl">
           <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">
             <Settings className="h-6 w-6 text-primary" />
-            <CardTitle className="text-2xl font-bold tracking-tight">Store Customization</CardTitle>
+            <CardTitle className="text-2xl font-bold tracking-tight">Customize Store</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

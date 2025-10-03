@@ -208,7 +208,7 @@ export default function DashboardPage() {
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Settings className="h-6 w-6 text-yellow-500" />
-              <CardTitle className="text-xl font-semibold">Store Customization</CardTitle>
+              <CardTitle className="text-xl font-semibold">Customize Store</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-base text-muted-foreground leading-relaxed">Customize your store</p>
