@@ -10,7 +10,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Package, ShoppingCart, DollarSign, Store, Settings, Globe, BellRing, LayoutDashboard } from "lucide-react"; // Import LayoutDashboard for Pages
 import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
-import { InactivityWarningBanner } from "@/components/inactivity-warning-banner";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { ScrollHintArrow } from "@/components/scroll-hint-arrow";
 import { AppLoader } from "@/components/app-loader";
@@ -106,10 +105,10 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       {profile?.tenant_name === null && <StoreSetupDialog onStoreCreated={() => setShowConfetti(true)} />}
-      <InactivityWarningBanner />
+      {/* InactivityWarningBanner removed from here, now in layout.tsx */}
       <ConfettiEffect run={showConfetti} />
 
-      <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} /> {/* Removed showBackButton and currentPath */}
 
       <main className="flex-1 px-8 pt-4 pb-8">
         <div className="flex justify-center mb-4">

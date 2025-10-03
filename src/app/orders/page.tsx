@@ -9,23 +9,24 @@ import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MoreHorizontal, Trash2, Edit, ShoppingCart } from 'lucide-react';
+import { MoreHorizontal, Trash2, Edit, ShoppingCart, ArrowLeft } from 'lucide-react'; // Import ArrowLeft
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { DashboardHeader } from '@/components/dashboard-header';
-import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
-import { AppLoader } from '@/components/app-loader'; // Import AppLoader
+import { useIsMobile } from '@/hooks/use-mobile';
+import { AppLoader } from '@/components/app-loader';
+import Link from 'next/link'; // Import Link
 
 interface Order {
   id: string;
   user_id: string;
-  customer_name: string; // New field
+  customer_name: string;
   customer_email: string;
-  customer_phone: string; // New field
-  shipping_province: string; // New field
-  shipping_city: string; // New field
-  shipping_address_line: string; // New field
+  customer_phone: string;
+  shipping_province: string;
+  shipping_city: string;
+  shipping_address_line: string;
   total_amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   items_json: any[];
@@ -39,7 +40,7 @@ export default function OrdersPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
   const router = useRouter();
   const pathname = usePathname();
-  const isMobile = useIsMobile(); // Use the hook
+  const isMobile = useIsMobile();
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
@@ -125,10 +126,15 @@ export default function OrdersPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      <DashboardHeader profile={profile} onSignOut={handleSignOut} currentPath={pathname} />
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} /> {/* Removed currentPath */}
 
       <main className="flex-1 p-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3 mb-6">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/">
+              <ArrowLeft className="h-5 w-5" />
+            </Link>
+          </Button>
           <h2 className="text-2xl font-bold tracking-tight">Order Management</h2>
         </div>
 

@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Package, Trash2 } from 'lucide-react';
+import { Plus, Package, Trash2, ArrowLeft } from 'lucide-react'; // Import ArrowLeft
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -11,7 +11,7 @@ import { AddProductDialog } from '@/components/add-product-dialog';
 import { EditProductDialog } from '@/components/edit-product-dialog';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
-import { useRouter, usePathname } from 'next/navigation'; // Import usePathname
+import { useRouter, usePathname } from 'next/navigation';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,8 +23,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { DashboardHeader } from '@/components/dashboard-header'; // Import DashboardHeader
-import { AppLoader } from '@/components/app-loader'; // Import AppLoader
+import { DashboardHeader } from '@/components/dashboard-header';
+import { AppLoader } from '@/components/app-loader';
+import Link from 'next/link'; // Import Link
 
 interface Product {
   id: string;
@@ -42,7 +43,7 @@ const PRODUCT_LIMIT = 3;
 export default function ProductsPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
   const router = useRouter();
-  const pathname = usePathname(); // Get current pathname
+  const pathname = usePathname();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
@@ -135,19 +136,26 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      <DashboardHeader profile={profile} onSignOut={handleSignOut} currentPath={pathname} />
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} /> {/* Removed currentPath */}
 
       <main className="flex-1 p-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3 mb-6">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/">
+              <ArrowLeft className="h-5 w-5" />
+            </Link>
+          </Button>
           <h2 className="text-2xl font-bold tracking-tight">Product Management</h2>
+        </div>
+        <div className="flex items-center justify-between mb-6">
+          <p className="text-muted-foreground text-base leading-relaxed">
+            {products.length}/{PRODUCT_LIMIT} products used
+            {isAddProductDisabled && (
+              <span className="ml-2 text-destructive"> (Maximum limit reached)</span>
+            )}
+          </p>
           <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
         </div>
-        <p className="text-muted-foreground text-base leading-relaxed mb-6">
-          {products.length}/{PRODUCT_LIMIT} products used
-          {isAddProductDisabled && (
-            <span className="ml-2 text-destructive"> (Maximum limit reached)</span>
-          )}
-        </p>
 
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-3xl p-8">

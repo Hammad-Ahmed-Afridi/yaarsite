@@ -12,28 +12,16 @@ import { Profile, useSession } from '@/components/session-context-provider';
 interface DashboardHeaderProps {
   profile: Profile | null;
   onSignOut: () => void;
-  showBackButton?: boolean;
-  currentPath?: string;
+  // Removed showBackButton and currentPath props
 }
 
-export function DashboardHeader({ profile, onSignOut, showBackButton = true, currentPath }: DashboardHeaderProps) {
-  const isDashboardRoot = currentPath === '/';
-  
-  // The back button should always go to the main dashboard (/) unless explicitly hidden.
-  // The main dashboard itself (src/app/page.tsx) sets showBackButton={false},
-  // so this logic applies to all other pages where the back button is displayed.
-  const backButtonHref = '/'; 
+export function DashboardHeader({ profile, onSignOut }: DashboardHeaderProps) {
+  // Removed isDashboardRoot and backButtonHref logic
 
   return (
     <header className="flex items-center justify-between p-4 border-b border-border bg-card font-sans">
       <div className="flex items-center space-x-4">
-        {showBackButton && !isDashboardRoot && (
-          <Button variant="ghost" size="icon" asChild>
-            <Link href={backButtonHref}>
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-        )}
+        {/* Removed back button from here */}
         {profile?.avatar_url ? (
           <div className="relative h-8 w-8 rounded-full overflow-hidden">
             <Image

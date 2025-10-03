@@ -5,6 +5,7 @@ import { SessionContextProvider } from "@/components/session-context-provider";
 import { CartContextProvider } from "@/components/cart-context-provider";
 import { AuthWrapper } from '@/components/auth-wrapper';
 import { Toaster } from 'sonner'; // Import Toaster
+import { InactivityWarningBanner } from "@/components/inactivity-warning-banner"; // Import InactivityWarningBanner
 
 
 const geistSans = Geist({
@@ -57,6 +58,7 @@ export default function RootLayout({
           <SessionContextProvider>
             <CartContextProvider>
               <AuthWrapper>
+                <InactivityWarningBanner /> {/* Moved here */}
                 {children}
               </AuthWrapper>
             </CartContextProvider>

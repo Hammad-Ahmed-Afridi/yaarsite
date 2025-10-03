@@ -297,13 +297,13 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      <DashboardHeader profile={profile} onSignOut={handleSignOut} currentPath={pathname} />
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} /> {/* Removed currentPath */}
 
       <main className="flex-1 p-8 flex justify-center">
         <Card className="w-full max-w-2xl bg-card text-card-foreground shadow-lg rounded-3xl">
           <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">
             <Button variant="ghost" size="icon" asChild>
-              <Link href="/pages">
+              <Link href="/"> {/* Changed href to dashboard root */}
                 <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>
@@ -403,7 +403,7 @@ export default function SettingsPage() {
                         disabled={isUpdatingStore}
                       />
                       <Button asChild variant="outline" className="w-full font-semibold" disabled={isUpdatingStore}>
-                        <span>{logoPreview || profile?.avatar_url ? "Change Logo" : "Upload Logo"}</span>
+                        <span>{logoPreview || profile?.avatar_url ? "Change Image" : "Upload Image"}</span>
                       </Button>
                     </Label>
                   </div>

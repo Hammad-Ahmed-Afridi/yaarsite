@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Home, Info, Mail, LayoutDashboard } from 'lucide-react';
+import { Home, Info, Mail, LayoutDashboard, ArrowLeft } from 'lucide-react'; // Import ArrowLeft
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -45,11 +45,18 @@ export default function PagesPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      <DashboardHeader profile={profile} onSignOut={handleSignOut} currentPath={pathname} />
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} /> {/* Removed currentPath */}
 
       <main className="flex-1 p-8 flex justify-center">
         <div className="w-full max-w-2xl">
-          <h2 className="text-2xl font-bold tracking-tight mb-6">Customize Your Store Pages</h2>
+          <div className="flex items-center gap-3 mb-6">
+            <Button variant="ghost" size="icon" asChild>
+              <Link href="/">
+                <ArrowLeft className="h-5 w-5" />
+              </Link>
+            </Button>
+            <h2 className="text-2xl font-bold tracking-tight">Customize Your Store Pages</h2>
+          </div>
           <div className="grid gap-6 grid-cols-2">
             <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
               <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
