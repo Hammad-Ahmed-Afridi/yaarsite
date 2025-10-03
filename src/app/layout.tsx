@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Yaarsite - Easy Store Builder",
-  description: "Yaarsite helps you launch professional, beautiful websites in seconds. Easy, fast, and perfect for any e-commerce seller.",
+  title: "Yaarsite - Build Your Store In Seconds",
+  description: "Yaarsite helps you launch professional, beautiful stores in seconds. Easy, fast, and perfect for any e-commerce seller.",
   robots: "index, follow",
   authors: [{ name: "Hammad Ahmed Afridi" }],
   icons: {
