@@ -50,7 +50,7 @@ export default function PagesPage() {
       <main className="flex-1 p-8 flex justify-center">
         <div className="w-full max-w-2xl">
           <h2 className="text-2xl font-bold tracking-tight mb-6">Manage Your Store Pages</h2>
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 grid-cols-2"> {/* Changed from md:grid-cols-2 to grid-cols-2 */}
             <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
               <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
                 <Home className="h-6 w-6 text-blue-500" />

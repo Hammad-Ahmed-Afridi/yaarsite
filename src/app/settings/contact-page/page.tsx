@@ -17,7 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Mail, Image as ImageIcon, X, Loader2, ArrowLeft } from 'lucide-react';
+import { Mail, Image as ImageIcon, X, Loader2, ArrowLeft, Phone, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { AppLoader } from '@/components/app-loader';
@@ -29,6 +29,14 @@ const formSchema = z.object({
   contactPageHeading: z.string().max(100, { message: "Contact page heading cannot exceed 100 characters." }).optional(),
   contactPageDescription: z.string().max(500, { message: "Contact page description cannot exceed 500 characters." }).optional(),
   contactPageHeroImage: z.instanceof(File).optional(),
+  email: z.string().email({ message: "Please enter a valid email address." }).optional().or(z.literal('')),
+  phoneNumber: z.string()
+    .regex(/^03\d{9}$/, { message: "Phone number must start with 03 and be 11 digits long." })
+    .optional()
+    .or(z.literal('')),
+  storeAddressLine: z.string().max(200, { message: "Address line cannot exceed 200 characters." }).optional().or(z.literal('')),
+  storeCity: z.string().max(100, { message: "City cannot exceed 100 characters." }).optional().or(z.literal('')),
+  storeProvince: z.string().max(100, { message: "Province cannot exceed 100 characters." }).optional().or(z.literal('')),
 });
 
 export default function ContactPageSettingsPage() {
@@ -46,6 +54,11 @@ export default function ContactPageSettingsPage() {
       contactPageHeading: "",
       contactPageDescription: "",
       contactPageHeroImage: undefined,
+      email: "",
+      phoneNumber: "",
+      storeAddressLine: "",
+      storeCity: "",
+      storeProvince: "",
     },
   });
 
@@ -55,6 +68,11 @@ export default function ContactPageSettingsPage() {
         contactPageHeading: profile.contact_page_heading || "",
         contactPageDescription: profile.contact_page_description || "",
         contactPageHeroImage: undefined,
+        email: profile.email || "",
+        phoneNumber: profile.phone_number || "",
+        storeAddressLine: profile.store_address_line || "",
+        storeCity: profile.store_city || "",
+        storeProvince: profile.store_province || "",
       });
       setContactPageHeroImagePreview(profile.contact_page_hero_image_url || null);
     }
@@ -75,7 +93,7 @@ export default function ContactPageSettingsPage() {
     setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>,
     setPreview: React.Dispatch<React.SetStateAction<string | null>>,
     formFieldName: keyof z.infer<typeof formSchema>,
-    bucketName: 'store-logos' | 'store-content-images', // Added bucketName
+    bucketName: 'store-logos' | 'store-content-images',
     imageType: string
   ) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -112,7 +130,7 @@ export default function ContactPageSettingsPage() {
     currentImageUrl: string | null,
     setPreview: React.Dispatch<React.SetStateAction<string | null>>,
     setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>,
-    bucketName: 'store-logos' | 'store-content-images', // Added bucketName
+    bucketName: 'store-logos' | 'store-content-images',
     imageType: string,
     dbFieldName: ProfileImageKey
   ) => {
@@ -124,7 +142,7 @@ export default function ContactPageSettingsPage() {
         const path = currentImageUrl.split('store-content-images/')[1];
         if (path) {
           const { error: deleteStorageError } = await supabase.storage
-            .from(bucketName) // Use bucketName here
+            .from(bucketName)
             .remove([path]);
 
           if (deleteStorageError) {
@@ -222,6 +240,11 @@ export default function ContactPageSettingsPage() {
           contact_page_heading: values.contactPageHeading || null,
           contact_page_description: values.contactPageDescription || null,
           contact_page_hero_image_url: newContactPageHeroImageUrl,
+          email: values.email || null,
+          phone_number: values.phoneNumber || null,
+          store_address_line: values.storeAddressLine || null,
+          store_city: values.storeCity || null,
+          store_province: values.storeProvince || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -345,6 +368,87 @@ export default function ContactPageSettingsPage() {
                 {form.formState.errors.contactPageDescription && (
                   <p className="text-destructive text-sm">{form.formState.errors.contactPageDescription.message}</p>
                 )}
+              </div>
+
+              <div className="space-y-6">
+                <h3 className="text-xl font-semibold tracking-tight">Contact Information</h3>
+                <div className="grid gap-2">
+                  <Label htmlFor="email" className="text-sm font-medium">Store Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="your.store@example.com"
+                      className="pl-10"
+                      {...form.register("email")}
+                    />
+                  </div>
+                  {form.formState.errors.email && (
+                    <p className="text-destructive text-sm">{form.formState.errors.email.message}</p>
+                  )}
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="phoneNumber" className="text-sm font-medium">Store Phone Number</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="phoneNumber"
+                      type="tel"
+                      placeholder="03001234567"
+                      className="pl-10"
+                      {...form.register("phoneNumber")}
+                    />
+                  </div>
+                  {form.formState.errors.phoneNumber && (
+                    <p className="text-destructive text-sm">{form.formState.errors.phoneNumber.message}</p>
+                  )}
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="storeAddressLine" className="text-sm font-medium">Store Address Line</Label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="storeAddressLine"
+                      type="text"
+                      placeholder="House #123, Street 4"
+                      className="pl-10"
+                      {...form.register("storeAddressLine")}
+                    />
+                  </div>
+                  {form.formState.errors.storeAddressLine && (
+                    <p className="text-destructive text-sm">{form.formState.errors.storeAddressLine.message}</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="storeCity" className="text-sm font-medium">Store City</Label>
+                    <Input
+                      id="storeCity"
+                      type="text"
+                      placeholder="Lahore"
+                      {...form.register("storeCity")}
+                    />
+                    {form.formState.errors.storeCity && (
+                      <p className="text-destructive text-sm">{form.formState.errors.storeCity.message}</p>
+                    )}
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="storeProvince" className="text-sm font-medium">Store Province</Label>
+                    <Input
+                      id="storeProvince"
+                      type="text"
+                      placeholder="Punjab"
+                      {...form.register("storeProvince")}
+                    />
+                    {form.formState.errors.storeProvince && (
+                      <p className="text-destructive text-sm">{form.formState.errors.storeProvince.message}</p>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <Button type="submit" className="w-full font-semibold" disabled={isUpdating}>
