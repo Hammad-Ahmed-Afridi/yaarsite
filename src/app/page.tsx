@@ -105,10 +105,9 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       {profile?.tenant_name === null && <StoreSetupDialog onStoreCreated={() => setShowConfetti(true)} />}
-      {/* InactivityWarningBanner removed from here, now in layout.tsx */}
       <ConfettiEffect run={showConfetti} />
 
-      <DashboardHeader profile={profile} onSignOut={handleSignOut} /> {/* Removed showBackButton and currentPath */}
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} />
 
       <main className="flex-1 px-8 pt-4 pb-8">
         <div className="flex justify-center mb-4">
