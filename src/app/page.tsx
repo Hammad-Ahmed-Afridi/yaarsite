@@ -128,7 +128,7 @@ export default function DashboardPage() {
         <div className="flex justify-center mb-4">
           <ScrollHintArrow />
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Changed to grid-cols-2 for mobile */}
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-base font-medium">Total Products</CardTitle>
@@ -149,17 +149,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-base font-medium">Total Profit (Rs)</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">Rs{totalProfit.toFixed(2)}</div>
-            </CardContent>
-          </Card>
-
-          {/* New Card for New Orders */}
+          {/* New Card for New Orders - moved before Total Profit */}
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-base font-medium">New Orders</CardTitle>
@@ -167,6 +157,16 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{newOrders}</div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-base font-medium">Total Profit (Rs)</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">Rs{totalProfit.toFixed(2)}</div>
             </CardContent>
           </Card>
 
