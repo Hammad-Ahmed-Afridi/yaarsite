@@ -128,7 +128,7 @@ export default function DashboardPage() {
         <div className="flex justify-center mb-4">
           <ScrollHintArrow />
         </div>
-        <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Changed to grid-cols-2 for mobile */}
+        <div className="grid gap-6 grid-cols-2"> {/* Changed to grid-cols-2 for all screen sizes */}
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-base font-medium">Total Products</CardTitle>
