@@ -37,7 +37,7 @@ export function ConfettiEffect({ run, duration = 4000 }: ConfettiEffectProps) { 
         numberOfPieces={1000} // High number of pieces for full effect
         gravity={0.02} // Very low gravity for slower fall
         initialVelocityY={-30} // Strong initial upward velocity for wide spread
-        initialVelocityX={[-20, 20]} // Added horizontal velocity for wider spread
+        initialVelocityX={{ min: -20, max: 20 }} // Corrected: Changed to object { min, max }
         confettiSource={{
           x: 0, // Start from the left edge
           y: 0, // Start from the top edge
