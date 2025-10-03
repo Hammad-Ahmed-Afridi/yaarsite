@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { AppLoader } from '@/components/app-loader';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, Image as ImageIcon } from 'lucide-react';
+import Image from 'next/image';
 import { useStoreProfile } from '@/components/store-profile-context-provider'; // Import useStoreProfile
 import { Profile } from '@/components/session-context-provider'; // Import shared Profile type
 
@@ -51,7 +52,19 @@ export default function StoreContactPage() {
 
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
-      <Mail className="h-24 w-24 text-primary mb-6" />
+      {profile.contact_page_hero_image_url ? (
+        <div className="relative w-full max-w-4xl h-64 md:h-96 rounded-3xl overflow-hidden mb-12 shadow-lg">
+          <Image
+            src={profile.contact_page_hero_image_url}
+            alt="Contact Page Hero"
+            fill
+            style={{ objectFit: 'cover' }}
+            className="object-center"
+          />
+        </div>
+      ) : (
+        <Mail className="h-24 w-24 text-primary mb-6" />
+      )}
       <h1 className="text-4xl font-bold mb-4 tracking-tight">
         {profile.contact_page_heading || `Contact ${profile.tenant_name}`}
       </h1>
