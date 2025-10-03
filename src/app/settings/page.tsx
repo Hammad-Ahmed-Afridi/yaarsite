@@ -316,17 +316,17 @@ export default function SettingsPage() {
       };
 
       // Process logo
-      newAvatarUrl = await uploadImageAndGetUrl(selectedLogoFile, profile?.avatar_url, 'store-logos', 'logo');
+      newAvatarUrl = await uploadImageAndGetUrl(selectedLogoFile, profile?.avatar_url ?? null, 'store-logos', 'logo');
 
       // Process Home Page images
-      newHomePageHeroImageUrl = await uploadImageAndGetUrl(selectedHomePageHeroImageFile, profile?.home_page_hero_image_url, 'store-content-images', 'home-page-hero-image');
-      newHomePageContentImageUrl = await uploadImageAndGetUrl(selectedHomePageContentImageFile, profile?.home_page_content_image_url, 'store-content-images', 'home-page-content-image');
+      newHomePageHeroImageUrl = await uploadImageAndGetUrl(selectedHomePageHeroImageFile, profile?.home_page_hero_image_url ?? null, 'store-content-images', 'home-page-hero-image');
+      newHomePageContentImageUrl = await uploadImageAndGetUrl(selectedHomePageContentImageFile, profile?.home_page_content_image_url ?? null, 'store-content-images', 'home-page-content-image');
 
       // Process About Page image
-      newAboutPageHeroImageUrl = await uploadImageAndGetUrl(selectedAboutPageHeroImageFile, profile?.about_page_hero_image_url, 'store-content-images', 'about-page-hero-image');
+      newAboutPageHeroImageUrl = await uploadImageAndGetUrl(selectedAboutPageHeroImageFile, profile?.about_page_hero_image_url ?? null, 'store-content-images', 'about-page-hero-image');
 
       // Process Contact Page image
-      newContactPageHeroImageUrl = await uploadImageAndGetUrl(selectedContactPageHeroImageFile, profile?.contact_page_hero_image_url, 'store-content-images', 'contact-page-hero-image');
+      newContactPageHeroImageUrl = await uploadImageAndGetUrl(selectedContactPageHeroImageFile, profile?.contact_page_hero_image_url ?? null, 'store-content-images', 'contact-page-hero-image');
 
 
       const appBaseUrl = window.location.origin;
