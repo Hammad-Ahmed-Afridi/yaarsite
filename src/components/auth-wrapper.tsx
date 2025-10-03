@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react'; // Removed useRef as it's no longer needed for this logic
 import { useRouter, usePathname } from 'next/navigation';
 import { useSession } from '@/components/session-context-provider';
 import { AppLoader } from '@/components/app-loader';
@@ -14,17 +14,10 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
 
   const [isReadyToRender, setIsReadyToRender] = useState(false);
-  const prevUserRef = useRef(user); // Track previous user state
-
-  useEffect(() => {
-    // Update prevUserRef *before* any state changes are processed in the next render
-    prevUserRef.current = user;
-  }, [user]);
 
   useEffect(() => {
     console.log("AuthWrapper: useEffect triggered.");
     console.log("AuthWrapper: Current user:", user?.id);
-    console.log("AuthWrapper: Previous user (prevUserRef.current):", prevUserRef.current?.id);
     console.log("AuthWrapper: isSessionLoading:", isSessionLoading);
     console.log("AuthWrapper: isSigningOut:", isSigningOut);
     console.log("AuthWrapper: pathname:", pathname);
@@ -35,8 +28,16 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const wasUserPreviouslyAuthenticated = !!prevUserRef.current;
-    console.log("AuthWrapper: wasUserPreviouslyAuthenticated:", wasUserPreviouslyAuthenticated);
+    // --- CRITICAL FIX: Prioritize sign-out redirection above all other unauthenticated logic ---
+    if (isSigningOut) {
+      console.log("AuthWrapper: Sign-out in progress, redirecting to /login.");
+      if (pathname !== '/login') { // Only push if not already on the login page
+        router.push('/login');
+      }
+      setIsReadyToRender(false); // Keep loader visible during redirect
+      return; // Stop further execution of this useEffect cycle
+    }
+    // --- End of CRITICAL FIX ---
 
     if (user) {
       // User is currently authenticated
@@ -53,28 +54,13 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         setIsReadyToRender(true);
       }
     } else {
-      // User is NOT currently authenticated
-      console.log("AuthWrapper: User is NOT authenticated.");
-      if (isSigningOut) {
-        // If a sign-out is in progress, this is the definitive redirect to /login.
-        console.log("AuthWrapper: Sign-out in progress, redirecting to /login.");
-        router.push('/login');
+      // User is NOT currently authenticated (and not in the middle of a sign-out)
+      console.log("AuthWrapper: User is NOT authenticated (and not signing out).");
+      if (pathname === '/') {
+        // Initial unauthenticated visit to root, redirect to landing page
+        console.log("AuthWrapper: Initial unauthenticated visit to root, redirecting to /landing.");
+        router.push('/landing');
         setIsReadyToRender(false);
-      } else if (pathname === '/') {
-        // User is unauthenticated, NOT signing out, and at the root.
-        // This means it's either an initial unauthenticated visit OR
-        // a completed sign-out where the `isSigningOut` flag has already reset.
-        if (wasUserPreviouslyAuthenticated) {
-          // If there *was* a user in the previous render cycle, it means they just signed out.
-          console.log("AuthWrapper: User was previously authenticated (just signed out), redirecting to /login.");
-          router.push('/login');
-          setIsReadyToRender(false);
-        } else {
-          // No previous user, so it's an initial unauthenticated visit to the root.
-          console.log("AuthWrapper: Initial unauthenticated visit to root, redirecting to /landing.");
-          router.push('/landing');
-          setIsReadyToRender(false);
-        }
       } else if (!isPublicPath) {
         // Unauthenticated user on a protected path (not root, not public), redirect to login.
         console.log("AuthWrapper: Unauthenticated user on protected path, redirecting to /login.");
