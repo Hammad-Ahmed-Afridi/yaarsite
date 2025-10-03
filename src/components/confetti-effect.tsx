@@ -35,8 +35,8 @@ export function ConfettiEffect({ run, duration = 5000 }: ConfettiEffectProps) {
         height={height}
         recycle={false}
         numberOfPieces={1000} // Increased for maximum visibility
-        gravity={0.1}
-        initialVelocityY={-5}
+        gravity={0.05} // Reduced gravity to make pieces fall slower
+        initialVelocityY={-15} // Increased initial upward velocity
         confettiSource={{
           x: width / 2,
           y: height / 2,
