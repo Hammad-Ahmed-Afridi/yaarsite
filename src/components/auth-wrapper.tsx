@@ -36,12 +36,16 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       }
     } else {
       // User is NOT authenticated
-      if (!isPublicPath) {
-        // Unauthenticated user on a protected path, redirect to landing
-        router.push('/landing'); // Redirect to landing page
-        setIsReadyToRender(false); // Keep loader visible until redirect completes
+      if (pathname === '/') {
+        // If unauthenticated user tries to access the root, redirect to landing page
+        router.push('/landing');
+        setIsReadyToRender(false);
+      } else if (!isPublicPath) {
+        // If unauthenticated user tries to access any other protected path, redirect to login
+        router.push('/login');
+        setIsReadyToRender(false);
       } else {
-        // Unauthenticated user on a public path (including landing)
+        // Unauthenticated user on a public path (login, signup, store, cart, checkout, landing)
         setIsReadyToRender(true);
       }
     }
