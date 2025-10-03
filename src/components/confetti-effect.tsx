@@ -11,26 +11,29 @@ interface ConfettiEffectProps {
 
 export function ConfettiEffect({ run, duration = 5000 }: ConfettiEffectProps) {
   const { width, height } = useWindowSize();
-  const [showConfetti, setShowConfetti] = useState(false);
+  const [shouldRenderConfetti, setShouldRenderConfetti] = useState(false);
 
   useEffect(() => {
     if (run) {
-      setShowConfetti(true);
+      setShouldRenderConfetti(true);
       const timer = setTimeout(() => {
-        setShowConfetti(false);
+        setShouldRenderConfetti(false);
       }, duration);
       return () => clearTimeout(timer);
+    } else {
+      // If 'run' becomes false externally, stop confetti immediately
+      setShouldRenderConfetti(false);
     }
   }, [run, duration]);
 
-  if (!showConfetti) return null;
+  if (!shouldRenderConfetti) return null;
 
   return (
     <Confetti
       width={width}
       height={height}
-      recycle={false} // Only run once
-      numberOfPieces={500} // Increased number of pieces for fuller screen coverage
+      recycle={false}
+      numberOfPieces={1000} // Increased for maximum visibility
       gravity={0.1}
       initialVelocityY={-5}
       confettiSource={{
@@ -39,7 +42,8 @@ export function ConfettiEffect({ run, duration = 5000 }: ConfettiEffectProps) {
         w: width,
         h: height,
       }}
-      colors={['#6366F1', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981']} // Tailwind-inspired colors
+      colors={['#6366F1', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981']}
+      zIndex={9999} // Explicitly set a very high z-index
     />
   );
 }
