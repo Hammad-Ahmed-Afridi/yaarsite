@@ -59,7 +59,7 @@ export default function PagesPage() {
               <CardContent className="space-y-4">
                 <p className="text-base text-muted-foreground leading-relaxed">Customize your store's main landing page.</p>
                 <Button asChild className="w-full font-semibold">
-                  <Link href="/settings/home-page">Edit Home Page</Link>
+                  <Link href="/settings/home-page">Edit</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -72,7 +72,7 @@ export default function PagesPage() {
               <CardContent className="space-y-4">
                 <p className="text-base text-muted-foreground leading-relaxed">Tell your customers about your brand and story.</p>
                 <Button asChild className="w-full font-semibold">
-                  <Link href="/settings/about-page">Edit About Us Page</Link>
+                  <Link href="/settings/about-page">Edit</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -85,7 +85,7 @@ export default function PagesPage() {
               <CardContent className="space-y-4">
                 <p className="text-base text-muted-foreground leading-relaxed">Provide contact information and a way for customers to reach you.</p>
                 <Button asChild className="w-full font-semibold">
-                  <Link href="/settings/contact-page">Edit Contact Us Page</Link>
+                  <Link href="/settings/contact-page">Edit</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -98,7 +98,7 @@ export default function PagesPage() {
               <CardContent className="space-y-4">
                 <p className="text-base text-muted-foreground leading-relaxed">Manage your store's name, description, logo, and contact details.</p>
                 <Button asChild className="w-full font-semibold">
-                  <Link href="/settings">Edit General Settings</Link>
+                  <Link href="/settings">Edit</Link>
                 </Button>
               </CardContent>
             </Card>
