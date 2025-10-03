@@ -7,26 +7,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, ShoppingCart, DollarSign, Store, Settings, Globe, BellRing } from "lucide-react"; // Import BellRing icon for new orders
+import { Package, ShoppingCart, DollarSign, Store, Settings, Globe, BellRing, LayoutDashboard } from "lucide-react"; // Import LayoutDashboard for Pages
 import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
 import { InactivityWarningBanner } from "@/components/inactivity-warning-banner";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { ScrollHintArrow } from "@/components/scroll-hint-arrow";
 import { AppLoader } from "@/components/app-loader";
-import { ConfettiEffect } from '@/components/confetti-effect'; // Import ConfettiEffect
+import { ConfettiEffect } from '@/components/confetti-effect';
 
 export default function DashboardPage() {
-  const { user, profile, isLoading: isSessionLoading, initiateSignOut } = useSession(); // Get initiateSignOut
+  const { user, profile, isLoading: isSessionLoading, initiateSignOut } = useSession();
   const router = useRouter();
   const pathname = usePathname();
 
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
-  const [newOrders, setNewOrders] = useState(0); // New state for new orders
+  const [newOrders, setNewOrders] = useState(0);
   const [isLoadingDashboardData, setIsLoadingDashboardData] = useState(true);
-  const [showConfetti, setShowConfetti] = useState(false); // State to control confetti
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const fetchDashboardData = useCallback(async () => {
     setIsLoadingDashboardData(true);
@@ -36,22 +36,20 @@ export default function DashboardPage() {
         return;
       }
 
-      const SUPABASE_PROJECT_ID = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID || "vpfrtytxeimezwxhhtuf"; // Use your project ID
+      const SUPABASE_PROJECT_ID = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID || "vpfrtytxeimezwxhhtuf";
       const EDGE_FUNCTION_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/get-dashboard-stats`;
 
       const response = await fetch(EDGE_FUNCTION_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await supabase.auth.getSession().then(s => s.data.session?.access_token)}`, // Restored Authorization header
+          'Authorization': `Bearer ${await supabase.auth.getSession().then(s => s.data.session?.access_token)}`,
         },
         body: JSON.stringify({ user_id: user.id }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        // console.error("Dashboard Page: Error fetching dashboard data:", errorData); // Keep console log for debugging
-        // toast.error(errorData.message || "An unexpected error occurred while loading dashboard data."); // Removed toast
         throw new Error(errorData.message || "Failed to fetch dashboard stats via Edge Function");
       }
 
@@ -59,11 +57,10 @@ export default function DashboardPage() {
       setTotalProducts(data.totalProducts);
       setTotalOrders(data.totalOrders);
       setTotalProfit(data.totalProfit);
-      setNewOrders(data.newOrders); // Set new orders count from the response
+      setNewOrders(data.newOrders);
 
     } catch (error: any) {
-      console.error("Dashboard Page: Error fetching dashboard data:", error); // Keep console log for debugging
-      // toast.error(error.message || "An unexpected error occurred while loading dashboard data."); // Removed toast
+      console.error("Dashboard Page: Error fetching dashboard data:", error);
     } finally {
       setIsLoadingDashboardData(false);
     }
@@ -77,15 +74,6 @@ export default function DashboardPage() {
     }
   }, [isSessionLoading, user, fetchDashboardData]);
 
-  // No longer checking local storage here, direct state update from dialog
-  // useEffect(() => {
-  //   const confettiTrigger = localStorage.getItem('showConfettiAfterStoreCreation');
-  //   if (confettiTrigger === 'true') {
-  //     setShowConfetti(true);
-  //     localStorage.removeItem('showConfettiAfterStoreCreation'); // Clear the flag
-  //   }
-  // }, []);
-
   if (isSessionLoading || isLoadingDashboardData) {
     return (
       <AppLoader
@@ -98,10 +86,9 @@ export default function DashboardPage() {
   const handleSignOut = async () => {
     console.log("Dashboard Page: Attempting to sign out.");
     try {
-      await initiateSignOut(); // This sets isSigningOut to true and calls supabase.auth.signOut()
+      await initiateSignOut();
       console.log("Dashboard Page: Sign out successful. AuthWrapper will handle redirection.");
       toast.success("Signed out successfully!");
-      // Removed router.push('/login') here. AuthWrapper will now handle it.
     } catch (error) {
       console.error("Dashboard Page: Error during sign out:", error);
       toast.error("Failed to sign out. Please try again.");
@@ -120,7 +107,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       {profile?.tenant_name === null && <StoreSetupDialog onStoreCreated={() => setShowConfetti(true)} />}
       <InactivityWarningBanner />
-      <ConfettiEffect run={showConfetti} /> {/* Render confetti effect here */}
+      <ConfettiEffect run={showConfetti} />
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} showBackButton={false} currentPath={pathname} />
 
@@ -128,7 +115,7 @@ export default function DashboardPage() {
         <div className="flex justify-center mb-4">
           <ScrollHintArrow />
         </div>
-        <div className="grid gap-6 grid-cols-2"> {/* Analytics cards always 2 in a row */}
+        <div className="grid gap-6 grid-cols-2">
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-base font-medium">Total Products</CardTitle>
@@ -170,7 +157,6 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        {/* Action cards always 2 in a row */}
         <div className="grid gap-6 grid-cols-2 mt-6">
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
@@ -207,12 +193,12 @@ export default function DashboardPage() {
           
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
-              <Settings className="h-6 w-6 text-yellow-500" />
-              <CardTitle className="text-xl font-semibold">Customize Store</CardTitle>
+              <LayoutDashboard className="h-6 w-6 text-yellow-500" />
+              <CardTitle className="text-xl font-semibold">Manage Pages</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-base text-muted-foreground leading-relaxed">Customize your store</p>
-              <Button onClick={() => router.push('/settings')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Customize</Button>
+              <p className="text-base text-muted-foreground leading-relaxed">Customize your store's Home, About Us, and Contact Us pages.</p>
+              <Button onClick={() => router.push('/pages')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Manage Pages</Button>
             </CardContent>
           </Card>
 

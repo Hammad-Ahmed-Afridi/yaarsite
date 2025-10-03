@@ -5,26 +5,36 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Store, LogOut, LayoutDashboard, Globe } from 'lucide-react'; // Import Globe icon
-import { Profile, useSession } from '@/components/session-context-provider'; // Import useSession
+import { ArrowLeft, Store, LogOut, LayoutDashboard, Globe } from 'lucide-react';
+import { Profile, useSession } from '@/components/session-context-provider';
 
 
 interface DashboardHeaderProps {
   profile: Profile | null;
-  onSignOut: () => void; // This prop will now call the initiateSignOut from context
+  onSignOut: () => void;
   showBackButton?: boolean;
-  currentPath?: string; // Optional: to determine if back button should go to dashboard
+  currentPath?: string;
 }
 
 export function DashboardHeader({ profile, onSignOut, showBackButton = true, currentPath }: DashboardHeaderProps) {
   const isDashboardRoot = currentPath === '/';
+  const isSettingsPage = currentPath?.startsWith('/settings');
+  const isPagesPage = currentPath === '/pages';
+
+  let backButtonHref = '/'; // Default back to dashboard
+  if (isSettingsPage || isPagesPage) {
+    backButtonHref = '/pages'; // If on any settings or pages sub-page, go back to /pages
+    if (currentPath === '/settings') { // If on general settings, go back to /pages
+      backButtonHref = '/pages';
+    }
+  }
 
   return (
     <header className="flex items-center justify-between p-4 border-b border-border bg-card font-sans">
       <div className="flex items-center space-x-4">
         {showBackButton && !isDashboardRoot && (
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/">
+            <Link href={backButtonHref}>
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
