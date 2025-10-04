@@ -13,7 +13,7 @@ import { useCart } from '@/components/cart-context-provider';
 import { ProductDetailDialog } from '@/components/product-detail-dialog';
 import { AppLoader } from '@/components/app-loader';
 import { useStoreProfile } from '@/components/store-profile-context-provider';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'; // Import Tabs components
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Import Select components
 
 interface Product {
   id: string;
@@ -148,17 +148,20 @@ export default function StoreProductsPage() {
         </div>
       ) : (
         <>
-          <div className="mb-8 overflow-x-auto">
-            <Tabs value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter} className="w-full">
-              <TabsList className="flex justify-start flex-nowrap overflow-x-auto pb-2">
-                <TabsTrigger value="all" className="whitespace-nowrap">All Products</TabsTrigger>
+          <div className="mb-8 flex justify-start">
+            <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
+              <SelectTrigger className="w-[180px] font-medium">
+                <SelectValue placeholder="Select Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all" className="font-medium">All Products</SelectItem>
                 {uniqueCategories.map(category => (
-                  <TabsTrigger key={category} value={category} className="whitespace-nowrap">
+                  <SelectItem key={category} value={category} className="font-medium">
                     {category}
-                  </TabsTrigger>
+                  </SelectItem>
                 ))}
-              </TabsList>
-            </Tabs>
+              </SelectContent>
+            </Select>
           </div>
 
           {filteredProducts.length === 0 ? (
