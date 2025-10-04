@@ -90,6 +90,10 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       setProfile(userProfile);
     } else {
       setProfile(null);
+      // Clear the flag when user is signed out
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('wasAuthenticatedOnDashboard');
+      }
     }
     setIsLoading(false);
     // Reset isSigningOut when the SIGNED_OUT event is processed

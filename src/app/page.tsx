@@ -68,9 +68,23 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!isSessionLoading && user) {
       fetchDashboardData();
+      // Set flag when authenticated on dashboard
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('wasAuthenticatedOnDashboard', 'true');
+      }
     } else if (!isSessionLoading && !user) {
-      setIsLoadingDashboardData(false);
+      // If session is done loading and there's no user, clear the flag
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('wasAuthenticatedOnDashboard');
+      }
     }
+
+    return () => {
+      // Clear the flag when component unmounts or user navigates away
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('wasAuthenticatedOnDashboard');
+      }
+    };
   }, [isSessionLoading, user, fetchDashboardData]);
 
   if (isSessionLoading || isLoadingDashboardData) {
