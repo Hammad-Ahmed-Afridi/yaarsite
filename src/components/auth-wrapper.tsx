@@ -58,10 +58,15 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     } else {
       // User is NOT currently authenticated (and not in the middle of a sign-out)
       console.log("AuthWrapper: User is NOT authenticated (and not signing out).");
-      // If the user is on the root path or any protected path, and not authenticated,
-      // redirect them to the login page.
-      if (pathname === '/' || !isPublicPath) {
-        console.log("AuthWrapper: Unauthenticated user on root or protected path, redirecting to /login.");
+
+      if (pathname === '/') {
+        // Unauthenticated user on the root path, redirect to landing page
+        console.log("AuthWrapper: Unauthenticated user on root path, redirecting to /landing.");
+        router.push('/landing');
+        setIsReadyToRender(false);
+      } else if (!isPublicPath) {
+        // Unauthenticated user on a protected path (not in publicPaths and not /)
+        console.log("AuthWrapper: Unauthenticated user on protected path, redirecting to /login.");
         router.push('/login');
         setIsReadyToRender(false);
       } else {
