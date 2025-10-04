@@ -3,13 +3,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Package, Trash2, ArrowLeft, Percent, Image as ImageIcon } from 'lucide-react'; // Added ImageIcon
+import { Plus, Package, Trash2, ArrowLeft, Percent } from 'lucide-react'; // Import ArrowLeft and Percent
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { AddProductDialog } from '@/components/add-product-dialog';
 import { EditProductDialog } from '@/components/edit-product-dialog';
-import { DiscountDialog } from '@/components/discount-dialog';
+import { DiscountDialog } from '@/components/discount-dialog'; // Import DiscountDialog
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { AppLoader } from '@/components/app-loader';
-import Link from 'next/link';
+import Link from 'next/link'; // Import Link
 
 interface Product {
   id: string;
@@ -37,13 +37,13 @@ interface Product {
   user_id: string;
   image_urls: string[] | null;
   category: string | null;
-  original_price: number | null;
-  discount_percentage: number | null;
-  discount_end_date: string | null;
+  original_price: number | null; // New: original_price
+  discount_percentage: number | null; // New: discount_percentage
+  discount_end_date: string | null; // New: discount_end_date
   created_at: string;
 }
 
-const PRODUCT_LIMIT = 2;
+const PRODUCT_LIMIT = 2; // Changed from 3 to 2
 
 export default function ProductsPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
@@ -141,9 +141,9 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      <DashboardHeader profile={profile} onSignOut={handleSignOut} />
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} /> {/* Removed currentPath */}
 
-      <main className="flex-1 p-4 sm:p-8">
+      <main className="flex-1 p-4 sm:p-8"> {/* Adjusted padding */}
         <div className="flex items-center gap-3 mb-6">
           <Button variant="ghost" size="icon" asChild>
             <Link href="/">
@@ -160,9 +160,7 @@ export default function ProductsPage() {
             )}
           </p>
           <div className="flex gap-2">
-            {products.length > 0 && ( // Only show DiscountDialog if there are products
-              <DiscountDialog products={products} onDiscountApplied={fetchProducts} />
-            )}
+            <DiscountDialog products={products} onDiscountApplied={fetchProducts} /> {/* Discount button */}
             <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
           </div>
         </div>
@@ -174,13 +172,13 @@ export default function ProductsPage() {
             <p className="text-base text-muted-foreground mb-6 leading-relaxed">
               Add your first product to start selling! You can add up to {PRODUCT_LIMIT} products.
             </p>
-            {/* Removed redundant AddProductDialog from here */}
+            <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products.map((product) => (
               <Card key={product.id} className="bg-card text-card-foreground shadow-md rounded-3xl">
-                {product.image_urls && product.image_urls.length > 0 ? (
+                {product.image_urls && product.image_urls.length > 0 && (
                   <div className="relative h-48 w-full overflow-hidden rounded-t-3xl">
                     <Image
                       src={product.image_urls[0]}
@@ -189,10 +187,6 @@ export default function ProductsPage() {
                       objectFit="cover"
                       className="transition-transform duration-300 hover:scale-105"
                     />
-                  </div>
-                ) : (
-                  <div className="relative h-48 w-full overflow-hidden rounded-t-3xl bg-muted flex items-center justify-center">
-                    <ImageIcon className="h-16 w-16 text-muted-foreground" />
                   </div>
                 )}
                 <CardHeader>

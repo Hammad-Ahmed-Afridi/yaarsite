@@ -69,8 +69,7 @@ export default function DashboardPage() {
       setTotalOrders(data.totalOrders);
       setTotalProfit(data.totalProfit);
       setNewOrders(data.newOrders);
-      // Removed success toast as it can be annoying on every refresh
-      // toast.success("Dashboard data refreshed!"); 
+      toast.success("Dashboard data refreshed!"); // Added success toast
 
     } catch (error: any) {
       console.error("Dashboard Page: Error fetching dashboard data:", error);
@@ -141,7 +140,10 @@ export default function DashboardPage() {
       <main className="flex-1 p-4 sm:p-8"> {/* Adjusted padding */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold tracking-tight">Your Dashboard</h2>
-          {/* Removed the refresh button */}
+          <Button variant="outline" size="icon" onClick={fetchDashboardData} disabled={isLoadingDashboardData}>
+            <RefreshCcw className="h-4 w-4" />
+            <span className="sr-only">Refresh Data</span>
+          </Button>
         </div>
         <div className="flex justify-center mb-4">
           <ScrollHintArrow />

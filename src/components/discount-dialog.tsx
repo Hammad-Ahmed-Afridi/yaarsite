@@ -113,7 +113,6 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
         const newPrice = product.price * (1 - values.discountPercentage / 100);
         return {
           id: product.id,
-          user_id: user.id, // Explicitly include user_id for RLS
           original_price: product.original_price === null ? product.price : product.original_price, // Store current price as original if not already set
           price: newPrice,
           discount_percentage: values.discountPercentage,
@@ -172,7 +171,6 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
 
       const updates = productsToUpdate.map(product => ({
         id: product.id,
-        user_id: user.id, // Explicitly include user_id for RLS
         price: product.original_price !== null ? product.original_price : product.price, // Revert to original price
         original_price: null, // Clear original price
         discount_percentage: null,
@@ -203,6 +201,11 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button className="flex items-center gap-2 font-semibold">
+          <Percent className="h-4 w-4" /> Discount
+        </Button>
+      </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto font-sans">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold tracking-tight">Apply Product Discount</DialogTitle>
@@ -263,7 +266,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
               </ScrollArea>
               {form.formState.errors.selectedProductIds && (
                 <p className="text-destructive text-sm">{form.formState.errors.selectedProductIds.message}</p>
-            )}
+              )}
             </div>
           )}
 
@@ -306,7 +309,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
                       {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-full p-0"> {/* Added w-full here */}
+                  <PopoverContent className="w-auto p-0">
                     <Calendar
                       mode="single"
                       selected={field.value}
