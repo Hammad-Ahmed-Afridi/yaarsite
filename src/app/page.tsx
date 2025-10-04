@@ -16,7 +16,7 @@ import { AppLoader } from "@/components/app-loader";
 import { ConfettiEffect } from '@/components/confetti-effect';
 
 export default function DashboardPage() {
-  const { user, profile, isLoading: isSessionLoading, initiateSignOut } = useSession();
+  const { user, profile, isLoading: isSessionLoading, initiateSignOut, session } = useSession(); // Get session from context
   const router = useRouter();
   const pathname = usePathname();
 
@@ -30,22 +30,16 @@ export default function DashboardPage() {
   const fetchDashboardData = useCallback(async () => {
     setIsLoadingDashboardData(true);
     try {
-      if (!user?.id) {
-        console.log("Dashboard Page: User ID not available, cannot fetch dashboard data.");
+      if (!user?.id || !session?.access_token) { // Check for session.access_token directly
+        console.log("Dashboard Page: User ID or access token not available, cannot fetch dashboard data.");
+        toast.error("Authentication required to refresh dashboard data.");
         setIsLoadingDashboardData(false);
         return;
       }
 
       console.log("Dashboard Page: Fetching dashboard data for user:", user.id);
-      const session = await supabase.auth.getSession();
-      const accessToken = session.data.session?.access_token;
+      const accessToken = session.access_token; // Use session from context directly
 
-      if (!accessToken) {
-        console.error("Dashboard Page: No access token found for fetching dashboard data.");
-        toast.error("Authentication required to refresh dashboard data.");
-        setIsLoadingDashboardData(false);
-        return;
-      }
       console.log("Dashboard Page: Using access token (first 10 chars):", accessToken.substring(0, 10) + "...");
 
       const SUPABASE_PROJECT_ID = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID || "vpfrtytxeimezwxhhtuf";
@@ -83,10 +77,10 @@ export default function DashboardPage() {
     } finally {
       setIsLoadingDashboardData(false);
     }
-  }, [user]); // Dependency array includes 'user'
+  }, [user, session]); // Add session to dependencies
 
   useEffect(() => {
-    if (!isSessionLoading && user) {
+    if (!isSessionLoading && user && session) { // Ensure session is also available
       fetchDashboardData();
       // Set flag when authenticated on dashboard
       if (typeof window !== 'undefined') {
@@ -105,7 +99,7 @@ export default function DashboardPage() {
         localStorage.removeItem('wasAuthenticatedOnDashboard');
       }
     };
-  }, [isSessionLoading, user, fetchDashboardData]);
+  }, [isSessionLoading, user, session, fetchDashboardData]); // Add session to dependencies
 
   if (isSessionLoading || isLoadingDashboardData) {
     return (
