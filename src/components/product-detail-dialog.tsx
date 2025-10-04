@@ -10,14 +10,14 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, ShoppingCart, Image as ImageIcon, Ruler, Expand } from 'lucide-react'; // Added Ruler, Expand icons
+import { ChevronLeft, ChevronRight, ShoppingCart, Image as ImageIcon, Ruler, Minus, Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/components/cart-context-provider';
 import { toast } from 'sonner';
-import { format } from 'date-fns'; // Import format
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'; // Import RadioGroup
-import { Label } from '@/components/ui/label'; // Import Label
-import { Input } from '@/components/ui/input'; // Import Input
+import { format } from 'date-fns';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,7 +26,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'; // Import AlertDialog for size chart
+} from '@/components/ui/alert-dialog';
+import { cn } from '@/lib/utils'; // Import cn for conditional classNames
 
 interface Product {
   id: string;
@@ -36,12 +37,12 @@ interface Product {
   stock: number;
   user_id: string; // Owner of the product
   image_urls: string[] | null;
-  original_price: number | null; // New: original_price
-  discount_percentage: number | null; // New: discount_percentage
-  discount_start_date: string | null; // New: discount_start_date
-  discount_end_date: string | null; // New: discount_end_date
-  size_chart_url: string | null; // New: size_chart_url
-  available_colors: string[] | null; // New: available_colors
+  original_price: number | null;
+  discount_percentage: number | null;
+  discount_start_date: string | null;
+  discount_end_date: string | null;
+  size_chart_url: string | null;
+  available_colors: string[] | null;
 }
 
 interface ProductDetailDialogProps {
@@ -53,15 +54,15 @@ interface ProductDetailDialogProps {
 
 export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerId }: ProductDetailDialogProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined); // New: state for selected color
-  const [selectedSizeInput, setSelectedSizeInput] = useState<string>(''); // New: state for size input
+  const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
+  const [quantity, setQuantity] = useState(1); // New state for quantity
   const { addToCart } = useCart();
 
   useEffect(() => {
     if (isOpen) {
       setCurrentImageIndex(0); // Reset image index when dialog opens
       setSelectedColor(product?.available_colors?.[0] || undefined); // Select first color by default
-      setSelectedSizeInput(''); // Clear size input
+      setQuantity(1); // Reset quantity to 1
     }
   }, [isOpen, product]);
 
@@ -71,7 +72,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
   const images = product.image_urls || [];
   const hasMultipleImages = images.length > 1;
-  const hasColors = (product.available_colors !== null && product.available_colors.length > 0); // Fixed: Ensure hasColors is always boolean
+  const hasColors = (product.available_colors !== null && product.available_colors.length > 0);
   const hasSizeChart = !!product.size_chart_url;
 
   const handlePrevImage = () => {
@@ -86,6 +87,12 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
     );
   };
 
+  const handleQuantityChange = (newQuantity: number) => {
+    if (newQuantity < 1) newQuantity = 1;
+    if (newQuantity > product.stock) newQuantity = product.stock;
+    setQuantity(newQuantity);
+  };
+
   const handleAddToCart = () => {
     if (product.stock <= 0) {
       toast.error("This product is out of stock.");
@@ -93,6 +100,10 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
     }
     if (hasColors && !selectedColor) {
       toast.error("Please select a color.");
+      return;
+    }
+    if (quantity > product.stock) {
+      toast.error(`Cannot add more than available stock (${product.stock} in stock).`);
       return;
     }
 
@@ -104,8 +115,8 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
       storeOwnerId: storeOwnerId,
       stock: product.stock, // Pass the product's stock
       selected_color: selectedColor, // New: pass selected color
-      selected_size_input: selectedSizeInput, // New: pass selected size input
-    });
+      selected_size_input: null, // Removed size input, so pass null
+    }, quantity); // Pass the selected quantity
     onOpenChange(false); // Close dialog after adding to cart
   };
 
@@ -114,54 +125,79 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto font-sans">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold tracking-tight">{product.name}</DialogTitle>
-          <DialogDescription className="text-base leading-relaxed">Product details</DialogDescription>
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto font-sans p-6">
+        <DialogHeader className="mb-4">
+          <DialogTitle className="text-3xl font-bold tracking-tight">{product.name}</DialogTitle>
+          <DialogDescription className="text-base leading-relaxed text-muted-foreground">Product details</DialogDescription>
         </DialogHeader>
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Image Slider */}
-          <div className="relative w-full h-80 md:h-96 bg-muted rounded-lg overflow-hidden flex items-center justify-center">
-            {images.length > 0 ? (
-              <>
-                <Image
-                  src={images[currentImageIndex]}
-                  alt={product.name}
-                  fill
-                  style={{ objectFit: 'contain' }}
-                  className="object-center"
-                />
-                {hasMultipleImages && (
-                  <>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/50 hover:bg-background/70 rounded-full z-10"
-                      onClick={handlePrevImage}
-                    >
-                      <ChevronLeft className="h-6 w-6" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/50 hover:bg-background/70 rounded-full z-10"
-                      onClick={handleNextImage}
-                    >
-                      <ChevronRight className="h-6 w-6" />
-                    </Button>
-                  </>
-                )}
-              </>
-            ) : (
-              <ImageIcon className="h-24 w-24 text-muted-foreground" />
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Image Gallery */}
+          <div className="flex flex-col gap-4">
+            <div className="relative w-full h-80 md:h-96 bg-muted rounded-xl overflow-hidden flex items-center justify-center shadow-md">
+              {images.length > 0 ? (
+                <>
+                  <Image
+                    src={images[currentImageIndex]}
+                    alt={product.name}
+                    fill
+                    style={{ objectFit: 'contain' }}
+                    className="object-center"
+                  />
+                  {hasMultipleImages && (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/50 hover:bg-background/70 rounded-full z-10"
+                        onClick={handlePrevImage}
+                      >
+                        <ChevronLeft className="h-6 w-6" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/50 hover:bg-background/70 rounded-full z-10"
+                        onClick={handleNextImage}
+                      >
+                        <ChevronRight className="h-6 w-6" />
+                      </Button>
+                    </>
+                  )}
+                </>
+              ) : (
+                <ImageIcon className="h-24 w-24 text-muted-foreground" />
+              )}
+            </div>
+            {hasMultipleImages && (
+              <div className="flex gap-2 justify-center">
+                {images.map((img, index) => (
+                  <div
+                    key={index}
+                    className={cn(
+                      "relative w-16 h-16 rounded-md overflow-hidden cursor-pointer border-2",
+                      index === currentImageIndex ? "border-primary" : "border-transparent opacity-70 hover:opacity-100"
+                    )}
+                    onClick={() => setCurrentImageIndex(index)}
+                  >
+                    <Image
+                      src={img}
+                      alt={`Thumbnail ${index + 1}`}
+                      fill
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </div>
+                ))}
+              </div>
             )}
           </div>
 
-          {/* Product Details */}
-          <div className="space-y-4">
+          {/* Product Details & Actions */}
+          <div className="space-y-6">
             <h3 className="text-3xl font-bold tracking-tight">{product.name}</h3>
             <p className="text-muted-foreground text-lg leading-relaxed">{product.description || "No description available."}</p>
-            <div className="flex items-center justify-between">
+            
+            {/* Price and Stock */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               {isDiscountActive && product.original_price !== null ? (
                 <div className="flex items-baseline gap-2">
                   <span className="text-lg text-muted-foreground line-through">Rs{product.original_price.toFixed(2)}</span>
@@ -175,14 +211,14 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               </Badge>
             </div>
             {isDiscountActive && (
-              <>
+              <div className="space-y-1">
                 <Badge className="bg-green-500 text-white text-base px-3 py-1 font-medium">
                   {product.discount_percentage}% OFF!
                 </Badge>
                 <p className="text-sm text-muted-foreground">
                   Valid from {format(new Date(product.discount_start_date!), "PPP")} to {format(new Date(product.discount_end_date!), "PPP")}
                 </p>
-              </>
+              </div>
             )}
 
             {/* Color Selection */}
@@ -196,10 +232,12 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                 >
                   {product.available_colors?.map((color) => (
                     <div key={color} className="flex items-center">
-                      <RadioGroupItem value={color} id={`color-${color}`} className="sr-only" />
+                      <RadioGroupItem value={color} id={`color-${color}`} className="peer sr-only" />
                       <Label
                         htmlFor={`color-${color}`}
-                        className="flex items-center justify-center px-4 py-2 border rounded-md cursor-pointer text-sm font-medium hover:bg-accent hover:text-accent-foreground data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                        className="flex items-center justify-center px-4 py-2 border rounded-md cursor-pointer text-sm font-medium 
+                                   peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground 
+                                   hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
                       >
                         {color}
                       </Label>
@@ -209,46 +247,70 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               </div>
             )}
 
-            {/* Size Chart & Size Input */}
+            {/* Quantity Selector */}
             <div className="space-y-2">
-              {hasSizeChart && (
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="outline" className="w-full flex items-center gap-2 font-semibold">
-                      <Ruler className="h-4 w-4" /> View Size Chart
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle className="text-2xl font-bold">Size Chart</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Refer to this chart to find your perfect size.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <div className="relative w-full h-[60vh] flex items-center justify-center bg-muted rounded-md overflow-hidden">
-                      <Image
-                        src={product.size_chart_url!}
-                        alt="Size Chart"
-                        fill
-                        style={{ objectFit: 'contain' }}
-                        className="object-center"
-                      />
-                    </div>
-                    <AlertDialogAction className="w-full font-semibold">Close</AlertDialogAction>
-                  </AlertDialogContent>
-                </AlertDialog>
-              )}
-              <Label htmlFor="size-input" className="text-base font-medium">Your Size (e.g., Large, 36 waist)</Label>
-              <Input
-                id="size-input"
-                placeholder="Enter your size based on the chart"
-                value={selectedSizeInput}
-                onChange={(e) => setSelectedSizeInput(e.target.value)}
-              />
+              <Label htmlFor="quantity" className="text-base font-medium">Quantity:</Label>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => handleQuantityChange(quantity - 1)}
+                  disabled={quantity <= 1 || product.stock <= 0}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <Input
+                  id="quantity"
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => handleQuantityChange(parseInt(e.target.value))}
+                  className="w-20 text-center text-base"
+                  min="1"
+                  max={product.stock}
+                  disabled={product.stock <= 0}
+                />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => handleQuantityChange(quantity + 1)}
+                  disabled={quantity >= product.stock || product.stock <= 0}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
+            {/* Size Chart */}
+            {hasSizeChart && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" className="w-full flex items-center gap-2 font-semibold">
+                    <Ruler className="h-4 w-4" /> View Size Chart
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-2xl font-bold">Size Chart</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Refer to this chart to find your perfect size.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="relative w-full h-[60vh] flex items-center justify-center bg-muted rounded-md overflow-hidden">
+                    <Image
+                      src={product.size_chart_url!}
+                      alt="Size Chart"
+                      fill
+                      style={{ objectFit: 'contain' }}
+                      className="object-center"
+                    />
+                  </div>
+                  <AlertDialogAction className="w-full font-semibold">Close</AlertDialogAction>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+
             <Button
-              className="w-full py-6 text-lg flex items-center gap-2 font-semibold"
+              className="w-full py-6 text-lg flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
               onClick={handleAddToCart}
               disabled={product.stock <= 0 || (hasColors && !selectedColor)}
             >
