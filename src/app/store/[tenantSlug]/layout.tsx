@@ -79,8 +79,8 @@ export default function StoreLayout({
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center font-sans">
-        <h1 className="text-2xl md:text-3xl font-bold text-destructive mb-4 tracking-tight">Error</h1>
-        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">{error}</p>
+        <h1 className="text-3xl font-bold text-destructive mb-4 tracking-tight">Error</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">{error}</p>
         <Button onClick={() => router.push('/')} className="mt-6 font-semibold">Go to Dashboard</Button>
       </div>
     );
@@ -89,8 +89,8 @@ export default function StoreLayout({
   if (!profile) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center font-sans">
-        <h1 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
-        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
+        <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
         <Button onClick={() => router.push('/')} className="mt-6 font-semibold">Go to Dashboard</Button>
       </div>
     );
@@ -116,7 +116,7 @@ export default function StoreLayout({
             ) : (
               <Store className="h-6 w-6 text-primary" />
             )}
-            <h1 className="text-lg md:text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
+            <h1 className="text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
           </div>
 
           {/* Center section: Desktop Navigation */}
@@ -145,7 +145,7 @@ export default function StoreLayout({
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-64 p-4">
-                  <h2 className="text-lg md:text-xl font-bold mb-4 md:mb-6 tracking-tight">Navigation</h2>
+                  <h2 className="text-xl font-bold mb-6 tracking-tight">Navigation</h2>
                   <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
                 </SheetContent>
               </Sheet>
@@ -158,7 +158,7 @@ export default function StoreLayout({
           {children}
         </main>
 
-        <footer className="w-full py-4 text-center text-muted-foreground text-xs md:text-sm border-t border-border bg-card">
+        <footer className="w-full py-4 text-center text-muted-foreground text-sm border-t border-border bg-card">
           Made with Yaarsite
         </footer>
       </div>

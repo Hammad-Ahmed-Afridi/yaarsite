@@ -245,8 +245,8 @@ export default function AboutPageSettingsPage() {
   if (!profile || profile.tenant_name === null) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center font-sans">
-        <h1 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight">Store Not Configured</h1>
-        <p className="text-base md:text-lg text-muted-foreground mb-8 leading-relaxed">Please set up your store first from the dashboard.</p>
+        <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Configured</h1>
+        <p className="text-lg text-muted-foreground mb-8 leading-relaxed">Please set up your store first from the dashboard.</p>
         <Button asChild className="font-semibold">
           <Link href="/">Go to Dashboard</Link>
         </Button>
@@ -267,12 +267,12 @@ export default function AboutPageSettingsPage() {
               </Link>
             </Button>
             <Info className="h-6 w-6 text-primary" />
-            <CardTitle className="text-xl md:text-2xl font-bold tracking-tight">About Us Page Settings</CardTitle>
+            <CardTitle className="text-2xl font-bold tracking-tight">About Us Page Settings</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid gap-2">
-                <Label className="text-xs md:text-sm font-medium">About Us Page Hero Image</Label>
+                <Label className="text-sm font-medium">About Us Page Hero Image</Label>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   This image will appear prominently at the top of your About Us page. Recommended: Wide aspect ratio (e.g., 16:9 or 2:1), max 5MB.
                 </p>
@@ -310,30 +310,29 @@ export default function AboutPageSettingsPage() {
                       onChange={(e) => handleImageChange(e, setSelectedAboutPageHeroImageFile, setAboutPageHeroImagePreview, "aboutPageHeroImage", 'store-content-images', 'about page hero image')}
                       disabled={isUpdating}
                     />
-                    <Button asChild variant="outline" className="w-full font-semibold text-sm md:text-base" disabled={isUpdating}>
+                    <Button asChild variant="outline" className="w-full font-semibold" disabled={isUpdating}>
                       <span>{aboutPageHeroImagePreview || profile?.about_page_hero_image_url ? "Change Image" : "Upload Image"}</span>
                     </Button>
                   </Label>
                 </div>
                 {form.formState.errors.aboutPageHeroImage && (
-                  <p className="text-destructive text-xs md:text-sm">{form.formState.errors.aboutPageHeroImage.message}</p>
+                  <p className="text-destructive text-sm">{form.formState.errors.aboutPageHeroImage.message}</p>
                 )}
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="aboutPageContent" className="text-xs md:text-sm font-medium">About Us Content</Label>
+                <Label htmlFor="aboutPageContent" className="text-sm font-medium">About Us Content</Label>
                 <Textarea
                   id="aboutPageContent"
                   placeholder="We are dedicated to providing you with the best products and an exceptional shopping experience."
                   rows={5}
-                  className="text-sm md:text-base"
                   {...form.register("aboutPageContent")}
                 />
                 {form.formState.errors.aboutPageContent && (
-                  <p className="text-destructive text-xs md:text-sm">{form.formState.errors.aboutPageContent.message}</p>
+                  <p className="text-destructive text-sm">{form.formState.errors.aboutPageContent.message}</p>
                 )}
               </div>
 
-              <Button type="submit" className="w-full font-semibold text-sm md:text-base" disabled={isUpdating}>
+              <Button type="submit" className="w-full font-semibold" disabled={isUpdating}>
                 {isUpdating ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

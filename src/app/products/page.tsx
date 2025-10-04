@@ -145,10 +145,10 @@ export default function ProductsPage() {
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
-          <h2 className="text-xl md:text-2xl font-bold tracking-tight">Product Management</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Product Management</h2>
         </div>
         <div className="flex items-center justify-between mb-6">
-          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+          <p className="text-muted-foreground text-base leading-relaxed">
             {products.length}/{PRODUCT_LIMIT} products used
             {isAddProductDisabled && (
               <span className="ml-2 text-destructive"> (Maximum limit reached)</span>
@@ -160,8 +160,8 @@ export default function ProductsPage() {
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-3xl p-8">
             <Package className="h-16 w-16 text-muted-foreground mb-4" />
-            <p className="text-lg md:text-xl text-muted-foreground mb-4 font-semibold">No Products Yet</p>
-            <p className="text-sm md:text-base text-muted-foreground mb-6 leading-relaxed">
+            <p className="text-xl text-muted-foreground mb-4 font-semibold">No Products Yet</p>
+            <p className="text-base text-muted-foreground mb-6 leading-relaxed">
               Add your first product to start selling! You can add up to {PRODUCT_LIMIT} products.
             </p>
             <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
@@ -182,13 +182,13 @@ export default function ProductsPage() {
                   </div>
                 )}
                 <CardHeader>
-                  <CardTitle className="text-base md:text-lg font-semibold">{product.name}</CardTitle>
+                  <CardTitle className="text-lg font-semibold">{product.name}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 leading-relaxed">{product.description || "No description."}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{product.description || "No description."}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-lg md:text-xl font-bold">Rs{product.price.toFixed(2)}</span>
-                    <Badge variant="secondary" className="text-xs md:text-sm font-medium">{product.stock} in stock</Badge>
+                    <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
+                    <Badge variant="secondary" className="font-medium">{product.stock} in stock</Badge>
                   </div>
                   <div className="flex gap-2 mt-4">
                     <EditProductDialog product={product} onProductUpdated={fetchProducts} />
@@ -201,7 +201,7 @@ export default function ProductsPage() {
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle className="text-lg font-semibold">Are you absolutely sure?</AlertDialogTitle>
-                          <AlertDialogDescription className="text-sm md:text-base leading-relaxed">
+                          <AlertDialogDescription className="text-base leading-relaxed">
                             This action cannot be undone. This will permanently delete your product
                             and remove its data and images from our servers.
                           </AlertDialogDescription>

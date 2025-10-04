@@ -170,11 +170,11 @@ export function StoreSetupDialog({ onStoreCreated }: StoreSetupDialogProps) {
           onEscapeKeyDown={(e) => e.preventDefault()}
         >
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl md:text-2xl font-bold tracking-tight">
+            <DialogTitle className="flex items-center gap-2 text-2xl font-bold tracking-tight">
               <Store className="h-6 w-6 text-primary" />
               Set Up Your Store
             </DialogTitle>
-            <DialogDescription className="text-sm md:text-base leading-relaxed">
+            <DialogDescription className="text-base leading-relaxed">
               Welcome! Let's get your store ready. You can change these details later.
             </DialogDescription>
           </DialogHeader>
@@ -189,25 +189,25 @@ export function StoreSetupDialog({ onStoreCreated }: StoreSetupDialogProps) {
           ) : (
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="storeName" className="text-xs md:text-sm font-medium">Store Name</Label>
+                <Label htmlFor="storeName" className="text-sm font-medium">Store Name</Label>
                 <Input
                   id="storeName"
                   placeholder="My Awesome Store"
                   {...form.register("storeName")}
                 />
                 {form.formState.errors.storeName && (
-                  <p className="text-destructive text-xs md:text-sm">{form.formState.errors.storeName.message}</p>
+                  <p className="text-destructive text-sm">{form.formState.errors.storeName.message}</p>
                 )}
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="storeDescription" className="text-xs md:text-sm font-medium">Store Description (Optional)</Label>
+                <Label htmlFor="storeDescription" className="text-sm font-medium">Store Description (Optional)</Label>
                 <Textarea
                   id="storeDescription"
                   placeholder="A brief description of what your store offers."
                   {...form.register("storeDescription")}
                 />
                 {form.formState.errors.storeDescription && (
-                  <p className="text-destructive text-xs md:text-sm">{form.formState.errors.storeDescription.message}</p>
+                  <p className="text-destructive text-sm">{form.formState.errors.storeDescription.message}</p>
                 )}
               </div>
               <Button type="submit" className="w-full font-semibold" disabled={isBuildingStore}>

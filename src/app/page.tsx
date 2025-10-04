@@ -68,8 +68,23 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!isSessionLoading && user) {
       fetchDashboardData();
+      // Set flag when authenticated on dashboard
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('wasAuthenticatedOnDashboard', 'true');
+      }
+    } else if (!isSessionLoading && !user) {
+      // If session is done loading and there's no user, clear the flag
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('wasAuthenticatedOnDashboard');
+      }
     }
-    // Removed localStorage.setItem/removeItem for 'wasAuthenticatedOnDashboard' as it's no longer needed.
+
+    return () => {
+      // Clear the flag when component unmounts or user navigates away
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('wasAuthenticatedOnDashboard');
+      }
+    };
   }, [isSessionLoading, user, fetchDashboardData]);
 
   if (isSessionLoading || isLoadingDashboardData) {
@@ -108,111 +123,111 @@ export default function DashboardPage() {
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} />
 
-      <main className="flex-1 px-4 pt-4 pb-8 md:px-8">
+      <main className="flex-1 px-8 pt-4 pb-8">
         <div className="flex justify-center mb-4">
           <ScrollHintArrow />
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 grid-cols-2">
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+              <CardTitle className="text-base font-medium">Total Products</CardTitle>
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-xl md:text-2xl font-bold">{totalProducts}</div>
+              <div className="text-2xl font-bold">{totalProducts}</div>
             </CardContent>
           </Card>
 
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+              <CardTitle className="text-base font-medium">Total Orders</CardTitle>
               <ShoppingCart className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-xl md:text-2xl font-bold">{totalOrders}</div>
+              <div className="text-2xl font-bold">{totalOrders}</div>
             </CardContent>
           </Card>
 
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">New Orders</CardTitle>
+              <CardTitle className="text-base font-medium">New Orders</CardTitle>
               <BellRing className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-xl md:text-2xl font-bold">{newOrders}</div>
+              <div className="text-2xl font-bold">{newOrders}</div>
             </CardContent>
           </Card>
 
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+              <CardTitle className="text-base font-medium">Total Revenue</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-xl md:text-2xl font-bold">Rs{totalProfit.toFixed(2)}</div>
+              <div className="text-2xl font-bold">Rs{totalProfit.toFixed(2)}</div>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-6">
+        <div className="grid gap-6 grid-cols-2 mt-6">
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Store className="h-6 w-6 text-primary" />
-              <CardTitle className="text-base md:text-xl font-semibold">View Your Store</CardTitle>
+              <CardTitle className="text-xl font-semibold">View Your Store</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">See how your store looks to customers</p>
-              <Button onClick={handleOpenStore} className="w-full font-semibold text-sm md:text-base" disabled={profile?.tenant_name === null}>Open Store</Button>
+              <p className="text-base text-muted-foreground leading-relaxed">See how your store looks to customers</p>
+              <Button onClick={handleOpenStore} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Open Store</Button>
             </CardContent>
           </Card>
 
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Package className="h-6 w-6 text-green-500" />
-              <CardTitle className="text-base md:text-xl font-semibold">Manage Products</CardTitle>
+              <CardTitle className="text-xl font-semibold">Manage Products</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">Add, edit, and organize your products</p>
-              <Button onClick={() => router.push('/products')} className="w-full font-semibold text-sm md:text-base" disabled={profile?.tenant_name === null}>Manage Products</Button>
+              <p className="text-base text-muted-foreground leading-relaxed">Add, edit, and organize your products</p>
+              <Button onClick={() => router.push('/products')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Manage Products</Button>
             </CardContent>
           </Card>
 
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <ShoppingCart className="h-6 w-6 text-purple-500" />
-              <CardTitle className="text-base md:text-xl font-semibold">View Orders</CardTitle>
+              <CardTitle className="text-xl font-semibold">View Orders</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">Track and manage customer orders</p>
-              <Button onClick={() => router.push('/orders')} className="w-full font-semibold text-sm md:text-base" disabled={profile?.tenant_name === null}>View Orders</Button>
+              <p className="text-base text-muted-foreground leading-relaxed">Track and manage customer orders</p>
+              <Button onClick={() => router.push('/orders')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>View Orders</Button>
             </CardContent>
           </Card>
           
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <LayoutDashboard className="h-6 w-6 text-yellow-500" />
-              <CardTitle className="text-base md:text-xl font-semibold">Customize Store</CardTitle>
+              <CardTitle className="text-xl font-semibold">Customize Store</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">Customize your store's Home, About Us, and Contact Us pages.</p>
-              <Button onClick={() => router.push('/pages')} className="w-full font-semibold text-sm md:text-base" disabled={profile?.tenant_name === null}>Customize Store</Button>
+              <p className="text-base text-muted-foreground leading-relaxed">Customize your store's Home, About Us, and Contact Us pages.</p>
+              <Button onClick={() => router.push('/pages')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Customize Store</Button>
             </CardContent>
           </Card>
 
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Globe className="h-6 w-6 text-blue-500" />
-              <CardTitle className="text-base md:text-xl font-semibold">Free Domain</CardTitle>
+              <CardTitle className="text-xl font-semibold">Free Domain</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">Claim a custom domain for your store</p>
-              <Button onClick={() => router.push('/free-domain')} className="w-full font-semibold text-sm md:text-base" disabled={profile?.tenant_name === null}>Free Domain</Button>
+              <p className="text-base text-muted-foreground leading-relaxed">Claim a custom domain for your store</p>
+              <Button onClick={() => router.push('/free-domain')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Free Domain</Button>
             </CardContent>
           </Card>
         </div>
       </main>
 
-      <footer className="w-full py-4 text-center text-muted-foreground text-xs md:text-sm border-t border-border bg-card">
+      <footer className="w-full py-4 text-center text-muted-foreground text-sm border-t border-border bg-card">
         Yaarsite for Entrepreneurs
       </footer>
     </div>
