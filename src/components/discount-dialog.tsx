@@ -126,6 +126,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
         return {
           id: product.id,
           user_id: user.id,
+          name: product.name, // Explicitly include name
           original_price: product.original_price === null ? product.price : product.original_price,
           price: newPrice,
           discount_percentage: values.discountPercentage,
@@ -186,6 +187,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
       const updates = productsToUpdate.map(product => ({
         id: product.id,
         user_id: user.id,
+        name: product.name, // Explicitly include name
         price: product.original_price !== null ? product.original_price : product.price,
         original_price: null,
         discount_percentage: null,
@@ -227,7 +229,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
           <Percent className="h-4 w-4" /> Discount
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto overflow-x-hidden font-sans">
+      <DialogContent className="w-full max-w-md max-h-[90vh] overflow-y-auto overflow-x-hidden font-sans">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold tracking-tight">Apply Product Discount</DialogTitle>
           <DialogDescription className="text-base leading-relaxed">
