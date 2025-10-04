@@ -206,6 +206,7 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
           stock: values.stock,
           image_urls: imageUrls.length > 0 ? imageUrls : null,
           category: values.category || null, // New: insert category
+          original_price: values.price, // Set original_price to initial price
         });
 
       if (insertError) {

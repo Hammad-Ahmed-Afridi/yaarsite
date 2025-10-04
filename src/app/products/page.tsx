@@ -3,12 +3,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Package, Trash2, ArrowLeft } from 'lucide-react'; // Import ArrowLeft
+import { Plus, Package, Trash2, ArrowLeft, Percent } from 'lucide-react'; // Import ArrowLeft and Percent
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { AddProductDialog } from '@/components/add-product-dialog';
 import { EditProductDialog } from '@/components/edit-product-dialog';
+import { DiscountDialog } from '@/components/discount-dialog'; // Import DiscountDialog
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
@@ -35,7 +36,10 @@ interface Product {
   stock: number;
   user_id: string;
   image_urls: string[] | null;
-  category: string | null; // Added category field
+  category: string | null;
+  original_price: number | null; // New: original_price
+  discount_percentage: number | null; // New: discount_percentage
+  discount_end_date: string | null; // New: discount_end_date
   created_at: string;
 }
 
@@ -155,7 +159,10 @@ export default function ProductsPage() {
               <span className="ml-2 text-destructive"> (Maximum limit reached)</span>
             )}
           </p>
-          <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
+          <div className="flex gap-2">
+            <DiscountDialog products={products} onDiscountApplied={fetchProducts} /> {/* Discount button */}
+            <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
+          </div>
         </div>
 
         {products.length === 0 ? (
@@ -188,9 +195,21 @@ export default function ProductsPage() {
                 <CardContent className="space-y-2">
                   <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{product.description || "No description."}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
+                    {product.discount_percentage && product.discount_end_date && new Date(product.discount_end_date) > new Date() ? (
+                      <div className="flex flex-col items-start">
+                        <span className="text-sm text-muted-foreground line-through">Rs{product.original_price?.toFixed(2) || product.price.toFixed(2)}</span>
+                        <span className="text-xl font-bold text-destructive">Rs{product.price.toFixed(2)}</span>
+                      </div>
+                    ) : (
+                      <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
+                    )}
                     <Badge variant="secondary" className="font-medium">{product.stock} in stock</Badge>
                   </div>
+                  {product.discount_percentage && product.discount_end_date && new Date(product.discount_end_date) > new Date() && (
+                    <Badge className="bg-green-500 text-white font-medium">
+                      {product.discount_percentage}% OFF!
+                    </Badge>
+                  )}
                   {product.category && (
                     <Badge variant="outline" className="mt-2 font-medium text-xs">
                       {product.category}

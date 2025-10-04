@@ -23,6 +23,9 @@ interface Product {
   stock: number;
   user_id: string; // Owner of the product
   image_urls: string[] | null;
+  original_price: number | null; // New: original_price
+  discount_percentage: number | null; // New: discount_percentage
+  discount_end_date: string | null; // New: discount_end_date
 }
 
 interface ProductDetailDialogProps {
@@ -77,6 +80,8 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
     onOpenChange(false); // Close dialog after adding to cart
   };
 
+  const isDiscountActive = product.discount_percentage && product.discount_end_date && new Date(product.discount_end_date) > new Date();
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto font-sans">
@@ -127,11 +132,23 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
             <h3 className="text-3xl font-bold tracking-tight">{product.name}</h3>
             <p className="text-muted-foreground text-lg leading-relaxed">{product.description || "No description available."}</p>
             <div className="flex items-center justify-between">
-              <span className="text-4xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span>
+              {isDiscountActive ? (
+                <div className="flex flex-col items-start">
+                  <span className="text-lg text-muted-foreground line-through">Rs{product.original_price?.toFixed(2) || product.price.toFixed(2)}</span>
+                  <span className="text-4xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span>
+                </div>
+              ) : (
+                <span className="text-4xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span>
+              )}
               <Badge variant="secondary" className="text-lg px-4 py-2 font-medium">
                 {product.stock} in stock
               </Badge>
             </div>
+            {isDiscountActive && (
+              <Badge className="bg-green-500 text-white text-base px-3 py-1 font-medium">
+                {product.discount_percentage}% OFF!
+              </Badge>
+            )}
             <Button
               className="w-full py-6 text-lg flex items-center gap-2 font-semibold"
               onClick={handleAddToCart}

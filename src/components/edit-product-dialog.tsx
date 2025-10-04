@@ -47,6 +47,9 @@ interface Product {
   user_id: string;
   image_urls: string[] | null;
   category: string | null; // New: category field
+  original_price: number | null; // New: original_price
+  discount_percentage: number | null; // New: discount_percentage
+  discount_end_date: string | null; // New: discount_end_date
   created_at: string;
 }
 
@@ -240,15 +243,43 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
         }
       }
 
+      // Determine if price is being changed and if a discount is active
+      const isPriceChanging = values.price !== product.price;
+      const isDiscountActive = product.discount_percentage !== null && product.discount_end_date && new Date(product.discount_end_date) > new Date();
+
+      let updatedPrice = values.price;
+      let updatedOriginalPrice = product.original_price;
+      let updatedDiscountPercentage = product.discount_percentage;
+      let updatedDiscountEndDate = product.discount_end_date;
+
+      if (isPriceChanging) {
+        // If price is changed manually, any active discount should be removed
+        // and the new price becomes the base price.
+        updatedOriginalPrice = null;
+        updatedDiscountPercentage = null;
+        updatedDiscountEndDate = null;
+      } else if (isDiscountActive) {
+        // If price is not changing manually, but a discount is active,
+        // ensure the original_price is preserved if it exists.
+        updatedOriginalPrice = product.original_price !== null ? product.original_price : product.price;
+      } else {
+        // If no discount is active and price is not changing, ensure original_price is null
+        updatedOriginalPrice = null;
+      }
+
+
       const { error: updateError } = await supabase
         .from('products')
         .update({
           name: values.name,
           description: values.description,
-          price: values.price,
+          price: updatedPrice, // Use the potentially updated price
           stock: values.stock,
           image_urls: finalImageUrls.length > 0 ? finalImageUrls : null,
-          category: values.category || null, // New: update category
+          category: values.category || null,
+          original_price: updatedOriginalPrice, // Update original_price
+          discount_percentage: updatedDiscountPercentage, // Update discount_percentage
+          discount_end_date: updatedDiscountEndDate, // Update discount_end_date
           updated_at: new Date().toISOString(),
         })
         .eq('id', product.id)

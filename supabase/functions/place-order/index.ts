@@ -37,11 +37,13 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // --- Server-side Stock Validation ---
+    let calculatedTotalAmount = 0;
+
+    // --- Server-side Stock and Discount Validation ---
     for (const item of items_json) {
       const { data: product, error: productError } = await supabaseAdmin
         .from('products')
-        .select('stock')
+        .select('stock, price, discount_percentage, discount_end_date') // Fetch discount fields
         .eq('id', item.id)
         .single();
 
@@ -58,8 +60,44 @@ serve(async (req) => {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
+
+      // Calculate actual price considering active discounts
+      let itemPrice = product.price;
+      const isDiscountActive = product.discount_percentage && product.discount_end_date && new Date(product.discount_end_date) > new Date();
+
+      if (isDiscountActive) {
+        itemPrice = product.price; // The 'price' column already holds the discounted price if a discount is active
+      }
+      
+      calculatedTotalAmount += itemPrice * item.quantity;
     }
-    // --- End Server-side Stock Validation ---
+    // --- End Server-side Stock and Discount Validation ---
+
+    // Fetch delivery charge from profile
+    const { data: profileData, error: profileError } = await supabaseAdmin
+      .from('profiles')
+      .select('delivery_charge')
+      .eq('id', user_id)
+      .single();
+
+    if (profileError || !profileData) {
+      console.error("Error fetching delivery charge for store owner:", profileError);
+      return new Response(JSON.stringify({ message: 'Failed to retrieve store delivery charge.' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const deliveryCharge = profileData.delivery_charge || 0;
+    calculatedTotalAmount += deliveryCharge;
+
+    // Validate that the client-provided total_amount matches the server-calculated total
+    if (Math.abs(calculatedTotalAmount - total_amount) > 0.01) { // Allow for minor floating point differences
+      return new Response(JSON.stringify({ message: `Price mismatch. Server calculated total: Rs${calculatedTotalAmount.toFixed(2)}, client provided: Rs${total_amount.toFixed(2)}.` }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     const { data, error: insertError } = await supabaseAdmin
       .from('orders')
@@ -70,7 +108,7 @@ serve(async (req) => {
         shipping_province,
         shipping_city,
         shipping_address_line,
-        total_amount,
+        total_amount: calculatedTotalAmount, // Use server-calculated total
         items_json,
         user_id,
         status: 'pending',

@@ -12,6 +12,9 @@ interface CartItem {
   image_url?: string;
   storeOwnerId: string; // To link cart items to a specific store owner
   stock: number; // New: Add stock to cart item
+  original_price?: number | null; // New: original_price
+  discount_percentage?: number | null; // New: discount_percentage
+  discount_end_date?: string | null; // New: discount_end_date
 }
 
 interface CartContextType {

@@ -24,6 +24,9 @@ interface Product {
   user_id: string;
   image_urls: string[] | null;
   category: string | null; // New: category field
+  original_price: number | null; // New: original_price
+  discount_percentage: number | null; // New: discount_percentage
+  discount_end_date: string | null; // New: discount_end_date
 }
 
 export default function StoreProductsPage() {
@@ -172,40 +175,55 @@ export default function StoreProductsPage() {
             </div>
           ) : (
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Adjusted grid for mobile */}
-              {filteredProducts.map((product) => (
-                <Card key={product.id} className="bg-card text-card-foreground shadow-md cursor-pointer rounded-3xl" onClick={() => handleProductClick(product)}>
-                  {product.image_urls && product.image_urls.length > 0 ? (
-                    <div className="relative h-48 w-full overflow-hidden rounded-t-3xl">
-                      <Image
-                        src={product.image_urls[0]}
-                        alt={product.name}
-                        fill
-                        style={{ objectFit: 'cover' }}
-                        className="transition-transform duration-300 hover:scale-105"
-                      />
-                    </div>
-                  ) : (
-                    <div className="relative h-48 w-full overflow-hidden rounded-t-3xl bg-muted flex items-center justify-center">
-                      <ImageIcon className="h-16 w-16 text-muted-foreground" />
-                    </div>
-                  )}
-                  <CardHeader>
-                    <CardTitle className="text-lg font-semibold">{product.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{product.description || "No description available."}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
-                      <Badge variant="secondary" className="font-medium">{product.stock} in stock</Badge>
-                    </div>
-                    {product.category && (
-                      <Badge variant="outline" className="mt-2 font-medium text-xs">
-                        {product.category}
-                      </Badge>
+              {filteredProducts.map((product) => {
+                const isDiscountActive = product.discount_percentage && product.discount_end_date && new Date(product.discount_end_date) > new Date();
+                return (
+                  <Card key={product.id} className="bg-card text-card-foreground shadow-md cursor-pointer rounded-3xl" onClick={() => handleProductClick(product)}>
+                    {product.image_urls && product.image_urls.length > 0 ? (
+                      <div className="relative h-48 w-full overflow-hidden rounded-t-3xl">
+                        <Image
+                          src={product.image_urls[0]}
+                          alt={product.name}
+                          fill
+                          style={{ objectFit: 'cover' }}
+                          className="transition-transform duration-300 hover:scale-105"
+                        />
+                      </div>
+                    ) : (
+                      <div className="relative h-48 w-full overflow-hidden rounded-t-3xl bg-muted flex items-center justify-center">
+                        <ImageIcon className="h-16 w-16 text-muted-foreground" />
+                      </div>
                     )}
-                  </CardContent>
-                </Card>
-              ))}
+                    <CardHeader>
+                      <CardTitle className="text-lg font-semibold">{product.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{product.description || "No description available."}</p>
+                      <div className="flex items-center justify-between">
+                        {isDiscountActive ? (
+                          <div className="flex flex-col items-start">
+                            <span className="text-sm text-muted-foreground line-through">Rs{product.original_price?.toFixed(2) || product.price.toFixed(2)}</span>
+                            <span className="text-xl font-bold text-primary">Rs{product.price.toFixed(2)}</span>
+                          </div>
+                        ) : (
+                          <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
+                        )}
+                        <Badge variant="secondary" className="font-medium">{product.stock} in stock</Badge>
+                      </div>
+                      {isDiscountActive && (
+                        <Badge className="bg-green-500 text-white font-medium">
+                          {product.discount_percentage}% OFF!
+                        </Badge>
+                      )}
+                      {product.category && (
+                        <Badge variant="outline" className="mt-2 font-medium text-xs">
+                          {product.category}
+                        </Badge>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </>
