@@ -38,7 +38,7 @@ interface Product {
   created_at: string;
 }
 
-const PRODUCT_LIMIT = 3;
+const PRODUCT_LIMIT = 2; // Changed from 3 to 2
 
 export default function ProductsPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();

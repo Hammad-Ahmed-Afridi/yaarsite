@@ -27,6 +27,7 @@ import Image from 'next/image';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+const PRODUCT_LIMIT = 2; // Added constant for product limit
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Product name is required." }),
@@ -118,8 +119,8 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
       return;
     }
 
-    if (currentProductCount >= 3) {
-      toast.error("You have reached the maximum limit of 3 products.");
+    if (currentProductCount >= PRODUCT_LIMIT) { // Updated condition
+      toast.error(`You have reached the maximum limit of ${PRODUCT_LIMIT} products.`); // Updated message
       setIsSubmitting(false); // Ensure submitting state is reset
       return;
     }
@@ -187,7 +188,7 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
     }
   };
 
-  const isAddProductDisabled = currentProductCount >= 3;
+  const isAddProductDisabled = currentProductCount >= PRODUCT_LIMIT;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
