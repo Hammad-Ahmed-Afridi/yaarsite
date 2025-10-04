@@ -14,6 +14,7 @@ import { ProductDetailDialog } from '@/components/product-detail-dialog';
 import { AppLoader } from '@/components/app-loader';
 import { useStoreProfile } from '@/components/store-profile-context-provider';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'; // Import Tabs components
+import { cn } from '@/lib/utils'; // Import cn for conditional class merging
 
 interface Product {
   id: string;
@@ -150,10 +151,27 @@ export default function StoreProductsPage() {
         <>
           <div className="mb-8 overflow-x-auto">
             <Tabs value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter} className="w-full">
-              <TabsList className="flex justify-start flex-nowrap overflow-x-auto pb-2">
-                <TabsTrigger value="all" className="whitespace-nowrap">All Products</TabsTrigger>
+              <TabsList className="flex justify-start flex-nowrap overflow-x-auto gap-2 p-1 bg-muted rounded-full">
+                <TabsTrigger
+                  value="all"
+                  className={cn(
+                    "whitespace-nowrap rounded-full px-4 py-2 text-base font-medium transition-all",
+                    "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm",
+                    "hover:bg-primary/10 hover:text-primary"
+                  )}
+                >
+                  All Products
+                </TabsTrigger>
                 {uniqueCategories.map(category => (
-                  <TabsTrigger key={category} value={category} className="whitespace-nowrap">
+                  <TabsTrigger
+                    key={category}
+                    value={category}
+                    className={cn(
+                      "whitespace-nowrap rounded-full px-4 py-2 text-base font-medium transition-all",
+                      "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm",
+                      "hover:bg-primary/10 hover:text-primary"
+                    )}
+                  >
                     {category}
                   </TabsTrigger>
                 ))}
