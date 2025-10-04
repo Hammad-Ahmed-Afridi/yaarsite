@@ -5,11 +5,67 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LayoutDashboard, ShoppingCart, Settings, ArrowRight, Package, Monitor, BarChart } from 'lucide-react';
+import { PricingCard } from '@/components/pricing-card'; // Import the new PricingCard component
 
 export default function LandingPage() {
   const animatedYaarsite = (
     <span className="inline-block text-primary font-bold animate-continuous-pulse">Yaarsite</span>
   );
+
+  const pricingPlans = [
+    {
+      planName: "Free",
+      description: "Perfect for getting started with your online store.",
+      priceMonthly: 0,
+      features: [
+        "Dashboard Access",
+        "Product Management (Up to 2 products)",
+        "Order Management",
+        "Free Yaarsite Subdomain",
+        "Basic Analytics",
+        "Cash on Delivery Payment",
+        "Limited Support",
+      ],
+      buttonText: "Start for Free",
+      buttonLink: "/signup",
+      isMostPopular: false,
+    },
+    {
+      planName: "Pro",
+      description: "Unlock full potential with unlimited products and customization.",
+      priceMonthly: 500,
+      priceYearly: 5000,
+      features: [
+        "Everything in Free",
+        "Unlimited Products",
+        "Full Store Customization (Home, About, Contact Pages)",
+        "Custom Store Logo & Description",
+        "Custom Delivery Charges",
+        "JazzCash & EasyPaisa Payments",
+        "Priority Support",
+      ],
+      buttonText: "Go Pro",
+      buttonLink: "/signup",
+      isMostPopular: true,
+    },
+    {
+      planName: "Business",
+      description: "Advanced features for growing businesses and maximum control.",
+      priceMonthly: 7000,
+      priceYearly: 70000,
+      features: [
+        "Everything in Pro",
+        "Advanced Analytics & Reporting",
+        "Dedicated Account Manager",
+        "Custom Domain Integration (Coming Soon)",
+        "API Access (Coming Soon)",
+        "24/7 Premium Support",
+      ],
+      buttonText: "Get Business",
+      buttonLink: "/signup",
+      isMostPopular: false,
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
@@ -123,6 +179,21 @@ export default function LandingPage() {
                 Track your sales with intuitive, real-time data.
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="py-20 px-4 bg-muted">
+        <div className="container mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Choose Your Plan</h2>
+          <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
+            Select the perfect plan to power your online store. Upgrade anytime!
+          </p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+            {pricingPlans.map((plan) => (
+              <PricingCard key={plan.planName} {...plan} />
+            ))}
           </div>
         </div>
       </section>
