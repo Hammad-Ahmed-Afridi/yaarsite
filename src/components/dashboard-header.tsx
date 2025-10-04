@@ -38,12 +38,7 @@ export function DashboardHeader({ profile, onSignOut }: DashboardHeaderProps) {
         <h1 className="text-xl font-bold">{profile?.tenant_name || "Dashboard"}</h1>
       </div>
       <div className="flex items-center gap-2">
-        <Button asChild variant="outline" className="flex items-center gap-2 font-semibold" disabled={profile?.tenant_name === null}>
-          <Link href="/free-domain">
-            <Globe className="h-4 w-4" />
-            Free Domain
-          </Link>
-        </Button>
+        {/* Removed the "Free Domain" button */}
         <Button onClick={onSignOut} variant="outline" className="flex items-center gap-2 font-semibold">
           <LogOut className="h-4 w-4" />
           Sign Out
