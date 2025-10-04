@@ -24,10 +24,30 @@ interface Product {
   image_urls: string[] | null;
 }
 
+// Revalidate every 60 seconds (or on demand via revalidatePath)
+export const revalidate = 60; 
+
+// This function will generate static paths for all existing tenant slugs
+export async function generateStaticParams() {
+  const { data: profiles, error } = await supabase
+    .from('profiles')
+    .select('tenant_slug')
+    .not('tenant_slug', 'is', null); // Only select profiles with a tenant_slug
+
+  if (error) {
+    console.error("Error generating static params for store products:", error);
+    return [];
+  }
+
+  return profiles.map((profile) => ({
+    tenantSlug: profile.tenant_slug,
+  }));
+}
+
 export default function StoreProductsPage() {
   const params = useParams();
   const tenantSlug = params.tenantSlug as string;
-  const { storeProfile: profile, setStoreProfile } = useStoreProfile(); // Use context
+  const { storeProfile: profile } = useStoreProfile(); // Use context
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
