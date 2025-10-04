@@ -59,14 +59,20 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       // User is NOT currently authenticated (and not in the middle of a sign-out)
       console.log("AuthWrapper: User is NOT authenticated (and not signing out).");
 
-      // If on the root path, or any path that is NOT explicitly public, redirect to login.
-      // The landing page is explicitly public, so it's handled by the 'else' below.
-      if (pathname === '/' || (!isPublicPath && !publicPaths.includes(pathname))) {
-        console.log("AuthWrapper: Unauthenticated user on root or protected path, redirecting to /login.");
+      if (pathname === '/') {
+        // Unauthenticated user on the root path, redirect to landing page
+        console.log("AuthWrapper: Unauthenticated user on root path, redirecting to /landing.");
+        router.push('/landing');
+        setIsReadyToRender(false);
+      } else if (!isPublicPath) {
+        // Unauthenticated user on a protected path (not in publicPaths and not /)
+        // This covers paths like /products, /orders, /settings, etc.
+        console.log("AuthWrapper: Unauthenticated user on protected path, redirecting to /login.");
         router.push('/login');
         setIsReadyToRender(false);
       } else {
         // Unauthenticated user on an explicitly public path (login, signup, store, cart, checkout, landing).
+        // This includes /landing itself, and ensures they stay on these pages if they refresh.
         console.log("AuthWrapper: Unauthenticated user on public path, allowing render.");
         setIsReadyToRender(true);
       }
