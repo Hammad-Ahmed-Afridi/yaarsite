@@ -37,8 +37,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Insert the order
-    const { data: orderData, error: orderError } = await supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from('orders')
       .insert({
         customer_name,
@@ -56,29 +55,15 @@ serve(async (req) => {
       .select()
       .single();
 
-    if (orderError) {
-      console.error("Supabase insert order error:", orderError);
-      return new Response(JSON.stringify({ message: orderError.message }), {
+    if (error) {
+      console.error("Supabase insert error:", error);
+      return new Response(JSON.stringify({ message: error.message }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Decrement product stock for each item in the order
-    for (const item of items_json) {
-      const { error: stockUpdateError } = await supabaseAdmin
-        .from('products')
-        .update({ stock: (item.stock || 0) - item.quantity }) // Assuming item.stock is the current stock, or fetch it
-        .eq('id', item.id);
-
-      if (stockUpdateError) {
-        console.error(`Error updating stock for product ${item.id}:`, stockUpdateError);
-        // Optionally, you might want to revert the order or log this more critically
-        // For now, we'll let the order go through but log the stock error
-      }
-    }
-
-    return new Response(JSON.stringify({ message: 'Order placed successfully', order: orderData }), {
+    return new Response(JSON.stringify({ message: 'Order placed successfully', order: data }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
