@@ -72,6 +72,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
       price: product.price,
       image_url: product.image_urls?.[0], // Use the first image for cart display
       storeOwnerId: storeOwnerId,
+      stock: product.stock, // Pass the product's stock
     });
     onOpenChange(false); // Close dialog after adding to cart
   };

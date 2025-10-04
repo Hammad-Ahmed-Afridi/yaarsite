@@ -115,6 +115,7 @@ export default function CartPage() {
                               onChange={(e) => handleUpdateQuantity(item.id, parseInt(e.target.value))}
                               className="w-16 text-center text-base"
                               min="1"
+                              max={item.stock} // Set max based on available stock
                             />
                             <Button
                               variant="outline"
@@ -190,6 +191,7 @@ export default function CartPage() {
                                     onChange={(e) => handleUpdateQuantity(item.id, parseInt(e.target.value))}
                                     className="w-16 text-center text-base"
                                     min="1"
+                                    max={item.stock} // Set max based on available stock
                                   />
                                   <Button
                                     variant="outline"

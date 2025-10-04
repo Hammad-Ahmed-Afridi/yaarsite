@@ -11,11 +11,12 @@ interface CartItem {
   quantity: number;
   image_url?: string;
   storeOwnerId: string; // To link cart items to a specific store owner
+  stock: number; // New: Add stock to cart item
 }
 
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (item: Omit<CartItem, 'quantity'>, quantity?: number) => void;
+  addToCart: (item: Omit<CartItem, 'quantity'> & { stock: number }, quantity?: number) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -71,7 +72,7 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
     fetchDeliveryCharge();
   }, [cartItems]);
 
-  const addToCart = useCallback((item: Omit<CartItem, 'quantity'>, quantityToAdd: number = 1) => {
+  const addToCart = useCallback((item: Omit<CartItem, 'quantity'> & { stock: number }, quantityToAdd: number = 1) => {
     setCartItems(prevItems => {
       // Check if cart is not empty and the new item is from a different store
       if (prevItems.length > 0 && prevItems[0].storeOwnerId !== item.storeOwnerId) {
@@ -84,11 +85,22 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
       if (existingItemIndex > -1) {
         // If item exists, update its quantity
         const updatedItems = [...prevItems];
-        updatedItems[existingItemIndex].quantity += quantityToAdd;
+        const newQuantity = updatedItems[existingItemIndex].quantity + quantityToAdd;
+
+        if (newQuantity > item.stock) {
+          toast.error(`Cannot add more than available stock (${item.stock} in stock).`);
+          return prevItems; // Prevent adding if it exceeds stock
+        }
+
+        updatedItems[existingItemIndex].quantity = newQuantity;
         toast.success(`${item.name} quantity updated in cart!`);
         return updatedItems;
       } else {
         // If item is new, add it to the cart
+        if (quantityToAdd > item.stock) {
+          toast.error(`Cannot add more than available stock (${item.stock} in stock).`);
+          return prevItems; // Prevent adding if initial quantity exceeds stock
+        }
         toast.success(`${item.name} added to cart!`);
         return [...prevItems, { ...item, quantity: quantityToAdd }];
       }
@@ -105,9 +117,17 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
 
   const updateQuantity = useCallback((productId: string, quantity: number) => {
     setCartItems(prevItems => {
-      const updatedItems = prevItems.map(item =>
-        item.id === productId ? { ...item, quantity: Math.max(1, quantity) } : item
-      );
+      const updatedItems = prevItems.map(item => {
+        if (item.id === productId) {
+          const newQuantity = Math.max(1, quantity); // Ensure quantity is at least 1
+          if (newQuantity > item.stock) {
+            toast.error(`Cannot set quantity more than available stock (${item.stock} in stock).`);
+            return { ...item, quantity: item.stock }; // Set to max available stock
+          }
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      });
       return updatedItems;
     });
   }, []);
