@@ -50,6 +50,15 @@
     --sidebar-accent-foreground: 222.2 84% 4.9%; /* Dark text for sidebar accent */
     --sidebar-border: 175 10% 80%; /* Subtle Teal-Grey for sidebar border */
     --sidebar-ring: 175 60% 40%; /* Primary Teal for sidebar ring */
+
+    /* Default store theme variables (will be overridden by inline styles if custom colors are set) */
+    --store-primary: var(--primary);
+    --store-secondary: var(--secondary);
+    --store-accent: var(--accent);
+    --store-background: var(--background);
+    --store-foreground: var(--foreground);
+    --store-card-background: var(--card);
+    --store-card-foreground: var(--card-foreground);
   }
 
   .dark {
@@ -97,6 +106,15 @@
     --sidebar-accent-foreground: 175 20% 95%; /* Light text for sidebar accent */
     --sidebar-border: 217.2 32.6% 17.5%; /* Darker Blue-Grey for sidebar border */
     --sidebar-ring: 175 70% 60%; /* Primary Teal for sidebar ring */
+
+    /* Default store theme variables (will be overridden by inline styles if custom colors are set) */
+    --store-primary: var(--primary);
+    --store-secondary: var(--secondary);
+    --store-accent: var(--accent);
+    --store-background: var(--background);
+    --store-foreground: var(--foreground);
+    --store-card-background: var(--card);
+    --store-card-foreground: var(--card-foreground);
   }
 }
 
@@ -109,5 +127,36 @@
   body {
     @apply bg-background text-foreground;
     overflow-x: hidden; /* Added to prevent horizontal scrolling */
+  }
+  /* Apply store-specific colors to elements within the store layout */
+  .bg-store-background {
+    background-color: hsl(var(--store-background));
+  }
+  .text-store-foreground {
+    color: hsl(var(--store-foreground));
+  }
+  .bg-store-card {
+    background-color: hsl(var(--store-card-background));
+  }
+  .text-store-card-foreground {
+    color: hsl(var(--store-card-foreground));
+  }
+  .text-store-primary {
+    color: hsl(var(--store-primary));
+  }
+  .bg-store-primary {
+    background-color: hsl(var(--store-primary));
+  }
+  .text-store-secondary {
+    color: hsl(var(--store-secondary));
+  }
+  .bg-store-secondary {
+    background-color: hsl(var(--store-secondary));
+  }
+  .text-store-accent {
+    color: hsl(var(--store-accent));
+  }
+  .bg-store-accent {
+    background-color: hsl(var(--store-accent));
   }
 }

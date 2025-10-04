@@ -45,7 +45,7 @@ export default function StoreLayout({
       try {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('*, store_page_welcome_message, home_page_heading, home_page_description, about_page_content, contact_page_heading, contact_page_description') // Select all relevant fields
+          .select('*, store_page_welcome_message, home_page_heading, home_page_description, about_page_content, contact_page_heading, contact_page_description, store_primary_color_hsl, store_secondary_color_hsl, store_accent_color_hsl, store_background_color_hsl, store_foreground_color_hsl, store_card_background_color_hsl, store_card_foreground_color_hsl') // Select all relevant fields including new colors
           .eq('tenant_slug', tenantSlug)
           .single();
 
@@ -71,6 +71,21 @@ export default function StoreLayout({
 
     fetchStoreProfile();
   }, [tenantSlug, cartItems, clearCart]); // Added cartItems and clearCart to dependencies
+
+  // Apply custom CSS variables for store theme
+  useEffect(() => {
+    if (profile) {
+      const root = document.documentElement; // Target the <html> element
+      root.style.setProperty('--store-primary', profile.store_primary_color_hsl || 'var(--primary)');
+      root.style.setProperty('--store-secondary', profile.store_secondary_color_hsl || 'var(--secondary)');
+      root.style.setProperty('--store-accent', profile.store_accent_color_hsl || 'var(--accent)');
+      root.style.setProperty('--store-background', profile.store_background_color_hsl || 'var(--background)');
+      root.style.setProperty('--store-foreground', profile.store_foreground_color_hsl || 'var(--foreground)');
+      root.style.setProperty('--store-card-background', profile.store_card_background_color_hsl || 'var(--card)');
+      root.style.setProperty('--store-card-foreground', profile.store_card_foreground_color_hsl || 'var(--card-foreground)');
+    }
+  }, [profile]);
+
 
   if (isLoading) {
     return <AppLoader message="Loading store..." />;
@@ -98,9 +113,9 @@ export default function StoreLayout({
 
   return (
     <StoreProfileProvider initialProfile={profile}>
-      <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
+      <div className="min-h-screen bg-store-background text-store-foreground flex flex-col font-sans"> {/* Use store-specific background/foreground */}
         {/* Header */}
-        <header className="flex items-center justify-between p-4 border-b border-border bg-card">
+        <header className="flex items-center justify-between p-4 border-b border-border bg-store-card text-store-card-foreground"> {/* Use store-specific card colors */}
           {/* Left section: Logo + Store Name */}
           <div className="flex items-center space-x-4">
             {profile?.avatar_url ? (
@@ -114,7 +129,7 @@ export default function StoreLayout({
                 />
               </div>
             ) : (
-              <Store className="h-6 w-6 text-primary" />
+              <Store className="h-6 w-6 text-store-primary" /> {/* Use store-specific primary */}
             )}
             <h1 className="text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
           </div>
@@ -144,7 +159,7 @@ export default function StoreLayout({
                     <span className="sr-only">Toggle menu</span>
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-64 p-4">
+                <SheetContent side="right" className="w-64 p-4 bg-store-background text-store-foreground"> {/* Use store-specific background/foreground */}
                   <h2 className="text-xl font-bold mb-6 tracking-tight">Navigation</h2>
                   <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
                 </SheetContent>
@@ -158,7 +173,7 @@ export default function StoreLayout({
           {children}
         </main>
 
-        <footer className="w-full py-4 text-center text-muted-foreground text-sm border-t border-border bg-card">
+        <footer className="w-full py-4 text-center text-store-foreground text-sm border-t border-border bg-store-card"> {/* Use store-specific card colors */}
           Made with Yaarsite
         </footer>
       </div>
