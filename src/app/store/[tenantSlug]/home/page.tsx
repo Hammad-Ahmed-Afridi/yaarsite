@@ -85,7 +85,7 @@ export default function StoreHomePage() {
       <p className="text-base md:text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
         {profile.home_page_description || "Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
       </p>
-      <Button asChild size="md" className="text-base md:size-lg md:text-lg font-semibold">
+      <Button asChild size="lg" className="text-base md:size-lg md:text-lg font-semibold">
         <Link href={`/store/${tenantSlug}`}>
           <Package className="mr-2 h-5 w-5" /> View Our Products
         </Link>
