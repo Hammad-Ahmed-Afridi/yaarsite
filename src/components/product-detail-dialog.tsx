@@ -135,9 +135,9 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
             <h3 className="text-3xl font-bold tracking-tight">{product.name}</h3>
             <p className="text-muted-foreground text-lg leading-relaxed">{product.description || "No description available."}</p>
             <div className="flex items-center justify-between">
-              {isDiscountActive ? (
-                <div className="flex flex-col items-start">
-                  <span className="text-lg text-muted-foreground line-through">Rs{product.original_price?.toFixed(2) || product.price.toFixed(2)}</span>
+              {isDiscountActive && product.original_price !== null ? (
+                <div className="flex items-baseline gap-2">
+                  <span className="text-lg text-muted-foreground line-through">Rs{product.original_price.toFixed(2)}</span>
                   <span className="text-4xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span>
                 </div>
               ) : (

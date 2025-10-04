@@ -203,9 +203,9 @@ export default function StoreProductsPage() {
                     <CardContent className="space-y-2">
                       <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{product.description || "No description available."}</p>
                       <div className="flex items-center justify-between">
-                        {isDiscountActive ? (
-                          <div className="flex flex-col items-start">
-                            <span className="text-sm text-muted-foreground line-through">Rs{product.original_price?.toFixed(2) || product.price.toFixed(2)}</span>
+                        {isDiscountActive && product.original_price !== null ? (
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-sm text-muted-foreground line-through">Rs{product.original_price.toFixed(2)}</span>
                             <span className="text-xl font-bold text-primary">Rs{product.price.toFixed(2)}</span>
                           </div>
                         ) : (
