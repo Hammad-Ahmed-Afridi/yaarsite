@@ -132,36 +132,34 @@ export function hslToHex(hsl: string): string | null {
 
   let c = (1 - Math.abs(2 * l - 1)) * s,
       x = c * (1 - Math.abs((h / 60) % 2 - 1)),
-      m = l - c / 2,
-      r = 0,
-      g = 0,
-      b = 0;
+      m = l - c / 2;
+  let r_num = 0, g_num = 0, b_num = 0;
 
   if (0 <= h && h < 60) {
-    r = c; g = x; b = 0;
+    r_num = c; g_num = x; b_num = 0;
   } else if (60 <= h && h < 120) {
-    r = x; g = c; b = 0;
+    r_num = x; g_num = c; b_num = 0;
   } else if (120 <= h && h < 180) {
-    r = 0; g = c; b = x;
+    r_num = 0; g_num = c; b_num = x;
   } else if (180 <= h && h < 240) {
-    r = 0; g = x; b = c;
+    r_num = 0; g_num = x; b_num = c;
   } else if (240 <= h && h < 300) {
-    r = x; g = 0; b = c;
+    r_num = x; g_num = 0; b_num = c;
   } else if (300 <= h && h < 360) {
-    r = c; g = 0; b = x;
+    r_num = c; g_num = 0; b_num = x;
   }
   // Having obtained RGB, convert channels to hex
-  r = Math.round((r + m) * 255).toString(16);
-  g = Math.round((g + m) * 255).toString(16);
-  b = Math.round((b + m) * 255).toString(16);
+  let r_hex: string = Math.round((r_num + m) * 255).toString(16);
+  let g_hex: string = Math.round((g_num + m) * 255).toString(16);
+  let b_hex: string = Math.round((b_num + m) * 255).toString(16);
 
   // Prepend 0s, if necessary
-  if (r.length === 1)
-    r = "0" + r;
-  if (g.length === 1)
-    g = "0" + g;
-  if (b.length === 1)
-    b = "0" + b;
+  if (r_hex.length === 1)
+    r_hex = "0" + r_hex;
+  if (g_hex.length === 1)
+    g_hex = "0" + g_hex;
+  if (b_hex.length === 1)
+    b_hex = "0" + b_hex;
 
-  return "#" + r + g + b;
+  return "#" + r_hex + g_hex + b_hex;
 }

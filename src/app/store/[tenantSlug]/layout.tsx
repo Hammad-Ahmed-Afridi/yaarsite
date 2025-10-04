@@ -129,7 +129,8 @@ export default function StoreLayout({
                 />
               </div>
             ) : (
-              <Store className="h-6 w-6 text-store-primary" /> {/* Use store-specific primary */}
+              // Use store-specific primary
+              <Store className="h-6 w-6 text-store-primary" />
             )}
             <h1 className="text-xl font-bold">{profile.tenant_name || "Public Store"}</h1>
           </div>
