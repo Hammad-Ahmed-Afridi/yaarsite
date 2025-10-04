@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, ShoppingCart, DollarSign, Store, Settings, Globe, BellRing, LayoutDashboard } from "lucide-react"; // Import LayoutDashboard for Pages
+import { Package, ShoppingCart, DollarSign, Store, Settings, Globe, BellRing, LayoutDashboard, RefreshCcw } from "lucide-react"; // Import LayoutDashboard and RefreshCcw for Pages
 import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
 import { DashboardHeader } from "@/components/dashboard-header";
@@ -57,9 +57,11 @@ export default function DashboardPage() {
       setTotalOrders(data.totalOrders);
       setTotalProfit(data.totalProfit);
       setNewOrders(data.newOrders);
+      toast.success("Dashboard data refreshed!"); // Added success toast
 
     } catch (error: any) {
       console.error("Dashboard Page: Error fetching dashboard data:", error);
+      toast.error("Failed to refresh dashboard data."); // Added error toast
     } finally {
       setIsLoadingDashboardData(false);
     }
@@ -124,6 +126,13 @@ export default function DashboardPage() {
       <DashboardHeader profile={profile} onSignOut={handleSignOut} />
 
       <main className="flex-1 px-8 pt-4 pb-8">
+        <div className="flex justify-between items-center mb-4"> {/* New div for header and refresh button */}
+          <h2 className="text-2xl font-bold tracking-tight">Your Dashboard</h2>
+          <Button variant="outline" size="icon" onClick={fetchDashboardData} disabled={isLoadingDashboardData}>
+            <RefreshCcw className="h-4 w-4" />
+            <span className="sr-only">Refresh Data</span>
+          </Button>
+        </div>
         <div className="flex justify-center mb-4">
           <ScrollHintArrow />
         </div>
