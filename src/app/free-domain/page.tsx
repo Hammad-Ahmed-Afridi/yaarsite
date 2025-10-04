@@ -93,8 +93,8 @@ export default function FreeDomainPage() {
                 <ExternalLink className="h-4 w-4" />
               </Button>
             </div>
-            <Button asChild className="font-semibold w-full max-w-xs">
-              <Link href={profile.store_url || "#"} target="_blank" rel="noopener noreferrer" disabled={!profile.store_url}>
+            <Button asChild className="font-semibold w-full max-w-xs" disabled={!profile.store_url}>
+              <Link href={profile.store_url || "#"} target="_blank" rel="noopener noreferrer">
                 Visit Your Store
               </Link>
             </Button>
