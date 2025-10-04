@@ -35,14 +35,10 @@ export interface Profile { // Exported for use in DashboardHeader
   store_province: string | null; // New: Store province
   jazzcash_phone_number: string | null; // New: JazzCash phone number
   easypaisa_phone_number: string | null; // New: EasyPaisa phone number
-  // New: Store theme colors (HSL format)
-  store_primary_color_hsl: string | null;
-  store_secondary_color_hsl: string | null;
-  store_accent_color_hsl: string | null;
-  store_background_color_hsl: string | null;
-  store_foreground_color_hsl: string | null;
-  store_card_background_color_hsl: string | null;
-  store_card_foreground_color_hsl: string | null;
+  // Simplified Store theme colors (HSL format)
+  store_primary_color_hsl: string | null; // Used for accent (buttons, links, icons)
+  store_background_color_hsl: string | null; // Main store background
+  store_card_background_color_hsl: string | null; // Cards, Header, Footer background
 }
 
 // Define a type for the specific profile keys that store image URLs

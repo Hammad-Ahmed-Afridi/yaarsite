@@ -40,14 +40,10 @@ const formSchema = z.object({
     .optional()
     .or(z.literal('')),
   logo: z.instanceof(File).optional(),
-  // New: Store theme colors (HEX format for input)
-  storePrimaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
-  storeSecondaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
-  storeAccentColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
+  // Simplified Store theme colors (HEX format for input)
+  storePrimaryAccentColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
   storeBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
-  storeForegroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
-  storeCardBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
-  storeCardForegroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
+  storeCardHeaderFooterBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
 });
 
 const DELIVERY_CHARGE_OPTIONS = [
@@ -75,13 +71,9 @@ export default function SettingsPage() {
       jazzcashPhoneNumber: "",
       easypaisaPhoneNumber: "",
       logo: undefined,
-      storePrimaryColor: "",
-      storeSecondaryColor: "",
-      storeAccentColor: "",
+      storePrimaryAccentColor: "",
       storeBackgroundColor: "",
-      storeForegroundColor: "",
-      storeCardBackgroundColor: "",
-      storeCardForegroundColor: "",
+      storeCardHeaderFooterBackgroundColor: "",
     },
   });
 
@@ -95,13 +87,9 @@ export default function SettingsPage() {
         easypaisaPhoneNumber: profile.easypaisa_phone_number || "",
         logo: undefined,
         // Convert HSL from profile to HEX for form display
-        storePrimaryColor: profile.store_primary_color_hsl ? hslToHex(profile.store_primary_color_hsl) || "" : "",
-        storeSecondaryColor: profile.store_secondary_color_hsl ? hslToHex(profile.store_secondary_color_hsl) || "" : "",
-        storeAccentColor: profile.store_accent_color_hsl ? hslToHex(profile.store_accent_color_hsl) || "" : "",
+        storePrimaryAccentColor: profile.store_primary_color_hsl ? hslToHex(profile.store_primary_color_hsl) || "" : "",
         storeBackgroundColor: profile.store_background_color_hsl ? hslToHex(profile.store_background_color_hsl) || "" : "",
-        storeForegroundColor: profile.store_foreground_color_hsl ? hslToHex(profile.store_foreground_color_hsl) || "" : "",
-        storeCardBackgroundColor: profile.store_card_background_color_hsl ? hslToHex(profile.store_card_background_color_hsl) || "" : "",
-        storeCardForegroundColor: profile.store_card_foreground_color_hsl ? hslToHex(profile.store_card_foreground_color_hsl) || "" : "",
+        storeCardHeaderFooterBackgroundColor: profile.store_card_background_color_hsl ? hslToHex(profile.store_card_background_color_hsl) || "" : "",
       });
       setLogoPreview(profile.avatar_url || null);
     }
@@ -272,13 +260,9 @@ export default function SettingsPage() {
       const newStoreUrl = `${appBaseUrl}/store/${profile?.tenant_slug}`;
 
       // Convert HEX colors to HSL for storage
-      const storePrimaryColorHsl = values.storePrimaryColor ? hexToHsl(values.storePrimaryColor) : null;
-      const storeSecondaryColorHsl = values.storeSecondaryColor ? hexToHsl(values.storeSecondaryColor) : null;
-      const storeAccentColorHsl = values.storeAccentColor ? hexToHsl(values.storeAccentColor) : null;
+      const storePrimaryAccentColorHsl = values.storePrimaryAccentColor ? hexToHsl(values.storePrimaryAccentColor) : null;
       const storeBackgroundColorHsl = values.storeBackgroundColor ? hexToHsl(values.storeBackgroundColor) : null;
-      const storeForegroundColorHsl = values.storeForegroundColor ? hexToHsl(values.storeForegroundColor) : null;
-      const storeCardBackgroundColorHsl = values.storeCardBackgroundColor ? hexToHsl(values.storeCardBackgroundColor) : null;
-      const storeCardForegroundColorHsl = values.storeCardForegroundColor ? hexToHsl(values.storeCardForegroundColor) : null;
+      const storeCardHeaderFooterBackgroundColorHsl = values.storeCardHeaderFooterBackgroundColor ? hexToHsl(values.storeCardHeaderFooterBackgroundColor) : null;
 
 
       const { error } = await supabase
@@ -292,13 +276,9 @@ export default function SettingsPage() {
           jazzcash_phone_number: values.jazzcashPhoneNumber || null,
           easypaisa_phone_number: values.easypaisaPhoneNumber || null,
           // New: Save HSL colors
-          store_primary_color_hsl: storePrimaryColorHsl,
-          store_secondary_color_hsl: storeSecondaryColorHsl,
-          store_accent_color_hsl: storeAccentColorHsl,
+          store_primary_color_hsl: storePrimaryAccentColorHsl,
           store_background_color_hsl: storeBackgroundColorHsl,
-          store_foreground_color_hsl: storeForegroundColorHsl,
-          store_card_background_color_hsl: storeCardBackgroundColorHsl,
-          store_card_foreground_color_hsl: storeCardForegroundColorHsl,
+          store_card_background_color_hsl: storeCardHeaderFooterBackgroundColorHsl,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -512,52 +492,24 @@ export default function SettingsPage() {
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="storePrimaryColor" className="text-sm font-medium">Primary Color</Label>
-                    <Input id="storePrimaryColor" type="color" {...form.register("storePrimaryColor")} />
-                    {form.formState.errors.storePrimaryColor && (
-                      <p className="text-destructive text-sm">{form.formState.errors.storePrimaryColor.message}</p>
-                    )}
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="storeSecondaryColor" className="text-sm font-medium">Secondary Color</Label>
-                    <Input id="storeSecondaryColor" type="color" {...form.register("storeSecondaryColor")} />
-                    {form.formState.errors.storeSecondaryColor && (
-                      <p className="text-destructive text-sm">{form.formState.errors.storeSecondaryColor.message}</p>
-                    )}
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="storeAccentColor" className="text-sm font-medium">Accent Color</Label>
-                    <Input id="storeAccentColor" type="color" {...form.register("storeAccentColor")} />
-                    {form.formState.errors.storeAccentColor && (
-                      <p className="text-destructive text-sm">{form.formState.errors.storeAccentColor.message}</p>
-                    )}
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="storeBackgroundColor" className="text-sm font-medium">Background Color</Label>
+                    <Label htmlFor="storeBackgroundColor" className="text-sm font-medium">Store Background Color</Label>
                     <Input id="storeBackgroundColor" type="color" {...form.register("storeBackgroundColor")} />
                     {form.formState.errors.storeBackgroundColor && (
                       <p className="text-destructive text-sm">{form.formState.errors.storeBackgroundColor.message}</p>
                     )}
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="storeForegroundColor" className="text-sm font-medium">Foreground Color</Label>
-                    <Input id="storeForegroundColor" type="color" {...form.register("storeForegroundColor")} />
-                    {form.formState.errors.storeForegroundColor && (
-                      <p className="text-destructive text-sm">{form.formState.errors.storeForegroundColor.message}</p>
+                    <Label htmlFor="storeCardHeaderFooterBackgroundColor" className="text-sm font-medium">Card, Header & Footer Background Color</Label>
+                    <Input id="storeCardHeaderFooterBackgroundColor" type="color" {...form.register("storeCardHeaderFooterBackgroundColor")} />
+                    {form.formState.errors.storeCardHeaderFooterBackgroundColor && (
+                      <p className="text-destructive text-sm">{form.formState.errors.storeCardHeaderFooterBackgroundColor.message}</p>
                     )}
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="storeCardBackgroundColor" className="text-sm font-medium">Card Background Color</Label>
-                    <Input id="storeCardBackgroundColor" type="color" {...form.register("storeCardBackgroundColor")} />
-                    {form.formState.errors.storeCardBackgroundColor && (
-                      <p className="text-destructive text-sm">{form.formState.errors.storeCardBackgroundColor.message}</p>
-                    )}
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="storeCardForegroundColor" className="text-sm font-medium">Card Foreground Color</Label>
-                    <Input id="storeCardForegroundColor" type="color" {...form.register("storeCardForegroundColor")} />
-                    {form.formState.errors.storeCardForegroundColor && (
-                      <p className="text-destructive text-sm">{form.formState.errors.storeCardForegroundColor.message}</p>
+                    <Label htmlFor="storePrimaryAccentColor" className="text-sm font-medium">Primary Accent Color (Buttons, Links, Icons)</Label>
+                    <Input id="storePrimaryAccentColor" type="color" {...form.register("storePrimaryAccentColor")} />
+                    {form.formState.errors.storePrimaryAccentColor && (
+                      <p className="text-destructive text-sm">{form.formState.errors.storePrimaryAccentColor.message}</p>
                     )}
                   </div>
                 </div>
