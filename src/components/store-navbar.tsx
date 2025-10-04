@@ -38,7 +38,7 @@ export function StoreNavbar({ tenantSlug, direction = 'horizontal', onLinkClick 
             variant="ghost"
             asChild
             className={cn(
-              "text-base font-medium",
+              "text-sm md:text-base font-medium",
               pathname === item.href ? "text-primary underline underline-offset-4" : "text-muted-foreground hover:text-foreground",
               direction === 'vertical' && "w-full justify-start" // Full width for vertical items
             )}

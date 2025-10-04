@@ -35,7 +35,7 @@ export function DashboardHeader({ profile, onSignOut }: DashboardHeaderProps) {
         ) : (
           <Store className="h-6 w-6 text-primary" />
         )}
-        <h1 className="text-xl font-bold">{profile?.tenant_name || "Dashboard"}</h1>
+        <h1 className="text-lg md:text-xl font-bold">{profile?.tenant_name || "Dashboard"}</h1>
       </div>
       <div className="flex items-center gap-2">
         <Button asChild variant="outline" className="flex items-center gap-2 font-semibold" disabled={profile?.tenant_name === null}>

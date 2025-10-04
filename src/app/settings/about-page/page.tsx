@@ -267,7 +267,7 @@ export default function AboutPageSettingsPage() {
               </Link>
             </Button>
             <Info className="h-6 w-6 text-primary" />
-            <CardTitle className="text-2xl font-bold tracking-tight">About Us Page Settings</CardTitle>
+            <CardTitle className="text-xl md:text-2xl font-bold tracking-tight">About Us Page Settings</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

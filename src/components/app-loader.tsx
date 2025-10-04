@@ -13,15 +13,15 @@ interface AppLoaderProps {
 
 export function AppLoader({ message = "Loading...", secondaryMessage, size = 'md', isFullScreen = true, className }: AppLoaderProps) {
   const iconSizeClasses = {
-    sm: "text-4xl", // Adjusted for text size
-    md: "text-6xl",
-    lg: "text-8xl",
+    sm: "text-3xl md:text-4xl", // Adjusted for text size
+    md: "text-5xl md:text-6xl",
+    lg: "text-7xl md:text-8xl",
   };
 
   const textSizeClasses = {
-    sm: "text-sm",
-    md: "text-base",
-    lg: "text-lg",
+    sm: "text-xs md:text-sm",
+    md: "text-sm md:text-base",
+    lg: "text-base md:text-lg",
   };
 
   return (
