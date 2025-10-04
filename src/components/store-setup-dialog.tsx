@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod'; // Corrected: changed '*s z' to '* as z'
+import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Store, Sparkles } from 'lucide-react'; // Import Sparkles for toast
+import { Store, Sparkles } from 'lucide-react';
 import { AppLoader } from '@/components/app-loader';
 
 const formSchema = z.object({
@@ -63,13 +63,7 @@ export function StoreSetupDialog({ onStoreCreated }: StoreSetupDialogProps) {
     }
 
     setIsBuildingStore(true);
-    toast.info(
-      <div className="flex items-center gap-2">
-        <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-        <span>Yaarsite AI is crafting your store. Get ready for magic!</span>
-      </div>,
-      { duration: 9000 }
-    );
+    // Removed the blue toast.info message here
 
     try {
       // 1. Check if a store with the same name already exists
