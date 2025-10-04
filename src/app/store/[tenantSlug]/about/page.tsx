@@ -60,7 +60,7 @@ export default function StoreAboutPage() {
           />
         </div>
       ) : (
-        <Info className="h-24 w-24 text-primary mb-6" />
+        <Info className="h-24 w-24 text-store-primary mb-6" /> {/* Use store-primary */}
       )}
       <h1 className="text-4xl font-bold mb-4 tracking-tight">About {profile.tenant_name}</h1>
       <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">

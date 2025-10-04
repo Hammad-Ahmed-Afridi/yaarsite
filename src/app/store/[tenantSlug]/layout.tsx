@@ -170,7 +170,7 @@ export default function StoreLayout({
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-4 sm:p-8"> {/* Adjusted padding */}
           {children}
         </main>
 

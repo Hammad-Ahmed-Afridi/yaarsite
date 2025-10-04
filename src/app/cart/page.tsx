@@ -69,7 +69,7 @@ export default function CartPage() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-4 sm:p-8"> {/* Adjusted padding */}
         {cartItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-3xl p-8">
             <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />

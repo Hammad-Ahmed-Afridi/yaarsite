@@ -132,7 +132,7 @@ export default function StoreProductsPage() {
   }
 
   return (
-    <div className="font-sans">
+    <div className="font-sans p-4 sm:p-0"> {/* Adjusted padding */}
       <h2 className="text-2xl font-bold mb-4 tracking-tight">Our Products</h2>
       {profile?.store_page_welcome_message && (
         <p className="text-lg text-muted-foreground mb-6 text-center max-w-prose mx-auto leading-relaxed">
@@ -171,7 +171,7 @@ export default function StoreProductsPage() {
               <p className="text-base text-muted-foreground leading-relaxed">Please select another category or view all products.</p>
             </div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Adjusted grid for mobile */}
               {filteredProducts.map((product) => (
                 <Card key={product.id} className="bg-card text-card-foreground shadow-md cursor-pointer rounded-3xl" onClick={() => handleProductClick(product)}>
                   {product.image_urls && product.image_urls.length > 0 ? (

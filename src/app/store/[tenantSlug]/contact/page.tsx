@@ -63,7 +63,7 @@ export default function StoreContactPage() {
           />
         </div>
       ) : (
-        <Mail className="h-24 w-24 text-primary mb-6" />
+        <Mail className="h-24 w-24 text-store-primary mb-6" /> {/* Use store-primary */}
       )}
       <h1 className="text-4xl font-bold mb-4 tracking-tight">
         {profile.contact_page_heading || `Contact ${profile.tenant_name}`}
@@ -74,24 +74,24 @@ export default function StoreContactPage() {
 
       <div className="space-y-4 text-left w-full max-w-md">
         {profile.email && (
-          <div className="flex items-center gap-4 p-4 border rounded-lg bg-card shadow-sm">
+          <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm"> {/* Use store-card */}
             <Mail className="h-6 w-6 text-muted-foreground" />
             <div>
               <p className="font-semibold text-base">Email Us</p>
-              <a href={`mailto:${profile.email}`} className="text-primary hover:underline text-base">{profile.email}</a>
+              <a href={`mailto:${profile.email}`} className="text-store-primary hover:underline text-base">{profile.email}</a> {/* Use store-primary */}
             </div>
           </div>
         )}
         {profile.phone_number && (
-          <div className="flex items-center gap-4 p-4 border rounded-lg bg-card shadow-sm">
+          <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm"> {/* Use store-card */}
             <Phone className="h-6 w-6 text-muted-foreground" />
             <div>
               <p className="font-semibold text-base">Call Us</p>
-              <a href={`tel:${profile.phone_number}`} className="text-primary hover:underline text-base">{profile.phone_number}</a>
+              <a href={`tel:${profile.phone_number}`} className="text-store-primary hover:underline text-base">{profile.phone_number}</a> {/* Use store-primary */}
             </div>
           </div>
         )}
-        <div className="flex items-center gap-4 p-4 border rounded-lg bg-card shadow-sm">
+        <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm"> {/* Use store-card */}
           <MapPin className="h-6 w-6 text-muted-foreground" />
           <div>
             <p className="font-semibold text-base">Visit Us</p>

@@ -354,7 +354,7 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       <DashboardHeader profile={profile} onSignOut={handleSignOut} /> {/* Removed currentPath */}
 
-      <main className="flex-1 p-8 flex justify-center">
+      <main className="flex-1 p-4 sm:p-8 flex justify-center"> {/* Adjusted padding */}
         <Card className="w-full max-w-2xl bg-card text-card-foreground shadow-lg rounded-3xl">
           <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">
             <Button variant="ghost" size="icon" asChild>

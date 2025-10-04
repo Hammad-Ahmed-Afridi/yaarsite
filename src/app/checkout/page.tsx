@@ -211,7 +211,7 @@ export default function CheckoutPage() {
         <h1 className="text-xl font-bold ml-4">Checkout</h1>
       </header>
 
-      <main className="flex-1 p-8 flex items-center justify-center">
+      <main className="flex-1 p-4 sm:p-8 flex items-center justify-center"> {/* Adjusted padding */}
         <Card className="w-full max-w-lg bg-card text-card-foreground shadow-lg rounded-3xl">
           <CardHeader className="text-center space-y-2">
             <CardTitle className="text-2xl font-bold tracking-tight">Confirm Your Order</CardTitle>

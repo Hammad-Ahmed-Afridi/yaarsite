@@ -143,8 +143,8 @@ export default function DashboardPage() {
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} />
 
-      <main className="flex-1 px-8 pt-4 pb-8">
-        <div className="flex justify-between items-center mb-4"> {/* New div for header and refresh button */}
+      <main className="flex-1 p-4 sm:p-8"> {/* Adjusted padding */}
+        <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold tracking-tight">Your Dashboard</h2>
           <Button variant="outline" size="icon" onClick={fetchDashboardData} disabled={isLoadingDashboardData}>
             <RefreshCcw className="h-4 w-4" />
@@ -154,7 +154,7 @@ export default function DashboardPage() {
         <div className="flex justify-center mb-4">
           <ScrollHintArrow />
         </div>
-        <div className="grid gap-6 grid-cols-2">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2"> {/* Adjusted grid for mobile */}
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-base font-medium">Total Products</CardTitle>
@@ -196,7 +196,7 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        <div className="grid gap-6 grid-cols-2 mt-6">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 mt-6"> {/* Adjusted grid for mobile */}
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Store className="h-6 w-6 text-primary" />

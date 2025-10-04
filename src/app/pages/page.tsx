@@ -47,7 +47,7 @@ export default function PagesPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       <DashboardHeader profile={profile} onSignOut={handleSignOut} /> {/* Removed currentPath */}
 
-      <main className="flex-1 p-8 flex justify-center">
+      <main className="flex-1 p-4 sm:p-8 flex justify-center"> {/* Adjusted padding */}
         <div className="w-full max-w-2xl">
           <div className="flex items-center gap-3 mb-6">
             <Button variant="ghost" size="icon" asChild>
@@ -57,7 +57,7 @@ export default function PagesPage() {
             </Button>
             <h2 className="text-2xl font-bold tracking-tight">Customize Your Store Pages</h2>
           </div>
-          <div className="grid gap-6 grid-cols-2">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2"> {/* Adjusted grid for mobile */}
             <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
               <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
                 <Home className="h-6 w-6 text-blue-500" />

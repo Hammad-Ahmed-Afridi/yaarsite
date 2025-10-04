@@ -139,7 +139,7 @@ export default function ProductsPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       <DashboardHeader profile={profile} onSignOut={handleSignOut} /> {/* Removed currentPath */}
 
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-4 sm:p-8"> {/* Adjusted padding */}
         <div className="flex items-center gap-3 mb-6">
           <Button variant="ghost" size="icon" asChild>
             <Link href="/">
