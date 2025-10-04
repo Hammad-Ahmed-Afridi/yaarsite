@@ -1,10 +1,12 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link'; // Added Link import
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Check, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge'; // Added Badge import
 
 interface PricingCardProps {
   planName: string;
