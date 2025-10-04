@@ -21,10 +21,11 @@ serve(async (req) => {
       shipping_address_line, 
       total_amount, 
       items_json, 
-      user_id 
+      user_id,
+      payment_method // New: payment_method
     } = await req.json();
 
-    if (!customer_name || !customer_email || !customer_phone || !shipping_province || !shipping_city || !shipping_address_line || !total_amount || !items_json || !user_id) {
+    if (!customer_name || !customer_email || !customer_phone || !shipping_province || !shipping_city || !shipping_address_line || !total_amount || !items_json || !user_id || !payment_method) {
       return new Response(JSON.stringify({ message: 'Missing required fields' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -49,6 +50,7 @@ serve(async (req) => {
         items_json,
         user_id,
         status: 'pending',
+        payment_method, // New: insert payment method
       })
       .select()
       .single();

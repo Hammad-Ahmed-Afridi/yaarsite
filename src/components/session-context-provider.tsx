@@ -33,6 +33,8 @@ export interface Profile { // Exported for use in DashboardHeader
   store_address_line: string | null; // New: Store physical address line
   store_city: string | null; // New: Store city
   store_province: string | null; // New: Store province
+  jazzcash_phone_number: string | null; // New: JazzCash phone number
+  easypaisa_phone_number: string | null; // New: EasyPaisa phone number
 }
 
 // Define a type for the specific profile keys that store image URLs
@@ -90,8 +92,6 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       setProfile(userProfile);
     } else {
       setProfile(null);
-      // IMPORTANT: Removed localStorage.removeItem('wasAuthenticatedOnDashboard') from here.
-      // This flag should only be cleared on explicit sign-out or when leaving dashboard.
     }
     setIsLoading(false);
     // Reset isSigningOut when the SIGNED_OUT event is processed

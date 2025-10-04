@@ -19,7 +19,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2, ArrowLeft } from 'lucide-react';
+import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2, ArrowLeft, Phone } from 'lucide-react';
 import Image from 'next/image';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { AppLoader } from '@/components/app-loader';
@@ -31,6 +31,14 @@ const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
   storeDescription: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
   deliveryCharge: z.coerce.number().min(0, { message: "Delivery charge cannot be negative." }),
+  jazzcashPhoneNumber: z.string()
+    .regex(/^03\d{9}$/, { message: "Phone number must start with 03 and be 11 digits long." })
+    .optional()
+    .or(z.literal('')),
+  easypaisaPhoneNumber: z.string()
+    .regex(/^03\d{9}$/, { message: "Phone number must start with 03 and be 11 digits long." })
+    .optional()
+    .or(z.literal('')),
   logo: z.instanceof(File).optional(),
 });
 
@@ -56,6 +64,8 @@ export default function SettingsPage() {
       storeName: "",
       storeDescription: "",
       deliveryCharge: 200,
+      jazzcashPhoneNumber: "",
+      easypaisaPhoneNumber: "",
       logo: undefined,
     },
   });
@@ -66,6 +76,8 @@ export default function SettingsPage() {
         storeName: profile.tenant_name || "",
         storeDescription: profile.store_description || "",
         deliveryCharge: profile.delivery_charge !== null ? profile.delivery_charge : 200,
+        jazzcashPhoneNumber: profile.jazzcash_phone_number || "",
+        easypaisaPhoneNumber: profile.easypaisa_phone_number || "",
         logo: undefined,
       });
       setLogoPreview(profile.avatar_url || null);
@@ -244,6 +256,8 @@ export default function SettingsPage() {
           store_description: values.storeDescription || null,
           avatar_url: newAvatarUrl,
           delivery_charge: values.deliveryCharge,
+          jazzcash_phone_number: values.jazzcashPhoneNumber || null,
+          easypaisa_phone_number: values.easypaisaPhoneNumber || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -411,6 +425,42 @@ export default function SettingsPage() {
                     <p className="text-destructive text-sm">{form.formState.errors.logo.message}</p>
                   )}
                 </div>
+
+                <h3 className="text-xl font-semibold tracking-tight mt-8">Payment Settings</h3>
+                <div className="grid gap-2">
+                  <Label htmlFor="jazzcashPhoneNumber" className="text-sm font-medium">JazzCash Phone Number</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="jazzcashPhoneNumber"
+                      type="tel"
+                      placeholder="03001234567"
+                      className="pl-10"
+                      {...form.register("jazzcashPhoneNumber")}
+                    />
+                  </div>
+                  {form.formState.errors.jazzcashPhoneNumber && (
+                    <p className="text-destructive text-sm">{form.formState.errors.jazzcashPhoneNumber.message}</p>
+                  )}
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="easypaisaPhoneNumber" className="text-sm font-medium">EasyPaisa Phone Number</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="easypaisaPhoneNumber"
+                      type="tel"
+                      placeholder="03001234567"
+                      className="pl-10"
+                      {...form.register("easypaisaPhoneNumber")}
+                    />
+                  </div>
+                  {form.formState.errors.easypaisaPhoneNumber && (
+                    <p className="text-destructive text-sm">{form.formState.errors.easypaisaPhoneNumber.message}</p>
+                  )}
+                </div>
+
               </div>
 
               <Button type="submit" className="w-full font-semibold" disabled={isUpdatingStore}>

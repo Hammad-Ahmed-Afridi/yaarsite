@@ -11,9 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Loader2, CheckCircle, RefreshCcw } from 'lucide-react';
+import { ArrowLeft, Loader2, CheckCircle, RefreshCcw, Wallet, Banknote, Smartphone } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/integrations/supabase/client'; // Import supabase client
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'; // Import RadioGroup
 
 // Function to generate a random 4-character alphanumeric code
 const generateRandomCode = () => {
@@ -28,6 +29,9 @@ const formSchema = z.object({
   shippingProvince: z.string().min(1, { message: "Province is required." }),
   shippingCity: z.string().min(1, { message: "City is required." }),
   shippingAddressLine: z.string().min(1, { message: "Specific location/address is required." }),
+  paymentMethod: z.enum(["Cash on Delivery", "JazzCash", "EasyPaisa"], {
+    required_error: "Please select a payment method.",
+  }),
   humanVerificationCode: z.string(), // Will be refined later
 });
 
@@ -39,6 +43,9 @@ export default function CheckoutPage() {
   const [storeTenantSlug, setStoreTenantSlug] = useState<string | null>(null); // Used for initial "Continue Shopping" link before order
   const [finalRedirectPath, setFinalRedirectPath] = useState<string | null>(null); // New state for post-order redirect
   const [currentVerificationCode, setCurrentVerificationCode] = useState('');
+  const [jazzcashPhoneNumber, setJazzcashPhoneNumber] = useState<string | null>(null);
+  const [easypaisaPhoneNumber, setEasypaisaPhoneNumber] = useState<string | null>(null);
+  const [isLoadingPaymentInfo, setIsLoadingPaymentInfo] = useState(true);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema.refine((data) => data.humanVerificationCode === currentVerificationCode, {
@@ -52,6 +59,7 @@ export default function CheckoutPage() {
       shippingProvince: "",
       shippingCity: "",
       shippingAddressLine: "",
+      paymentMethod: "Cash on Delivery", // Default payment method
       humanVerificationCode: "",
     },
   });
@@ -70,27 +78,35 @@ export default function CheckoutPage() {
 
   // Effect to fetch store slug for initial "Continue Shopping" link (before order is placed)
   useEffect(() => {
-    async function fetchStoreSlugForInitialLink() {
+    async function fetchStoreInfo() {
+      setIsLoadingPaymentInfo(true);
       if (cartItems.length > 0) {
         const storeOwnerId = cartItems[0].storeOwnerId;
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('tenant_slug')
+          .select('tenant_slug, jazzcash_phone_number, easypaisa_phone_number')
           .eq('id', storeOwnerId)
           .single();
 
-        if (profileError || !profileData?.tenant_slug) {
-          console.error("Error fetching store tenant slug for initial link:", profileError);
+        if (profileError || !profileData) {
+          console.error("Error fetching store profile for checkout:", profileError);
           setStoreTenantSlug(null);
+          setJazzcashPhoneNumber(null);
+          setEasypaisaPhoneNumber(null);
         } else {
           setStoreTenantSlug(profileData.tenant_slug);
+          setJazzcashPhoneNumber(profileData.jazzcash_phone_number);
+          setEasypaisaPhoneNumber(profileData.easypaisa_phone_number);
         }
       } else {
         setStoreTenantSlug(null);
+        setJazzcashPhoneNumber(null);
+        setEasypaisaPhoneNumber(null);
       }
+      setIsLoadingPaymentInfo(false);
     }
 
-    fetchStoreSlugForInitialLink();
+    fetchStoreInfo();
   }, [cartItems]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -141,6 +157,7 @@ export default function CheckoutPage() {
           totalAmount: cartTotal, // This now includes delivery charge
           items: cartItems,
           storeOwnerId: currentStoreOwnerId,
+          paymentMethod: values.paymentMethod, // Include payment method
         }),
       });
 
@@ -295,6 +312,55 @@ export default function CheckoutPage() {
                 />
                 {form.formState.errors.shippingAddressLine && (
                   <p className="text-destructive text-sm">{form.formState.errors.shippingAddressLine.message}</p>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                <Label className="text-sm font-medium">Payment Method</Label>
+                {isLoadingPaymentInfo ? (
+                  <p className="text-muted-foreground text-sm">Loading payment options...</p>
+                ) : (
+                  <RadioGroup
+                    onValueChange={(value) => form.setValue("paymentMethod", value as z.infer<typeof formSchema>["paymentMethod"])}
+                    value={form.watch("paymentMethod")}
+                    className="grid gap-2"
+                  >
+                    <div className="flex items-center space-x-2 p-3 border rounded-md bg-background">
+                      <RadioGroupItem value="Cash on Delivery" id="cod" />
+                      <Label htmlFor="cod" className="flex items-center gap-2 text-base font-medium">
+                        <Banknote className="h-5 w-5 text-green-600" /> Cash on Delivery
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2 p-3 border rounded-md bg-background">
+                      <RadioGroupItem value="JazzCash" id="jazzcash" disabled={!jazzcashPhoneNumber} />
+                      <Label htmlFor="jazzcash" className="flex flex-col items-start gap-1 text-base font-medium">
+                        <span className="flex items-center gap-2">
+                          <Smartphone className="h-5 w-5 text-purple-600" /> JazzCash
+                        </span>
+                        {jazzcashPhoneNumber ? (
+                          <span className="text-sm text-muted-foreground">Account: {jazzcashPhoneNumber}</span>
+                        ) : (
+                          <span className="text-sm text-destructive">Not configured by store owner</span>
+                        )}
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2 p-3 border rounded-md bg-background">
+                      <RadioGroupItem value="EasyPaisa" id="easypaisa" disabled={!easypaisaPhoneNumber} />
+                      <Label htmlFor="easypaisa" className="flex flex-col items-start gap-1 text-base font-medium">
+                        <span className="flex items-center gap-2">
+                          <Wallet className="h-5 w-5 text-teal-600" /> EasyPaisa
+                        </span>
+                        {easypaisaPhoneNumber ? (
+                          <span className="text-sm text-muted-foreground">Account: {easypaisaPhoneNumber}</span>
+                        ) : (
+                          <span className="text-sm text-destructive">Not configured by store owner</span>
+                        )}
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                )}
+                {form.formState.errors.paymentMethod && (
+                  <p className="text-destructive text-sm">{form.formState.errors.paymentMethod.message}</p>
                 )}
               </div>
 

@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MoreHorizontal, Trash2, Edit, ShoppingCart, ArrowLeft } from 'lucide-react'; // Import ArrowLeft
+import { MoreHorizontal, Trash2, Edit, ShoppingCart, ArrowLeft, Wallet, Banknote, Smartphone } from 'lucide-react'; // Import ArrowLeft, Wallet, Banknote, Smartphone
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -30,6 +30,7 @@ interface Order {
   total_amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   items_json: any[];
+  payment_method: string; // New: payment_method
   created_at: string;
   updated_at: string;
 }
@@ -81,6 +82,19 @@ export default function OrdersPage() {
     } else {
       toast.success("Signed out successfully!");
       router.push('/login');
+    }
+  };
+
+  const getPaymentMethodIcon = (method: string) => {
+    switch (method) {
+      case 'Cash on Delivery':
+        return <Banknote className="h-4 w-4 text-green-600" />;
+      case 'JazzCash':
+        return <Smartphone className="h-4 w-4 text-purple-600" />;
+      case 'EasyPaisa':
+        return <Wallet className="h-4 w-4 text-teal-600" />;
+      default:
+        return null;
     }
   };
 
@@ -174,6 +188,13 @@ export default function OrdersPage() {
                         <span>Rs{order.total_amount.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between items-center">
+                        <span className="font-medium">Payment Method:</span>
+                        <span className="flex items-center gap-1">
+                          {getPaymentMethodIcon(order.payment_method)}
+                          {order.payment_method}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
                         <span className="font-medium">Status:</span>
                         <Select
                           value={order.status}
@@ -243,6 +264,7 @@ export default function OrdersPage() {
                           <TableHead className="font-semibold">Phone</TableHead>
                           <TableHead className="font-semibold">Address</TableHead>
                           <TableHead className="font-semibold">Total Amount</TableHead>
+                          <TableHead className="font-semibold">Payment Method</TableHead> {/* New column */}
                           <TableHead className="font-semibold">Status</TableHead>
                           <TableHead className="font-semibold">Order Date</TableHead>
                           <TableHead className="text-right font-semibold">Actions</TableHead>
@@ -259,6 +281,10 @@ export default function OrdersPage() {
                               {order.shipping_address_line}, {order.shipping_city}, {order.shipping_province}
                             </TableCell>
                             <TableCell className="text-base">Rs{order.total_amount.toFixed(2)}</TableCell>
+                            <TableCell className="text-base flex items-center gap-1"> {/* Display payment method */}
+                              {getPaymentMethodIcon(order.payment_method)}
+                              {order.payment_method}
+                            </TableCell>
                             <TableCell>
                               <Select
                                 value={order.status}

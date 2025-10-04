@@ -11,10 +11,11 @@ export async function POST(request: Request) {
       shippingAddressLine, 
       totalAmount, 
       items, 
-      storeOwnerId 
+      storeOwnerId,
+      paymentMethod // New: paymentMethod
     } = await request.json();
 
-    if (!customerName || !customerEmail || !customerPhone || !shippingProvince || !shippingCity || !shippingAddressLine || !totalAmount || !items || !storeOwnerId) {
+    if (!customerName || !customerEmail || !customerPhone || !shippingProvince || !shippingCity || !shippingAddressLine || !totalAmount || !items || !storeOwnerId || !paymentMethod) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
 
@@ -46,6 +47,7 @@ export async function POST(request: Request) {
         total_amount: totalAmount,
         items_json: items,
         user_id: storeOwnerId,
+        payment_method: paymentMethod, // New: pass payment method
       }),
     });
 
