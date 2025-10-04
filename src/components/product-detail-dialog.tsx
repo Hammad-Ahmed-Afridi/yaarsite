@@ -71,7 +71,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
   const images = product.image_urls || [];
   const hasMultipleImages = images.length > 1;
-  const hasColors = product.available_colors && product.available_colors.length > 0;
+  const hasColors = (product.available_colors !== null && product.available_colors.length > 0); // Fixed: Ensure hasColors is always boolean
   const hasSizeChart = !!product.size_chart_url;
 
   const handlePrevImage = () => {
