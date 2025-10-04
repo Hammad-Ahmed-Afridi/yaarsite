@@ -40,19 +40,19 @@ export default function LandingPage() {
             <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-accent/5 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob-2"></div>
         </div>
         <div className="container mx-auto flex flex-col items-center justify-center text-center px-4">
-          <h1 className="relative z-10 text-3xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">
+          <h1 className="relative z-10 text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">
             Launch Your Store in <span className="text-primary">Seconds</span> with {animatedYaarsite}
           </h1>
-          <p className="relative z-10 text-base md:text-xl text-muted-foreground mb-10 max-w-3xl leading-relaxed">
+          <p className="relative z-10 text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl leading-relaxed">
             {animatedYaarsite} helps entrepreneurs build beautiful, professional e-commerce stores effortlessly. Focus on your products, we handle the tech.
           </p>
           <div className="relative z-10 flex flex-col sm:flex-row gap-4">
-            <Button asChild size="lg" className="px-6 py-4 text-base md:px-8 md:py-6 md:text-lg font-semibold hover:scale-[1.02] transition-transform duration-200">
+            <Button asChild size="lg" className="px-8 py-6 text-lg font-semibold hover:scale-[1.02] transition-transform duration-200">
               <Link href="/signup" target="_blank" rel="noopener noreferrer">
                 Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="px-6 py-4 text-base md:px-8 md:py-6 md:text-lg font-semibold hover:scale-[1.02] transition-transform duration-200">
+            <Button asChild variant="outline" size="lg" className="px-8 py-6 text-lg font-semibold hover:scale-[1.02] transition-transform duration-200">
               <Link href="/login" target="_blank" rel="noopener noreferrer">
                 Log In
               </Link>
@@ -64,62 +64,62 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className="py-20 px-4 bg-background">
         <div className="container mx-auto text-center">
-          <h2 className="text-2xl md:text-4xl font-bold mb-4 tracking-tight">Everything You Need to Sell Online</h2>
-          <p className="text-base md:text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Everything You Need to Sell Online</h2>
+          <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
             From product management to order tracking, {animatedYaarsite} provides a complete solution for your e-commerce business.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card className="group p-6 text-left shadow-lg hover:shadow-2xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.05] hover:bg-gradient-to-br hover:from-primary/5 hover:to-transparent">
               <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
                 <LayoutDashboard className="h-8 w-8 text-primary" />
-                <CardTitle className="text-lg md:text-xl font-semibold">Intuitive Dashboard</CardTitle>
+                <CardTitle className="text-xl font-semibold">Intuitive Dashboard</CardTitle>
               </CardHeader>
-              <CardContent className="p-0 text-muted-foreground text-sm md:text-base leading-relaxed">
+              <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
                 Manage your products, orders, and store settings with an easy-to-use interface.
               </CardContent>
             </Card>
             <Card className="group p-6 text-left shadow-lg hover:shadow-2xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.05] hover:bg-gradient-to-br hover:from-primary/5 hover:to-transparent">
               <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
                 <Package className="h-8 w-8 text-primary" />
-                <CardTitle className="text-lg md:text-xl font-semibold">Effortless Product Management</CardTitle>
+                <CardTitle className="text-xl font-semibold">Effortless Product Management</CardTitle>
               </CardHeader>
-              <CardContent className="p-0 text-muted-foreground text-sm md:text-base leading-relaxed">
+              <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
                 Add, edit, and organize your products with images and detailed descriptions.
               </CardContent>
             </Card>
             <Card className="group p-6 text-left shadow-lg hover:shadow-2xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.05] hover:bg-gradient-to-br hover:from-primary/5 hover:to-transparent">
               <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
                 <ShoppingCart className="h-8 w-8 text-primary" />
-                <CardTitle className="text-lg md:text-xl font-semibold">Seamless Order Management</CardTitle>
+                <CardTitle className="text-xl font-semibold">Seamless Order Management</CardTitle>
               </CardHeader>
-              <CardContent className="p-0 text-muted-foreground text-sm md:text-base leading-relaxed">
+              <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
                 Track customer orders from pending to delivered, all in one place.
               </CardContent>
             </Card>
             <Card className="group p-6 text-left shadow-lg hover:shadow-2xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.05] hover:bg-gradient-to-br hover:from-primary/5 hover:to-transparent">
               <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
                 <Settings className="h-8 w-8 text-primary" />
-                <CardTitle className="text-lg md:text-xl font-semibold">Customizable Storefront</CardTitle>
+                <CardTitle className="text-xl font-semibold">Customizable Storefront</CardTitle>
               </CardHeader>
-              <CardContent className="p-0 text-muted-foreground text-sm md:text-base leading-relaxed">
+              <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
                 Personalize your store's look and feel to match your brand.
               </CardContent>
             </Card>
             <Card className="group p-6 text-left shadow-lg hover:shadow-2xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.05] hover:bg-gradient-to-br hover:from-primary/5 hover:to-transparent">
               <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
                 <Monitor className="h-8 w-8 text-primary" />
-                <CardTitle className="text-lg md:text-xl font-semibold">Fully Responsive Design</CardTitle>
+                <CardTitle className="text-xl font-semibold">Fully Responsive Design</CardTitle>
               </CardHeader>
-              <CardContent className="p-0 text-muted-foreground text-sm md:text-base leading-relaxed">
+              <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
                 Your store looks stunning and works perfectly on any device, from desktops to mobile phones.
               </CardContent>
             </Card>
             <Card className="group p-6 text-left shadow-lg hover:shadow-2xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.05] hover:bg-gradient-to-br hover:from-primary/5 hover:to-transparent">
               <CardHeader className="flex flex-row items-center gap-4 p-0 pb-4">
                 <BarChart className="h-8 w-8 text-primary" />
-                <CardTitle className="text-lg md:text-xl font-semibold">Real-time Analytics</CardTitle>
+                <CardTitle className="text-xl font-semibold">Real-time Analytics</CardTitle>
               </CardHeader>
-              <CardContent className="p-0 text-muted-foreground text-sm md:text-base leading-relaxed">
+              <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
                 Track your sales with intuitive, real-time data.
               </CardContent>
             </Card>
@@ -130,11 +130,11 @@ export default function LandingPage() {
       {/* Call to Action Section */}
       <section className="bg-gradient-to-br from-muted to-background rounded-4xl shadow-lg py-20 px-4">
         <div className="container mx-auto text-center">
-          <h2 className="text-2xl md:text-4xl font-bold mb-4 tracking-tight">Ready to Start Selling with {animatedYaarsite}</h2>
-          <p className="text-base md:text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Ready to Start Selling with {animatedYaarsite}</h2>
+          <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
             Join {animatedYaarsite} today and transform your business idea into a thriving online store.
           </p>
-          <Button asChild size="lg" className="px-8 py-6 text-lg md:px-10 md:py-7 md:text-xl font-semibold hover:scale-[1.02] transition-transform duration-200">
+          <Button asChild size="lg" className="px-10 py-7 text-xl font-semibold hover:scale-[1.02] transition-transform duration-200">
             <Link href="/signup" target="_blank" rel="noopener noreferrer">
               Sign Up Now <ArrowRight className="ml-3 h-6 w-6" />
             </Link>
@@ -143,7 +143,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="w-full py-8 text-center text-muted-foreground text-xs sm:text-sm border-t border-border bg-card rounded-t-4xl shadow-lg">
+      <footer className="w-full py-8 text-center text-muted-foreground text-sm border-t border-border bg-card rounded-t-4xl shadow-lg">
         <div className="container mx-auto">
           &copy; {new Date().getFullYear()} {animatedYaarsite}. All rights reserved.
         </div>

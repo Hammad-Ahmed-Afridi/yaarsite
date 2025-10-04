@@ -158,9 +158,9 @@ export default function SignupPage() {
       <Card className="w-full max-w-md bg-card text-card-foreground shadow-lg rounded-3xl">
         <CardHeader className="text-center space-y-2">
           <Store className="mx-auto h-10 w-10 text-primary" />
-          <CardTitle className="text-2xl md:text-3xl font-bold tracking-tight">Create Account</CardTitle>
-          <CardDescription className="text-sm md:text-base text-muted-foreground leading-relaxed">Sign up to get started with your store</CardDescription>
-          <p className="text-destructive text-xs md:text-sm font-semibold mt-2">
+          <CardTitle className="text-3xl font-bold tracking-tight">Create Account</CardTitle>
+          <CardDescription className="text-base text-muted-foreground leading-relaxed">Sign up to get started with your store</CardDescription>
+          <p className="text-destructive text-sm font-semibold mt-2">
             Important: Kindly put in the correct credentials or your account will get banned and deleted.
           </p>
         </CardHeader>

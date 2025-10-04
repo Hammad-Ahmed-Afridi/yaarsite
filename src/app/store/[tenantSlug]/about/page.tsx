@@ -32,8 +32,8 @@ export default function StoreAboutPage() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
-        <h1 className="text-2xl md:text-3xl font-bold text-destructive mb-4 tracking-tight">Error</h1>
-        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">{error}</p>
+        <h1 className="text-3xl font-bold text-destructive mb-4 tracking-tight">Error</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">{error}</p>
       </div>
     );
   }
@@ -41,8 +41,8 @@ export default function StoreAboutPage() {
   if (!profile) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
-        <h1 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
-        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
+        <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
       </div>
     );
   }
@@ -60,10 +60,10 @@ export default function StoreAboutPage() {
           />
         </div>
       ) : (
-        <Info className="h-20 w-20 md:h-24 md:w-24 text-primary mb-6" />
+        <Info className="h-24 w-24 text-primary mb-6" />
       )}
-      <h1 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">About {profile.tenant_name}</h1>
-      <p className="text-base md:text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
+      <h1 className="text-4xl font-bold mb-4 tracking-tight">About {profile.tenant_name}</h1>
+      <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
         {profile.about_page_content || "We are dedicated to providing you with the best products and an exceptional shopping experience. Our mission is to bring quality and value directly to you."}
       </p>
     </div>

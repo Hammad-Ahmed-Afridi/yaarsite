@@ -294,7 +294,7 @@ export default function ContactPageSettingsPage() {
               </Link>
             </Button>
             <Mail className="h-6 w-6 text-primary" />
-            <CardTitle className="text-xl md:text-2xl font-bold tracking-tight">Contact Us Page Settings</CardTitle>
+            <CardTitle className="text-2xl font-bold tracking-tight">Contact Us Page Settings</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -371,7 +371,7 @@ export default function ContactPageSettingsPage() {
               </div>
 
               <div className="space-y-6">
-                <h3 className="text-lg md:text-xl font-semibold tracking-tight">Contact Information</h3>
+                <h3 className="text-xl font-semibold tracking-tight">Contact Information</h3>
                 <div className="grid gap-2">
                   <Label htmlFor="email" className="text-sm font-medium">Store Email</Label>
                   <div className="relative">

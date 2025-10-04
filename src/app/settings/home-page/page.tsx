@@ -286,7 +286,7 @@ export default function HomePageSettingsPage() {
               </Link>
             </Button>
             <Home className="h-6 w-6 text-primary" />
-            <CardTitle className="text-xl md:text-2xl font-bold tracking-tight">Home Page Settings</CardTitle>
+            <CardTitle className="text-2xl font-bold tracking-tight">Home Page Settings</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

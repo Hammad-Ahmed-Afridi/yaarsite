@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod'; // Corrected: changed '*s z' to '* as z'
+import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
@@ -199,8 +199,8 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto font-sans">
         <DialogHeader>
-          <DialogTitle className="text-xl md:text-2xl font-bold tracking-tight">Add New Product</DialogTitle>
-          <DialogDescription className="text-sm md:text-base leading-relaxed">
+          <DialogTitle className="text-2xl font-bold tracking-tight">Add New Product</DialogTitle>
+          <DialogDescription className="text-base leading-relaxed">
             Fill in the details to add a new product to your store.
           </DialogDescription>
         </DialogHeader>

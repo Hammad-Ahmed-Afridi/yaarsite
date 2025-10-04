@@ -104,8 +104,8 @@ export default function StoreProductsPage() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
-        <h1 className="text-2xl md:text-3xl font-bold text-destructive mb-4 tracking-tight">Error</h1>
-        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">{error}</p>
+        <h1 className="text-3xl font-bold text-destructive mb-4 tracking-tight">Error</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">{error}</p>
       </div>
     );
   }
@@ -113,25 +113,25 @@ export default function StoreProductsPage() {
   if (!profile) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
-        <h1 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
-        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
+        <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
       </div>
     );
   }
 
   return (
     <div className="font-sans">
-      <h2 className="text-xl md:text-2xl font-bold mb-4 tracking-tight">Our Products</h2>
+      <h2 className="text-2xl font-bold mb-4 tracking-tight">Our Products</h2>
       {profile?.store_page_welcome_message && (
-        <p className="text-base md:text-lg text-muted-foreground mb-6 text-center max-w-prose mx-auto leading-relaxed">
+        <p className="text-lg text-muted-foreground mb-6 text-center max-w-prose mx-auto leading-relaxed">
           {profile.store_page_welcome_message}
         </p>
       )}
       {products.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <Package className="h-16 w-16 text-muted-foreground mb-4" />
-          <p className="text-lg md:text-xl text-muted-foreground mb-4 font-semibold">No products available yet.</p>
-          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">Check back later or contact the store owner.</p>
+          <p className="text-xl text-muted-foreground mb-4 font-semibold">No products available yet.</p>
+          <p className="text-base text-muted-foreground leading-relaxed">Check back later or contact the store owner.</p>
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -153,12 +153,12 @@ export default function StoreProductsPage() {
                 </div>
               )}
               <CardHeader>
-                <CardTitle className="text-base md:text-lg font-semibold">{product.name}</CardTitle>
+                <CardTitle className="text-lg font-semibold">{product.name}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{product.description || "No description available."}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-lg md:text-xl font-bold">Rs{product.price.toFixed(2)}</span>
+                  <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
                   <Badge variant="secondary" className="font-medium">{product.stock} in stock</Badge>
                 </div>
               </CardContent>

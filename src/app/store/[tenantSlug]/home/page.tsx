@@ -36,8 +36,8 @@ export default function StoreHomePage() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
-        <h1 className="text-2xl md:text-3xl font-bold text-destructive mb-4 tracking-tight">Error</h1>
-        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">{error}</p>
+        <h1 className="text-3xl font-bold text-destructive mb-4 tracking-tight">Error</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">{error}</p>
       </div>
     );
   }
@@ -45,8 +45,8 @@ export default function StoreHomePage() {
   if (!profile) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
-        <h1 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
-        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
+        <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
       </div>
     );
   }
@@ -76,13 +76,13 @@ export default function StoreHomePage() {
             />
           </div>
         ) : (
-          <Store className="h-20 w-20 md:h-24 md:w-24 text-primary mb-6" />
+          <Store className="h-24 w-24 text-primary mb-6" />
         )
       )}
-      <h1 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">
+      <h1 className="text-4xl font-bold mb-4 tracking-tight">
         {profile.home_page_heading || `Welcome to ${profile.tenant_name}!`}
       </h1>
-      <p className="text-base md:text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
+      <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
         {profile.home_page_description || "Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
       </p>
       <Button asChild size="lg" className="font-semibold">
@@ -107,12 +107,12 @@ export default function StoreHomePage() {
               </div>
             ) : (
               <div className="flex items-center justify-center w-full h-64 md:h-80 rounded-3xl bg-muted shadow-lg">
-                <ImageIcon className="h-20 w-20 md:h-24 md:w-24 text-muted-foreground" />
+                <ImageIcon className="h-24 w-24 text-muted-foreground" />
               </div>
             )}
             <div className="space-y-4">
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">More About Our Store</h2>
-              <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+              <h2 className="text-3xl font-bold tracking-tight">More About Our Store</h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">
                 {profile.home_page_content_text || "Here you can tell your customers more about your unique selling propositions, your brand story, or any special offers you have. Make it engaging!"}
               </p>
             </div>
