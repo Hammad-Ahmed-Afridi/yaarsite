@@ -35,6 +35,7 @@ interface Product {
   price: number;
   original_price: number | null;
   discount_percentage: number | null;
+  discount_start_date: string | null; // New: discount_start_date
   discount_end_date: string | null;
   user_id: string;
 }
@@ -52,7 +53,17 @@ const formSchema = z.object({
   discountPercentage: z.coerce.number()
     .min(1, { message: "Discount percentage must be at least 1." })
     .max(99, { message: "Discount percentage cannot exceed 99." }),
-  discountEndDate: z.date().min(new Date(), { message: "Discount end date cannot be in the past." }).optional(),
+  discountStartDate: z.date().optional(), // New: discountStartDate
+  discountEndDate: z.date().optional(),
+}).refine((data) => {
+  // If both dates are provided, start date must be before or equal to end date
+  if (data.discountStartDate && data.discountEndDate) {
+    return data.discountStartDate <= data.discountEndDate;
+  }
+  return true;
+}, {
+  message: "Start date cannot be after end date.",
+  path: ["discountEndDate"],
 });
 
 export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogProps) {
@@ -66,6 +77,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
       discountScope: "all",
       selectedProductIds: [],
       discountPercentage: 10,
+      discountStartDate: undefined, // Initialize new field
       discountEndDate: undefined,
     },
   });
@@ -113,10 +125,11 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
         const newPrice = product.price * (1 - values.discountPercentage / 100);
         return {
           id: product.id,
-          user_id: user.id, // Explicitly include user_id
-          original_price: product.original_price === null ? product.price : product.original_price, // Store current price as original if not already set
+          user_id: user.id,
+          original_price: product.original_price === null ? product.price : product.original_price,
           price: newPrice,
           discount_percentage: values.discountPercentage,
+          discount_start_date: values.discountStartDate ? values.discountStartDate.toISOString() : null, // Save start date
           discount_end_date: values.discountEndDate ? values.discountEndDate.toISOString() : null,
           updated_at: new Date().toISOString(),
         };
@@ -133,7 +146,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
       toast.success("Discount applied successfully!");
       setIsOpen(false);
       onDiscountApplied();
-      form.reset(); // Reset form after successful submission
+      form.reset();
 
     } catch (error: any) {
       console.error("Error applying discount:", error);
@@ -172,10 +185,11 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
 
       const updates = productsToUpdate.map(product => ({
         id: product.id,
-        user_id: user.id, // Explicitly include user_id
-        price: product.original_price !== null ? product.original_price : product.price, // Revert to original price
-        original_price: null, // Clear original price
+        user_id: user.id,
+        price: product.original_price !== null ? product.original_price : product.price,
+        original_price: null,
         discount_percentage: null,
+        discount_start_date: null, // Clear start date
         discount_end_date: null,
         updated_at: new Date().toISOString(),
       }));
@@ -191,7 +205,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
       toast.success("Discount removed successfully!");
       setIsOpen(false);
       onDiscountApplied();
-      form.reset(); // Reset form after successful submission
+      form.reset();
 
     } catch (error: any) {
       console.error("Error removing discount:", error);
@@ -199,6 +213,11 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const selectedRange = {
+    from: form.watch("discountStartDate"),
+    to: form.watch("discountEndDate"),
   };
 
   return (
@@ -293,7 +312,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="discountEndDate" className="text-sm font-medium">Discount End Date (Optional)</Label>
+            <Label htmlFor="discountEndDate" className="text-sm font-medium">Discount Period (Optional)</Label>
             <Controller
               name="discountEndDate"
               control={form.control}
@@ -304,18 +323,33 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
                       variant={"outline"}
                       className={cn(
                         "w-full justify-start text-left font-normal",
-                        !field.value && "text-muted-foreground"
+                        !field.value && !form.watch("discountStartDate") && "text-muted-foreground"
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                      {selectedRange.from ? (
+                        selectedRange.to ? (
+                          <>
+                            {format(selectedRange.from, "PPP")} -{" "}
+                            {format(selectedRange.to, "PPP")}
+                          </>
+                        ) : (
+                          format(selectedRange.from, "PPP")
+                        )
+                      ) : (
+                        <span>Pick a date range</span>
+                      )}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
                     <Calendar
-                      mode="single" // Explicitly set to single
-                      selected={field.value}
-                      onSelect={field.onChange}
+                      mode="range" // Changed to range mode
+                      selected={selectedRange}
+                      onSelect={(range) => {
+                        form.setValue("discountStartDate", range?.from);
+                        form.setValue("discountEndDate", range?.to);
+                        form.clearErrors("discountEndDate"); // Clear error on selection
+                      }}
                       initialFocus
                     />
                   </PopoverContent>

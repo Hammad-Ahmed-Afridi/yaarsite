@@ -14,6 +14,7 @@ interface CartItem {
   stock: number; // New: Add stock to cart item
   original_price?: number | null; // New: original_price
   discount_percentage?: number | null; // New: discount_percentage
+  discount_start_date?: string | null; // New: discount_start_date
   discount_end_date?: string | null; // New: discount_end_date
 }
 

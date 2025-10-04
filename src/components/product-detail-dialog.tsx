@@ -14,6 +14,7 @@ import { ChevronLeft, ChevronRight, ShoppingCart, Image as ImageIcon } from 'luc
 import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/components/cart-context-provider';
 import { toast } from 'sonner';
+import { format } from 'date-fns'; // Import format
 
 interface Product {
   id: string;
@@ -25,6 +26,7 @@ interface Product {
   image_urls: string[] | null;
   original_price: number | null; // New: original_price
   discount_percentage: number | null; // New: discount_percentage
+  discount_start_date: string | null; // New: discount_start_date
   discount_end_date: string | null; // New: discount_end_date
 }
 
@@ -80,7 +82,8 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
     onOpenChange(false); // Close dialog after adding to cart
   };
 
-  const isDiscountActive = product.discount_percentage && product.discount_end_date && new Date(product.discount_end_date) > new Date();
+  const isDiscountActive = product.discount_percentage && product.discount_start_date && product.discount_end_date &&
+                           new Date(product.discount_start_date) <= new Date() && new Date(product.discount_end_date) >= new Date();
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -145,9 +148,14 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               </Badge>
             </div>
             {isDiscountActive && (
-              <Badge className="bg-green-500 text-white text-base px-3 py-1 font-medium">
-                {product.discount_percentage}% OFF!
-              </Badge>
+              <>
+                <Badge className="bg-green-500 text-white text-base px-3 py-1 font-medium">
+                  {product.discount_percentage}% OFF!
+                </Badge>
+                <p className="text-sm text-muted-foreground">
+                  Valid from {format(new Date(product.discount_start_date!), "PPP")} to {format(new Date(product.discount_end_date!), "PPP")}
+                </p>
+              </>
             )}
             <Button
               className="w-full py-6 text-lg flex items-center gap-2 font-semibold"

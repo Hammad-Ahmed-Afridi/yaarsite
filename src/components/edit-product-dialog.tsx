@@ -49,6 +49,7 @@ interface Product {
   category: string | null; // New: category field
   original_price: number | null; // New: original_price
   discount_percentage: number | null; // New: discount_percentage
+  discount_start_date: string | null; // New: discount_start_date
   discount_end_date: string | null; // New: discount_end_date
   created_at: string;
 }
@@ -250,6 +251,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
       let updatedPrice = values.price;
       let updatedOriginalPrice = product.original_price;
       let updatedDiscountPercentage = product.discount_percentage;
+      let updatedDiscountStartDate = product.discount_start_date; // New: track start date
       let updatedDiscountEndDate = product.discount_end_date;
 
       if (isPriceChanging) {
@@ -257,6 +259,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
         // and the new price becomes the base price.
         updatedOriginalPrice = null;
         updatedDiscountPercentage = null;
+        updatedDiscountStartDate = null; // Clear start date
         updatedDiscountEndDate = null;
       } else if (isDiscountActive) {
         // If price is not changing manually, but a discount is active,
@@ -273,13 +276,14 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
         .update({
           name: values.name,
           description: values.description,
-          price: updatedPrice, // Use the potentially updated price
+          price: updatedPrice,
           stock: values.stock,
           image_urls: finalImageUrls.length > 0 ? finalImageUrls : null,
           category: values.category || null,
-          original_price: updatedOriginalPrice, // Update original_price
-          discount_percentage: updatedDiscountPercentage, // Update discount_percentage
-          discount_end_date: updatedDiscountEndDate, // Update discount_end_date
+          original_price: updatedOriginalPrice,
+          discount_percentage: updatedDiscountPercentage,
+          discount_start_date: updatedDiscountStartDate, // Update start date
+          discount_end_date: updatedDiscountEndDate,
           updated_at: new Date().toISOString(),
         })
         .eq('id', product.id)

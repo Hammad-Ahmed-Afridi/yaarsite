@@ -14,6 +14,7 @@ import { ProductDetailDialog } from '@/components/product-detail-dialog';
 import { AppLoader } from '@/components/app-loader';
 import { useStoreProfile } from '@/components/store-profile-context-provider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Import Select components
+import { format } from 'date-fns'; // Import format
 
 interface Product {
   id: string;
@@ -26,6 +27,7 @@ interface Product {
   category: string | null; // New: category field
   original_price: number | null; // New: original_price
   discount_percentage: number | null; // New: discount_percentage
+  discount_start_date: string | null; // New: discount_start_date
   discount_end_date: string | null; // New: discount_end_date
 }
 
@@ -176,7 +178,8 @@ export default function StoreProductsPage() {
           ) : (
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Adjusted grid for mobile */}
               {filteredProducts.map((product) => {
-                const isDiscountActive = product.discount_percentage && product.discount_end_date && new Date(product.discount_end_date) > new Date();
+                const isDiscountActive = product.discount_percentage && product.discount_start_date && product.discount_end_date &&
+                                         new Date(product.discount_start_date) <= new Date() && new Date(product.discount_end_date) >= new Date();
                 return (
                   <Card key={product.id} className="bg-card text-card-foreground shadow-md cursor-pointer rounded-3xl" onClick={() => handleProductClick(product)}>
                     {product.image_urls && product.image_urls.length > 0 ? (
@@ -211,9 +214,14 @@ export default function StoreProductsPage() {
                         <Badge variant="secondary" className="font-medium">{product.stock} in stock</Badge>
                       </div>
                       {isDiscountActive && (
-                        <Badge className="bg-green-500 text-white font-medium">
-                          {product.discount_percentage}% OFF!
-                        </Badge>
+                        <>
+                          <Badge className="bg-green-500 text-white font-medium">
+                            {product.discount_percentage}% OFF!
+                          </Badge>
+                          <p className="text-xs text-muted-foreground">
+                            {format(new Date(product.discount_start_date!), "MMM d")} - {format(new Date(product.discount_end_date!), "MMM d, yyyy")}
+                          </p>
+                        </>
                       )}
                       {product.category && (
                         <Badge variant="outline" className="mt-2 font-medium text-xs">

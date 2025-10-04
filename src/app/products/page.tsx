@@ -27,6 +27,7 @@ import {
 import { DashboardHeader } from '@/components/dashboard-header';
 import { AppLoader } from '@/components/app-loader';
 import Link from 'next/link'; // Import Link
+import { format } from 'date-fns'; // Import format
 
 interface Product {
   id: string;
@@ -39,6 +40,7 @@ interface Product {
   category: string | null;
   original_price: number | null; // New: original_price
   discount_percentage: number | null; // New: discount_percentage
+  discount_start_date: string | null; // New: discount_start_date
   discount_end_date: string | null; // New: discount_end_date
   created_at: string;
 }
@@ -176,77 +178,90 @@ export default function ProductsPage() {
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {products.map((product) => (
-              <Card key={product.id} className="bg-card text-card-foreground shadow-md rounded-3xl">
-                {product.image_urls && product.image_urls.length > 0 && (
-                  <div className="relative h-48 w-full overflow-hidden rounded-t-3xl">
-                    <Image
-                      src={product.image_urls[0]}
-                      alt={product.name}
-                      layout="fill"
-                      objectFit="cover"
-                      className="transition-transform duration-300 hover:scale-105"
-                    />
-                  </div>
-                )}
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold">{product.name}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{product.description || "No description."}</p>
-                  <div className="flex items-center justify-between">
-                    {product.discount_percentage && product.discount_end_date && new Date(product.discount_end_date) > new Date() ? (
-                      <div className="flex flex-col items-start">
-                        <span className="text-sm text-muted-foreground line-through">Rs{product.original_price?.toFixed(2) || product.price.toFixed(2)}</span>
-                        <span className="text-xl font-bold text-destructive">Rs{product.price.toFixed(2)}</span>
-                      </div>
-                    ) : (
-                      <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
+            {products.map((product) => {
+              const isDiscountActive = product.discount_percentage && product.discount_start_date && product.discount_end_date &&
+                                       new Date(product.discount_start_date) <= new Date() && new Date(product.discount_end_date) >= new Date();
+              return (
+                <Card key={product.id} className="bg-card text-card-foreground shadow-md rounded-3xl">
+                  {product.image_urls && product.image_urls.length > 0 ? (
+                    <div className="relative h-48 w-full overflow-hidden rounded-t-3xl">
+                      <Image
+                        src={product.image_urls[0]}
+                        alt={product.name}
+                        layout="fill"
+                        objectFit="cover"
+                        className="transition-transform duration-300 hover:scale-105"
+                      />
+                    </div>
+                  ) : (
+                    <div className="relative h-48 w-full overflow-hidden rounded-t-3xl bg-muted flex items-center justify-center">
+                      <ImageIcon className="h-16 w-16 text-muted-foreground" />
+                    </div>
+                  )}
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold">{product.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{product.description || "No description."}</p>
+                    <div className="flex items-center justify-between">
+                      {isDiscountActive ? (
+                        <div className="flex flex-col items-start">
+                          <span className="text-sm text-muted-foreground line-through">Rs{product.original_price?.toFixed(2) || product.price.toFixed(2)}</span>
+                          <span className="text-xl font-bold text-destructive">Rs{product.price.toFixed(2)}</span>
+                        </div>
+                      ) : (
+                        <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
+                      )}
+                      <Badge variant="secondary" className="font-medium">{product.stock} in stock</Badge>
+                    </div>
+                    {isDiscountActive && (
+                      <>
+                        <Badge className="bg-green-500 text-white font-medium">
+                          {product.discount_percentage}% OFF!
+                        </Badge>
+                        <p className="text-xs text-muted-foreground">
+                          {format(new Date(product.discount_start_date!), "MMM d")} - {format(new Date(product.discount_end_date!), "MMM d, yyyy")}
+                        </p>
+                      </>
                     )}
-                    <Badge variant="secondary" className="font-medium">{product.stock} in stock</Badge>
-                  </div>
-                  {product.discount_percentage && product.discount_end_date && new Date(product.discount_end_date) > new Date() && (
-                    <Badge className="bg-green-500 text-white font-medium">
-                      {product.discount_percentage}% OFF!
-                    </Badge>
-                  )}
-                  {product.category && (
-                    <Badge variant="outline" className="mt-2 font-medium text-xs">
-                      {product.category}
-                    </Badge>
-                  )}
-                  <div className="flex gap-2 mt-4">
-                    <EditProductDialog product={product} onProductUpdated={fetchProducts} />
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="sm" className="flex-1 font-semibold">
-                          <Trash2 className="mr-2 h-4 w-4" /> Delete
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle className="text-lg font-semibold">Are you absolutely sure?</AlertDialogTitle>
-                          <AlertDialogDescription className="text-base leading-relaxed">
-                            This action cannot be undone. This will permanently delete your product
-                            and remove its data and images from our servers.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel className="font-medium">Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => handleDeleteProduct(product.id, product.image_urls)}
-                            disabled={isDeletingProduct}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-semibold"
-                          >
-                            {isDeletingProduct ? "Deleting..." : "Delete"}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    {product.category && (
+                      <Badge variant="outline" className="mt-2 font-medium text-xs">
+                        {product.category}
+                      </Badge>
+                    )}
+                    <div className="flex gap-2 mt-4">
+                      <EditProductDialog product={product} onProductUpdated={fetchProducts} />
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive" size="sm" className="flex-1 font-semibold">
+                            <Trash2 className="mr-2 h-4 w-4" /> Delete
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className="text-lg font-semibold">Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription className="text-base leading-relaxed">
+                              This action cannot be undone. This will permanently delete your product
+                              and remove its data and images from our servers.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="font-medium">Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteProduct(product.id, product.image_urls)}
+                              disabled={isDeletingProduct}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-semibold"
+                            >
+                              {isDeletingProduct ? "Deleting..." : "Delete"}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </main>

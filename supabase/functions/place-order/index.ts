@@ -38,12 +38,13 @@ serve(async (req) => {
     );
 
     let calculatedTotalAmount = 0;
+    const now = new Date();
 
     // --- Server-side Stock and Discount Validation ---
     for (const item of items_json) {
       const { data: product, error: productError } = await supabaseAdmin
         .from('products')
-        .select('stock, price, discount_percentage, discount_end_date') // Fetch discount fields
+        .select('stock, price, discount_percentage, discount_start_date, discount_end_date') // Fetch discount start date
         .eq('id', item.id)
         .single();
 
@@ -63,7 +64,8 @@ serve(async (req) => {
 
       // Calculate actual price considering active discounts
       let itemPrice = product.price;
-      const isDiscountActive = product.discount_percentage && product.discount_end_date && new Date(product.discount_end_date) > new Date();
+      const isDiscountActive = product.discount_percentage && product.discount_start_date && product.discount_end_date &&
+                               new Date(product.discount_start_date) <= now && new Date(product.discount_end_date) >= now;
 
       if (isDiscountActive) {
         itemPrice = product.price; // The 'price' column already holds the discounted price if a discount is active
