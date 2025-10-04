@@ -58,49 +58,49 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen bg-background p-4 font-sans">
       <Card className="w-full max-w-md bg-card text-card-foreground shadow-lg rounded-3xl">
         <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-3xl font-bold tracking-tight">Welcome Back</CardTitle>
-          <CardDescription className="text-base text-muted-foreground leading-relaxed">Sign in to your account to continue</CardDescription>
+          <CardTitle className="text-2xl md:text-3xl font-bold tracking-tight">Welcome Back</CardTitle>
+          <CardDescription className="text-sm md:text-base text-muted-foreground leading-relaxed">Sign in to your account to continue</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+              <Label htmlFor="email" className="text-xs md:text-sm font-medium">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="Enter your email"
-                  className="pl-10"
+                  className="pl-8 md:pl-10 text-sm md:text-base"
                   {...form.register("email")}
                 />
               </div>
               {form.formState.errors.email && (
-                <p className="text-destructive text-sm">{form.formState.errors.email.message}</p>
+                <p className="text-destructive text-xs md:text-sm">{form.formState.errors.email.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+              <Label htmlFor="password" className="text-xs md:text-sm font-medium">Password</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
-                  className="pl-10 pr-10"
+                  className="pl-8 pr-8 md:pl-10 md:pr-10 text-sm md:text-base"
                   {...form.register("password")}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
               {form.formState.errors.password && (
-                <p className="text-destructive text-sm">{form.formState.errors.password.message}</p>
+                <p className="text-destructive text-xs md:text-sm">{form.formState.errors.password.message}</p>
               )}
             </div>
 
@@ -109,7 +109,7 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-sm">
+          <div className="mt-4 text-center text-xs md:text-sm">
             Don't have an account?{" "}
             <Link href="/signup" className="text-primary hover:underline font-medium">
               Sign up

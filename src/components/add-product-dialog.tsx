@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import *s z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
@@ -199,67 +199,71 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto font-sans">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold tracking-tight">Add New Product</DialogTitle>
-          <DialogDescription className="text-base leading-relaxed">
+          <DialogTitle className="text-xl md:text-2xl font-bold tracking-tight">Add New Product</DialogTitle>
+          <DialogDescription className="text-sm md:text-base leading-relaxed">
             Fill in the details to add a new product to your store.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="name" className="text-sm font-medium">Product Name *</Label>
+            <Label htmlFor="name" className="text-xs md:text-sm font-medium">Product Name *</Label>
             <Input
               id="name"
               placeholder="Enter product name"
+              className="text-sm md:text-base"
               {...form.register("name")}
             />
             {form.formState.errors.name && (
-              <p className="text-destructive text-sm">{form.formState.errors.name.message}</p>
+              <p className="text-destructive text-xs md:text-sm">{form.formState.errors.name.message}</p>
             )}
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="description" className="text-sm font-medium">Description</Label>
+            <Label htmlFor="description" className="text-xs md:text-sm font-medium">Description</Label>
             <Textarea
               id="description"
               placeholder="Enter product description"
+              className="text-sm md:text-base"
               {...form.register("description")}
             />
             {form.formState.errors.description && (
-              <p className="text-destructive text-sm">{form.formState.errors.description.message}</p>
+              <p className="text-destructive text-xs md:text-sm">{form.formState.errors.description.message}</p>
             )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="price" className="text-sm font-medium">Price (Rs) *</Label>
+              <Label htmlFor="price" className="text-xs md:text-sm font-medium">Price (Rs) *</Label>
               <Input
                 id="price"
                 type="number"
                 step="0.01"
                 placeholder="0.00"
+                className="text-sm md:text-base"
                 {...form.register("price", { valueAsNumber: true })}
               />
               {form.formState.errors.price && (
-                <p className="text-destructive text-sm">{form.formState.errors.price.message}</p>
+                <p className="text-destructive text-xs md:text-sm">{form.formState.errors.price.message}</p>
             )}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="stock" className="text-sm font-medium">Stock Quantity *</Label>
+              <Label htmlFor="stock" className="text-xs md:text-sm font-medium">Stock Quantity *</Label>
               <Input
                 id="stock"
                 type="number"
                 step="1"
                 placeholder="0"
+                className="text-sm md:text-base"
                 {...form.register("stock", { valueAsNumber: true })}
               />
               {form.formState.errors.stock && (
-                <p className="text-destructive text-sm">{form.formState.errors.stock.message}</p>
+                <p className="text-destructive text-xs md:text-sm">{form.formState.errors.stock.message}</p>
               )}
             </div>
           </div>
 
           <div className="grid gap-2">
-            <Label className="text-sm font-medium">Product Images ({selectedImageFiles.length}/2)</Label>
+            <Label className="text-xs md:text-sm font-medium">Product Images ({selectedImageFiles.length}/2)</Label>
             <p className="text-xs text-muted-foreground leading-relaxed">
               Upload up to 2 high-quality images. Recommended: 1000x1000px or higher square aspect ratio, max 5MB per image.
               <br />
@@ -296,7 +300,7 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
               )}
             </div>
             {form.formState.errors.images && (
-              <p className="text-destructive text-sm">{form.formState.errors.images.message}</p>
+              <p className="text-destructive text-xs md:text-sm">{form.formState.errors.images.message}</p>
             )}
           </div>
 

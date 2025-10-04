@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import *s z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession, ProfileImageKey } from '@/components/session-context-provider';
@@ -264,8 +264,8 @@ export default function HomePageSettingsPage() {
   if (!profile || profile.tenant_name === null) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center font-sans">
-        <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Configured</h1>
-        <p className="text-lg text-muted-foreground mb-8 leading-relaxed">Please set up your store first from the dashboard.</p>
+        <h1 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight">Store Not Configured</h1>
+        <p className="text-base md:text-lg text-muted-foreground mb-8 leading-relaxed">Please set up your store first from the dashboard.</p>
         <Button asChild className="font-semibold">
           <Link href="/">Go to Dashboard</Link>
         </Button>
@@ -286,35 +286,37 @@ export default function HomePageSettingsPage() {
               </Link>
             </Button>
             <Home className="h-6 w-6 text-primary" />
-            <CardTitle className="text-2xl font-bold tracking-tight">Home Page Settings</CardTitle>
+            <CardTitle className="text-xl md:text-2xl font-bold tracking-tight">Home Page Settings</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid gap-2">
-                <Label htmlFor="homePageHeading" className="text-sm font-medium">Home Page Heading</Label>
+                <Label htmlFor="homePageHeading" className="text-xs md:text-sm font-medium">Home Page Heading</Label>
                 <Input
                   id="homePageHeading"
                   placeholder="Welcome to our store!"
+                  className="text-sm md:text-base"
                   {...form.register("homePageHeading")}
                 />
                 {form.formState.errors.homePageHeading && (
-                  <p className="text-destructive text-sm">{form.formState.errors.homePageHeading.message}</p>
+                  <p className="text-destructive text-xs md:text-sm">{form.formState.errors.homePageHeading.message}</p>
                 )}
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="homePageDescription" className="text-sm font-medium">Home Page Description</Label>
+                <Label htmlFor="homePageDescription" className="text-xs md:text-sm font-medium">Home Page Description</Label>
                 <Textarea
                   id="homePageDescription"
                   placeholder="Discover a wide range of products hand-picked just for you."
                   rows={3}
+                  className="text-sm md:text-base"
                   {...form.register("homePageDescription")}
                 />
                 {form.formState.errors.homePageDescription && (
-                  <p className="text-destructive text-sm">{form.formState.errors.homePageDescription.message}</p>
+                  <p className="text-destructive text-xs md:text-sm">{form.formState.errors.homePageDescription.message}</p>
                 )}
               </div>
               <div className="grid gap-2">
-                <Label className="text-sm font-medium">Home Page Hero Image</Label>
+                <Label className="text-xs md:text-sm font-medium">Home Page Hero Image</Label>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   This image will appear prominently at the top of your home page. Recommended: Wide aspect ratio (e.g., 16:9 or 2:1), max 5MB.
                 </p>
@@ -352,18 +354,18 @@ export default function HomePageSettingsPage() {
                       onChange={(e) => handleImageChange(e, setSelectedHomePageHeroImageFile, setHomePageHeroImagePreview, "homePageHeroImage", 'store-content-images', 'home page hero image')}
                       disabled={isUpdating}
                     />
-                    <Button asChild variant="outline" className="w-full font-semibold" disabled={isUpdating}>
+                    <Button asChild variant="outline" className="w-full font-semibold text-sm md:text-base" disabled={isUpdating}>
                       <span>{homePageHeroImagePreview || profile?.home_page_hero_image_url ? "Change Image" : "Upload Image"}</span>
                     </Button>
                   </Label>
                 </div>
                 {form.formState.errors.homePageHeroImage && (
-                  <p className="text-destructive text-sm">{form.formState.errors.homePageHeroImage.message}</p>
+                  <p className="text-destructive text-xs md:text-sm">{form.formState.errors.homePageHeroImage.message}</p>
                 )}
               </div>
 
               <div className="grid gap-2">
-                <Label className="text-sm font-medium">Home Page Content Image</Label>
+                <Label className="text-xs md:text-sm font-medium">Home Page Content Image</Label>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   This image will appear alongside a text section on your home page. Recommended: Square aspect ratio, max 5MB.
                 </p>
@@ -401,30 +403,31 @@ export default function HomePageSettingsPage() {
                       onChange={(e) => handleImageChange(e, setSelectedHomePageContentImageFile, setHomePageContentImagePreview, "homePageContentImage", 'store-content-images', 'home page content image')}
                       disabled={isUpdating}
                     />
-                    <Button asChild variant="outline" className="w-full font-semibold" disabled={isUpdating}>
+                    <Button asChild variant="outline" className="w-full font-semibold text-sm md:text-base" disabled={isUpdating}>
                       <span>{homePageContentImagePreview || profile?.home_page_content_image_url ? "Change Image" : "Upload Image"}</span>
                     </Button>
                   </Label>
                 </div>
                 {form.formState.errors.homePageContentImage && (
-                  <p className="text-destructive text-sm">{form.formState.errors.homePageContentImage.message}</p>
+                  <p className="text-destructive text-xs md:text-sm">{form.formState.errors.homePageContentImage.message}</p>
                 )}
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="homePageContentText" className="text-sm font-medium">Home Page Content Text</Label>
+                <Label htmlFor="homePageContentText" className="text-xs md:text-sm font-medium">Home Page Content Text</Label>
                 <Textarea
                   id="homePageContentText"
                   placeholder="Add some engaging text to describe your store or products."
                   rows={5}
+                  className="text-sm md:text-base"
                   {...form.register("homePageContentText")}
                 />
                 {form.formState.errors.homePageContentText && (
-                  <p className="text-destructive text-sm">{form.formState.errors.homePageContentText.message}</p>
+                  <p className="text-destructive text-xs md:text-sm">{form.formState.errors.homePageContentText.message}</p>
                 )}
               </div>
 
-              <Button type="submit" className="w-full font-semibold" disabled={isUpdating}>
+              <Button type="submit" className="w-full font-semibold text-sm md:text-base" disabled={isUpdating}>
                 {isUpdating ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

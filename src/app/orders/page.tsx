@@ -149,14 +149,14 @@ export default function OrdersPage() {
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
-          <h2 className="text-2xl font-bold tracking-tight">Order Management</h2>
+          <h2 className="text-xl md:text-2xl font-bold tracking-tight">Order Management</h2>
         </div>
 
         {orders.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed rounded-3xl p-8">
             <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
-            <p className="text-xl text-muted-foreground mb-4 font-semibold">No Orders Yet</p>
-            <p className="text-base text-muted-foreground mb-6 leading-relaxed">
+            <p className="text-lg md:text-xl text-muted-foreground mb-4 font-semibold">No Orders Yet</p>
+            <p className="text-sm md:text-base text-muted-foreground mb-6 leading-relaxed">
               Customers will place orders through your public store.
             </p>
             <Button onClick={() => router.push('/')} className="font-semibold">Go to Dashboard</Button>
@@ -168,10 +168,10 @@ export default function OrdersPage() {
                 {orders.map((order) => (
                   <Card key={order.id} className="bg-card text-card-foreground shadow-md rounded-3xl">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-lg font-semibold">Order ID: {order.id.substring(0, 8)}...</CardTitle>
-                      <p className="text-sm text-muted-foreground leading-relaxed">Customer: {order.customer_name} ({order.customer_email})</p>
+                      <CardTitle className="text-base md:text-lg font-semibold">Order ID: {order.id.substring(0, 8)}...</CardTitle>
+                      <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">Customer: {order.customer_name} ({order.customer_email})</p>
                     </CardHeader>
-                    <CardContent className="space-y-2 text-base">
+                    <CardContent className="space-y-2 text-sm md:text-base">
                       <div className="flex justify-between items-center">
                         <span className="font-medium">Phone:</span>
                         <span>{order.customer_phone}</span>
@@ -201,12 +201,12 @@ export default function OrdersPage() {
                           onValueChange={(newStatus: Order['status']) => handleUpdateOrderStatus(order.id, newStatus)}
                           disabled={isUpdatingStatus}
                         >
-                          <SelectTrigger className="w-[140px] font-medium">
+                          <SelectTrigger className="w-[120px] md:w-[140px] font-medium text-sm md:text-base">
                             <SelectValue placeholder="Select Status" />
                           </SelectTrigger>
                           <SelectContent>
                             {ORDER_STATUSES.map((status) => (
-                              <SelectItem key={status} value={status} className="font-medium">
+                              <SelectItem key={status} value={status} className="font-medium text-sm md:text-base">
                                 {status.charAt(0).toUpperCase() + status.slice(1)}
                               </SelectItem>
                             ))}
@@ -227,7 +227,7 @@ export default function OrdersPage() {
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle className="text-lg font-semibold">Are you absolutely sure?</AlertDialogTitle>
-                              <AlertDialogDescription className="text-base leading-relaxed">
+                              <AlertDialogDescription className="text-sm md:text-base leading-relaxed">
                                 This action cannot be undone. This will permanently delete this order.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
@@ -273,15 +273,15 @@ export default function OrdersPage() {
                       <TableBody>
                         {orders.map((order) => (
                           <TableRow key={order.id}>
-                            <TableCell className="font-medium text-base">{order.id.substring(0, 8)}...</TableCell>
-                            <TableCell className="text-base">{order.customer_name}</TableCell>
-                            <TableCell className="text-base">{order.customer_email}</TableCell>
-                            <TableCell className="text-base">{order.customer_phone}</TableCell>
-                            <TableCell className="text-base">
+                            <TableCell className="font-medium text-sm md:text-base">{order.id.substring(0, 8)}...</TableCell>
+                            <TableCell className="text-sm md:text-base">{order.customer_name}</TableCell>
+                            <TableCell className="text-sm md:text-base">{order.customer_email}</TableCell>
+                            <TableCell className="text-sm md:text-base">{order.customer_phone}</TableCell>
+                            <TableCell className="text-sm md:text-base">
                               {order.shipping_address_line}, {order.shipping_city}, {order.shipping_province}
                             </TableCell>
-                            <TableCell className="text-base">Rs{order.total_amount.toFixed(2)}</TableCell>
-                            <TableCell className="text-base flex items-center gap-1"> {/* Display payment method */}
+                            <TableCell className="text-sm md:text-base">Rs{order.total_amount.toFixed(2)}</TableCell>
+                            <TableCell className="text-sm md:text-base flex items-center gap-1"> {/* Display payment method */}
                               {getPaymentMethodIcon(order.payment_method)}
                               {order.payment_method}
                             </TableCell>
@@ -291,19 +291,19 @@ export default function OrdersPage() {
                                 onValueChange={(newStatus: Order['status']) => handleUpdateOrderStatus(order.id, newStatus)}
                                 disabled={isUpdatingStatus}
                               >
-                                <SelectTrigger className="w-[180px] font-medium">
+                                <SelectTrigger className="w-[180px] font-medium text-sm md:text-base">
                                   <SelectValue placeholder="Select Status" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {ORDER_STATUSES.map((status) => (
-                                    <SelectItem key={status} value={status} className="font-medium">
+                                    <SelectItem key={status} value={status} className="font-medium text-sm md:text-base">
                                       {status.charAt(0).toUpperCase() + status.slice(1)}
                                     </SelectItem>
                                   ))}
                                 </SelectContent>
                               </Select>
                             </TableCell>
-                            <TableCell className="text-base">{new Date(order.created_at).toLocaleDateString()}</TableCell>
+                            <TableCell className="text-sm md:text-base">{new Date(order.created_at).toLocaleDateString()}</TableCell>
                             <TableCell className="text-right">
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
@@ -314,7 +314,7 @@ export default function OrdersPage() {
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
                                     <AlertDialogTitle className="text-lg font-semibold">Are you absolutely sure?</AlertDialogTitle>
-                                    <AlertDialogDescription className="text-base leading-relaxed">
+                                    <AlertDialogDescription className="text-sm md:text-base leading-relaxed">
                                       This action cannot be undone. This will permanently delete this order.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>

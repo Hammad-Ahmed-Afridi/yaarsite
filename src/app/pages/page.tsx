@@ -34,8 +34,8 @@ export default function PagesPage() {
   if (!profile || profile.tenant_name === null) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center font-sans">
-        <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Configured</h1>
-        <p className="text-lg text-muted-foreground mb-8 leading-relaxed">Please set up your store first from the dashboard.</p>
+        <h1 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight">Store Not Configured</h1>
+        <p className="text-base md:text-lg text-muted-foreground mb-8 leading-relaxed">Please set up your store first from the dashboard.</p>
         <Button asChild className="font-semibold">
           <Link href="/">Go to Dashboard</Link>
         </Button>
@@ -55,17 +55,17 @@ export default function PagesPage() {
                 <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>
-            <h2 className="text-2xl font-bold tracking-tight">Customize Your Store Pages</h2>
+            <h2 className="text-xl md:text-2xl font-bold tracking-tight">Customize Your Store Pages</h2>
           </div>
-          <div className="grid gap-6 grid-cols-2">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
             <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
               <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
                 <Home className="h-6 w-6 text-blue-500" />
-                <CardTitle className="text-xl font-semibold">Home Page</CardTitle>
+                <CardTitle className="text-lg md:text-xl font-semibold">Home Page</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-base text-muted-foreground leading-relaxed">Customize your store's main landing page.</p>
-                <Button asChild className="w-full font-semibold">
+                <p className="text-sm md:text-base text-muted-foreground leading-relaxed">Customize your store's main landing page.</p>
+                <Button asChild className="w-full font-semibold text-sm md:text-base">
                   <Link href="/settings/home-page">Edit</Link>
                 </Button>
               </CardContent>
@@ -74,11 +74,11 @@ export default function PagesPage() {
             <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
               <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
                 <Info className="h-6 w-6 text-green-500" />
-                <CardTitle className="text-xl font-semibold">About Us Page</CardTitle>
+                <CardTitle className="text-lg md:text-xl font-semibold">About Us Page</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-base text-muted-foreground leading-relaxed">Tell your customers about your brand and story.</p>
-                <Button asChild className="w-full font-semibold">
+                <p className="text-sm md:text-base text-muted-foreground leading-relaxed">Tell your customers about your brand and story.</p>
+                <Button asChild className="w-full font-semibold text-sm md:text-base">
                   <Link href="/settings/about-page">Edit</Link>
                 </Button>
               </CardContent>
@@ -87,11 +87,11 @@ export default function PagesPage() {
             <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
               <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
                 <Mail className="h-6 w-6 text-purple-500" />
-                <CardTitle className="text-xl font-semibold">Contact Us Page</CardTitle>
+                <CardTitle className="text-lg md:text-xl font-semibold">Contact Us Page</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-base text-muted-foreground leading-relaxed">Provide contact information and a way for customers to reach you.</p>
-                <Button asChild className="w-full font-semibold">
+                <p className="text-sm md:text-base text-muted-foreground leading-relaxed">Provide contact information and a way for customers to reach you.</p>
+                <Button asChild className="w-full font-semibold text-sm md:text-base">
                   <Link href="/settings/contact-page">Edit</Link>
                 </Button>
               </CardContent>
@@ -100,11 +100,11 @@ export default function PagesPage() {
             <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
               <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
                 <LayoutDashboard className="h-6 w-6 text-yellow-500" />
-                <CardTitle className="text-xl font-semibold">General Store Settings</CardTitle>
+                <CardTitle className="text-lg md:text-xl font-semibold">General Store Settings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-base text-muted-foreground leading-relaxed">Manage your store's name, description, logo, and contact details.</p>
-                <Button asChild className="w-full font-semibold">
+                <p className="text-sm md:text-base text-muted-foreground leading-relaxed">Manage your store's name, description, logo, and contact details.</p>
+                <Button asChild className="w-full font-semibold text-sm md:text-base">
                   <Link href="/settings">Edit</Link>
                 </Button>
               </CardContent>

@@ -272,8 +272,8 @@ export default function ContactPageSettingsPage() {
   if (!profile || profile.tenant_name === null) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center font-sans">
-        <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Configured</h1>
-        <p className="text-lg text-muted-foreground mb-8 leading-relaxed">Please set up your store first from the dashboard.</p>
+        <h1 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight">Store Not Configured</h1>
+        <p className="text-base md:text-lg text-muted-foreground mb-8 leading-relaxed">Please set up your store first from the dashboard.</p>
         <Button asChild className="font-semibold">
           <Link href="/">Go to Dashboard</Link>
         </Button>
@@ -294,12 +294,12 @@ export default function ContactPageSettingsPage() {
               </Link>
             </Button>
             <Mail className="h-6 w-6 text-primary" />
-            <CardTitle className="text-2xl font-bold tracking-tight">Contact Us Page Settings</CardTitle>
+            <CardTitle className="text-xl md:text-2xl font-bold tracking-tight">Contact Us Page Settings</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid gap-2">
-                <Label className="text-sm font-medium">Contact Page Hero Image</Label>
+                <Label className="text-xs md:text-sm font-medium">Contact Page Hero Image</Label>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   This image will appear prominently at the top of your Contact Us page. Recommended: Wide aspect ratio (e.g., 16:9 or 2:1), max 5MB.
                 </p>
@@ -337,121 +337,125 @@ export default function ContactPageSettingsPage() {
                       onChange={(e) => handleImageChange(e, setSelectedContactPageHeroImageFile, setContactPageHeroImagePreview, "contactPageHeroImage", 'store-content-images', 'contact page hero image')}
                       disabled={isUpdating}
                     />
-                    <Button asChild variant="outline" className="w-full font-semibold" disabled={isUpdating}>
+                    <Button asChild variant="outline" className="w-full font-semibold text-sm md:text-base" disabled={isUpdating}>
                       <span>{contactPageHeroImagePreview || profile?.contact_page_hero_image_url ? "Change Image" : "Upload Image"}</span>
                     </Button>
                   </Label>
                 </div>
                 {form.formState.errors.contactPageHeroImage && (
-                  <p className="text-destructive text-sm">{form.formState.errors.contactPageHeroImage.message}</p>
+                  <p className="text-destructive text-xs md:text-sm">{form.formState.errors.contactPageHeroImage.message}</p>
                 )}
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="contactPageHeading" className="text-sm font-medium">Contact Page Heading</Label>
+                <Label htmlFor="contactPageHeading" className="text-xs md:text-sm font-medium">Contact Page Heading</Label>
                 <Input
                   id="contactPageHeading"
                   placeholder="Get in Touch with Us!"
+                  className="text-sm md:text-base"
                   {...form.register("contactPageHeading")}
                 />
                 {form.formState.errors.contactPageHeading && (
-                  <p className="text-destructive text-sm">{form.formState.errors.contactPageHeading.message}</p>
+                  <p className="text-destructive text-xs md:text-sm">{form.formState.errors.contactPageHeading.message}</p>
                 )}
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="contactPageDescription" className="text-sm font-medium">Contact Page Description</Label>
+                <Label htmlFor="contactPageDescription" className="text-xs md:text-sm font-medium">Contact Page Description</Label>
                 <Textarea
                   id="contactPageDescription"
                   placeholder="We'd love to hear from you. Reach out with any questions or feedback."
                   rows={3}
+                  className="text-sm md:text-base"
                   {...form.register("contactPageDescription")}
                 />
                 {form.formState.errors.contactPageDescription && (
-                  <p className="text-destructive text-sm">{form.formState.errors.contactPageDescription.message}</p>
+                  <p className="text-destructive text-xs md:text-sm">{form.formState.errors.contactPageDescription.message}</p>
                 )}
               </div>
 
               <div className="space-y-6">
-                <h3 className="text-xl font-semibold tracking-tight">Contact Information</h3>
+                <h3 className="text-lg md:text-xl font-semibold tracking-tight">Contact Information</h3>
                 <div className="grid gap-2">
-                  <Label htmlFor="email" className="text-sm font-medium">Store Email</Label>
+                  <Label htmlFor="email" className="text-xs md:text-sm font-medium">Store Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="email"
                       type="email"
                       placeholder="your.store@example.com"
-                      className="pl-10"
+                      className="pl-8 md:pl-10 text-sm md:text-base"
                       {...form.register("email")}
                     />
                   </div>
                   {form.formState.errors.email && (
-                    <p className="text-destructive text-sm">{form.formState.errors.email.message}</p>
+                    <p className="text-destructive text-xs md:text-sm">{form.formState.errors.email.message}</p>
                   )}
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="phoneNumber" className="text-sm font-medium">Store Phone Number</Label>
+                  <Label htmlFor="phoneNumber" className="text-xs md:text-sm font-medium">Store Phone Number</Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="phoneNumber"
                       type="tel"
                       placeholder="03001234567"
-                      className="pl-10"
+                      className="pl-8 md:pl-10 text-sm md:text-base"
                       {...form.register("phoneNumber")}
                     />
                   </div>
                   {form.formState.errors.phoneNumber && (
-                    <p className="text-destructive text-sm">{form.formState.errors.phoneNumber.message}</p>
+                    <p className="text-destructive text-xs md:text-sm">{form.formState.errors.phoneNumber.message}</p>
                   )}
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="storeAddressLine" className="text-sm font-medium">Store Address Line</Label>
+                  <Label htmlFor="storeAddressLine" className="text-xs md:text-sm font-medium">Store Address Line</Label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="storeAddressLine"
                       type="text"
                       placeholder="House #123, Street 4"
-                      className="pl-10"
+                      className="pl-8 md:pl-10 text-sm md:text-base"
                       {...form.register("storeAddressLine")}
                     />
                   </div>
                   {form.formState.errors.storeAddressLine && (
-                    <p className="text-destructive text-sm">{form.formState.errors.storeAddressLine.message}</p>
+                    <p className="text-destructive text-xs md:text-sm">{form.formState.errors.storeAddressLine.message}</p>
                   )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="storeCity" className="text-sm font-medium">Store City</Label>
+                    <Label htmlFor="storeCity" className="text-xs md:text-sm font-medium">Store City</Label>
                     <Input
                       id="storeCity"
                       type="text"
                       placeholder="Lahore"
+                      className="text-sm md:text-base"
                       {...form.register("storeCity")}
                     />
                     {form.formState.errors.storeCity && (
-                      <p className="text-destructive text-sm">{form.formState.errors.storeCity.message}</p>
+                      <p className="text-destructive text-xs md:text-sm">{form.formState.errors.storeCity.message}</p>
                     )}
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="storeProvince" className="text-sm font-medium">Store Province</Label>
+                    <Label htmlFor="storeProvince" className="text-xs md:text-sm font-medium">Store Province</Label>
                     <Input
                       id="storeProvince"
                       type="text"
                       placeholder="Punjab"
+                      className="text-sm md:text-base"
                       {...form.register("storeProvince")}
                     />
                     {form.formState.errors.storeProvince && (
-                      <p className="text-destructive text-sm">{form.formState.errors.storeProvince.message}</p>
+                      <p className="text-destructive text-xs md:text-sm">{form.formState.errors.storeProvince.message}</p>
                     )}
                   </div>
                 </div>
               </div>
 
-              <Button type="submit" className="w-full font-semibold" disabled={isUpdating}>
+              <Button type="submit" className="w-full font-semibold text-sm md:text-base" disabled={isUpdating}>
                 {isUpdating ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
