@@ -160,8 +160,9 @@ export default function ProductsPage() {
             )}
           </p>
           <div className="flex gap-2">
-            {/* Dedicated button for DiscountDialog */}
-            <DiscountDialog products={products} onDiscountApplied={fetchProducts} />
+            {products.length > 0 && ( // Only show DiscountDialog if there are products
+              <DiscountDialog products={products} onDiscountApplied={fetchProducts} />
+            )}
             <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
           </div>
         </div>
@@ -173,13 +174,13 @@ export default function ProductsPage() {
             <p className="text-base text-muted-foreground mb-6 leading-relaxed">
               Add your first product to start selling! You can add up to {PRODUCT_LIMIT} products.
             </p>
-            <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
+            {/* Removed redundant AddProductDialog from here */}
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products.map((product) => (
               <Card key={product.id} className="bg-card text-card-foreground shadow-md rounded-3xl">
-                {product.image_urls && product.image_urls.length > 0 && (
+                {product.image_urls && product.image_urls.length > 0 ? (
                   <div className="relative h-48 w-full overflow-hidden rounded-t-3xl">
                     <Image
                       src={product.image_urls[0]}
@@ -188,6 +189,10 @@ export default function ProductsPage() {
                       objectFit="cover"
                       className="transition-transform duration-300 hover:scale-105"
                     />
+                  </div>
+                ) : (
+                  <div className="relative h-48 w-full overflow-hidden rounded-t-3xl bg-muted flex items-center justify-center">
+                    <ImageIcon className="h-16 w-16 text-muted-foreground" />
                   </div>
                 )}
                 <CardHeader>
