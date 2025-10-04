@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react'; // Removed useRef as it's no longer needed for this logic
+import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSession } from '@/components/session-context-provider';
 import { AppLoader } from '@/components/app-loader';
@@ -28,42 +28,40 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // --- CRITICAL FIX: Prioritize sign-out redirection above all other unauthenticated logic ---
+    // Prioritize sign-out redirection above all other unauthenticated logic
     if (isSigningOut) {
       console.log("AuthWrapper: Sign-out in progress, redirecting to /login.");
-      if (pathname !== '/login') { // Only push if not already on the login page
+      if (pathname !== '/login') {
         router.push('/login');
       }
-      setIsReadyToRender(false); // Keep loader visible during redirect
-      return; // Stop further execution of this useEffect cycle
+      setIsReadyToRender(false);
+      return;
     }
-    // --- End of CRITICAL FIX ---
 
     if (user) {
       // User is currently authenticated
       console.log("AuthWrapper: User is authenticated.");
       if (pathname === '/signup') {
+        // Authenticated user on signup page, allowing render (e.g., if they just signed up and are being redirected)
         console.log("AuthWrapper: Authenticated user on signup, allowing render.");
         setIsReadyToRender(true);
       } else if (pathname === '/login' || pathname === '/landing') {
+        // Authenticated user on auth/landing page, redirecting to dashboard
         console.log("AuthWrapper: Authenticated user on auth/landing page, redirecting to /.");
         router.push('/');
         setIsReadyToRender(false);
       } else {
+        // Authenticated user on a protected page, allowing render
         console.log("AuthWrapper: Authenticated user on protected page, allowing render.");
         setIsReadyToRender(true);
       }
     } else {
       // User is NOT currently authenticated (and not in the middle of a sign-out)
       console.log("AuthWrapper: User is NOT authenticated (and not signing out).");
-      if (pathname === '/') {
-        // Initial unauthenticated visit to root, redirect to landing page
-        console.log("AuthWrapper: Initial unauthenticated visit to root, redirecting to /landing.");
-        router.push('/landing');
-        setIsReadyToRender(false);
-      } else if (!isPublicPath) {
-        // Unauthenticated user on a protected path (not root, not public), redirect to login.
-        console.log("AuthWrapper: Unauthenticated user on protected path, redirecting to /login.");
+      // If the user is on the root path or any protected path, and not authenticated,
+      // redirect them to the login page.
+      if (pathname === '/' || !isPublicPath) {
+        console.log("AuthWrapper: Unauthenticated user on root or protected path, redirecting to /login.");
         router.push('/login');
         setIsReadyToRender(false);
       } else {
