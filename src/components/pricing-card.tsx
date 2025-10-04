@@ -60,7 +60,7 @@ export function PricingCard({
             </li>
           ))}
         </ul>
-        <Button asChild className="w-full mt-8 py-6 text-lg font-semibold">
+        <Button asChild className="w-full mt-8 py-6 text-lg font-semibold hover:scale-[1.02] transition-transform duration-200">
           <Link href={buttonLink}>
             {buttonText}
           </Link>
