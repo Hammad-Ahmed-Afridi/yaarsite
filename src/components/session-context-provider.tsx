@@ -92,9 +92,11 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
     setUser(currentSession?.user || null);
 
     if (currentSession) {
+      console.log("SessionContext: User is authenticated. Access Token (first 10 chars):", currentSession.access_token.substring(0, 10) + "...");
       const userProfile = await fetchUserProfile(currentSession.user.id);
       setProfile(userProfile);
     } else {
+      console.log("SessionContext: User is NOT authenticated.");
       setProfile(null);
     }
     setIsLoading(false);
