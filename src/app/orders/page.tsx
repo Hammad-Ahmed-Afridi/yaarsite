@@ -165,7 +165,7 @@ export default function OrdersPage() {
             <Button onClick={() => router.push('/')} className="font-semibold">Go to Dashboard</Button>
           </div>
         ) : (
-          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Responsive grid for cards */}
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {orders.map((order) => (
               <Card key={order.id} className="bg-card text-card-foreground shadow-md rounded-3xl">
                 <CardHeader className="pb-2">
