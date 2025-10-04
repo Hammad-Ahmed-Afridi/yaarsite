@@ -3,13 +3,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Package, Trash2, ArrowLeft, Percent } from 'lucide-react'; // Import ArrowLeft and Percent
+import { Plus, Package, Trash2, ArrowLeft, Percent } from 'lucide-react';
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { AddProductDialog } from '@/components/add-product-dialog';
 import { EditProductDialog } from '@/components/edit-product-dialog';
-import { DiscountDialog } from '@/components/discount-dialog'; // Import DiscountDialog
+import { DiscountDialog } from '@/components/discount-dialog';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { AppLoader } from '@/components/app-loader';
-import Link from 'next/link'; // Import Link
+import Link from 'next/link';
 
 interface Product {
   id: string;
@@ -37,13 +37,13 @@ interface Product {
   user_id: string;
   image_urls: string[] | null;
   category: string | null;
-  original_price: number | null; // New: original_price
-  discount_percentage: number | null; // New: discount_percentage
-  discount_end_date: string | null; // New: discount_end_date
+  original_price: number | null;
+  discount_percentage: number | null;
+  discount_end_date: string | null;
   created_at: string;
 }
 
-const PRODUCT_LIMIT = 2; // Changed from 3 to 2
+const PRODUCT_LIMIT = 2;
 
 export default function ProductsPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
@@ -141,9 +141,9 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      <DashboardHeader profile={profile} onSignOut={handleSignOut} /> {/* Removed currentPath */}
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} />
 
-      <main className="flex-1 p-4 sm:p-8"> {/* Adjusted padding */}
+      <main className="flex-1 p-4 sm:p-8">
         <div className="flex items-center gap-3 mb-6">
           <Button variant="ghost" size="icon" asChild>
             <Link href="/">
@@ -161,11 +161,7 @@ export default function ProductsPage() {
           </p>
           <div className="flex gap-2">
             {/* Dedicated button for DiscountDialog */}
-            <DiscountDialog products={products} onDiscountApplied={fetchProducts}>
-              <Button className="flex items-center gap-2 font-semibold" variant="outline">
-                <Percent className="h-4 w-4" /> Apply Discount
-              </Button>
-            </DiscountDialog>
+            <DiscountDialog products={products} onDiscountApplied={fetchProducts} />
             <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
           </div>
         </div>
