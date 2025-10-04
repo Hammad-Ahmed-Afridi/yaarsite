@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -22,24 +22,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Image as ImageIcon, Loader2, X } from 'lucide-react';
+import { Plus, Image as ImageIcon, Loader2, X, ChevronDown } from 'lucide-react';
 import Image from 'next/image';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Import Select components
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-const PRODUCT_LIMIT = 2; // Added constant for product limit
+const PRODUCT_LIMIT = 2;
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Product name is required." }),
   description: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
-  price: z.coerce.number().min(0.01, { message: "Price must be greater than 0." }), // Changed from preprocess
-  stock: z.coerce.number().int().min(0, { message: "Stock quantity cannot be negative." }), // Changed from preprocess
+  price: z.coerce.number().min(0.01, { message: "Price must be greater than 0." }),
+  stock: z.coerce.number().int().min(0, { message: "Stock quantity cannot be negative." }),
   images: z.array(z.instanceof(File)).max(2, { message: "You can upload a maximum of 2 images." }).optional(),
+  category: z.string().optional(), // New: category field
 });
 
 interface AddProductDialogProps {
   onProductAdded: () => void;
-  currentProductCount: number; // New prop to receive current product count
+  currentProductCount: number;
 }
 
 export function AddProductDialog({ onProductAdded, currentProductCount }: AddProductDialogProps) {
@@ -48,6 +50,9 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImageFiles, setSelectedImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [existingCategories, setExistingCategories] = useState<string[]>([]); // New: state for existing categories
+  const [selectedCategory, setSelectedCategory] = useState<string>(''); // New: state for selected category
+  const [isCreatingNewCategory, setIsCreatingNewCategory] = useState(false); // New: state for creating new category
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -56,9 +61,31 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
       description: "",
       price: 0.01,
       stock: 0,
-      images: undefined, // Explicitly undefined for optional array
+      images: undefined,
+      category: "", // Default category
     },
   });
+
+  // Fetch existing categories when dialog opens
+  useEffect(() => {
+    if (isOpen && user) {
+      const fetchCategories = async () => {
+        const { data, error } = await supabase
+          .from('products')
+          .select('category')
+          .eq('user_id', user.id);
+
+        if (error) {
+          console.error("Error fetching categories:", error);
+          return;
+        }
+
+        const uniqueCategories = Array.from(new Set(data.map(p => p.category).filter(Boolean) as string[]));
+        setExistingCategories(uniqueCategories);
+      };
+      fetchCategories();
+    }
+  }, [isOpen, user]);
 
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -84,7 +111,7 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
         }
         
         let fileToUpload = file;
-        if (file.size > 600 * 1024) { // Compress if larger than 600KB
+        if (file.size > 600 * 1024) {
           toast.info(`Compressing "${file.name}" for faster loading...`);
           fileToUpload = await compressImage(file);
           if (fileToUpload.size < file.size) {
@@ -113,15 +140,28 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
     form.setValue("images", updatedFiles);
   };
 
+  const handleCategoryChange = (value: string) => {
+    if (value === "new-category") {
+      setIsCreatingNewCategory(true);
+      setSelectedCategory(''); // Clear selected category when creating new
+      form.setValue("category", ''); // Clear form value
+    } else {
+      setIsCreatingNewCategory(false);
+      setSelectedCategory(value);
+      form.setValue("category", value);
+    }
+    form.clearErrors("category");
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) {
       toast.error("You must be logged in to add a product.");
       return;
     }
 
-    if (currentProductCount >= PRODUCT_LIMIT) { // Updated condition
-      toast.error(`You have reached the maximum limit of ${PRODUCT_LIMIT} products.`); // Updated message
-      setIsSubmitting(false); // Ensure submitting state is reset
+    if (currentProductCount >= PRODUCT_LIMIT) {
+      toast.error(`You have reached the maximum limit of ${PRODUCT_LIMIT} products.`);
+      setIsSubmitting(false);
       return;
     }
 
@@ -129,11 +169,10 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
     let imageUrls: string[] = [];
 
     try {
-      // 1. Upload images to Supabase Storage
       if (selectedImageFiles.length > 0) {
         for (const file of selectedImageFiles) {
           const fileExtension = file.name.split('.').pop();
-          const fileName = `${user.id}/${uuidv4()}.${fileExtension}`; // Store under user ID folder
+          const fileName = `${user.id}/${uuidv4()}.${fileExtension}`;
           const { data, error: uploadError } = await supabase.storage
             .from('product-images')
             .upload(fileName, file, {
@@ -157,7 +196,6 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
         }
       }
 
-      // 2. Insert product data into Supabase database
       const { error: insertError } = await supabase
         .from('products')
         .insert({
@@ -166,7 +204,8 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
           description: values.description,
           price: values.price,
           stock: values.stock,
-          image_urls: imageUrls.length > 0 ? imageUrls : null, // Set to null if no images
+          image_urls: imageUrls.length > 0 ? imageUrls : null,
+          category: values.category || null, // New: insert category
         });
 
       if (insertError) {
@@ -177,8 +216,10 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
       form.reset();
       setSelectedImageFiles([]);
       setImagePreviews([]);
-      setIsOpen(false); // Close the dialog
-      onProductAdded(); // Notify parent component to refresh product list
+      setSelectedCategory('');
+      setIsCreatingNewCategory(false);
+      setIsOpen(false);
+      onProductAdded();
 
     } catch (error: any) {
       console.error("Error adding product:", error);
@@ -259,16 +300,51 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
           </div>
 
           <div className="grid gap-2">
+            <Label htmlFor="category" className="text-sm font-medium">Category</Label>
+            {!isCreatingNewCategory ? (
+              <Select onValueChange={handleCategoryChange} value={selectedCategory}>
+                <SelectTrigger className="font-medium">
+                  <SelectValue placeholder="Select or create a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {existingCategories.map((cat) => (
+                    <SelectItem key={cat} value={cat} className="font-medium">
+                      {cat}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="new-category" className="font-medium text-primary">
+                    + Create New Category
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Input
+                  id="new-category-input"
+                  placeholder="Enter new category name"
+                  {...form.register("category")}
+                />
+                <Button type="button" variant="outline" size="icon" onClick={() => setIsCreatingNewCategory(false)}>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+            {form.formState.errors.category && (
+              <p className="text-destructive text-sm">{form.formState.errors.category.message}</p>
+            )}
+          </div>
+
+          <div className="grid gap-2">
             <Label className="text-sm font-medium">Product Images ({selectedImageFiles.length}/2)</Label>
             <p className="text-xs text-muted-foreground leading-relaxed">
               Upload up to 2 high-quality images. Recommended: 1000x1000px or higher square aspect ratio, max 5MB per image.
               <br />
               Supported formats: JPG, PNG, WebP. Images will be compressed for faster loading.
             </p>
-            <div className="flex gap-2 mt-2 flex-wrap"> {/* Added flex-wrap */}
+            <div className="flex gap-2 mt-2 flex-wrap">
               {imagePreviews.map((preview, index) => (
                 <div key={index} className="relative w-24 h-24 border rounded-md overflow-hidden">
-                  <Image src={preview} alt={`Product preview ${index + 1}`} fill style={{ objectFit: 'cover' }} /> {/* Updated prop */}
+                  <Image src={preview} alt={`Product preview ${index + 1}`} fill style={{ objectFit: 'cover' }} />
                   <Button
                     type="button"
                     variant="destructive"
