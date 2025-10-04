@@ -35,6 +35,7 @@ interface Product {
   stock: number;
   user_id: string;
   image_urls: string[] | null;
+  category: string | null; // Added category field
   created_at: string;
 }
 
@@ -190,6 +191,11 @@ export default function ProductsPage() {
                     <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
                     <Badge variant="secondary" className="font-medium">{product.stock} in stock</Badge>
                   </div>
+                  {product.category && (
+                    <Badge variant="outline" className="mt-2 font-medium text-xs">
+                      {product.category}
+                    </Badge>
+                  )}
                   <div className="flex gap-2 mt-4">
                     <EditProductDialog product={product} onProductUpdated={fetchProducts} />
                     <AlertDialog>
