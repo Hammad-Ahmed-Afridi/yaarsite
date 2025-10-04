@@ -236,7 +236,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                       <Label
                         htmlFor={`color-${color}`}
                         className="flex items-center justify-center px-4 py-2 border rounded-md cursor-pointer text-sm font-medium 
-                                   peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground 
+                                   peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground peer-data-[state=checked]:font-bold
                                    hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
                       >
                         {color}
