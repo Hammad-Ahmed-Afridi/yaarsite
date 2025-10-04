@@ -229,7 +229,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
           <Percent className="h-4 w-4" /> Discount
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-full max-w-md max-h-[90vh] overflow-y-auto overflow-x-hidden font-sans">
+      <DialogContent className="sm:max-w-[600px] max-w-[90vw] max-h-[90vh] overflow-y-auto overflow-x-hidden font-sans">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold tracking-tight">Apply Product Discount</DialogTitle>
           <DialogDescription className="text-base leading-relaxed">
@@ -363,14 +363,14 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
             )}
           </div>
 
-          <div className="flex justify-end gap-2 mt-6">
-            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} disabled={isSubmitting} className="font-semibold">
+          <div className="flex flex-wrap justify-end gap-2 mt-6">
+            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} disabled={isSubmitting} className="w-full sm:w-auto font-semibold">
               Cancel
             </Button>
-            <Button type="button" variant="destructive" onClick={handleRemoveDiscount} disabled={isSubmitting} className="font-semibold">
+            <Button type="button" variant="destructive" onClick={handleRemoveDiscount} disabled={isSubmitting} className="w-full sm:w-auto font-semibold">
               <XCircle className="mr-2 h-4 w-4" /> Remove Discount
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="font-semibold">
+            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto font-semibold">
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
