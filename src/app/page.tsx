@@ -119,7 +119,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       {profile?.tenant_name === null && <StoreSetupDialog onStoreCreated={() => setShowConfetti(true)} />}
-      <ConfettiEffect run={showConfetti} />
+      <ConfettiEffect run={showConfetti} duration={5000} />
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} />
 

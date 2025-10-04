@@ -63,13 +63,7 @@ export function StoreSetupDialog({ onStoreCreated }: StoreSetupDialogProps) {
     }
 
     setIsBuildingStore(true);
-    toast.info(
-      <div className="flex items-center gap-2">
-        <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-        <span>Yaarsite AI is crafting your store. Get ready for magic!</span>
-      </div>,
-      { duration: 9000 }
-    );
+    // Removed the blue toast message here as requested.
 
     try {
       // 1. Check if a store with the same name already exists
