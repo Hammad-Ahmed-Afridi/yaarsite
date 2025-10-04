@@ -22,7 +22,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Image as ImageIcon, Loader2, X, Edit, ChevronDown } from 'lucide-react';
+import { Image as ImageIcon, Loader2, X, Edit, ChevronDown, Ruler } from 'lucide-react'; // Added Ruler icon
 import Image from 'next/image';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Import Select components
 
@@ -36,6 +36,8 @@ const formSchema = z.object({
   stock: z.coerce.number().int().min(0, { message: "Stock quantity cannot be negative." }),
   newImages: z.array(z.instanceof(File)).max(2, { message: "You can upload a maximum of 2 new images." }).optional(),
   category: z.string().optional(), // New: category field
+  sizeChartImage: z.instanceof(File).optional(), // New: sizeChartImage
+  availableColors: z.string().optional(), // New: availableColors as comma-separated string
 });
 
 interface Product {
@@ -52,6 +54,8 @@ interface Product {
   discount_start_date: string | null; // New: discount_start_date
   discount_end_date: string | null; // New: discount_end_date
   created_at: string;
+  size_chart_url: string | null; // New: size_chart_url
+  available_colors: string[] | null; // New: available_colors
 }
 
 interface EditProductDialogProps {
@@ -69,6 +73,8 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
   const [existingCategories, setExistingCategories] = useState<string[]>([]); // New: state for existing categories
   const [selectedCategory, setSelectedCategory] = useState<string>(''); // New: state for selected category
   const [isCreatingNewCategory, setIsCreatingNewCategory] = useState(false); // New: state for creating new category
+  const [selectedSizeChartFile, setSelectedSizeChartFile] = useState<File | null>(null); // New: state for size chart file
+  const [sizeChartPreview, setSizeChartPreview] = useState<string | null>(null); // New: state for size chart preview
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -79,6 +85,8 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
       stock: product.stock,
       newImages: undefined,
       category: product.category || "", // Default category
+      sizeChartImage: undefined,
+      availableColors: product.available_colors?.join(', ') || "",
     },
   });
 
@@ -91,12 +99,15 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
         stock: product.stock,
         newImages: undefined,
         category: product.category || "",
+        sizeChartImage: undefined, // Reset file input
+        availableColors: product.available_colors?.join(', ') || "",
       });
       setExistingImageUrls(product.image_urls || []);
       setSelectedNewImageFiles([]);
       setNewImagePreviews([]);
       setSelectedCategory(product.category || '');
       setIsCreatingNewCategory(false); // Reset new category creation state
+      setSizeChartPreview(product.size_chart_url || null); // Set existing size chart preview
 
       // Fetch existing categories when dialog opens
       const fetchCategories = async () => {
@@ -175,6 +186,78 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
     form.setValue("newImages", updatedFiles);
   };
 
+  const handleSizeChartChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+
+      if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+        toast.error(`Invalid file type for size chart. Please upload a JPEG, PNG, or WebP image.`);
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error(`Size chart file is too large (max ${MAX_FILE_SIZE / (1024 * 1024)}MB).`);
+        return;
+      }
+
+      let fileToUpload = file;
+      if (file.size > 600 * 1024) { // Compress if larger than 600KB
+        toast.info(`Compressing size chart for faster loading...`);
+        fileToUpload = await compressImage(file);
+        if (fileToUpload.size < file.size) {
+          toast.success(`Size chart compressed successfully!`);
+        } else {
+          toast.info(`Size chart size is already optimized.`);
+        }
+      }
+
+      setSelectedSizeChartFile(fileToUpload);
+      setSizeChartPreview(URL.createObjectURL(fileToUpload));
+      form.setValue("sizeChartImage", fileToUpload as any);
+      form.clearErrors("sizeChartImage");
+    }
+  };
+
+  const handleRemoveSizeChart = useCallback(async () => {
+    if (!user) return;
+
+    setIsSubmitting(true);
+    try {
+      if (product.size_chart_url) {
+        const path = product.size_chart_url.split('store-content-images/')[1];
+        if (path) {
+          const { error: deleteStorageError } = await supabase.storage
+            .from('store-content-images')
+            .remove([path]);
+
+          if (deleteStorageError) {
+            console.warn(`Failed to delete old size chart from storage:`, deleteStorageError.message);
+          }
+        }
+      }
+
+      const { error } = await supabase
+        .from('products')
+        .update({ size_chart_url: null, updated_at: new Date().toISOString() })
+        .eq('id', product.id)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error(`Error removing size chart:`, error);
+        toast.error(`Failed to remove size chart. Please try again.`);
+      } else {
+        toast.success(`Size chart removed successfully!`);
+        setSelectedSizeChartFile(null);
+        setSizeChartPreview(null);
+        onProductUpdated(); // Refresh product list
+      }
+    } catch (err) {
+      console.error(`Unexpected error during size chart removal:`, err);
+      toast.error(`An unexpected error occurred during size chart removal.`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [user, product, onProductUpdated]);
+
   const handleCategoryChange = (value: string) => {
     if (value === "new-category") {
       setIsCreatingNewCategory(true);
@@ -197,6 +280,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
     setIsSubmitting(true);
     let finalImageUrls: string[] = [...existingImageUrls];
     const oldImagePathsToRemove: string[] = [];
+    let newSizeChartUrl = product.size_chart_url;
 
     try {
       const initialImageUrls = product.image_urls || [];
@@ -210,7 +294,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
       if (selectedNewImageFiles.length > 0) {
         for (const file of selectedNewImageFiles) {
           const fileExtension = file.name.split('.').pop();
-          const fileName = `${user.id}/${uuidv4()}.${fileExtension}`;
+          const fileName = `${user.id}/products/${uuidv4()}.${fileExtension}`;
           const { data, error: uploadError } = await supabase.storage
             .from('product-images')
             .upload(fileName, file, {
@@ -233,6 +317,58 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
           }
         }
       }
+
+      // Handle size chart upload/update
+      if (selectedSizeChartFile) {
+        // If there was an old size chart, remove it first
+        if (product.size_chart_url) {
+          const oldPath = product.size_chart_url.split('store-content-images/')[1];
+          if (oldPath) {
+            const { error: deleteOldError } = await supabase.storage
+              .from('store-content-images')
+              .remove([oldPath]);
+            if (deleteOldError) {
+              console.warn(`Failed to delete old size chart from storage:`, deleteOldError.message);
+            }
+          }
+        }
+
+        const fileExtension = selectedSizeChartFile.name.split('.').pop();
+        const fileName = `${user.id}/size-charts/${uuidv4()}.${fileExtension}`;
+        const { error: uploadError } = await supabase.storage
+          .from('store-content-images')
+          .upload(fileName, selectedSizeChartFile, {
+            cacheControl: '3600',
+            upsert: false,
+          });
+
+        if (uploadError) {
+          throw new Error(`Size chart upload failed: ${uploadError.message}`);
+        }
+
+        const { data: publicUrlData } = supabase.storage
+          .from('store-content-images')
+          .getPublicUrl(fileName);
+
+        if (publicUrlData?.publicUrl) {
+          newSizeChartUrl = publicUrlData.publicUrl;
+        } else {
+          throw new Error("Failed to get public URL for uploaded size chart.");
+        }
+      } else if (sizeChartPreview === null && product.size_chart_url) {
+        // If preview is null but product had a URL, it means it was removed
+        const oldPath = product.size_chart_url.split('store-content-images/')[1];
+        if (oldPath) {
+          const { error: deleteOldError } = await supabase.storage
+            .from('store-content-images')
+            .remove([oldPath]);
+          if (deleteOldError) {
+            console.warn(`Failed to delete old size chart from storage:`, deleteOldError.message);
+          }
+        }
+        newSizeChartUrl = null;
+      }
+
 
       if (oldImagePathsToRemove.length > 0) {
         const { error: deleteError } = await supabase.storage
@@ -270,6 +406,9 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
         updatedOriginalPrice = null;
       }
 
+      const availableColorsArray = values.availableColors
+        ? values.availableColors.split(',').map(color => color.trim()).filter(Boolean)
+        : null;
 
       const { error: updateError } = await supabase
         .from('products')
@@ -284,6 +423,8 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
           discount_percentage: updatedDiscountPercentage,
           discount_start_date: updatedDiscountStartDate, // Update start date
           discount_end_date: updatedDiscountEndDate,
+          size_chart_url: newSizeChartUrl, // New: update size chart URL
+          available_colors: availableColorsArray, // New: update available colors
           updated_at: new Date().toISOString(),
         })
         .eq('id', product.id)
@@ -463,6 +604,72 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
             </div>
             {form.formState.errors.newImages && (
               <p className="text-destructive text-sm">{form.formState.errors.newImages.message}</p>
+            )}
+          </div>
+
+          <div className="grid gap-2">
+            <Label className="text-sm font-medium">Size Chart Image (Optional)</Label>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Upload an image of your product's size chart. This will be visible to customers on the product page.
+              <br />
+              Recommended: Clear text, max 5MB. Supported formats: JPG, PNG, WebP.
+            </p>
+            <div className="flex items-center gap-4 mt-2 flex-wrap">
+              {(sizeChartPreview || product.size_chart_url) ? (
+                <div className="relative w-48 h-24 border rounded-md overflow-hidden">
+                  <Image
+                    src={sizeChartPreview || product.size_chart_url!}
+                    alt="Size Chart Preview"
+                    fill
+                    style={{ objectFit: 'contain' }}
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-1 right-1 h-6 w-6 rounded-full"
+                    onClick={handleRemoveSizeChart}
+                    disabled={isSubmitting}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center w-48 h-24 border-2 border-dashed rounded-md bg-muted">
+                  <Ruler className="h-10 w-10 text-muted-foreground" />
+                </div>
+              )}
+              <Label htmlFor="size-chart-upload" className="flex-1">
+                <Input
+                  id="size-chart-upload"
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  className="hidden"
+                  onChange={handleSizeChartChange}
+                  disabled={isSubmitting}
+                />
+                <Button asChild variant="outline" className="w-full font-semibold" disabled={isSubmitting}>
+                  <span>{(sizeChartPreview || product.size_chart_url) ? "Change Size Chart" : "Upload Size Chart"}</span>
+                </Button>
+              </Label>
+            </div>
+            {form.formState.errors.sizeChartImage && (
+              <p className="text-destructive text-sm">{form.formState.errors.sizeChartImage.message}</p>
+            )}
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="availableColors" className="text-sm font-medium">Available Colors (Optional)</Label>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Enter colors separated by commas (e.g., "Red, Blue, Green"). Customers can select these.
+            </p>
+            <Input
+              id="availableColors"
+              placeholder="e.g., Red, Blue, Green"
+              {...form.register("availableColors")}
+            />
+            {form.formState.errors.availableColors && (
+              <p className="text-destructive text-sm">{form.formState.errors.availableColors.message}</p>
             )}
           </div>
 

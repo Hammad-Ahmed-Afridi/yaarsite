@@ -29,6 +29,8 @@ interface Product {
   discount_percentage: number | null; // New: discount_percentage
   discount_start_date: string | null; // New: discount_start_date
   discount_end_date: string | null; // New: discount_end_date
+  size_chart_url: string | null; // New: size_chart_url
+  available_colors: string[] | null; // New: available_colors
 }
 
 export default function StoreProductsPage() {

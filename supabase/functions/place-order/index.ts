@@ -20,7 +20,7 @@ serve(async (req) => {
       shipping_city, 
       shipping_address_line, 
       total_amount, 
-      items_json, 
+      items_json, // This now includes selected_color and selected_size_input
       user_id,
       payment_method // New: payment_method
     } = await req.json();
@@ -111,7 +111,7 @@ serve(async (req) => {
         shipping_city,
         shipping_address_line,
         total_amount: calculatedTotalAmount, // Use server-calculated total
-        items_json,
+        items_json, // items_json now includes selected_color and selected_size_input
         user_id,
         status: 'pending',
         payment_method, // New: insert payment method

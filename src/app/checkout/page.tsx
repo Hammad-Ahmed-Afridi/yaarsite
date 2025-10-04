@@ -142,6 +142,17 @@ export default function CheckoutPage() {
         determinedTenantSlug = profileData.tenant_slug;
       }
 
+      // Map cart items to the structure expected by the edge function, including new fields
+      const itemsForOrder = cartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image_url: item.image_url,
+        selected_color: item.selected_color || null, // Include selected color
+        selected_size_input: item.selected_size_input || null, // Include selected size input
+      }));
+
       const response = await fetch('/api/place-order', {
         method: 'POST',
         headers: {
@@ -155,7 +166,7 @@ export default function CheckoutPage() {
           shippingCity: values.shippingCity,
           shippingAddressLine: values.shippingAddressLine,
           totalAmount: cartTotal, // This now includes delivery charge
-          items: cartItems,
+          items: itemsForOrder, // Use the mapped items
           storeOwnerId: currentStoreOwnerId,
           paymentMethod: values.paymentMethod, // Include payment method
         }),

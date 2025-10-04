@@ -32,6 +32,8 @@ interface Order {
     price: number;
     quantity: number;
     image_url?: string;
+    selected_color?: string; // New: selected color
+    selected_size_input?: string; // New: selected size input
   }>; // Explicitly type items_json
   payment_method: string;
   created_at: string;
@@ -200,7 +202,11 @@ export default function OrdersPage() {
                       <p className="font-semibold text-sm">Items Ordered:</p>
                       {order.items_json.map((item, itemIndex) => (
                         <div key={itemIndex} className="flex justify-between text-sm text-muted-foreground">
-                          <span>{item.name}</span>
+                          <span>
+                            {item.name}
+                            {item.selected_color && <span className="ml-1">({item.selected_color})</span>}
+                            {item.selected_size_input && <span className="ml-1">[{item.selected_size_input}]</span>}
+                          </span>
                           <span>x{item.quantity}</span>
                         </div>
                       ))}
