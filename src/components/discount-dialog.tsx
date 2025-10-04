@@ -313,7 +313,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
                     <Calendar
-                      mode="single"
+                      mode="single" // Explicitly set to single
                       selected={field.value}
                       onSelect={field.onChange}
                       initialFocus

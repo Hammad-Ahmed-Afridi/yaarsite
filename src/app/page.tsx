@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, ShoppingCart, DollarSign, Store, Settings, Globe, BellRing, LayoutDashboard, RefreshCcw } from "lucide-react"; // Import LayoutDashboard and RefreshCcw for Pages
+import { Package, ShoppingCart, DollarSign, Store, Settings, Globe, BellRing, LayoutDashboard } from "lucide-react"; // Removed RefreshCcw
 import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
 import { DashboardHeader } from "@/components/dashboard-header";
@@ -140,10 +140,7 @@ export default function DashboardPage() {
       <main className="flex-1 p-4 sm:p-8"> {/* Adjusted padding */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold tracking-tight">Your Dashboard</h2>
-          <Button variant="outline" size="icon" onClick={fetchDashboardData} disabled={isLoadingDashboardData}>
-            <RefreshCcw className="h-4 w-4" />
-            <span className="sr-only">Refresh Data</span>
-          </Button>
+          {/* Removed the refresh button */}
         </div>
         <div className="flex justify-center mb-4">
           <ScrollHintArrow />
