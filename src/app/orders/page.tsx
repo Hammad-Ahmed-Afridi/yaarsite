@@ -4,19 +4,16 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MoreHorizontal, Trash2, Edit, ShoppingCart, ArrowLeft, Wallet, Banknote, Smartphone } from 'lucide-react'; // Import ArrowLeft, Wallet, Banknote, Smartphone
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Trash2, Edit, ShoppingCart, ArrowLeft, Wallet, Banknote, Smartphone } from 'lucide-react';
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { DashboardHeader } from '@/components/dashboard-header';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { AppLoader } from '@/components/app-loader';
-import Link from 'next/link'; // Import Link
+import Link from 'next/link';
 
 interface Order {
   id: string;
@@ -29,8 +26,14 @@ interface Order {
   shipping_address_line: string;
   total_amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  items_json: any[];
-  payment_method: string; // New: payment_method
+  items_json: Array<{
+    id: string;
+    name: string;
+    price: number;
+    quantity: number;
+    image_url?: string;
+  }>; // Explicitly type items_json
+  payment_method: string;
   created_at: string;
   updated_at: string;
 }
@@ -40,8 +43,6 @@ const ORDER_STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'cancel
 export default function OrdersPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
   const router = useRouter();
-  const pathname = usePathname();
-  const isMobile = useIsMobile();
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
@@ -140,9 +141,9 @@ export default function OrdersPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      <DashboardHeader profile={profile} onSignOut={handleSignOut} /> {/* Removed currentPath */}
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} />
 
-      <main className="flex-1 p-4 sm:p-8"> {/* Adjusted padding */}
+      <main className="flex-1 p-4 sm:p-8">
         <div className="flex items-center gap-3 mb-6">
           <Button variant="ghost" size="icon" asChild>
             <Link href="/">
@@ -162,184 +163,104 @@ export default function OrdersPage() {
             <Button onClick={() => router.push('/')} className="font-semibold">Go to Dashboard</Button>
           </div>
         ) : (
-          <>
-            {isMobile ? (
-              <div className="grid gap-4">
-                {orders.map((order) => (
-                  <Card key={order.id} className="bg-card text-card-foreground shadow-md rounded-3xl">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg font-semibold">Order ID: {order.id.substring(0, 8)}...</CardTitle>
-                      <p className="text-sm text-muted-foreground leading-relaxed">Customer: {order.customer_name} ({order.customer_email})</p>
-                    </CardHeader>
-                    <CardContent className="space-y-2 text-base">
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">Phone:</span>
-                        <span>{order.customer_phone}</span>
-                      </div>
-                      <div className="flex justify-between items-start">
-                        <span className="font-medium">Address:</span>
-                        <div className="text-right leading-relaxed">
-                          <span>{order.shipping_address_line},</span><br/>
-                          <span>{order.shipping_city}, {order.shipping_province}</span>
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">Total:</span>
-                        <span>Rs{order.total_amount.toFixed(2)}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">Payment Method:</span>
-                        <span className="flex items-center gap-1">
-                          {getPaymentMethodIcon(order.payment_method)}
-                          {order.payment_method}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">Status:</span>
-                        <Select
-                          value={order.status}
-                          onValueChange={(newStatus: Order['status']) => handleUpdateOrderStatus(order.id, newStatus)}
-                          disabled={isUpdatingStatus}
-                        >
-                          <SelectTrigger className="w-[140px] font-medium">
-                            <SelectValue placeholder="Select Status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ORDER_STATUSES.map((status) => (
-                              <SelectItem key={status} value={status} className="font-medium">
-                                {status.charAt(0).toUpperCase() + status.slice(1)}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">Date:</span>
-                        <span>{new Date(order.created_at).toLocaleDateString()}</span>
-                      </div>
-                      <div className="flex justify-end mt-4">
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="destructive" size="sm" className="font-semibold">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle className="text-lg font-semibold">Are you absolutely sure?</AlertDialogTitle>
-                              <AlertDialogDescription className="text-base leading-relaxed">
-                                This action cannot be undone. This will permanently delete this order.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel className="font-medium">Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleDeleteOrder(order.id)}
-                                disabled={isDeletingOrder}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-semibold"
-                              >
-                                {isDeletingOrder ? "Deleting..." : "Delete"}
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
-                <CardHeader>
-                  <CardTitle className="text-xl font-semibold">All Orders</CardTitle>
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Responsive grid for cards */}
+            {orders.map((order) => (
+              <Card key={order.id} className="bg-card text-card-foreground shadow-md rounded-3xl">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg font-semibold">Order ID: {order.id.substring(0, 8)}...</CardTitle>
+                  <p className="text-sm text-muted-foreground leading-relaxed">Customer: {order.customer_name} ({order.customer_email})</p>
                 </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="font-semibold">Order ID</TableHead>
-                          <TableHead className="font-semibold">Customer Name</TableHead>
-                          <TableHead className="font-semibold">Email</TableHead>
-                          <TableHead className="font-semibold">Phone</TableHead>
-                          <TableHead className="font-semibold">Address</TableHead>
-                          <TableHead className="font-semibold">Total Amount</TableHead>
-                          <TableHead className="font-semibold">Payment Method</TableHead> {/* New column */}
-                          <TableHead className="font-semibold">Status</TableHead>
-                          <TableHead className="font-semibold">Order Date</TableHead>
-                          <TableHead className="text-right font-semibold">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {orders.map((order) => (
-                          <TableRow key={order.id}>
-                            <TableCell className="font-medium text-base">{order.id.substring(0, 8)}...</TableCell>
-                            <TableCell className="text-base">{order.customer_name}</TableCell>
-                            <TableCell className="text-base">{order.customer_email}</TableCell>
-                            <TableCell className="text-base">{order.customer_phone}</TableCell>
-                            <TableCell className="text-base">
-                              {order.shipping_address_line}, {order.shipping_city}, {order.shipping_province}
-                            </TableCell>
-                            <TableCell className="text-base">Rs{order.total_amount.toFixed(2)}</TableCell>
-                            <TableCell className="text-base flex items-center gap-1"> {/* Display payment method */}
-                              {getPaymentMethodIcon(order.payment_method)}
-                              {order.payment_method}
-                            </TableCell>
-                            <TableCell>
-                              <Select
-                                value={order.status}
-                                onValueChange={(newStatus: Order['status']) => handleUpdateOrderStatus(order.id, newStatus)}
-                                disabled={isUpdatingStatus}
-                              >
-                                <SelectTrigger className="w-[180px] font-medium">
-                                  <SelectValue placeholder="Select Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {ORDER_STATUSES.map((status) => (
-                                    <SelectItem key={status} value={status} className="font-medium">
-                                      {status.charAt(0).toUpperCase() + status.slice(1)}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </TableCell>
-                            <TableCell className="text-base">{new Date(order.created_at).toLocaleDateString()}</TableCell>
-                            <TableCell className="text-right">
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button variant="destructive" size="sm" className="font-semibold">
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle className="text-lg font-semibold">Are you absolutely sure?</AlertDialogTitle>
-                                    <AlertDialogDescription className="text-base leading-relaxed">
-                                      This action cannot be undone. This will permanently delete this order.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel className="font-medium">Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => handleDeleteOrder(order.id)}
-                                      disabled={isDeletingOrder}
-                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-semibold"
-                                    >
-                                      {isDeletingOrder ? "Deleting..." : "Delete"}
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </TableCell>
-                          </TableRow>
+                <CardContent className="space-y-2 text-base">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Phone:</span>
+                    <span>{order.customer_phone}</span>
+                  </div>
+                  <div className="flex justify-between items-start">
+                    <span className="font-medium">Address:</span>
+                    <div className="text-right leading-relaxed">
+                      <span>{order.shipping_address_line},</span><br/>
+                      <span>{order.shipping_city}, {order.shipping_province}</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Total:</span>
+                    <span>Rs{order.total_amount.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Payment Method:</span>
+                    <span className="flex items-center gap-1">
+                      {getPaymentMethodIcon(order.payment_method)}
+                      {order.payment_method}
+                    </span>
+                  </div>
+                  
+                  {/* Display Ordered Items */}
+                  {order.items_json && order.items_json.length > 0 && (
+                    <div className="space-y-1 mt-2 border-t pt-2">
+                      <p className="font-semibold text-sm">Items Ordered:</p>
+                      {order.items_json.map((item, itemIndex) => (
+                        <div key={itemIndex} className="flex justify-between text-sm text-muted-foreground">
+                          <span>{item.name}</span>
+                          <span>x{item.quantity}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex justify-between items-center pt-2 border-t">
+                    <span className="font-medium">Status:</span>
+                    <Select
+                      value={order.status}
+                      onValueChange={(newStatus: Order['status']) => handleUpdateOrderStatus(order.id, newStatus)}
+                      disabled={isUpdatingStatus}
+                    >
+                      <SelectTrigger className="w-[140px] font-medium">
+                        <SelectValue placeholder="Select Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ORDER_STATUSES.map((status) => (
+                          <SelectItem key={status} value={status} className="font-medium">
+                            {status.charAt(0).toUpperCase() + status.slice(1)}
+                          </SelectItem>
                         ))}
-                      </TableBody>
-                    </Table>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Date:</span>
+                    <span>{new Date(order.created_at).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex justify-end mt-4">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" size="sm" className="font-semibold">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="text-lg font-semibold">Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription className="text-base leading-relaxed">
+                            This action cannot be undone. This will permanently delete this order.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel className="font-medium">Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDeleteOrder(order.id)}
+                            disabled={isDeletingOrder}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-semibold"
+                          >
+                            {isDeletingOrder ? "Deleting..." : "Delete"}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </CardContent>
               </Card>
-            )}
-          </>
+            ))}
+          </div>
         )}
       </main>
     </div>
