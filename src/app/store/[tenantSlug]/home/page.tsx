@@ -49,7 +49,6 @@ export default function StoreHomePage() {
         <p className="text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
       </div>
     );
-  );
   }
 
   return (
@@ -67,7 +66,7 @@ export default function StoreHomePage() {
         </div>
       ) : (
         profile.avatar_url ? (
-          <div className="relative h-32 w-32 rounded-full overflow-hidden mb-6 border-2 border-store-primary"> {/* Use store-primary */}
+          <div className="relative h-32 w-32 rounded-full overflow-hidden mb-6 border-2 border-store-primary">
             <Image
               src={profile.avatar_url}
               alt="Store Logo"
@@ -77,7 +76,7 @@ export default function StoreHomePage() {
             />
           </div>
         ) : (
-          <Store className="h-24 w-24 text-store-primary mb-6" /> {/* Use store-primary */}
+          <Store className="h-24 w-24 text-store-primary mb-6" />
         )
       )}
       <h1 className="text-4xl font-bold mb-4 tracking-tight">

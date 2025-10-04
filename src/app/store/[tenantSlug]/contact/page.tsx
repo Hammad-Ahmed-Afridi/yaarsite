@@ -63,7 +63,7 @@ export default function StoreContactPage() {
           />
         </div>
       ) : (
-        <Mail className="h-24 w-24 text-store-primary mb-6" /> {/* Use store-primary */}
+        <Mail className="h-24 w-24 text-store-primary mb-6" /> 
       )}
       <h1 className="text-4xl font-bold mb-4 tracking-tight">
         {profile.contact_page_heading || `Contact ${profile.tenant_name}`}
