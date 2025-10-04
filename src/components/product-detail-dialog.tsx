@@ -115,7 +115,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
       storeOwnerId: storeOwnerId,
       stock: product.stock, // Pass the product's stock
       selected_color: selectedColor, // New: pass selected color
-      selected_size_input: null, // Removed size input, so pass null
+      selected_size_input: undefined, // Removed size input, so pass undefined
     }, quantity); // Pass the selected quantity
     onOpenChange(false); // Close dialog after adding to cart
   };
