@@ -194,7 +194,7 @@ export default function HomePageSettingsPage() {
                 .from('store-content-images')
                 .remove([oldPath]);
               if (deleteOldError) {
-                console.warn(`Failed to delete old ${imageType} from storage:`, oldDeleteError.message);
+                console.warn(`Failed to delete old ${imageType} from storage:`, deleteOldError.message);
               }
             }
           }
