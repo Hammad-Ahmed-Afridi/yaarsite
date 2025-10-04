@@ -90,10 +90,8 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       setProfile(userProfile);
     } else {
       setProfile(null);
-      // Clear the flag when user is signed out
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('wasAuthenticatedOnDashboard');
-      }
+      // IMPORTANT: Removed localStorage.removeItem('wasAuthenticatedOnDashboard') from here.
+      // This flag should only be cleared on explicit sign-out or when leaving dashboard.
     }
     setIsLoading(false);
     // Reset isSigningOut when the SIGNED_OUT event is processed
@@ -119,6 +117,10 @@ export const SessionContextProvider = ({ children }: { children: React.ReactNode
       console.error("SessionContext: Error during signOut:", error);
       setIsSigningOut(false); // Reset on error
       throw error; // Re-throw to be handled by caller
+    }
+    // Explicitly clear the flag on successful sign-out
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('wasAuthenticatedOnDashboard');
     }
   }, []);
 
