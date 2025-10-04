@@ -31,9 +31,22 @@ export default function DashboardPage() {
     setIsLoadingDashboardData(true);
     try {
       if (!user?.id) {
+        console.log("Dashboard Page: User ID not available, cannot fetch dashboard data.");
         setIsLoadingDashboardData(false);
         return;
       }
+
+      console.log("Dashboard Page: Fetching dashboard data for user:", user.id);
+      const session = await supabase.auth.getSession();
+      const accessToken = session.data.session?.access_token;
+
+      if (!accessToken) {
+        console.error("Dashboard Page: No access token found for fetching dashboard data.");
+        toast.error("Authentication required to refresh dashboard data.");
+        setIsLoadingDashboardData(false);
+        return;
+      }
+      console.log("Dashboard Page: Using access token (first 10 chars):", accessToken.substring(0, 10) + "...");
 
       const SUPABASE_PROJECT_ID = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID || "vpfrtytxeimezwxhhtuf";
       const EDGE_FUNCTION_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/get-dashboard-stats`;
@@ -42,14 +55,19 @@ export default function DashboardPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await supabase.auth.getSession().then(s => s.data.session?.access_token)}`,
+          'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ user_id: user.id }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to fetch dashboard stats via Edge Function");
+        console.error("Dashboard Page: Edge Function response not OK.", {
+          status: response.status,
+          statusText: response.statusText,
+          errorData: errorData,
+        });
+        throw new Error(errorData.message || `Failed to fetch dashboard stats (Status: ${response.status})`);
       }
 
       const data = await response.json();
@@ -65,7 +83,7 @@ export default function DashboardPage() {
     } finally {
       setIsLoadingDashboardData(false);
     }
-  }, [user]);
+  }, [user]); // Dependency array includes 'user'
 
   useEffect(() => {
     if (!isSessionLoading && user) {
