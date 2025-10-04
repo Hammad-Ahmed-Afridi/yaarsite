@@ -160,7 +160,12 @@ export default function ProductsPage() {
             )}
           </p>
           <div className="flex gap-2">
-            <DiscountDialog products={products} onDiscountApplied={fetchProducts} /> {/* Discount button */}
+            {/* Dedicated button for DiscountDialog */}
+            <DiscountDialog products={products} onDiscountApplied={fetchProducts}>
+              <Button className="flex items-center gap-2 font-semibold" variant="outline">
+                <Percent className="h-4 w-4" /> Apply Discount
+              </Button>
+            </DiscountDialog>
             <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
           </div>
         </div>
