@@ -113,6 +113,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
         const newPrice = product.price * (1 - values.discountPercentage / 100);
         return {
           id: product.id,
+          user_id: user.id, // Explicitly include user_id
           original_price: product.original_price === null ? product.price : product.original_price, // Store current price as original if not already set
           price: newPrice,
           discount_percentage: values.discountPercentage,
@@ -171,6 +172,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
 
       const updates = productsToUpdate.map(product => ({
         id: product.id,
+        user_id: user.id, // Explicitly include user_id
         price: product.original_price !== null ? product.original_price : product.price, // Revert to original price
         original_price: null, // Clear original price
         discount_percentage: null,
@@ -266,7 +268,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
               </ScrollArea>
               {form.formState.errors.selectedProductIds && (
                 <p className="text-destructive text-sm">{form.formState.errors.selectedProductIds.message}</p>
-              )}
+            )}
             </div>
           )}
 
