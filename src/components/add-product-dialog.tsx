@@ -83,7 +83,7 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
         }
         
         let fileToUpload = file;
-        if (file.size > 500 * 1024) { // Compress if larger than 500KB
+        if (file.size > 600 * 1024) { // Compress if larger than 600KB
           toast.info(`Compressing "${file.name}" for faster loading...`);
           fileToUpload = await compressImage(file);
           if (fileToUpload.size < file.size) {
@@ -240,7 +240,7 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
               />
               {form.formState.errors.price && (
                 <p className="text-destructive text-sm">{form.formState.errors.price.message}</p>
-              )}
+            )}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="stock" className="text-sm font-medium">Stock Quantity *</Label>

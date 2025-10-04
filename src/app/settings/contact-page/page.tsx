@@ -109,7 +109,7 @@ export default function ContactPageSettingsPage() {
       }
 
       let fileToUpload = file;
-      if (file.size > 500 * 1024) {
+      if (file.size > 600 * 1024) { // Compress if larger than 600KB
         toast.info(`Compressing ${imageType} for faster loading...`);
         fileToUpload = await compressImage(file);
         if (fileToUpload.size < file.size) {

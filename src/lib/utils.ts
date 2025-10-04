@@ -36,7 +36,7 @@ export function generateRandomAlphanumeric(length: number): string {
  */
 export async function compressImage(imageFile: File): Promise<File> {
   const options = {
-    maxSizeMB: 1,           // (max file size in MB)
+    maxSizeMB: 0.6,         // (max file size in MB, 600KB)
     maxWidthOrHeight: 1000, // (max width or height in pixels)
     useWebWorker: true,     // (use web worker for faster compression)
     fileType: 'image/webp', // (output file type)

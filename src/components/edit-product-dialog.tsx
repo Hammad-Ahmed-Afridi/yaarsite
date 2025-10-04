@@ -112,7 +112,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
         }
 
         let fileToUpload = file;
-        if (file.size > 500 * 1024) { // Compress if larger than 500KB
+        if (file.size > 600 * 1024) { // Compress if larger than 600KB
           toast.info(`Compressing "${file.name}" for faster loading...`);
           fileToUpload = await compressImage(file);
           if (fileToUpload.size < file.size) {
