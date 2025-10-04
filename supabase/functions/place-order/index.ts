@@ -20,9 +20,9 @@ serve(async (req) => {
       shipping_city, 
       shipping_address_line, 
       total_amount, 
-      items_json, // This now includes selected_color and selected_size_input
+      items_json, 
       user_id,
-      payment_method // New: payment_method
+      payment_method 
     } = await req.json();
 
     if (!customer_name || !customer_email || !customer_phone || !shipping_province || !shipping_city || !shipping_address_line || !total_amount || !items_json || !user_id || !payment_method) {
@@ -39,12 +39,13 @@ serve(async (req) => {
 
     let calculatedTotalAmount = 0;
     const now = new Date();
+    const fetchedProducts = new Map(); // Store fetched product data
 
     // --- Server-side Stock and Discount Validation ---
     for (const item of items_json) {
       const { data: product, error: productError } = await supabaseAdmin
         .from('products')
-        .select('stock, price, discount_percentage, discount_start_date, discount_end_date') // Fetch discount start date
+        .select('stock, price, discount_percentage, discount_start_date, discount_end_date')
         .eq('id', item.id)
         .single();
 
@@ -61,6 +62,9 @@ serve(async (req) => {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
+
+      // Store the fetched product for later stock reduction
+      fetchedProducts.set(item.id, product);
 
       // Calculate actual price considering active discounts
       let itemPrice = product.price;
@@ -94,7 +98,7 @@ serve(async (req) => {
     calculatedTotalAmount += deliveryCharge;
 
     // Validate that the client-provided total_amount matches the server-calculated total
-    if (Math.abs(calculatedTotalAmount - total_amount) > 0.01) { // Allow for minor floating point differences
+    if (Math.abs(calculatedTotalAmount - total_amount) > 0.01) { 
       return new Response(JSON.stringify({ message: `Price mismatch. Server calculated total: Rs${calculatedTotalAmount.toFixed(2)}, client provided: Rs${total_amount.toFixed(2)}.` }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -110,11 +114,11 @@ serve(async (req) => {
         shipping_province,
         shipping_city,
         shipping_address_line,
-        total_amount: calculatedTotalAmount, // Use server-calculated total
-        items_json, // items_json now includes selected_color and selected_size_input
+        total_amount: calculatedTotalAmount, 
+        items_json, 
         user_id,
         status: 'pending',
-        payment_method, // New: insert payment method
+        payment_method, 
       })
       .select()
       .single();
@@ -129,15 +133,18 @@ serve(async (req) => {
 
     // --- Stock Reduction ---
     for (const item of items_json) {
-      const { error: updateStockError } = await supabaseAdmin
-        .from('products')
-        .update({ stock: (item.stock - item.quantity) }) // Assuming item.stock is the current stock from the client, which is validated above
-        .eq('id', item.id);
+      const fetchedProduct = fetchedProducts.get(item.id);
+      if (fetchedProduct) {
+        const { error: updateStockError } = await supabaseAdmin
+          .from('products')
+          .update({ stock: (fetchedProduct.stock - item.quantity) }) // Use fetchedProduct.stock
+          .eq('id', item.id);
 
-      if (updateStockError) {
-        console.error(`Error reducing stock for product ${item.id}:`, updateStockError);
-        // Optionally, you might want to revert the order or mark it for manual review
-        // For now, we'll just log the error and proceed with the order being placed.
+        if (updateStockError) {
+          console.error(`Error reducing stock for product ${item.id}:`, updateStockError);
+        }
+      } else {
+        console.error(`Product ${item.id} not found in fetchedProducts map during stock reduction.`);
       }
     }
     // --- End Stock Reduction ---
