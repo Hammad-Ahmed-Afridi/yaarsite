@@ -27,8 +27,8 @@ export const metadata: Metadata = {
     icon: "https://placehold.co/32x32/1e293b/cbd5e1?text=Ys",
   },
   openGraph: {
-    title: "Yaarsite - Easy Store Builder",
-    description: "Launch your store in seconds, manage products, and grow online with Yaarsite.",
+    title: "Yaarsite - Build Your Store In Seconds",
+    description: "Yaarsite helps you launch professional, beautiful stores in seconds. Easy, fast, and perfect for any e-commerce seller.",
     url: "https://yaarsite.vercel.app",
     type: "website",
     images: [
