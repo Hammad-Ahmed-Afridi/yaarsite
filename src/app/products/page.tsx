@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Package, Trash2, ArrowLeft, Percent } from 'lucide-react'; // Import ArrowLeft and Percent
+import { Plus, Package, Trash2, ArrowLeft, Percent, Image as ImageIcon } from 'lucide-react'; // Import ArrowLeft, Percent, and ImageIcon
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
