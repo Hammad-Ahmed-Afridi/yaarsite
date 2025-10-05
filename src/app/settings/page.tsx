@@ -300,7 +300,7 @@ export default function SettingsPage() {
   };
 
   const handleCopyStoreUrl = () => {
-    const urlToCopy = profile?.custom_domain && profile.domain_verified_at ? `https://${profile.custom_domain}` : profile?.store_url;
+    const urlToCopy = profile?.store_url; // Simplified: only Yaarsite subdomain
     if (urlToCopy) {
       navigator.clipboard.writeText(urlToCopy);
       toast.info("Store URL copied to clipboard!");
@@ -308,15 +308,13 @@ export default function SettingsPage() {
   };
 
   const handleOpenStoreUrl = () => {
-    const urlToOpen = profile?.custom_domain && profile.domain_verified_at ? `https://${profile.custom_domain}` : profile?.store_url;
+    const urlToOpen = profile?.store_url; // Simplified: only Yaarsite subdomain
     if (urlToOpen) {
       window.open(urlToOpen, '_blank');
     }
   };
 
-  const displayStoreUrl = profile?.custom_domain && profile.domain_verified_at
-    ? `https://${profile.custom_domain}`
-    : profile?.store_url || "Not available";
+  const displayStoreUrl = profile?.store_url || "Not available"; // Simplified
 
   if (isSessionLoading) {
     return (
@@ -462,7 +460,6 @@ export default function SettingsPage() {
                       id="jazzcashPhoneNumber"
                       type="tel"
                       placeholder="03001234567"
-                      className="pl-10"
                       {...form.register("jazzcashPhoneNumber")}
                     />
                   </div>
@@ -547,10 +544,10 @@ export default function SettingsPage() {
                   readOnly
                   className="flex-1 text-base"
                 />
-                <Button variant="outline" size="icon" onClick={handleCopyStoreUrl} disabled={!profile.store_url && !profile.custom_domain}>
+                <Button variant="outline" size="icon" onClick={handleCopyStoreUrl} disabled={!profile.store_url}>
                   <Copy className="h-4 w-4" />
                 </Button>
-                <Button variant="outline" size="icon" onClick={handleOpenStoreUrl} disabled={!profile.store_url && !profile.custom_domain}>
+                <Button variant="outline" size="icon" onClick={handleOpenStoreUrl} disabled={!profile.store_url}>
                   <ExternalLink className="h-4 w-4" />
                 </Button>
               </div>

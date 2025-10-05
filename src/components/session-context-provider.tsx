@@ -39,10 +39,7 @@ export interface Profile { // Exported for use in DashboardHeader
   store_primary_color_hsl: string | null; // Used for accent (buttons, links, icons)
   store_background_color_hsl: string | null; // Main store background
   store_card_background_color_hsl: string | null; // Cards, Header, Footer background
-  // New fields for custom domain
-  custom_domain: string | null;
-  domain_verification_code: string | null;
-  domain_verified_at: string | null; // Stored as ISO string
+  // Removed custom domain fields
 }
 
 // Define a type for the specific profile keys that store image URLs
