@@ -25,6 +25,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Hammad Ahmed Afridi" }],
   icons: {
     icon: "/android-chrome-192x192.png", // Changed to use a high-res PWA icon
+    apple: "/apple-touch-icon.png", // Added for iOS PWA
   },
   openGraph: {
     title: "Yaarsite - Build Your Store In Seconds",
