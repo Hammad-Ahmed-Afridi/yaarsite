@@ -130,9 +130,9 @@ export default function SettingsPage() {
         toast.info(`Compressing ${imageType} for faster loading...`);
         fileToUpload = await compressImage(file);
         if (fileToUpload.size < file.size) {
-          toast.success(`${imageType} compressed successfully!`);
+          toast.success(`"${file.name}" compressed successfully!`);
         } else {
-          toast.info(`${imageType} size is already optimized.`);
+          toast.info(`"${file.name}" size is already optimized.`);
         }
       }
 
@@ -256,8 +256,8 @@ export default function SettingsPage() {
 
       newAvatarUrl = await uploadImageAndGetUrl(selectedLogoFile, profile?.avatar_url ?? null, 'store-logos', 'logo');
 
-      const appBaseUrl = window.location.origin;
-      const newStoreUrl = `${appBaseUrl}/store/${profile?.tenant_slug}`;
+      // The store_url will now be dynamically generated based on custom_domain or tenant_slug
+      // We no longer update store_url directly from here.
 
       // Convert HEX colors to HSL for storage
       const storePrimaryAccentColorHsl = values.storePrimaryAccentColor ? hexToHsl(values.storePrimaryAccentColor) : null;
@@ -269,7 +269,7 @@ export default function SettingsPage() {
         .from('profiles')
         .update({
           tenant_name: values.storeName,
-          store_url: newStoreUrl,
+          // store_url: newStoreUrl, // Removed direct update of store_url
           store_description: values.storeDescription || null,
           avatar_url: newAvatarUrl,
           delivery_charge: values.deliveryCharge,
@@ -300,17 +300,23 @@ export default function SettingsPage() {
   };
 
   const handleCopyStoreUrl = () => {
-    if (profile?.store_url) {
-      navigator.clipboard.writeText(profile.store_url);
+    const urlToCopy = profile?.custom_domain && profile.domain_verified_at ? `https://${profile.custom_domain}` : profile?.store_url;
+    if (urlToCopy) {
+      navigator.clipboard.writeText(urlToCopy);
       toast.info("Store URL copied to clipboard!");
     }
   };
 
   const handleOpenStoreUrl = () => {
-    if (profile?.store_url) {
-      window.open(profile.store_url, '_blank');
+    const urlToOpen = profile?.custom_domain && profile.domain_verified_at ? `https://${profile.custom_domain}` : profile?.store_url;
+    if (urlToOpen) {
+      window.open(urlToOpen, '_blank');
     }
   };
+
+  const displayStoreUrl = profile?.custom_domain && profile.domain_verified_at
+    ? `https://${profile.custom_domain}`
+    : profile?.store_url || "Not available";
 
   if (isSessionLoading) {
     return (
@@ -537,14 +543,14 @@ export default function SettingsPage() {
               <h3 className="text-xl font-semibold mt-6 tracking-tight">Store URL</h3>
               <div className="flex items-center gap-2">
                 <Input
-                  value={profile.store_url || "Not available"}
+                  value={displayStoreUrl}
                   readOnly
                   className="flex-1 text-base"
                 />
-                <Button variant="outline" size="icon" onClick={handleCopyStoreUrl} disabled={!profile.store_url}>
+                <Button variant="outline" size="icon" onClick={handleCopyStoreUrl} disabled={!profile.store_url && !profile.custom_domain}>
                   <Copy className="h-4 w-4" />
                 </Button>
-                <Button variant="outline" size="icon" onClick={handleOpenStoreUrl} disabled={!profile.store_url}>
+                <Button variant="outline" size="icon" onClick={handleOpenStoreUrl} disabled={!profile.store_url && !profile.custom_domain}>
                   <ExternalLink className="h-4 w-4" />
                 </Button>
               </div>
