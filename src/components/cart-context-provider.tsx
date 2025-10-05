@@ -126,6 +126,27 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
     });
   }, []);
 
+  const updateQuantity = useCallback((productId: string, newQuantity: number) => {
+    setCartItems(prevItems => {
+      const updatedItems = prevItems.map(item => {
+        if (item.id === productId) {
+          if (newQuantity < 1) {
+            toast.error("Quantity cannot be less than 1.");
+            return item; // Don't update if less than 1
+          }
+          if (newQuantity > item.stock) {
+            toast.error(`Cannot add more than available stock (${item.stock} in stock).`);
+            return item; // Don't update if exceeds stock
+          }
+          toast.success(`${item.name} quantity updated to ${newQuantity}.`);
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      });
+      return updatedItems;
+    });
+  }, []);
+
   const clearCart = useCallback((suppressToast: boolean = false) => { // Modified: Added suppressToast
     setCartItems([]);
     if (!suppressToast) { // Only show toast if not suppressed
