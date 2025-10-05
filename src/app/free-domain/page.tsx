@@ -16,6 +16,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { format } from 'date-fns';
+import { Label } from '@/components/ui/label'; // Added import for Label
+import { Badge } from '@/components/ui/badge'; // Added import for Badge
 
 const domainSchema = z.object({
   customDomain: z.string().min(3, { message: "Domain must be at least 3 characters." }).regex(/^(?!:\/\/)([a-zA-Z0-9-]+\.){1,}[a-zA-Z]{2,}(\/\S*)?$/, { message: "Invalid domain format." }),
@@ -148,7 +150,7 @@ export default function FreeDomainPage() {
     ? `https://${profile.custom_domain}`
     : profile?.store_url || "Store URL not available";
 
-  const isCustomDomainActive = profile?.custom_domain && profile.domain_verified_at;
+  const isCustomDomainActive = !!(profile?.custom_domain && profile.domain_verified_at); // Explicitly cast to boolean
 
   if (isSessionLoading) {
     return <AppLoader message="Loading page..." />;
