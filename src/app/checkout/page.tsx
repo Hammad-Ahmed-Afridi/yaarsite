@@ -204,7 +204,7 @@ export default function CheckoutPage() {
     const redirectPath = finalRedirectPath || '/store'; // Use finalRedirectPath, with a fallback
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center font-sans">
-        <ConfettiEffect run={showConfetti} duration={5000} /> {/* Confetti for 5 seconds */}
+        <ConfettiEffect run={showConfetti} duration={8000} /> {/* Confetti for 8 seconds */}
         <CheckCircle className="h-20 w-20 text-green-500 mb-6" />
         <h1 className="text-3xl font-bold mb-4 tracking-tight">Order Placed!</h1>
         <p className="text-lg text-muted-foreground mb-8 leading-relaxed">Thank you for your purchase. We will contact you soon.</p>
