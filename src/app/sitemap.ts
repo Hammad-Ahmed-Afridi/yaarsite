@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { supabaseServer } from '@/integrations/supabase/server'; // Import the server-side client
+// Removed import for supabaseServer as it's no longer needed for dynamic store paths
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://yaarsite.vercel.app'; // Use your deployed app's URL
 
@@ -79,47 +79,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Fetch dynamic store pages from Supabase
-  const { data: profiles, error } = await supabaseServer // Use supabaseServer here
-    .from('profiles')
-    .select('tenant_slug, updated_at')
-    .not('tenant_slug', 'is', null); // Only select profiles with a tenant_slug
+  // Removed logic for fetching and generating dynamic store paths.
+  // The sitemap will now only contain the static paths defined above.
 
-  if (error) {
-    console.error("Error fetching tenant slugs for sitemap:", error);
-    // If there's an error fetching dynamic data, return only static paths
-    return staticPaths;
-  }
-
-  const dynamicPaths: MetadataRoute.Sitemap = profiles.flatMap(profile => {
-    const lastModified = profile.updated_at ? new Date(profile.updated_at) : new Date();
-    return [
-      {
-        url: `${BASE_URL}/store/${profile.tenant_slug}`, // Main store page (products)
-        lastModified,
-        changeFrequency: 'daily',
-        priority: 0.9,
-      },
-      {
-        url: `${BASE_URL}/store/${profile.tenant_slug}/home`,
-        lastModified,
-        changeFrequency: 'weekly',
-        priority: 0.8,
-      },
-      {
-        url: `${BASE_URL}/store/${profile.tenant_slug}/about`,
-        lastModified,
-        changeFrequency: 'weekly',
-        priority: 0.8,
-      },
-      {
-        url: `${BASE_URL}/store/${profile.tenant_slug}/contact`,
-        lastModified,
-        changeFrequency: 'weekly',
-        priority: 0.8,
-      },
-    ];
-  });
-
-  return [...staticPaths, ...dynamicPaths];
+  return staticPaths;
 }
