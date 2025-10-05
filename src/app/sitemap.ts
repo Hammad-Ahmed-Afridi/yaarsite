@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseServer } from '@/integrations/supabase/server'; // Import the server-side client
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://yaarsite.vercel.app'; // Use your deployed app's URL
 
@@ -80,7 +80,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Fetch dynamic store pages from Supabase
-  const { data: profiles, error } = await supabase
+  const { data: profiles, error } = await supabaseServer // Use supabaseServer here
     .from('profiles')
     .select('tenant_slug, updated_at')
     .not('tenant_slug', 'is', null); // Only select profiles with a tenant_slug
