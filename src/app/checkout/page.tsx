@@ -15,6 +15,7 @@ import { ArrowLeft, Loader2, CheckCircle, RefreshCcw, Wallet, Banknote, Smartpho
 import Link from 'next/link';
 import { supabase } from '@/integrations/supabase/client'; // Import supabase client
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'; // Import RadioGroup
+import { ConfettiEffect } from '@/components/confetti-effect'; // Import ConfettiEffect
 
 // Function to generate a random 4-character alphanumeric code
 const generateRandomCode = () => {
@@ -46,6 +47,7 @@ export default function CheckoutPage() {
   const [jazzcashPhoneNumber, setJazzcashPhoneNumber] = useState<string | null>(null);
   const [easypaisaPhoneNumber, setEasypaisaPhoneNumber] = useState<string | null>(null);
   const [isLoadingPaymentInfo, setIsLoadingPaymentInfo] = useState(true);
+  const [showConfetti, setShowConfetti] = useState(false); // New state for confetti
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema.refine((data) => data.humanVerificationCode === currentVerificationCode, {
@@ -181,12 +183,13 @@ export default function CheckoutPage() {
       console.log("Order placed successfully:", result);
 
       toast.success("Thank you for your purchase. We will contact you soon.", { duration: 5000 });
-      clearCart();
+      clearCart(true); // Suppress toast when clearing cart after order
       
       // Set the final redirect path here, after successful order and before setting orderPlaced
       const path = determinedTenantSlug ? `/store/${determinedTenantSlug}` : '/store';
       setFinalRedirectPath(path); // Set the new state
       setOrderPlaced(true);
+      setShowConfetti(true); // Trigger confetti
 
     } catch (error: any) {
       console.error("Error placing order:", error);
@@ -201,6 +204,7 @@ export default function CheckoutPage() {
     const redirectPath = finalRedirectPath || '/store'; // Use finalRedirectPath, with a fallback
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center font-sans">
+        <ConfettiEffect run={showConfetti} duration={5000} /> {/* Confetti for 5 seconds */}
         <CheckCircle className="h-20 w-20 text-green-500 mb-6" />
         <h1 className="text-3xl font-bold mb-4 tracking-tight">Order Placed!</h1>
         <p className="text-lg text-muted-foreground mb-8 leading-relaxed">Thank you for your purchase. We will contact you soon.</p>

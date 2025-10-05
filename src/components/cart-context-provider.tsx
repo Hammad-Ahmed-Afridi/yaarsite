@@ -25,7 +25,7 @@ interface CartContextType {
   addToCart: (item: Omit<CartItem, 'quantity'> & { stock: number }, quantity?: number) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
-  clearCart: () => void;
+  clearCart: (suppressToast?: boolean) => void; // Modified: Added suppressToast
   cartTotal: number;
   itemCount: number;
   deliveryCharge: number; // New: delivery charge
@@ -126,26 +126,11 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
     });
   }, []);
 
-  const updateQuantity = useCallback((productId: string, quantity: number) => {
-    setCartItems(prevItems => {
-      const updatedItems = prevItems.map(item => {
-        if (item.id === productId) {
-          const newQuantity = Math.max(1, quantity); // Ensure quantity is at least 1
-          if (newQuantity > item.stock) {
-            toast.error(`Cannot set quantity more than available stock (${item.stock} in stock).`);
-            return { ...item, quantity: item.stock }; // Set to max available stock
-          }
-          return { ...item, quantity: newQuantity };
-        }
-        return item;
-      });
-      return updatedItems;
-    });
-  }, []);
-
-  const clearCart = useCallback(() => {
+  const clearCart = useCallback((suppressToast: boolean = false) => { // Modified: Added suppressToast
     setCartItems([]);
-    toast.info("Cart cleared.");
+    if (!suppressToast) { // Only show toast if not suppressed
+      toast.info("Cart cleared.");
+    }
   }, []);
 
   const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
