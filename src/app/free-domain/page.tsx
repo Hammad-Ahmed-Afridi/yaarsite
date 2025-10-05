@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Globe, ArrowLeft, Copy, ExternalLink, Loader2 } from 'lucide-react'; // Removed CheckCircle, XCircle, RefreshCcw
+import { Globe, ArrowLeft, Copy, ExternalLink, Loader2 } from 'lucide-react';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { useSession } from '@/components/session-context-provider';
 import { useRouter } from 'next/navigation';
@@ -12,14 +12,10 @@ import { toast } from 'sonner';
 import { AppLoader } from '@/components/app-loader';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-// Removed useForm, zodResolver, z, format, Label, Badge imports as they are no longer needed for custom domain logic
 
 export default function FreeDomainPage() {
   const { user, profile, isLoading: isSessionLoading, refreshProfile, session } = useSession();
   const router = useRouter();
-  // Removed custom domain related states: isSubmittingDomain, isVerifyingDomain
-
-  // Removed form and useEffect for form reset as custom domain form is gone
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -37,13 +33,11 @@ export default function FreeDomainPage() {
   };
 
   const handleOpenStoreUrl = () => {
-    const urlToOpen = profile?.store_url; // Simplified: only Yaarsite subdomain
+    const urlToOpen = profile?.store_url;
     if (urlToOpen) {
       window.open(urlToOpen, '_blank');
     }
   };
-
-  // Removed onSubmitDomain and handleVerifyDomain functions
 
   const displayStoreUrl = profile?.store_url || "Store URL not available";
 
@@ -130,14 +124,42 @@ export default function FreeDomainPage() {
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold tracking-tight">Free Domains</CardTitle>
             <CardDescription className="text-base leading-relaxed">
-              This feature is currently under development and will be available soon!
+              For social media bios and marketing, you can create a shorter, more memorable link that redirects to your Yaarsite store.
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-center space-y-4">
-            <Loader2 className="h-12 w-12 text-primary animate-spin mx-auto" />
-            <p className="text-lg font-semibold text-muted-foreground">
-              We're working on providing free domain options for your store. Stay tuned for updates.
-            </p>
+          <CardContent className="text-left space-y-6">
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold">Option 1: Bitly</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Bitly allows you to create custom short links (e.g., `bit.ly/YourStoreName`).
+              </p>
+              <ol className="list-decimal list-inside text-muted-foreground space-y-1 leading-relaxed">
+                <li>Go to <a href="https://bitly.com/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Bitly.com</a> and sign up for a free account.</li>
+                <li>Click "Create new" and select "Link".</li>
+                <li>Paste your Yaarsite Store URL (copied above) into the "Destination" field.</li>
+                <li>Customize the "Back-half" (the part after `bit.ly/`) to something memorable for your store.</li>
+                <li>Save your new short link and use it in your social media bios!</li>
+              </ol>
+              <Button asChild variant="outline" className="mt-2 font-semibold">
+                <a href="https://bitly.com/" target="_blank" rel="noopener noreferrer">Go to Bitly</a>
+              </Button>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold">Option 2: Linktree</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Linktree is perfect for creating a single, mobile-friendly landing page with multiple links, ideal for Instagram bios.
+              </p>
+              <ol className="list-decimal list-inside text-muted-foreground space-y-1 leading-relaxed">
+                <li>Go to <a href="https://linktr.ee/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Linktr.ee</a> and sign up for a free account.</li>
+                <li>Add a new link and paste your Yaarsite Store URL (copied above).</li>
+                <li>Customize the title of the link (e.g., "Shop Our Store").</li>
+                <li>Share your Linktree URL (`linktr.ee/YourStoreName`) in your social media bios.</li>
+              </ol>
+              <Button asChild variant="outline" className="mt-2 font-semibold">
+                <a href="https://linktr.ee/" target="_blank" rel="noopener noreferrer">Go to Linktree</a>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </main>
