@@ -24,8 +24,7 @@ export const metadata: Metadata = {
   robots: "index, follow",
   authors: [{ name: "Hammad Ahmed Afridi" }],
   icons: {
-    icon: "/android-chrome-192x192.png", // Changed to use a high-res PWA icon
-    apple: "/apple-touch-icon.png", // Added for iOS PWA
+    icon: "https://placehold.co/32x32/1e293b/cbd5e1?text=Ys",
   },
   openGraph: {
     title: "Yaarsite - Build Your Store In Seconds",
