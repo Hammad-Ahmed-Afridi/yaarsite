@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 import { jwtVerify } from 'https://deno.land/x/jose@v5.2.4/index.ts';
-import { lookupTxt } from "https://deno.land/x/dns@v1.1.0/mod.ts"; // For DNS TXT record lookup
+// Removed: import { lookupTxt } from "https://deno.land/x/dns@v1.1.0/mod.ts"; // For DNS TXT record lookup
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -111,8 +111,8 @@ serve(async (req) => {
 
       let verified = false;
       try {
-        // Perform DNS TXT record lookup
-        const txtRecords = await lookupTxt(`_yaarsite.${domain}`);
+        // Perform DNS TXT record lookup using Deno's built-in API
+        const txtRecords = await Deno.resolveDns(`_yaarsite.${domain}`, "TXT");
         console.log(`DNS TXT records for _yaarsite.${domain}:`, txtRecords);
 
         // Check if any TXT record matches the expected verification code
