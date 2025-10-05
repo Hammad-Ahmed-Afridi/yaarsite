@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, Download, Smartphone, Monitor, Apple, Chrome, Edge } from 'lucide-react';
+import { ArrowLeft, Download, Smartphone, Monitor, Apple, Chrome } from 'lucide-react'; // Removed Edge
 import { DashboardHeader } from '@/components/dashboard-header';
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
@@ -118,7 +118,8 @@ export default function DownloadAppPage() {
               {/* Edge Desktop */}
               <div className="space-y-2">
                 <h3 className="text-xl font-semibold flex items-center gap-2">
-                  <Edge className="h-6 w-6 text-blue-500" /> Microsoft Edge
+                  {/* Removed Edge icon as it's not exported by lucide-react */}
+                  Microsoft Edge
                 </h3>
                 <ol className="list-decimal list-inside text-muted-foreground space-y-2 leading-relaxed">
                   <li>Open **Microsoft Edge** browser on your desktop.</li>
