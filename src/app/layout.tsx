@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   robots: "index, follow",
   authors: [{ name: "Hammad Ahmed Afridi" }],
   icons: {
-    icon: "https://placehold.co/32x32/1e293b/29A399?text=Ys", // Updated favicon color
+    icon: "https://placehold.co/32x32/ffffff/29A399?text=Ys", // Updated favicon background to white
   },
   openGraph: {
     title: "Yaarsite - Build Your Store In Seconds",
