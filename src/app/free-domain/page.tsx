@@ -61,7 +61,7 @@ export default function FreeDomainPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       <DashboardHeader profile={profile} onSignOut={handleSignOut} />
 
-      <main className="flex-1 p-4 sm:p-8 flex flex-col items-center justify-center text-center">
+      <main className="flex-1 p-4 sm:p-8 flex flex-col items-center text-center">
         <div className="flex items-center gap-3 mb-6">
           <Button variant="ghost" size="icon" asChild>
             <Link href="/">
@@ -129,16 +129,18 @@ export default function FreeDomainPage() {
           </CardHeader>
           <CardContent className="text-left space-y-6">
             <div className="space-y-2">
-              <h3 className="text-xl font-semibold">Option 1: Bitly</h3>
+              <h3 className="text-xl font-semibold">Option 1: Bitly (Custom Short Links)</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Bitly allows you to create custom short links (e.g., `bit.ly/YourStoreName`).
+                Bitly allows you to create custom short links (e.g., `bit.ly/YourStoreName`) that are easy to remember and share.
               </p>
-              <ol className="list-decimal list-inside text-muted-foreground space-y-1 leading-relaxed">
-                <li>Go to <a href="https://bitly.com/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Bitly.com</a> and sign up for a free account.</li>
-                <li>Click "Create new" and select "Link".</li>
-                <li>Paste your Yaarsite Store URL (copied above) into the "Destination" field.</li>
-                <li>Customize the "Back-half" (the part after `bit.ly/`) to something memorable for your store.</li>
-                <li>Save your new short link and use it in your social media bios!</li>
+              <ol className="list-decimal list-inside text-muted-foreground space-y-2 leading-relaxed">
+                <li>**Go to Bitly:** Open your web browser and navigate to <a href="https://bitly.com/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Bitly.com</a>.</li>
+                <li>**Sign Up/Log In:** Create a free account or log in if you already have one.</li>
+                <li>**Create New Link:** On your Bitly dashboard, look for a button like "Create new" or "Create Link" and click it.</li>
+                <li>**Paste Your Store URL:** In the field provided (often labeled "Destination" or "Long URL"), paste your full Yaarsite Store URL (which you can copy from above).</li>
+                <li>**Customize Back-half:** Bitly will generate a random short link. You can customize the "Back-half" (the part after `bit.ly/`) to something relevant and memorable for your store, like `bit.ly/MyAwesomeStore`.</li>
+                <li>**Save Your Link:** Click "Create" or "Save" to finalize your custom short link.</li>
+                <li>**Use Your Link:** Copy this new short link and use it in your social media bios, marketing materials, or anywhere you want a concise link to your store!</li>
               </ol>
               <Button asChild variant="outline" className="mt-2 font-semibold">
                 <a href="https://bitly.com/" target="_blank" rel="noopener noreferrer">Go to Bitly</a>
@@ -146,15 +148,22 @@ export default function FreeDomainPage() {
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-xl font-semibold">Option 2: Linktree</h3>
+              <h3 className="text-xl font-semibold">Option 2: Linktree (Multiple Links in One)</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Linktree is perfect for creating a single, mobile-friendly landing page with multiple links, ideal for Instagram bios.
+                Linktree is ideal for social media bios where you want to share multiple links from a single, mobile-friendly landing page.
               </p>
-              <ol className="list-decimal list-inside text-muted-foreground space-y-1 leading-relaxed">
-                <li>Go to <a href="https://linktr.ee/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Linktr.ee</a> and sign up for a free account.</li>
-                <li>Add a new link and paste your Yaarsite Store URL (copied above).</li>
-                <li>Customize the title of the link (e.g., "Shop Our Store").</li>
-                <li>Share your Linktree URL (`linktr.ee/YourStoreName`) in your social media bios.</li>
+              <ol className="list-decimal list-inside text-muted-foreground space-y-2 leading-relaxed">
+                <li>**Go to Linktree:** Open your web browser and go to <a href="https://linktr.ee/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Linktr.ee</a>.</li>
+                <li>**Sign Up/Log In:** Create a free account or log in.</li>
+                <li>**Add New Link:** On your Linktree dashboard, click "Add New Link".</li>
+                <li>**Enter Title & URL:**
+                  <ul className="list-disc list-inside ml-4">
+                    <li>For the "Title" field, enter something like "Shop Our Store" or "Visit My Yaarsite Store".</li>
+                    <li>For the "URL" field, paste your Yaarsite Store URL (copied from above).</li>
+                  </ul>
+                </li>
+                <li>**Customize Your Linktree:** You can add more links (e.g., to your social media profiles), customize the appearance of your Linktree page, and reorder your links.</li>
+                <li>**Share Your Linktree URL:** Your unique Linktree URL will be something like `linktr.ee/YourStoreName`. Copy this URL and use it in your social media bios (e.g., Instagram, TikTok) to direct customers to your Yaarsite store and other important links.</li>
               </ol>
               <Button asChild variant="outline" className="mt-2 font-semibold">
                 <a href="https://linktr.ee/" target="_blank" rel="noopener noreferrer">Go to Linktree</a>

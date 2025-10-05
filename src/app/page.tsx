@@ -7,16 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, ShoppingCart, DollarSign, Store, Settings, Globe, BellRing, LayoutDashboard } from "lucide-react"; // Removed RefreshCcw
+import { Package, ShoppingCart, DollarSign, Store, Settings, Globe, BellRing, LayoutDashboard, Download } from "lucide-react"; // Added Download icon
 import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { ScrollHintArrow } from "@/components/scroll-hint-arrow";
 import { AppLoader } from "@/components/app-loader";
 import { ConfettiEffect } from '@/components/confetti-effect';
+import Link from "next/link"; // Ensure Link is imported
 
 export default function DashboardPage() {
-  const { user, profile, isLoading: isSessionLoading, initiateSignOut, session } = useSession(); // Get session from context
+  const { user, profile, isLoading: isSessionLoading, initiateSignOut, session } = useSession();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -30,7 +31,7 @@ export default function DashboardPage() {
   const fetchDashboardData = useCallback(async () => {
     setIsLoadingDashboardData(true);
     try {
-      if (!user?.id || !session?.access_token) { // Check for session.access_token directly
+      if (!user?.id || !session?.access_token) {
         console.log("Dashboard Page: User ID or access token not available, cannot fetch dashboard data.");
         toast.error("Authentication required to refresh dashboard data.");
         setIsLoadingDashboardData(false);
@@ -38,7 +39,7 @@ export default function DashboardPage() {
       }
 
       console.log("Dashboard Page: Fetching dashboard data for user:", user.id);
-      const accessToken = session.access_token; // Use session from context directly
+      const accessToken = session.access_token;
 
       console.log("Dashboard Page: Using access token (first 10 chars):", accessToken.substring(0, 10) + "...");
 
@@ -69,37 +70,34 @@ export default function DashboardPage() {
       setTotalOrders(data.totalOrders);
       setTotalProfit(data.totalProfit);
       setNewOrders(data.newOrders);
-      toast.success("Dashboard data refreshed!"); // Added success toast
+      toast.success("Dashboard data refreshed!");
 
     } catch (error: any) {
       console.error("Dashboard Page: Error fetching dashboard data:", error);
-      toast.error("Failed to refresh dashboard data."); // Added error toast
+      toast.error("Failed to refresh dashboard data.");
     } finally {
       setIsLoadingDashboardData(false);
     }
-  }, [user, session]); // Add session to dependencies
+  }, [user, session]);
 
   useEffect(() => {
-    if (!isSessionLoading && user && session) { // Ensure session is also available
+    if (!isSessionLoading && user && session) {
       fetchDashboardData();
-      // Set flag when authenticated on dashboard
       if (typeof window !== 'undefined') {
         localStorage.setItem('wasAuthenticatedOnDashboard', 'true');
       }
     } else if (!isSessionLoading && !user) {
-      // If session is done loading and there's no user, clear the flag
       if (typeof window !== 'undefined') {
         localStorage.removeItem('wasAuthenticatedOnDashboard');
       }
     }
 
     return () => {
-      // Clear the flag when component unmounts or user navigates away
       if (typeof window !== 'undefined') {
         localStorage.removeItem('wasAuthenticatedOnDashboard');
       }
     };
-  }, [isSessionLoading, user, session, fetchDashboardData]); // Add session to dependencies
+  }, [isSessionLoading, user, session, fetchDashboardData]);
 
   if (isSessionLoading || isLoadingDashboardData) {
     return (
@@ -137,15 +135,14 @@ export default function DashboardPage() {
 
       <DashboardHeader profile={profile} onSignOut={handleSignOut} />
 
-      <main className="flex-1 p-4 sm:p-8"> {/* Adjusted padding */}
+      <main className="flex-1 p-4 sm:p-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold tracking-tight">Your Dashboard</h2>
-          {/* Removed the refresh button */}
         </div>
         <div className="flex justify-center mb-4">
           <ScrollHintArrow />
         </div>
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2"> {/* Adjusted grid for mobile */}
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-base font-medium">Total Products</CardTitle>
@@ -187,7 +184,7 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 mt-6"> {/* Adjusted grid for mobile */}
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6"> {/* Adjusted grid for mobile */}
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
               <Store className="h-6 w-6 text-primary" />
@@ -240,6 +237,20 @@ export default function DashboardPage() {
             <CardContent className="space-y-4">
               <p className="text-base text-muted-foreground leading-relaxed">Claim a custom domain for your store</p>
               <Button onClick={() => router.push('/free-domain')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Free Domain</Button>
+            </CardContent>
+          </Card>
+
+          {/* New Card for Download App */}
+          <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
+            <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
+              <Download className="h-6 w-6 text-orange-500" /> {/* Using orange for download icon */}
+              <CardTitle className="text-xl font-semibold">Download App</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-base text-muted-foreground leading-relaxed">Get the app on your device for quick access</p>
+              <Button asChild className="w-full font-semibold">
+                <Link href="/download-app">Download App</Link>
+              </Button>
             </CardContent>
           </Card>
         </div>
