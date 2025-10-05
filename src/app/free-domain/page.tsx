@@ -128,44 +128,16 @@ export default function FreeDomainPage() {
 
         <Card className="w-full max-w-2xl bg-card text-card-foreground shadow-lg rounded-3xl">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold tracking-tight">Professional Short Links</CardTitle>
+            <CardTitle className="text-2xl font-bold tracking-tight">Free Domains</CardTitle>
             <CardDescription className="text-base leading-relaxed">
-              For social media bios and marketing, you can create a shorter, more memorable link that redirects to your Yaarsite store.
+              This feature is currently under development and will be available soon!
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-left space-y-6">
-            <div className="space-y-2">
-              <h3 className="text-xl font-semibold">Option 1: Bitly</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Bitly allows you to create custom short links (e.g., `bit.ly/YourStoreName`).
-              </p>
-              <ol className="list-decimal list-inside text-muted-foreground space-y-1 leading-relaxed">
-                <li>Go to <a href="https://bitly.com/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Bitly.com</a> and sign up for a free account.</li>
-                <li>Click "Create new" and select "Link".</li>
-                <li>Paste your Yaarsite Store URL (copied above) into the "Destination" field.</li>
-                <li>Customize the "Back-half" (the part after `bit.ly/`) to something memorable for your store.</li>
-                <li>Save your new short link and use it in your social media bios!</li>
-              </ol>
-              <Button asChild variant="outline" className="mt-2 font-semibold">
-                <a href="https://bitly.com/" target="_blank" rel="noopener noreferrer">Go to Bitly</a>
-              </Button>
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="text-xl font-semibold">Option 2: Linktree</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Linktree is perfect for creating a single, mobile-friendly landing page with multiple links, ideal for Instagram bios.
-              </p>
-              <ol className="list-decimal list-inside text-muted-foreground space-y-1 leading-relaxed">
-                <li>Go to <a href="https://linktr.ee/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Linktr.ee</a> and sign up for a free account.</li>
-                <li>Add a new link and paste your Yaarsite Store URL (copied above).</li>
-                <li>Customize the title of the link (e.g., "Shop Our Store").</li>
-                <li>Share your Linktree URL (`linktr.ee/YourStoreName`) in your social media bios.</li>
-              </ol>
-              <Button asChild variant="outline" className="mt-2 font-semibold">
-                <a href="https://linktr.ee/" target="_blank" rel="noopener noreferrer">Go to Linktree</a>
-              </Button>
-            </div>
+          <CardContent className="text-center space-y-4">
+            <Loader2 className="h-12 w-12 text-primary animate-spin mx-auto" />
+            <p className="text-lg font-semibold text-muted-foreground">
+              We're working on providing free domain options for your store. Stay tuned for updates.
+            </p>
           </CardContent>
         </Card>
       </main>

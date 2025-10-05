@@ -15,6 +15,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'; // Im
 import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
 import { toast } from 'sonner'; // Import toast
 import { StoreProfileProvider } from '@/components/store-profile-context-provider'; // Import new provider
+import { StoreWelcomeBanner } from '@/components/store-welcome-banner'; // Import StoreWelcomeBanner
 
 export default function StoreLayout({
   children,
@@ -167,6 +168,9 @@ export default function StoreLayout({
             )}
           </div>
         </header>
+
+        {/* Store Welcome Banner */}
+        <StoreWelcomeBanner message={profile.store_page_welcome_message || `Welcome to ${profile.tenant_name || 'our store'}!`} />
 
         {/* Main Content */}
         <main className="flex-1 p-4 sm:p-8"> {/* Adjusted padding */}
