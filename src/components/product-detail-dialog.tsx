@@ -338,6 +338,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               )}
             </div>
           </div>
+          </div> {/* Closing tag for the flex-1 overflow-y-auto div */}
           <Button
             className={cn(
               "w-full py-6 text-lg flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200 mt-6 flex-shrink-0"
