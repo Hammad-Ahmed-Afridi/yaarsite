@@ -27,68 +27,53 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { cn } from '@/lib/utils';
-import { Product, ProductVariant } from './edit-product-dialog'; // Import Product and ProductVariant interfaces
+import { cn } from '@/lib/utils'; // Import cn for conditional classNames
+
+interface Product {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  stock: number;
+  user_id: string; // Owner of the product
+  image_urls: string[] | null;
+  original_price: number | null;
+  discount_percentage: number | null;
+  discount_start_date: string | null;
+  discount_end_date: string | null;
+  size_chart_url: string | null;
+  available_colors: string[] | null;
+}
 
 interface ProductDetailDialogProps {
   product: Product | null;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  storeOwnerId: string;
+  storeOwnerId: string; // Pass store owner ID for adding to cart
 }
 
 export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerId }: ProductDetailDialogProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(undefined);
-  const [selectedAttributes, setSelectedAttributes] = useState<{[key: string]: string}>({});
-  const [quantity, setQuantity] = useState(1);
+  const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
+  const [quantity, setQuantity] = useState(1); // New state for quantity
   const { addToCart } = useCart();
 
   useEffect(() => {
-    if (isOpen && product) {
-      setCurrentImageIndex(0);
-      setQuantity(1);
-
-      if (product.variants && product.variants.length > 0) {
-        // Initialize selected attributes with the first variant's attributes
-        const initialAttributes: {[key: string]: string} = {};
-        Object.keys(product.variants[0].attributes).forEach(attrName => {
-          initialAttributes[attrName] = product.variants![0].attributes[attrName];
-        });
-        setSelectedAttributes(initialAttributes);
-        setSelectedVariant(product.variants[0]); // Select the first variant by default
-      } else {
-        setSelectedAttributes({});
-        setSelectedVariant(undefined);
-      }
+    if (isOpen) {
+      setCurrentImageIndex(0); // Reset image index when dialog opens
+      setSelectedColor(product?.available_colors?.[0] || undefined); // Select first color by default
+      setQuantity(1); // Reset quantity to 1
     }
   }, [isOpen, product]);
 
-  // Effect to update selectedVariant when selectedAttributes change
-  useEffect(() => {
-    if (product && product.variants && Object.keys(selectedAttributes).length > 0) {
-      const foundVariant = product.variants.find(variant =>
-        Object.keys(selectedAttributes).every(attrName =>
-          variant.attributes[attrName] === selectedAttributes[attrName]
-        )
-      );
-      setSelectedVariant(foundVariant || undefined);
-    }
-  }, [selectedAttributes, product]);
-
   if (!product) {
-    return null;
+    return null; // Don't render if no product is provided
   }
 
   const images = product.image_urls || [];
   const hasMultipleImages = images.length > 1;
+  const hasColors = (product.available_colors !== null && product.available_colors.length > 0);
   const hasSizeChart = !!product.size_chart_url;
-  const hasVariants = !!(product.variants && product.variants.length > 0); // Fixed: Ensure hasVariants is a strict boolean
-
-  // Determine current price and stock based on selected variant or main product
-  const currentPrice = selectedVariant?.price ?? product.price ?? 0;
-  const currentStock = selectedVariant?.stock ?? product.stock ?? 0;
-  const availableAttributeNames = hasVariants ? Array.from(new Set(product.variants!.flatMap(v => Object.keys(v.attributes)))) : [];
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -104,55 +89,43 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity < 1) newQuantity = 1;
-    if (newQuantity > currentStock) newQuantity = currentStock;
+    if (newQuantity > product.stock) newQuantity = product.stock;
     setQuantity(newQuantity);
   };
 
-  const handleAttributeSelection = (attrName: string, value: string) => {
-    setSelectedAttributes(prev => ({ ...prev, [attrName]: value }));
-  };
-
   const handleAddToCart = () => {
-    if (currentStock <= 0) {
+    if (product.stock <= 0) {
       toast.error("This product is out of stock.");
       return;
     }
-    if (hasVariants && selectedVariant === undefined) {
-      toast.error("Please select all product variations.");
+    if (hasColors && !selectedColor) {
+      toast.error("Please select a color.");
       return;
     }
-    if (quantity > currentStock) {
-      toast.error(`Cannot add more than available stock (${currentStock} in stock).`);
+    if (quantity > product.stock) {
+      toast.error(`Cannot add more than available stock (${product.stock} in stock).`);
       return;
     }
 
     addToCart({
       id: product.id,
       name: product.name,
-      price: currentPrice,
-      image_url: product.image_urls?.[0],
+      price: product.price,
+      image_url: product.image_urls?.[0], // Use the first image for cart display
       storeOwnerId: storeOwnerId,
-      stock: currentStock,
-      variantId: selectedVariant?.id, // Pass variant ID
-      selectedAttributes: selectedAttributes, // Pass selected attributes
-      original_price: product.original_price, // Pass product-level discount info
-      discount_percentage: product.discount_percentage,
-      discount_start_date: product.discount_start_date,
-      discount_end_date: product.discount_end_date,
-    }, quantity);
-    onOpenChange(false);
+      stock: product.stock, // Pass the product's stock
+      selected_color: selectedColor, // New: pass selected color
+      selected_size_input: undefined, // Removed size input, so pass undefined
+    }, quantity); // Pass the selected quantity
+    onOpenChange(false); // Close dialog after adding to cart
   };
 
   const isDiscountActive = product.discount_percentage && product.discount_start_date && product.discount_end_date &&
                            new Date(product.discount_start_date) <= new Date() && new Date(product.discount_end_date) >= new Date();
 
-  const discountedPrice = isDiscountActive && product.discount_percentage !== null
-    ? currentPrice * (1 - product.discount_percentage / 100)
-    : currentPrice;
-
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px] max-w-[90vw] max-h-[90vh] overflow-y-auto font-sans p-6"> {/* Added max-w-[90vw] and max-h-[90vh] overflow-y-auto */}
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto font-sans p-6">
         <DialogHeader className="mb-4">
           <DialogTitle className="text-3xl font-bold tracking-tight">{product.name}</DialogTitle>
           <DialogDescription className="text-base leading-relaxed text-muted-foreground">Product details</DialogDescription>
@@ -228,13 +201,13 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               {isDiscountActive && product.original_price !== null ? (
                 <div className="flex items-baseline gap-2">
                   <span className="text-lg text-muted-foreground line-through">Rs{product.original_price.toFixed(2)}</span>
-                  <span className="text-4xl font-extrabold text-primary">Rs{discountedPrice.toFixed(2)}</span>
+                  <span className="text-4xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span>
                 </div>
               ) : (
-                <span className="text-4xl font-extrabold text-primary">Rs{currentPrice.toFixed(2)}</span>
+                <span className="text-4xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span>
               )}
               <Badge variant="secondary" className="text-lg px-4 py-2 font-medium">
-                {currentStock} in stock
+                {product.stock} in stock
               </Badge>
             </div>
             {isDiscountActive && (
@@ -248,31 +221,31 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               </div>
             )}
 
-            {/* Variant Selection */}
-            {hasVariants && availableAttributeNames.map(attrName => (
-              <div key={attrName} className="space-y-2">
-                <Label className="text-base font-medium">Select {attrName}:</Label>
+            {/* Color Selection */}
+            {hasColors && (
+              <div className="space-y-2">
+                <Label className="text-base font-medium">Select Color:</Label>
                 <RadioGroup
-                  value={selectedAttributes[attrName]}
-                  onValueChange={(value) => handleAttributeSelection(attrName, value)}
+                  value={selectedColor}
+                  onValueChange={setSelectedColor}
                   className="flex flex-wrap gap-2"
                 >
-                  {Array.from(new Set(product.variants!.map(v => v.attributes[attrName]))).filter(Boolean).map((attrValue) => (
-                    <div key={`${attrName}-${attrValue}`} className="flex items-center">
-                      <RadioGroupItem value={attrValue} id={`${attrName}-${attrValue}`} className="peer sr-only" />
+                  {product.available_colors?.map((color) => (
+                    <div key={color} className="flex items-center">
+                      <RadioGroupItem value={color} id={`color-${color}`} className="peer sr-only" />
                       <Label
-                        htmlFor={`${attrName}-${attrValue}`}
+                        htmlFor={`color-${color}`}
                         className="flex items-center justify-center px-4 py-2 border rounded-md cursor-pointer text-sm font-medium 
                                    peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground peer-data-[state=checked]:font-bold
                                    hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
                       >
-                        {attrValue}
+                        {color}
                       </Label>
                     </div>
                   ))}
                 </RadioGroup>
               </div>
-            ))}
+            )}
 
             {/* Quantity Selector */}
             <div className="space-y-2">
@@ -282,7 +255,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                   variant="outline"
                   size="icon"
                   onClick={() => handleQuantityChange(quantity - 1)}
-                  disabled={quantity <= 1 || currentStock <= 0}
+                  disabled={quantity <= 1 || product.stock <= 0}
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
@@ -293,14 +266,14 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                   onChange={(e) => handleQuantityChange(parseInt(e.target.value))}
                   className="w-20 text-center text-base"
                   min="1"
-                  max={currentStock}
-                  disabled={currentStock <= 0}
+                  max={product.stock}
+                  disabled={product.stock <= 0}
                 />
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => handleQuantityChange(quantity + 1)}
-                  disabled={quantity >= currentStock || currentStock <= 0}
+                  disabled={quantity >= product.stock || product.stock <= 0}
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -339,10 +312,10 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
             <Button
               className="w-full py-6 text-lg flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
               onClick={handleAddToCart}
-              disabled={currentStock <= 0 || (hasVariants && selectedVariant === undefined)}
+              disabled={product.stock <= 0 || (hasColors && !selectedColor)}
             >
               <ShoppingCart className="h-5 w-5" />
-              {currentStock <= 0 ? "Out of Stock" : "Add to Cart"}
+              {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
             </Button>
           </div>
         </div>

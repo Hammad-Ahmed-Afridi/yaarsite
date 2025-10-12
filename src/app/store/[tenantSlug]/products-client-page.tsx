@@ -13,9 +13,25 @@ import { useCart } from '@/components/cart-context-provider';
 import { ProductDetailDialog } from '@/components/product-detail-dialog';
 import { AppLoader } from '@/components/app-loader';
 import { useStoreProfile } from '@/components/store-profile-context-provider';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { format } from 'date-fns';
-import { Product } from '@/components/edit-product-dialog'; // Import Product interface
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Import Select components
+import { format } from 'date-fns'; // Import format
+
+interface Product {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  stock: number;
+  user_id: string;
+  image_urls: string[] | null;
+  category: string | null; // New: category field
+  original_price: number | null; // New: original_price
+  discount_percentage: number | null; // New: discount_percentage
+  discount_start_date: string | null; // New: discount_start_date
+  discount_end_date: string | null; // New: discount_end_date
+  size_chart_url: string | null; // New: size_chart_url
+  available_colors: string[] | null; // New: available_colors
+}
 
 export default function StoreProductsPage() {
   const params = useParams();
@@ -27,7 +43,7 @@ export default function StoreProductsPage() {
 
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('all');
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('all'); // New: state for category filter
 
   useEffect(() => {
     async function fetchStoreProducts() {
@@ -123,7 +139,7 @@ export default function StoreProductsPage() {
   }
 
   return (
-    <div className="font-sans p-4 sm:p-0">
+    <div className="font-sans p-4 sm:p-0"> {/* Adjusted padding */}
       <h2 className="text-2xl font-bold mb-4 tracking-tight">Our Products</h2>
       {profile?.store_page_welcome_message && (
         <p className="text-lg text-muted-foreground mb-6 text-center max-w-prose mx-auto leading-relaxed">
@@ -162,41 +178,10 @@ export default function StoreProductsPage() {
               <p className="text-base text-muted-foreground leading-relaxed">Please select another category or view all products.</p>
             </div>
           ) : (
-            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Adjusted grid for mobile */}
               {filteredProducts.map((product) => {
                 const isDiscountActive = product.discount_percentage && product.discount_start_date && product.discount_end_date &&
                                          new Date(product.discount_start_date) <= new Date() && new Date(product.discount_end_date) >= new Date();
-                
-                // Determine price and stock to display
-                let displayPrice: number | string = "N/A";
-                let displayStock: number | string = "N/A";
-                let originalDisplayPrice: number | string | null = null;
-
-                if (product.variants && product.variants.length > 0) {
-                  // For products with variants, show a range or "from" price/stock
-                  const prices = product.variants.map(v => v.price);
-                  const stocks = product.variants.map(v => v.stock);
-                  const minPrice = Math.min(...prices);
-                  const maxPrice = Math.max(...prices);
-                  const totalStock = stocks.reduce((sum, s) => sum + s, 0);
-
-                  displayPrice = prices.length > 1 ? `From Rs${minPrice.toFixed(2)}` : `Rs${minPrice.toFixed(2)}`;
-                  displayStock = `${totalStock} in stock`;
-
-                  if (isDiscountActive && product.original_price !== null) {
-                    originalDisplayPrice = prices.length > 1 ? `From Rs${product.original_price.toFixed(2)}` : `Rs${product.original_price.toFixed(2)}`;
-                  }
-
-                } else if (product.price !== null && product.stock !== null) {
-                  // For products without variants, use main product price and stock
-                  displayPrice = `Rs${product.price.toFixed(2)}`;
-                  displayStock = `${product.stock} in stock`;
-
-                  if (isDiscountActive && product.original_price !== null) {
-                    originalDisplayPrice = `Rs${product.original_price.toFixed(2)}`;
-                  }
-                }
-
                 return (
                   <Card key={product.id} className="bg-card text-card-foreground shadow-md cursor-pointer rounded-3xl" onClick={() => handleProductClick(product)}>
                     {product.image_urls && product.image_urls.length > 0 ? (
@@ -220,15 +205,15 @@ export default function StoreProductsPage() {
                     <CardContent className="space-y-2">
                       <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{product.description || "No description available."}</p>
                       <div className="flex items-center justify-between">
-                        {isDiscountActive && originalDisplayPrice !== null ? (
-                          <div className="flex flex-col items-start">
-                            <span className="text-sm text-muted-foreground line-through">{originalDisplayPrice}</span>
-                            <span className="text-xl font-bold text-primary">{displayPrice}</span>
+                        {isDiscountActive && product.original_price !== null ? (
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-sm text-muted-foreground line-through">Rs{product.original_price.toFixed(2)}</span>
+                            <span className="text-xl font-bold text-primary">Rs{product.price.toFixed(2)}</span>
                           </div>
                         ) : (
-                          <span className="text-xl font-bold">{displayPrice}</span>
+                          <span className="text-xl font-bold">Rs{product.price.toFixed(2)}</span>
                         )}
-                        <Badge variant="secondary" className="font-medium">{displayStock}</Badge>
+                        <Badge variant="secondary" className="font-medium">{product.stock} in stock</Badge>
                       </div>
                       {isDiscountActive && (
                         <>
