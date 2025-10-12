@@ -152,9 +152,10 @@ export default function CheckoutPage() {
         quantity: item.quantity,
         image_url: item.image_url,
         selected_color: item.selected_color || null, // Include selected color
-        selected_size_input: item.selected_size_input || null, // Include selected size input
+        selected_size_input: undefined, // Removed size input, so pass undefined
       }));
 
+      console.log("Checkout Page: Sending order with cartTotal:", cartTotal); // Add this line
       const response = await fetch('/api/place-order', {
         method: 'POST',
         headers: {

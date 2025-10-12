@@ -19,7 +19,7 @@ serve(async (req) => {
       shipping_province, 
       shipping_city, 
       shipping_address_line, 
-      total_amount, 
+      total_amount, // This is the client-provided total
       items_json, 
       user_id,
       payment_method 
@@ -37,11 +37,10 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    let calculatedTotalAmount = 0;
+    let calculatedSubtotal = 0; // Calculate subtotal first
     const now = new Date();
-    const fetchedProducts = new Map(); // Store fetched product data
+    const fetchedProducts = new Map();
 
-    // --- Server-side Stock and Discount Validation ---
     for (const item of items_json) {
       const { data: product, error: productError } = await supabaseAdmin
         .from('products')
@@ -63,23 +62,13 @@ serve(async (req) => {
         });
       }
 
-      // Store the fetched product for later stock reduction
       fetchedProducts.set(item.id, product);
 
-      // Calculate actual price considering active discounts
       let itemPrice = product.price;
-      const isDiscountActive = product.discount_percentage && product.discount_start_date && product.discount_end_date &&
-                               new Date(product.discount_start_date) <= now && new Date(product.discount_end_date) >= now;
-
-      if (isDiscountActive) {
-        itemPrice = product.price; // The 'price' column already holds the discounted price if a discount is active
-      }
       
-      calculatedTotalAmount += itemPrice * item.quantity;
+      calculatedSubtotal += itemPrice * item.quantity;
     }
-    // --- End Server-side Stock and Discount Validation ---
 
-    // Fetch delivery charge from profile
     const { data: profileData, error: profileError } = await supabaseAdmin
       .from('profiles')
       .select('delivery_charge')
@@ -95,11 +84,20 @@ serve(async (req) => {
     }
 
     const deliveryCharge = profileData.delivery_charge || 0;
-    calculatedTotalAmount += deliveryCharge;
+    const calculatedTotalAmount = calculatedSubtotal + deliveryCharge;
 
-    // Validate that the client-provided total_amount matches the server-calculated total
-    if (Math.abs(calculatedTotalAmount - total_amount) > 0.01) { 
-      return new Response(JSON.stringify({ message: `Price mismatch. Server calculated total: Rs${calculatedTotalAmount.toFixed(2)}, client provided: Rs${total_amount.toFixed(2)}.` }), {
+    // Round both client-provided and server-calculated totals to 2 decimal places for robust comparison
+    const roundedCalculatedTotal = parseFloat(calculatedTotalAmount.toFixed(2));
+    const roundedClientTotal = parseFloat(total_amount.toFixed(2));
+
+    console.log("Edge Function: Received total_amount from client:", total_amount);
+    console.log("Edge Function: Calculated total_amount on server:", calculatedTotalAmount);
+    console.log("Edge Function: Rounded calculated total:", roundedCalculatedTotal);
+    console.log("Edge Function: Rounded client total:", roundedClientTotal);
+
+    if (roundedCalculatedTotal !== roundedClientTotal) { 
+      console.error(`Edge Function: Price mismatch detected. Server: ${roundedCalculatedTotal}, Client: ${roundedClientTotal}`);
+      return new Response(JSON.stringify({ message: `Price mismatch. Server calculated total: Rs${roundedCalculatedTotal.toFixed(2)}, client provided: Rs${roundedClientTotal.toFixed(2)}.` }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -114,7 +112,7 @@ serve(async (req) => {
         shipping_province,
         shipping_city,
         shipping_address_line,
-        total_amount: calculatedTotalAmount, 
+        total_amount: roundedCalculatedTotal, // Use the rounded calculated total for insertion
         items_json, 
         user_id,
         status: 'pending',
@@ -131,13 +129,12 @@ serve(async (req) => {
       });
     }
 
-    // --- Stock Reduction ---
     for (const item of items_json) {
       const fetchedProduct = fetchedProducts.get(item.id);
       if (fetchedProduct) {
         const { error: updateStockError } = await supabaseAdmin
           .from('products')
-          .update({ stock: (fetchedProduct.stock - item.quantity) }) // Use fetchedProduct.stock
+          .update({ stock: (fetchedProduct.stock - item.quantity) })
           .eq('id', item.id);
 
         if (updateStockError) {
@@ -147,7 +144,6 @@ serve(async (req) => {
         console.error(`Product ${item.id} not found in fetchedProducts map during stock reduction.`);
       }
     }
-    // --- End Stock Reduction ---
 
     return new Response(JSON.stringify({ message: 'Order placed successfully', order: data }), {
       status: 200,
