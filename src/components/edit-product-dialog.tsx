@@ -455,7 +455,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
           <Edit className="mr-2 h-4 w-4" /> Edit
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] max-w-[90vw] max-h-[90vh] overflow-y-auto overflow-x-hidden font-sans">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto font-sans">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold tracking-tight">Edit Product</DialogTitle>
           <DialogDescription className="text-base leading-relaxed">

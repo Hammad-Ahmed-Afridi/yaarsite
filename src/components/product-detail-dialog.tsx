@@ -125,7 +125,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px] max-w-[90vw] max-h-[90vh] overflow-y-auto overflow-x-hidden font-sans p-6">
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto font-sans p-6">
         <DialogHeader className="mb-4">
           <DialogTitle className="text-3xl font-bold tracking-tight">{product.name}</DialogTitle>
           <DialogDescription className="text-base leading-relaxed text-muted-foreground">Product details</DialogDescription>
@@ -288,7 +288,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                     <Ruler className="h-4 w-4" /> View Size Chart
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="max-w-3xl max-w-[90vw] max-h-[90vh] overflow-y-auto overflow-x-hidden">
+                <AlertDialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                   <AlertDialogHeader>
                     <AlertDialogTitle className="text-2xl font-bold">Size Chart</AlertDialogTitle>
                     <AlertDialogDescription>

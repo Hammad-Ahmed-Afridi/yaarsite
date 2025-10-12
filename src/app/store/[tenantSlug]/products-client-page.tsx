@@ -139,7 +139,7 @@ export default function StoreProductsPage() {
   }
 
   return (
-    <div className="font-sans p-4 sm:p-8"> {/* Adjusted padding */}
+    <div className="font-sans p-4 sm:p-0"> {/* Adjusted padding */}
       <h2 className="text-2xl font-bold mb-4 tracking-tight">Our Products</h2>
       {profile?.store_page_welcome_message && (
         <p className="text-lg text-muted-foreground mb-6 text-center max-w-prose mx-auto leading-relaxed">
