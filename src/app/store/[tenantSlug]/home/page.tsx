@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { AppLoader } from '@/components/app-loader';
 import { Button } from '@/components/ui/button';
-import { Store, Package, Image as ImageIcon } from 'lucide-react';
+import { Store, Image as ImageIcon } from 'lucide-react'; // Removed Package icon
 import Image from 'next/image';
 import Link from 'next/link';
 import { useStoreProfile } from '@/components/store-profile-context-provider'; // Import useStoreProfile
@@ -80,7 +80,7 @@ export default function StoreHomePage() {
       <Button asChild size="lg" className="font-semibold bg-store-primary text-store-primary-foreground hover:bg-store-primary/90">
         <Link href={`/store/${tenantSlug}`}>
           <span>
-            <Package className="mr-2 h-5 w-5" /> View Our Products
+            View Our Products
           </span>
         </Link>
       </Button>
