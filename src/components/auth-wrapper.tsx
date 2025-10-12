@@ -10,7 +10,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const publicPaths = ['/login', '/signup', '/store', '/cart', '/checkout', '/landing'];
+  const publicPaths = ['/login', '/signup', '/store', '/cart', '/checkout', '/landing', '/terms-and-conditions'];
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
 
   const [isReadyToRender, setIsReadyToRender] = useState(false);
