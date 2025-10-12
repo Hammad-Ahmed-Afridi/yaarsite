@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { AppLoader } from '@/components/app-loader';
 import Link from 'next/link';
-import ReactToPrint from 'react-to-print'; // Import ReactToPrint
+import { default as ReactToPrint } from 'react-to-print'; // Fixed: Explicitly import default as ReactToPrint
 import { InvoiceDocument } from '@/components/invoice-document'; // Import InvoiceDocument
 
 interface Order {
