@@ -20,7 +20,7 @@ serve(async (req) => {
       shipping_city, 
       shipping_address_line, 
       total_amount, 
-      items_json, 
+      items_json, // This now includes variantId and selectedAttributes
       user_id,
       payment_method 
     } = await req.json();
@@ -39,13 +39,13 @@ serve(async (req) => {
 
     let calculatedTotalAmount = 0;
     const now = new Date();
-    const fetchedProducts = new Map(); // Store fetched product data
+    const productsToUpdate: { productId: string; newVariants: any[] }[] = []; // To store updated variants for stock reduction
 
     // --- Server-side Stock and Discount Validation ---
     for (const item of items_json) {
       const { data: product, error: productError } = await supabaseAdmin
         .from('products')
-        .select('stock, price, discount_percentage, discount_start_date, discount_end_date')
+        .select('stock, price, discount_percentage, discount_start_date, discount_end_date, variants')
         .eq('id', item.id)
         .single();
 
@@ -56,26 +56,61 @@ serve(async (req) => {
         });
       }
 
-      if (product.stock < item.quantity) {
-        return new Response(JSON.stringify({ message: `Insufficient stock for product: ${item.name}. Only ${product.stock} available.` }), {
+      let itemPrice = 0;
+      let itemStock = 0;
+      let updatedVariants = product.variants ? [...product.variants] : null;
+
+      if (product.variants && item.variantId) {
+        // Product has variants, find the specific variant
+        const variantIndex = product.variants.findIndex((v: any) => v.id === item.variantId);
+        if (variantIndex === -1) {
+          return new Response(JSON.stringify({ message: `Variant with ID ${item.variantId} not found for product ${item.name}.` }), {
+            status: 404,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        const selectedVariant = product.variants[variantIndex];
+        itemPrice = selectedVariant.price;
+        itemStock = selectedVariant.stock;
+
+        // Prepare for stock reduction
+        if (updatedVariants) {
+          updatedVariants[variantIndex] = { ...selectedVariant, stock: selectedVariant.stock - item.quantity };
+        }
+
+      } else if (!product.variants && product.price !== null && product.stock !== null) {
+        // Product has no variants, use main product price and stock
+        itemPrice = product.price;
+        itemStock = product.stock;
+      } else {
+        return new Response(JSON.stringify({ message: `Product ${item.name} has an invalid price/stock configuration.` }), {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
 
-      // Store the fetched product for later stock reduction
-      fetchedProducts.set(item.id, product);
+      if (itemStock < item.quantity) {
+        return new Response(JSON.stringify({ message: `Insufficient stock for product: ${item.name} (Variant: ${JSON.stringify(item.selectedAttributes)}). Only ${itemStock} available.` }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
 
-      // Calculate actual price considering active discounts
-      let itemPrice = product.price;
+      // Apply product-level discount if active
       const isDiscountActive = product.discount_percentage && product.discount_start_date && product.discount_end_date &&
                                new Date(product.discount_start_date) <= now && new Date(product.discount_end_date) >= now;
 
-      if (isDiscountActive) {
-        itemPrice = product.price; // The 'price' column already holds the discounted price if a discount is active
+      if (isDiscountActive && product.discount_percentage !== null) {
+        itemPrice = itemPrice * (1 - product.discount_percentage / 100);
       }
       
       calculatedTotalAmount += itemPrice * item.quantity;
+
+      // Add to productsToUpdate for later stock reduction
+      productsToUpdate.push({
+        productId: item.id,
+        newVariants: updatedVariants,
+      });
     }
     // --- End Server-side Stock and Discount Validation ---
 
@@ -132,19 +167,41 @@ serve(async (req) => {
     }
 
     // --- Stock Reduction ---
-    for (const item of items_json) {
-      const fetchedProduct = fetchedProducts.get(item.id);
-      if (fetchedProduct) {
+    for (const productUpdate of productsToUpdate) {
+      if (productUpdate.newVariants) {
+        // Update variants stock
         const { error: updateStockError } = await supabaseAdmin
           .from('products')
-          .update({ stock: (fetchedProduct.stock - item.quantity) }) // Use fetchedProduct.stock
-          .eq('id', item.id);
+          .update({ variants: productUpdate.newVariants })
+          .eq('id', productUpdate.productId);
 
         if (updateStockError) {
-          console.error(`Error reducing stock for product ${item.id}:`, updateStockError);
+          console.error(`Error reducing variant stock for product ${productUpdate.productId}:`, updateStockError);
         }
       } else {
-        console.error(`Product ${item.id} not found in fetchedProducts map during stock reduction.`);
+        // Update main product stock (if no variants)
+        const { data: currentProduct, error: fetchProductError } = await supabaseAdmin
+          .from('products')
+          .select('stock')
+          .eq('id', productUpdate.productId)
+          .single();
+
+        if (fetchProductError || !currentProduct) {
+          console.error(`Error fetching product ${productUpdate.productId} for stock update:`, fetchProductError);
+          continue;
+        }
+
+        const itemInOrder = items_json.find((item: any) => item.id === productUpdate.productId);
+        if (itemInOrder) {
+          const { error: updateStockError } = await supabaseAdmin
+            .from('products')
+            .update({ stock: currentProduct.stock - itemInOrder.quantity })
+            .eq('id', productUpdate.productId);
+
+          if (updateStockError) {
+            console.error(`Error reducing main product stock for product ${productUpdate.productId}:`, updateStockError);
+          }
+        }
       }
     }
     // --- End Stock Reduction ---

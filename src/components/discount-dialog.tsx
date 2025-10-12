@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
 import { format } from 'date-fns';
+import { Product } from './edit-product-dialog'; // Import Product interface
 
 import {
   Dialog,
@@ -29,17 +30,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Percent, CalendarIcon, Loader2, Tag, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  original_price: number | null;
-  discount_percentage: number | null;
-  discount_start_date: string | null; // New: discount_start_date
-  discount_end_date: string | null;
-  user_id: string;
-}
-
 interface DiscountDialogProps {
   products: Product[];
   onDiscountApplied: () => void;
@@ -53,7 +43,7 @@ const formSchema = z.object({
   discountPercentage: z.coerce.number()
     .min(1, { message: "Discount percentage must be at least 1." })
     .max(99, { message: "Discount percentage cannot exceed 99." }),
-  discountStartDate: z.date().optional(), // New: discountStartDate
+  discountStartDate: z.date().optional(),
   discountEndDate: z.date().optional(),
 }).refine((data) => {
   // If both dates are provided, start date must be before or equal to end date
@@ -77,7 +67,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
       discountScope: "all",
       selectedProductIds: [],
       discountPercentage: 10,
-      discountStartDate: undefined, // Initialize new field
+      discountStartDate: undefined,
       discountEndDate: undefined,
     },
   });
@@ -122,16 +112,34 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
       }
 
       const updates = productsToUpdate.map(product => {
-        const newPrice = product.price * (1 - values.discountPercentage / 100);
+        // If product has variants, calculate new prices for each variant
+        let updatedVariants = product.variants ? [...product.variants] : null;
+        let newPriceForMainProduct: number | null = product.price;
+        let originalPriceForMainProduct: number | null = product.original_price === null ? product.price : product.original_price;
+
+        if (updatedVariants) {
+          updatedVariants = updatedVariants.map(variant => {
+            const newVariantPrice = variant.price * (1 - values.discountPercentage / 100);
+            return { ...variant, price: newVariantPrice };
+          });
+          // Main product price/original_price should be null if variants exist
+          newPriceForMainProduct = null;
+          originalPriceForMainProduct = null;
+        } else if (product.price !== null) {
+          // If no variants, apply discount to main product price
+          newPriceForMainProduct = product.price * (1 - values.discountPercentage / 100);
+        }
+
         return {
           id: product.id,
           user_id: user.id,
-          name: product.name, // Explicitly include name
-          original_price: product.original_price === null ? product.price : product.original_price,
-          price: newPrice,
+          name: product.name,
+          original_price: originalPriceForMainProduct,
+          price: newPriceForMainProduct, // This will be null if variants exist
           discount_percentage: values.discountPercentage,
-          discount_start_date: values.discountStartDate ? values.discountStartDate.toISOString() : null, // Save start date
+          discount_start_date: values.discountStartDate ? values.discountStartDate.toISOString() : null,
           discount_end_date: values.discountEndDate ? values.discountEndDate.toISOString() : null,
+          variants: updatedVariants, // Update variants
           updated_at: new Date().toISOString(),
         };
       });
@@ -184,17 +192,38 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
         return;
       }
 
-      const updates = productsToUpdate.map(product => ({
-        id: product.id,
-        user_id: user.id,
-        name: product.name, // Explicitly include name
-        price: product.original_price !== null ? product.original_price : product.price,
-        original_price: null,
-        discount_percentage: null,
-        discount_start_date: null, // Clear start date
-        discount_end_date: null,
-        updated_at: new Date().toISOString(),
-      }));
+      const updates = productsToUpdate.map(product => {
+        // If product has variants, revert prices for each variant
+        let updatedVariants = product.variants ? [...product.variants] : null;
+        let newPriceForMainProduct: number | null = product.price;
+
+        if (updatedVariants) {
+          updatedVariants = updatedVariants.map(variant => {
+            // Assuming original_price was stored at product level,
+            // we need to revert variant prices to their pre-discount state.
+            // This is a simplification; a more robust system would store original variant prices.
+            // For now, we'll just remove the discount effect.
+            return { ...variant, price: variant.price / (1 - (product.discount_percentage || 0) / 100) };
+          });
+          newPriceForMainProduct = null; // Main product price remains null if variants exist
+        } else if (product.original_price !== null) {
+          // If no variants, revert main product price to its original_price
+          newPriceForMainProduct = product.original_price;
+        }
+
+        return {
+          id: product.id,
+          user_id: user.id,
+          name: product.name,
+          price: newPriceForMainProduct,
+          original_price: null,
+          discount_percentage: null,
+          discount_start_date: null,
+          discount_end_date: null,
+          variants: updatedVariants, // Update variants
+          updated_at: new Date().toISOString(),
+        };
+      });
 
       const { error } = await supabase
         .from('products')
@@ -280,7 +309,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
                           onCheckedChange={(checked) => handleProductSelection(product.id, checked as boolean)}
                         />
                         <Label htmlFor={`product-${product.id}`} className="text-base font-medium">
-                          {product.name} (Rs{product.price.toFixed(2)})
+                          {product.name} ({product.variants && product.variants.length > 0 ? `From Rs${Math.min(...product.variants.map(v => v.price)).toFixed(2)}` : `Rs${product.price?.toFixed(2) || 'N/A'}`})
                         </Label>
                       </div>
                     ))
@@ -345,12 +374,12 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
                     <Calendar
-                      mode="range" // Changed to range mode
+                      mode="range"
                       selected={selectedRange}
                       onSelect={(range) => {
                         form.setValue("discountStartDate", range?.from);
                         form.setValue("discountEndDate", range?.to);
-                        form.clearErrors("discountEndDate"); // Clear error on selection
+                        form.clearErrors("discountEndDate");
                       }}
                       initialFocus
                     />

@@ -22,9 +22,41 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Image as ImageIcon, Loader2, X, Edit, ChevronDown, Ruler } from 'lucide-react'; // Added Ruler icon
+import { Image as ImageIcon, Loader2, X, Edit, ChevronDown, Ruler, PlusCircle, MinusCircle } from 'lucide-react'; // Added PlusCircle, MinusCircle icons
 import Image from 'next/image';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Import Select components
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'; // Import Table components
+
+// New: Define ProductVariant interface
+export interface ProductVariant {
+  id: string; // Unique ID for the variant
+  attributes: { [key: string]: string }; // e.g., { size: "Small", color: "Red" }
+  price: number;
+  stock: number;
+  image_url?: string; // Optional variant-specific image
+}
+
+// Updated: Product interface
+export interface Product {
+  id: string;
+  name: string;
+  description: string | null;
+  user_id: string;
+  image_urls: string[] | null;
+  category: string | null;
+  // These are only used if variants is NULL
+  price: number | null;
+  stock: number | null;
+  // Discount fields apply to the product as a whole, affecting variant prices
+  original_price: number | null;
+  discount_percentage: number | null;
+  discount_start_date: string | null;
+  discount_end_date: string | null;
+  size_chart_url: string | null;
+  available_colors: string[] | null;
+  variants: ProductVariant[] | null; // New: Array of product variants
+  created_at: string;
+}
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -32,31 +64,33 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/web
 const formSchema = z.object({
   name: z.string().min(1, { message: "Product name is required." }),
   description: z.string().max(500, { message: "Description cannot exceed 500 characters." }).optional(),
-  price: z.coerce.number().min(0.01, { message: "Price must be greater than 0." }),
-  stock: z.coerce.number().int().min(0, { message: "Stock quantity cannot be negative." }),
+  // Price and stock are now optional as they might be handled by variants
+  price: z.coerce.number().min(0.01, { message: "Price must be greater than 0." }).optional().or(z.literal(0)),
+  stock: z.coerce.number().int().min(0, { message: "Stock quantity cannot be negative." }).optional().or(z.literal(0)),
   newImages: z.array(z.instanceof(File)).max(2, { message: "You can upload a maximum of 2 new images." }).optional(),
-  category: z.string().optional(), // New: category field
-  sizeChartImage: z.instanceof(File).optional(), // New: sizeChartImage
-  availableColors: z.string().optional(), // New: availableColors as comma-separated string
+  category: z.string().optional(),
+  sizeChartImage: z.instanceof(File).optional(),
+  availableColors: z.string().optional(),
+  // New: Variants field for form
+  variants: z.array(z.object({
+    id: z.string().optional(), // ID is optional for new variants
+    attributes: z.record(z.string(), z.string().min(1, "Attribute value cannot be empty.")),
+    price: z.coerce.number().min(0.01, { message: "Variant price must be greater than 0." }),
+    stock: z.coerce.number().int().min(0, { message: "Variant stock cannot be negative." }),
+  })).optional(),
+  attributeNames: z.array(z.string().min(1, "Attribute name cannot be empty.")).optional(),
+}).refine((data) => {
+  // Custom validation: if variants are defined, price and stock on the main product should be 0 or undefined
+  if (data.variants && data.variants.length > 0) {
+    return (data.price === 0 || data.price === undefined) && (data.stock === 0 || data.stock === undefined);
+  }
+  // If no variants, price and stock must be defined and valid
+  return (data.price !== undefined && data.price > 0) && (data.stock !== undefined && data.stock >= 0);
+}, {
+  message: "If variants are defined, main product price and stock must be 0. If no variants, price and stock are required.",
+  path: ["price"], // Can point to either price or stock
 });
 
-interface Product {
-  id: string;
-  name: string;
-  description: string | null;
-  price: number;
-  stock: number;
-  user_id: string;
-  image_urls: string[] | null;
-  category: string | null; // New: category field
-  original_price: number | null; // New: original_price
-  discount_percentage: number | null; // New: discount_percentage
-  discount_start_date: string | null; // New: discount_start_date
-  discount_end_date: string | null; // New: discount_end_date
-  created_at: string;
-  size_chart_url: string | null; // New: size_chart_url
-  available_colors: string[] | null; // New: available_colors
-}
 
 interface EditProductDialogProps {
   product: Product;
@@ -70,23 +104,31 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
   const [selectedNewImageFiles, setSelectedNewImageFiles] = useState<File[]>([]);
   const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
   const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
-  const [existingCategories, setExistingCategories] = useState<string[]>([]); // New: state for existing categories
-  const [selectedCategory, setSelectedCategory] = useState<string>(''); // New: state for selected category
-  const [isCreatingNewCategory, setIsCreatingNewCategory] = useState(false); // New: state for creating new category
-  const [selectedSizeChartFile, setSelectedSizeChartFile] = useState<File | null>(null); // New: state for size chart file
-  const [sizeChartPreview, setSizeChartPreview] = useState<string | null>(null); // New: state for size chart preview
+  const [existingCategories, setExistingCategories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [isCreatingNewCategory, setIsCreatingNewCategory] = useState(false);
+  const [selectedSizeChartFile, setSelectedSizeChartFile] = useState<File | null>(null);
+  const [sizeChartPreview, setSizeChartPreview] = useState<string | null>(null);
+
+  // New states for variant management
+  const [attributeNames, setAttributeNames] = useState<string[]>([]);
+  const [attributeValues, setAttributeValues] = useState<{[key: string]: string[]}>({});
+  const [productVariants, setProductVariants] = useState<ProductVariant[]>([]);
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: product.name,
       description: product.description || "",
-      price: product.price,
-      stock: product.stock,
+      price: product.price || 0.01, // Default to 0.01 if null
+      stock: product.stock || 0, // Default to 0 if null
       newImages: undefined,
-      category: product.category || "", // Default category
+      category: product.category || "",
       sizeChartImage: undefined,
       availableColors: product.available_colors?.join(', ') || "",
+      variants: [], // Initialize variants
+      attributeNames: [],
     },
   });
 
@@ -95,19 +137,40 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
       form.reset({
         name: product.name,
         description: product.description || "",
-        price: product.price,
-        stock: product.stock,
+        price: product.price || 0.01,
+        stock: product.stock || 0,
         newImages: undefined,
         category: product.category || "",
-        sizeChartImage: undefined, // Reset file input
+        sizeChartImage: undefined,
         availableColors: product.available_colors?.join(', ') || "",
+        variants: product.variants || [],
+        attributeNames: product.variants && product.variants.length > 0
+          ? Array.from(new Set(product.variants.flatMap(v => Object.keys(v.attributes))))
+          : [],
       });
       setExistingImageUrls(product.image_urls || []);
       setSelectedNewImageFiles([]);
       setNewImagePreviews([]);
       setSelectedCategory(product.category || '');
-      setIsCreatingNewCategory(false); // Reset new category creation state
-      setSizeChartPreview(product.size_chart_url || null); // Set existing size chart preview
+      setIsCreatingNewCategory(false);
+      setSizeChartPreview(product.size_chart_url || null);
+      setProductVariants(product.variants || []);
+
+      // Initialize attribute names and values from existing product variants
+      if (product.variants && product.variants.length > 0) {
+        const initialAttributeNames = Array.from(new Set(product.variants.flatMap(v => Object.keys(v.attributes))));
+        setAttributeNames(initialAttributeNames);
+
+        const initialAttributeValues: {[key: string]: string[]} = {};
+        initialAttributeNames.forEach(attrName => {
+          initialAttributeValues[attrName] = Array.from(new Set(product.variants?.map(v => v.attributes[attrName]).filter(Boolean) || []));
+        });
+        setAttributeValues(initialAttributeValues);
+      } else {
+        setAttributeNames([]);
+        setAttributeValues({});
+      }
+
 
       // Fetch existing categories when dialog opens
       const fetchCategories = async () => {
@@ -271,6 +334,132 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
     form.clearErrors("category");
   };
 
+  // New: Variant management functions
+  const addAttribute = () => {
+    const newAttributeName = `Attribute ${attributeNames.length + 1}`;
+    setAttributeNames(prev => [...prev, newAttributeName]);
+    setAttributeValues(prev => ({ ...prev, [newAttributeName]: [] }));
+  };
+
+  const removeAttribute = (nameToRemove: string) => {
+    setAttributeNames(prev => prev.filter(name => name !== nameToRemove));
+    setAttributeValues(prev => {
+      const newValues = { ...prev };
+      delete newValues[nameToRemove];
+      return newValues;
+    });
+    // Also remove attribute from all variants
+    setProductVariants(prev => prev.map(variant => {
+      const newAttributes = { ...variant.attributes };
+      delete newAttributes[nameToRemove];
+      return { ...variant, attributes: newAttributes };
+    }));
+  };
+
+  const handleAttributeNameChange = (oldName: string, newName: string) => {
+    setAttributeNames(prev => prev.map(name => (name === oldName ? newName : name)));
+    setAttributeValues(prev => {
+      const newValues = { ...prev };
+      newValues[newName] = newValues[oldName];
+      delete newValues[oldName];
+      return newValues;
+    });
+    setProductVariants(prev => prev.map(variant => {
+      const newAttributes = { ...variant.attributes };
+      if (newAttributes[oldName] !== undefined) {
+        newAttributes[newName] = newAttributes[oldName];
+        delete newAttributes[oldName];
+      }
+      return { ...variant, attributes: newAttributes };
+    }));
+  };
+
+  const addAttributeValue = (attributeName: string) => {
+    setAttributeValues(prev => ({
+      ...prev,
+      [attributeName]: [...(prev[attributeName] || []), `Value ${prev[attributeName]?.length + 1 || 1}`]
+    }));
+  };
+
+  const removeAttributeValue = (attributeName: string, valueToRemove: string) => {
+    setAttributeValues(prev => ({
+      ...prev,
+      [attributeName]: prev[attributeName].filter(val => val !== valueToRemove)
+    }));
+    // Also remove variants that contain this attribute value
+    setProductVariants(prev => prev.filter(variant => variant.attributes[attributeName] !== valueToRemove));
+  };
+
+  const handleAttributeValueChange = (attributeName: string, oldValue: string, newValue: string) => {
+    setAttributeValues(prev => ({
+      ...prev,
+      [attributeName]: prev[attributeName].map(val => (val === oldValue ? newValue : val))
+    }));
+    setProductVariants(prev => prev.map(variant => {
+      if (variant.attributes[attributeName] === oldValue) {
+        return { ...variant, attributes: { ...variant.attributes, [attributeName]: newValue } };
+      }
+      return variant;
+    }));
+  };
+
+  const generateVariants = () => {
+    const combinations: { [key: string]: string }[] = [];
+    const attributeKeys = Object.keys(attributeValues);
+
+    if (attributeKeys.length === 0) {
+      setProductVariants([]);
+      return;
+    }
+
+    function generate(index: number, currentCombination: { [key: string]: string }) {
+      if (index === attributeKeys.length) {
+        combinations.push(currentCombination);
+        return;
+      }
+
+      const currentAttributeName = attributeKeys[index];
+      const values = attributeValues[currentAttributeName];
+
+      if (!values || values.length === 0) {
+        // If an attribute has no values, it cannot form combinations
+        // This case should ideally be prevented by UI validation
+        return;
+      }
+
+      for (const value of values) {
+        generate(index + 1, { ...currentCombination, [currentAttributeName]: value });
+      }
+    }
+
+    generate(0, {});
+
+    const newVariants: ProductVariant[] = combinations.map(combo => {
+      const existingVariant = productVariants.find(v =>
+        Object.keys(v.attributes).every(attr => v.attributes[attr] === combo[attr]) &&
+        Object.keys(combo).every(attr => combo[attr] === v.attributes[attr])
+      );
+
+      return existingVariant || {
+        id: uuidv4(),
+        attributes: combo,
+        price: 0.01, // Default price
+        stock: 0,    // Default stock
+      };
+    });
+    setProductVariants(newVariants);
+    form.setValue("variants", newVariants);
+  };
+
+  const handleVariantChange = (variantId: string, field: 'price' | 'stock', value: string) => {
+    setProductVariants(prev => prev.map(variant =>
+      variant.id === variantId ? { ...variant, [field]: parseFloat(value) || 0 } : variant
+    ));
+    form.setValue("variants", productVariants.map(variant =>
+      variant.id === variantId ? { ...variant, [field]: parseFloat(value) || 0 } : variant
+    ));
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) {
       toast.error("You must be logged in to edit a product.");
@@ -387,7 +576,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
       let updatedPrice = values.price;
       let updatedOriginalPrice = product.original_price;
       let updatedDiscountPercentage = product.discount_percentage;
-      let updatedDiscountStartDate = product.discount_start_date; // New: track start date
+      let updatedDiscountStartDate = product.discount_start_date;
       let updatedDiscountEndDate = product.discount_end_date;
 
       if (isPriceChanging) {
@@ -395,7 +584,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
         // and the new price becomes the base price.
         updatedOriginalPrice = null;
         updatedDiscountPercentage = null;
-        updatedDiscountStartDate = null; // Clear start date
+        updatedDiscountStartDate = null;
         updatedDiscountEndDate = null;
       } else if (isDiscountActive) {
         // If price is not changing manually, but a discount is active,
@@ -410,21 +599,26 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
         ? values.availableColors.split(',').map(color => color.trim()).filter(Boolean)
         : null;
 
+      // Prepare variants for database
+      const finalVariants = productVariants.length > 0 ? productVariants : null;
+
       const { error: updateError } = await supabase
         .from('products')
         .update({
           name: values.name,
           description: values.description,
-          price: updatedPrice,
-          stock: values.stock,
+          // Set price and stock to null if variants exist, otherwise use form values
+          price: finalVariants ? null : values.price,
+          stock: finalVariants ? null : values.stock,
           image_urls: finalImageUrls.length > 0 ? finalImageUrls : null,
           category: values.category || null,
           original_price: updatedOriginalPrice,
           discount_percentage: updatedDiscountPercentage,
-          discount_start_date: updatedDiscountStartDate, // Update start date
+          discount_start_date: updatedDiscountStartDate,
           discount_end_date: updatedDiscountEndDate,
-          size_chart_url: newSizeChartUrl, // New: update size chart URL
-          available_colors: availableColorsArray, // New: update available colors
+          size_chart_url: newSizeChartUrl,
+          available_colors: availableColorsArray,
+          variants: finalVariants, // New: Update variants
           updated_at: new Date().toISOString(),
         })
         .eq('id', product.id)
@@ -447,6 +641,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
   };
 
   const totalCurrentImages = existingImageUrls.length + selectedNewImageFiles.length;
+  const hasVariants = productVariants && productVariants.length > 0;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -487,34 +682,37 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="price" className="text-sm font-medium">Price (Rs) *</Label>
-              <Input
-                id="price"
-                type="number"
-                step="0.01"
-                placeholder="0.00"
-                {...form.register("price", { valueAsNumber: true })}
-              />
-              {form.formState.errors.price && (
-                <p className="text-destructive text-sm">{form.formState.errors.price.message}</p>
-              )}
+          {/* Conditional Price and Stock inputs */}
+          {!hasVariants && (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="price" className="text-sm font-medium">Price (Rs) *</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  {...form.register("price", { valueAsNumber: true })}
+                />
+                {form.formState.errors.price && (
+                  <p className="text-destructive text-sm">{form.formState.errors.price.message}</p>
+                )}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="stock" className="text-sm font-medium">Stock Quantity *</Label>
+                <Input
+                  id="stock"
+                  type="number"
+                  step="1"
+                  placeholder="0"
+                  {...form.register("stock", { valueAsNumber: true })}
+                />
+                {form.formState.errors.stock && (
+                  <p className="text-destructive text-sm">{form.formState.errors.stock.message}</p>
+                )}
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="stock" className="text-sm font-medium">Stock Quantity *</Label>
-              <Input
-                id="stock"
-                type="number"
-                step="1"
-                placeholder="0"
-                {...form.register("stock", { valueAsNumber: true })}
-              />
-              {form.formState.errors.stock && (
-                <p className="text-destructive text-sm">{form.formState.errors.stock.message}</p>
-              )}
-            </div>
-          </div>
+          )}
 
           <div className="grid gap-2">
             <Label htmlFor="category" className="text-sm font-medium">Category</Label>
@@ -670,6 +868,108 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
             />
             {form.formState.errors.availableColors && (
               <p className="text-destructive text-sm">{form.formState.errors.availableColors.message}</p>
+            )}
+          </div>
+
+          {/* New: Variant Management Section */}
+          <div className="space-y-4 border-t pt-4 mt-4">
+            <h3 className="text-xl font-semibold tracking-tight">Product Variants</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Define attributes (e.g., Size, Material) and their values to create product variations.
+              Each unique combination will have its own price and stock.
+              If variants are defined, the main product's price and stock will be ignored.
+            </p>
+
+            {attributeNames.map((attrName, attrIndex) => (
+              <div key={attrName} className="grid gap-2 border p-3 rounded-md">
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={attrName}
+                    onChange={(e) => handleAttributeNameChange(attrName, e.target.value)}
+                    placeholder="Attribute Name (e.g., Size)"
+                    className="flex-1 font-medium"
+                  />
+                  <Button type="button" variant="destructive" size="icon" onClick={() => removeAttribute(attrName)}>
+                    <MinusCircle className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {(attributeValues[attrName] || []).map((val, valIndex) => (
+                    <div key={`${attrName}-${valIndex}`} className="flex items-center gap-1">
+                      <Input
+                        value={val}
+                        onChange={(e) => handleAttributeValueChange(attrName, val, e.target.value)}
+                        placeholder="Value (e.g., Small)"
+                        className="w-32"
+                      />
+                      <Button type="button" variant="ghost" size="icon" onClick={() => removeAttributeValue(attrName, val)}>
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" size="sm" onClick={() => addAttributeValue(attrName)}>
+                    <PlusCircle className="mr-1 h-4 w-4" /> Add Value
+                  </Button>
+                </div>
+              </div>
+            ))}
+            <Button type="button" variant="outline" onClick={addAttribute} className="w-full font-semibold">
+              <PlusCircle className="mr-2 h-4 w-4" /> Add Attribute
+            </Button>
+
+            {attributeNames.length > 0 && (
+              <Button type="button" onClick={generateVariants} className="w-full font-semibold mt-4">
+                Generate Variants
+              </Button>
+            )}
+
+            {productVariants.length > 0 && (
+              <div className="mt-6">
+                <h4 className="text-lg font-semibold mb-2">Variant Combinations</h4>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        {attributeNames.map(name => <TableHead key={name}>{name}</TableHead>)}
+                        <TableHead>Price (Rs)</TableHead>
+                        <TableHead>Stock</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {productVariants.map(variant => (
+                        <TableRow key={variant.id}>
+                          {attributeNames.map(name => (
+                            <TableCell key={`${variant.id}-${name}`}>
+                              {variant.attributes[name]}
+                            </TableCell>
+                          ))}
+                          <TableCell>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              value={variant.price}
+                              onChange={(e) => handleVariantChange(variant.id, 'price', e.target.value)}
+                              className="w-24"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              type="number"
+                              step="1"
+                              value={variant.stock}
+                              onChange={(e) => handleVariantChange(variant.id, 'stock', e.target.value)}
+                              className="w-20"
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                {form.formState.errors.variants && (
+                  <p className="text-destructive text-sm mt-2">{form.formState.errors.variants.message}</p>
+                )}
+              </div>
             )}
           </div>
 

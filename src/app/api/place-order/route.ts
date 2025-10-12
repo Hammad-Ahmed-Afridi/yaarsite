@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       totalAmount, 
       items, 
       storeOwnerId,
-      paymentMethod // New: paymentMethod
+      paymentMethod 
     } = await request.json();
 
     if (!customerName || !customerEmail || !customerPhone || !shippingProvince || !shippingCity || !shippingAddressLine || !totalAmount || !items || !storeOwnerId || !paymentMethod) {
@@ -45,9 +45,9 @@ export async function POST(request: Request) {
         shipping_city: shippingCity,
         shipping_address_line: shippingAddressLine,
         total_amount: totalAmount,
-        items_json: items,
+        items_json: items, // This now includes variantId and selectedAttributes
         user_id: storeOwnerId,
-        payment_method: paymentMethod, // New: pass payment method
+        payment_method: paymentMethod,
       }),
     });
 

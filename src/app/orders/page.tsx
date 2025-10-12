@@ -27,14 +27,14 @@ interface Order {
   total_amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   items_json: Array<{
-    id: string;
+    id: string; // Product ID
+    variantId?: string; // New: Variant ID
     name: string;
     price: number;
     quantity: number;
     image_url?: string;
-    selected_color?: string; // New: selected color
-    selected_size_input?: string; // New: selected size input
-  }>; // Explicitly type items_json
+    selectedAttributes?: { [key: string]: string }; // New: Selected variant attributes
+  }>;
   payment_method: string;
   created_at: string;
   updated_at: string;
@@ -204,8 +204,11 @@ export default function OrdersPage() {
                         <div key={itemIndex} className="flex justify-between text-sm text-muted-foreground">
                           <span>
                             {item.name}
-                            {item.selected_color && <span className="ml-1">({item.selected_color})</span>}
-                            {item.selected_size_input && <span className="ml-1">[{item.selected_size_input}]</span>}
+                            {item.selectedAttributes && Object.keys(item.selectedAttributes).length > 0 && (
+                              <span className="ml-1">
+                                ({Object.entries(item.selectedAttributes).map(([key, value]) => `${key}: ${value}`).join(', ')})
+                              </span>
+                            )}
                           </span>
                           <span>x{item.quantity}</span>
                         </div>

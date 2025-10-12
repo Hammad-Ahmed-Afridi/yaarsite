@@ -5,31 +5,31 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client'; // Import supabase client
 
 interface CartItem {
-  id: string;
+  id: string; // Product ID
+  variantId?: string; // New: ID of the selected variant
   name: string;
   price: number;
   quantity: number;
   image_url?: string;
-  storeOwnerId: string; // To link cart items to a specific store owner
-  stock: number; // New: Add stock to cart item
-  original_price?: number | null; // New: original_price
-  discount_percentage?: number | null; // New: discount_percentage
-  discount_start_date?: string | null; // New: discount_start_date
-  discount_end_date?: string | null; // New: discount_end_date
-  selected_color?: string; // New: selected color
-  selected_size_input?: string; // New: selected size input
+  storeOwnerId: string;
+  stock: number; // Stock of the specific variant or product
+  original_price?: number | null;
+  discount_percentage?: number | null;
+  discount_start_date?: string | null;
+  discount_end_date?: string | null;
+  selectedAttributes?: { [key: string]: string }; // New: Selected variant attributes
 }
 
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (item: Omit<CartItem, 'quantity'> & { stock: number }, quantity?: number) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  clearCart: (suppressToast?: boolean) => void; // Modified: Added suppressToast
+  addToCart: (item: Omit<CartItem, 'quantity'>, quantity?: number) => void; // Updated item type
+  removeFromCart: (productId: string, variantId?: string) => void; // Updated to include variantId
+  updateQuantity: (productId: string, newQuantity: number, variantId?: string) => void; // Updated to include variantId
+  clearCart: (suppressToast?: boolean) => void;
   cartTotal: number;
   itemCount: number;
-  deliveryCharge: number; // New: delivery charge
-  isLoadingDeliveryCharge: boolean; // New: loading state for delivery charge
+  deliveryCharge: number;
+  isLoadingDeliveryCharge: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -78,7 +78,7 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
     fetchDeliveryCharge();
   }, [cartItems]);
 
-  const addToCart = useCallback((item: Omit<CartItem, 'quantity'> & { stock: number }, quantityToAdd: number = 1) => {
+  const addToCart = useCallback((item: Omit<CartItem, 'quantity'>, quantityToAdd: number = 1) => {
     setCartItems(prevItems => {
       // Check if cart is not empty and the new item is from a different store
       if (prevItems.length > 0 && prevItems[0].storeOwnerId !== item.storeOwnerId) {
@@ -86,15 +86,14 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
         return prevItems; // Do not modify cart
       }
 
-      // For items with color/size, treat different selections as distinct items in cart
-      const existingItemIndex = prevItems.findIndex(cartItem => 
-        cartItem.id === item.id && 
-        cartItem.selected_color === item.selected_color &&
-        cartItem.selected_size_input === item.selected_size_input
+      // For items with variants, treat different selections as distinct items in cart
+      const existingItemIndex = prevItems.findIndex(cartItem =>
+        cartItem.id === item.id &&
+        cartItem.variantId === item.variantId // Match by variantId if present
       );
 
       if (existingItemIndex > -1) {
-        // If item exists with same color/size, update its quantity
+        // If item exists with same variant, update its quantity
         const updatedItems = [...prevItems];
         const newQuantity = updatedItems[existingItemIndex].quantity + quantityToAdd;
 
@@ -107,7 +106,7 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
         toast.success(`${item.name} quantity updated in cart!`);
         return updatedItems;
       } else {
-        // If item is new or has different color/size, add it to the cart
+        // If item is new or has different variant, add it to the cart
         if (quantityToAdd > item.stock) {
           toast.error(`Cannot add more than available stock (${item.stock} in stock).`);
           return prevItems; // Prevent adding if initial quantity exceeds stock
@@ -118,25 +117,27 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
     });
   }, []);
 
-  const removeFromCart = useCallback((productId: string) => {
+  const removeFromCart = useCallback((productId: string, variantId?: string) => {
     setCartItems(prevItems => {
-      const updatedItems = prevItems.filter(item => item.id !== productId);
+      const updatedItems = prevItems.filter(item =>
+        item.id !== productId || (variantId !== undefined && item.variantId !== variantId)
+      );
       toast.info("Item removed from cart.");
       return updatedItems;
     });
   }, []);
 
-  const updateQuantity = useCallback((productId: string, newQuantity: number) => {
+  const updateQuantity = useCallback((productId: string, newQuantity: number, variantId?: string) => {
     setCartItems(prevItems => {
       const updatedItems = prevItems.map(item => {
-        if (item.id === productId) {
+        if (item.id === productId && (variantId === undefined || item.variantId === variantId)) {
           if (newQuantity < 1) {
             toast.error("Quantity cannot be less than 1.");
-            return item; // Don't update if less than 1
+            return item;
           }
           if (newQuantity > item.stock) {
             toast.error(`Cannot add more than available stock (${item.stock} in stock).`);
-            return item; // Don't update if exceeds stock
+            return item;
           }
           toast.success(`${item.name} quantity updated to ${newQuantity}.`);
           return { ...item, quantity: newQuantity };
@@ -147,9 +148,9 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
     });
   }, []);
 
-  const clearCart = useCallback((suppressToast: boolean = false) => { // Modified: Added suppressToast
+  const clearCart = useCallback((suppressToast: boolean = false) => {
     setCartItems([]);
-    if (!suppressToast) { // Only show toast if not suppressed
+    if (!suppressToast) {
       toast.info("Cart cleared.");
     }
   }, []);
