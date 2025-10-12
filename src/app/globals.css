@@ -2,35 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
 @layer base {
   :root {
-    --background: 210 20% 98%; /* Very light grey-blue */
-    --foreground: 220 10% 20%; /* Dark charcoal */
+    --background: 0 0% 100%; /* White */
+    --foreground: 222.2 84% 4.9%; /* Dark blue-grey */
 
     --card: 0 0% 100%; /* White */
-    --card-foreground: 220 10% 20%; /* Dark charcoal */
+    --card-foreground: 222.2 84% 4.9%; /* Dark blue-grey */
 
     --popover: 0 0% 100%; /* White */
-    --popover-foreground: 220 10% 20%; /* Dark charcoal */
+    --popover-foreground: 222.2 84% 4.9%; /* Dark blue-grey */
 
-    --primary: 190 70% 35%; /* Deep Cyan/Teal */
+    --primary: 175 60% 40%; /* Fresh Teal */
     --primary-foreground: 0 0% 100%; /* White */
 
-    --secondary: 210 20% 90%; /* Light grey-blue */
-    --secondary-foreground: 220 10% 20%; /* Dark charcoal */
+    --secondary: 175 20% 95%; /* Very Light Teal-Grey */
+    --secondary-foreground: 222.2 84% 4.9%; /* Dark blue-grey */
 
-    --muted: 210 15% 90%; /* Slightly darker light grey-blue */
-    --muted-foreground: 215 10% 45%; /* Medium grey */
+    --muted: 175 15% 90%; /* Slightly darker light teal-grey */
+    --muted-foreground: 215.4 16.3% 46.9%; /* Medium Grey */
 
-    --accent: 190 70% 45%; /* Brighter Cyan/Teal */
-    --accent-foreground: 220 10% 20%; /* Dark charcoal */
+    --accent: 175 30% 85%; /* Light Teal Accent */
+    --accent-foreground: 222.2 84% 4.9%; /* Dark blue-grey */
 
     --destructive: 0 84.2% 60.2%; /* Red */
     --destructive-foreground: 0 0% 100%; /* White */
 
-    --border: 210 15% 85%; /* Light grey-blue border */
-    --input: 210 15% 85%; /* Light grey-blue input */
-    --ring: 190 70% 35%; /* Primary Cyan/Teal for Ring */
+    --border: 175 10% 80%; /* Subtle Teal-Grey Border */
+    --input: 175 10% 80%; /* Subtle Teal-Grey Input */
+    --ring: 175 60% 40%; /* Primary Teal for Ring */
 
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -40,14 +42,14 @@
 
     --radius: 0.5rem;
 
-    --sidebar-background: 210 20% 98%; /* Light background for sidebar */
-    --sidebar-foreground: 220 10% 20%; /* Dark text for sidebar */
-    --sidebar-primary: 190 70% 35%; /* Primary Cyan/Teal for sidebar primary */
+    --sidebar-background: 210 40% 98%; /* Light background for sidebar */
+    --sidebar-foreground: 222.2 84% 4.9%; /* Dark text for sidebar */
+    --sidebar-primary: 175 60% 40%; /* Primary Teal for sidebar primary */
     --sidebar-primary-foreground: 0 0% 100%; /* White text for sidebar primary */
-    --sidebar-accent: 190 70% 45%; /* Brighter Cyan/Teal for sidebar accent */
-    --sidebar-accent-foreground: 220 10% 20%; /* Dark text for sidebar accent */
-    --sidebar-border: 210 15% 85%; /* Light grey-blue for sidebar border */
-    --sidebar-ring: 190 70% 35%; /* Primary Cyan/Teal for sidebar ring */
+    --sidebar-accent: 175 30% 85%; /* Light Teal for sidebar accent */
+    --sidebar-accent-foreground: 222.2 84% 4.9%; /* Dark text for sidebar accent */
+    --sidebar-border: 175 10% 80%; /* Subtle Teal-Grey for sidebar border */
+    --sidebar-ring: 175 60% 40%; /* Primary Teal for sidebar ring */
 
     /* Default store theme variables (will be overridden by inline styles if custom colors are set) */
     --store-primary: var(--primary);
@@ -60,33 +62,33 @@
   }
 
   .dark {
-    --background: 220 10% 10%; /* Very dark charcoal */
-    --foreground: 210 20% 90%; /* Light grey-blue */
+    --background: 222.2 84% 4.9%; /* Dark blue-grey */
+    --foreground: 175 20% 95%; /* Light grey-green */
 
-    --card: 220 10% 15%; /* Dark charcoal card */
-    --card-foreground: 210 20% 90%; /* Light grey-blue */
+    --card: 222.2 84% 4.9%; /* Dark blue-grey */
+    --card-foreground: 175 20% 95%; /* Light grey-green */
 
-    --popover: 220 10% 15%; /* Dark charcoal popover */
-    --popover-foreground: 210 20% 90%; /* Light grey-blue */
+    --popover: 222.2 84% 4.9%; /* Dark blue-grey */
+    --popover-foreground: 175 20% 95%; /* Light grey-green */
 
-    --primary: 190 70% 55%; /* Lighter Cyan/Teal for dark mode */
-    --primary-foreground: 220 10% 10%; /* Very dark charcoal */
+    --primary: 175 70% 60%; /* Lighter, vibrant Teal for dark mode */
+    --primary-foreground: 222.2 84% 4.9%; /* Dark blue-grey */
 
-    --secondary: 210 15% 20%; /* Darker grey-blue */
-    --secondary-foreground: 210 20% 90%; /* Light grey-blue */
+    --secondary: 175 30% 20%; /* Darker, desaturated Teal */
+    --secondary-foreground: 175 20% 95%; /* Light grey-green */
 
-    --muted: 217 15% 25%; /* Darker blue-grey */
-    --muted-foreground: 215 10% 60%; /* Medium light grey */
+    --muted: 217.2 32.6% 17.5%; /* Darker blue-grey */
+    --muted-foreground: 215 20.2% 65.1%; /* Medium Light Grey */
 
-    --accent: 190 70% 65%; /* Brighter Cyan/Teal for dark mode */
-    --accent-foreground: 210 20% 90%; /* Light grey-blue */
+    --accent: 175 40% 25%; /* Darker Teal Accent */
+    --accent-foreground: 175 20% 95%; /* Light grey-green */
 
     --destructive: 0 62.8% 30.6%; /* Dark Red */
     --destructive-foreground: 0 0% 98%; /* White */
 
-    --border: 217 15% 25%; /* Darker blue-grey border */
-    --input: 217 15% 25%; /* Darker blue-grey input */
-    --ring: 190 70% 55%; /* Primary Cyan/Teal for Ring */
+    --border: 217.2 32.6% 17.5%; /* Darker Blue-Grey */
+    --input: 217.2 32.6% 17.5%; /* Darker Blue-Grey */
+    --ring: 175 70% 60%; /* Primary Teal for Ring */
 
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -96,14 +98,14 @@
 
     --radius: 0.5rem;
 
-    --sidebar-background: 220 10% 10%; /* Dark background for sidebar */
-    --sidebar-foreground: 210 20% 90%; /* Light text for sidebar */
-    --sidebar-primary: 190 70% 55%; /* Primary Cyan/Teal for sidebar primary */
-    --sidebar-primary-foreground: 220 10% 10%; /* Dark text for sidebar primary */
-    --sidebar-accent: 190 70% 65%; /* Brighter Cyan/Teal for sidebar accent */
-    --sidebar-accent-foreground: 210 20% 90%; /* Light text for sidebar accent */
-    --sidebar-border: 217 15% 25%; /* Darker blue-grey for sidebar border */
-    --sidebar-ring: 190 70% 55%; /* Primary Cyan/Teal for sidebar ring */
+    --sidebar-background: 222.2 84% 4.9%; /* Dark background for sidebar */
+    --sidebar-foreground: 175 20% 95%; /* Light text for sidebar */
+    --sidebar-primary: 175 70% 60%; /* Primary Teal for sidebar primary */
+    --sidebar-primary-foreground: 222.2 84% 4.9%; /* Dark text for sidebar primary */
+    --sidebar-accent: 175 40% 25%; /* Darker Teal for sidebar accent */
+    --sidebar-accent-foreground: 175 20% 95%; /* Light text for sidebar accent */
+    --sidebar-border: 217.2 32.6% 17.5%; /* Darker Blue-Grey for sidebar border */
+    --sidebar-ring: 175 70% 60%; /* Primary Teal for sidebar ring */
 
     /* Default store theme variables (will be overridden by inline styles if custom colors are set) */
     --store-primary: var(--primary);
@@ -115,6 +117,8 @@
     --store-card-foreground: var(--card-foreground);
   }
 }
+
+
 
 @layer base {
   * {
