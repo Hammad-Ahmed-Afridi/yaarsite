@@ -126,7 +126,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px] max-w-[90vw] max-h-[90vh] overflow-y-auto font-sans p-4 sm:p-6"> {/* Adjusted padding here */}
+      <DialogContent className="sm:max-w-[900px] max-w-[90vw] max-h-[90vh] overflow-y-auto overflow-x-hidden font-sans p-4 sm:p-6"> {/* Added overflow-x-hidden */}
         <DialogHeader className="mb-4">
           <DialogTitle className="text-3xl font-bold tracking-tight break-words">{product.name}</DialogTitle>
           <DialogDescription className="text-base leading-relaxed text-muted-foreground break-words">Product details</DialogDescription>
@@ -238,7 +238,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                         htmlFor={`color-${color}`}
                         className="flex items-center justify-center px-4 py-2 border rounded-md cursor-pointer text-sm font-medium 
                                    peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground peer-data-[state=checked]:font-bold
-                                   hover:bg-accent hover:text-accent-foreground transition-colors duration-200 break-words"
+                                   hover:bg-accent hover:text-accent-foreground transition-colors duration-200 break-words min-w-0" // Added min-w-0
                       >
                         {color}
                       </Label>
