@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff, Mail, Lock, Phone, User, RefreshCcw } from 'lucide-react'; // Removed Store icon
+import { Eye, EyeOff, Mail, Lock, Phone, User, RefreshCcw } from 'lucide-react';
 import Link from 'next/link';
 
 // Function to generate a random 4-character alphanumeric code
@@ -157,7 +157,6 @@ export default function SignupPage() {
     <div className="flex items-center justify-center min-h-screen bg-background p-4 font-sans">
       <Card className="w-full max-w-md bg-card text-card-foreground shadow-lg rounded-3xl">
         <CardHeader className="text-center space-y-2">
-          {/* Removed Store icon */}
           <CardTitle className="text-3xl font-bold tracking-tight">Create Account</CardTitle>
           <CardDescription className="text-base text-muted-foreground leading-relaxed">Sign up to get started with your store</CardDescription>
           <p className="text-destructive text-sm font-semibold mt-2">
@@ -301,7 +300,7 @@ export default function SignupPage() {
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 I agree to the{" "}
-                <Link href="#" className="text-primary hover:underline">
+                <Link href="/terms-and-conditions" className="text-primary hover:underline">
                   Terms and Conditions
                 </Link>
               </label>
