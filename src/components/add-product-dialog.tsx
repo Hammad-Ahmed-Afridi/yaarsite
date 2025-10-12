@@ -348,7 +348,7 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> {/* Changed to grid-cols-1 sm:grid-cols-2 */}
             <div className="grid gap-2">
               <Label htmlFor="price" className="text-sm font-medium">Price (Rs) *</Label>
               <Input
