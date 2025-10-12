@@ -38,7 +38,7 @@ export default function StoreProductsPage() {
   const tenantSlug = params.tenantSlug as string;
   const { storeProfile: profile } = useStoreProfile();
   const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true); // Renamed to avoid conflict with layout's isLoading
   const [error, setError] = useState<string | null>(null);
 
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
@@ -47,12 +47,14 @@ export default function StoreProductsPage() {
 
   useEffect(() => {
     async function fetchStoreProducts() {
-      setIsLoading(true);
+      setIsLoadingProducts(true);
       setError(null);
 
       if (!profile) {
+        // This case should ideally not happen if StoreLayout handles loading/errors correctly.
+        // It serves as a final safeguard.
         setError("Store profile not found. Please try refreshing the page.");
-        setIsLoading(false);
+        setIsLoadingProducts(false);
         return;
       }
 
@@ -64,7 +66,7 @@ export default function StoreProductsPage() {
 
         if (productsError) {
           setError("Could not load products for this store.");
-          setIsLoading(false);
+          setIsLoadingProducts(false);
           return;
         }
         setProducts(productsData || []);
@@ -72,12 +74,15 @@ export default function StoreProductsPage() {
       } catch (err: any) {
         setError(err.message || "An unexpected error occurred.");
       } finally {
-        setIsLoading(false);
+        setIsLoadingProducts(false);
       }
     }
 
-    fetchStoreProducts();
-  }, [profile]);
+    // Only fetch products if profile is available from context
+    if (profile) {
+      fetchStoreProducts();
+    }
+  }, [profile]); // Depend on profile from context
 
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
@@ -114,7 +119,7 @@ export default function StoreProductsPage() {
     return categorizedProducts[selectedCategoryFilter] || [];
   }, [products, categorizedProducts, selectedCategoryFilter]);
 
-  if (isLoading) {
+  if (isLoadingProducts) { // Use local loading state for products
     return (
       <AppLoader message="Loading products..." isFullScreen={false} />
     );
@@ -130,10 +135,12 @@ export default function StoreProductsPage() {
   }
 
   if (!profile) {
+    // This case should ideally not be reached if StoreLayout handles loading/errors correctly.
+    // It serves as a final safeguard.
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
         <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
-        <p className="text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
+        <p className="text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist or could not be loaded.</p>
       </div>
     );
   }

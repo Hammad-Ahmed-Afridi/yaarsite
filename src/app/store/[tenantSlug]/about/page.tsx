@@ -11,38 +11,18 @@ import { useStoreProfile } from '@/components/store-profile-context-provider'; /
 export default function StoreAboutPage() {
   const params = useParams();
   const tenantSlug = params.tenantSlug as string;
-  const { storeProfile: profile, setStoreProfile } = useStoreProfile(); // Use context
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { storeProfile: profile } = useStoreProfile(); // Use context
 
-  // No need to fetch profile here, it comes from layout via context
-  useEffect(() => {
-    if (profile) {
-      setIsLoading(false);
-    } else {
-      setError("Store profile not found. Please try refreshing the page.");
-      setIsLoading(false);
-    }
-  }, [profile]);
-
-  if (isLoading) {
-    return <AppLoader message="Loading about page..." isFullScreen={false} />;
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
-        <h1 className="text-3xl font-bold text-destructive mb-4 tracking-tight">Error</h1>
-        <p className="text-lg text-muted-foreground leading-relaxed">{error}</p>
-      </div>
-    );
-  }
+  // The loading and error states are now managed by the parent StoreLayout.
+  // This component will only render if a profile is successfully loaded by the layout.
 
   if (!profile) {
+    // This case should ideally not be reached if StoreLayout handles loading/errors correctly.
+    // It serves as a final safeguard.
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center font-sans">
         <h1 className="text-3xl font-bold mb-4 tracking-tight">Store Not Found</h1>
-        <p className="text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist.</p>
+        <p className="text-lg text-muted-foreground leading-relaxed">The store you are looking for does not exist or could not be loaded.</p>
       </div>
     );
   }
