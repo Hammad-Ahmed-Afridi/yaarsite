@@ -128,8 +128,8 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[900px] max-w-[90vw] max-h-[90vh] overflow-y-auto font-sans p-4 sm:p-6"> {/* Adjusted padding here */}
         <DialogHeader className="mb-4">
-          <DialogTitle className="text-3xl font-bold tracking-tight">{product.name}</DialogTitle>
-          <DialogDescription className="text-base leading-relaxed text-muted-foreground">Product details</DialogDescription>
+          <DialogTitle className="text-3xl font-bold tracking-tight break-words">{product.name}</DialogTitle>
+          <DialogDescription className="text-base leading-relaxed text-muted-foreground break-words">Product details</DialogDescription>
         </DialogHeader>
         <div className="grid md:grid-cols-2 gap-8">
           {/* Image Gallery */}
@@ -194,8 +194,8 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
           {/* Product Details & Actions */}
           <div className="space-y-6">
-            <h3 className="text-3xl font-bold tracking-tight">{product.name}</h3>
-            <p className="text-muted-foreground text-lg leading-relaxed">{product.description || "No description available."}</p>
+            <h3 className="text-3xl font-bold tracking-tight break-words">{product.name}</h3>
+            <p className="text-muted-foreground text-lg leading-relaxed break-words">{product.description || "No description available."}</p>
             
             {/* Price and Stock */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -216,7 +216,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                 <Badge className="bg-green-500 text-white text-base px-3 py-1 font-medium">
                   {product.discount_percentage}% OFF!
                 </Badge>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground break-words">
                   Valid from {format(new Date(product.discount_start_date!), "PPP")} to {format(new Date(product.discount_end_date!), "PPP")}
                 </p>
               </div>
@@ -238,7 +238,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                         htmlFor={`color-${color}`}
                         className="flex items-center justify-center px-4 py-2 border rounded-md cursor-pointer text-sm font-medium 
                                    peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground peer-data-[state=checked]:font-bold
-                                   hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
+                                   hover:bg-accent hover:text-accent-foreground transition-colors duration-200 break-words"
                       >
                         {color}
                       </Label>
@@ -291,8 +291,8 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                 </AlertDialogTrigger>
                 <AlertDialogContent className="max-w-3xl max-w-[90vw] max-h-[90vh] overflow-y-auto"> {/* Added max-w-[90vw] */}
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="text-2xl font-bold">Size Chart</AlertDialogTitle>
-                    <AlertDialogDescription>
+                    <AlertDialogTitle className="text-2xl font-bold break-words">Size Chart</AlertDialogTitle>
+                    <AlertDialogDescription className="break-words">
                       Refer to this chart to find your perfect size.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
