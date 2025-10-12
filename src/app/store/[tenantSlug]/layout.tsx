@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation'; // Import useParams
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,19 +20,17 @@ import { StoreWelcomeBanner } from '@/components/store-welcome-banner';
 // Define the props interface for the client component
 interface StoreLayoutProps {
   children: React.ReactNode;
-  // Update params type to be more general to satisfy Next.js's internal LayoutProps
-  params: { [key: string]: string | string[] | undefined } | Promise<any>;
+  // Removed params prop as it will now be accessed via useParams hook
 }
 
 export default function StoreLayout({
   children,
-  params,
 }: StoreLayoutProps) {
   const router = useRouter();
   
-  // Directly access tenantSlug from params, no need for React.use()
-  // We assert params as the object type because we know it will be at runtime in a client component
-  const tenantSlug = (params as { tenantSlug: string }).tenantSlug;
+  // Get tenantSlug directly from useParams hook
+  const params = useParams();
+  const tenantSlug = params.tenantSlug as string;
   
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
