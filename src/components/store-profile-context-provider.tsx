@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Profile } from '@/components/session-context-provider'; // Re-use the Profile type
 
 interface StoreProfileContextType {
@@ -12,6 +12,11 @@ const StoreProfileContext = createContext<StoreProfileContextType | undefined>(u
 
 export const StoreProfileProvider = ({ children, initialProfile }: { children: ReactNode; initialProfile: Profile | null }) => {
   const [storeProfile, setStoreProfile] = useState<Profile | null>(initialProfile);
+
+  // Update internal state when initialProfile prop changes
+  useEffect(() => {
+    setStoreProfile(initialProfile);
+  }, [initialProfile]);
 
   return (
     <StoreProfileContext.Provider value={{ storeProfile, setStoreProfile }}>
