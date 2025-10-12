@@ -38,7 +38,9 @@ export interface Profile { // Exported for use in DashboardHeader
   // Simplified Store theme colors (HSL format)
   store_primary_color_hsl: string | null; // Used for accent (buttons, links, icons)
   store_background_color_hsl: string | null; // Main store background
+  store_foreground_color_hsl: string | null; // New: Store foreground color
   store_card_background_color_hsl: string | null; // Cards, Header, Footer background
+  store_card_foreground_color_hsl: string | null; // New: Store card foreground color
   // Removed custom domain fields
 }
 
