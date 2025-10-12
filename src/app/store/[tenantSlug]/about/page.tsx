@@ -11,12 +11,12 @@ import { useStoreProfile } from '@/components/store-profile-context-provider'; /
 export default function StoreAboutPage() {
   const params = useParams();
   const tenantSlug = params.tenantSlug as string;
-  const { storeProfile: profile, setStoreProfile } = useStoreProfile(); // Use context
+  const { storeProfile: profile } = useStoreProfile(); // Use context
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // No need to fetch profile here, it comes from layout via context
   useEffect(() => {
+    console.log("StoreAboutPage: Profile from context:", profile); // DEBUG LOG
     if (profile) {
       setIsLoading(false);
     } else {
@@ -47,12 +47,15 @@ export default function StoreAboutPage() {
     );
   }
 
+  const displayHeroImage = profile.about_page_hero_image_url;
+
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
-      {profile.about_page_hero_image_url ? (
+      <p className="text-red-500 text-5xl font-bold mb-8">DEBUG: ABOUT PAGE IS RENDERING!</p> {/* DEBUG TEXT */}
+      {displayHeroImage ? (
         <div className="relative w-full max-w-4xl h-64 md:h-96 rounded-3xl overflow-hidden mb-12 shadow-lg">
           <Image
-            src={profile.about_page_hero_image_url}
+            src={displayHeroImage}
             alt="About Us Hero"
             fill
             style={{ objectFit: 'cover' }}
@@ -62,9 +65,9 @@ export default function StoreAboutPage() {
       ) : (
         <Info className="h-24 w-24 text-store-primary mb-6" /> 
       )}
-      <h1 className="text-4xl font-bold mb-4 tracking-tight">About {profile.tenant_name}</h1>
+      <h1 className="text-4xl font-bold mb-4 tracking-tight">About {profile?.tenant_name || <span className="text-red-500">(Default Store Name)</span>}</h1>
       <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
-        {profile.about_page_content || "We are dedicated to providing you with the best products and an exceptional shopping experience. Our mission is to bring quality and value directly to you."}
+        {profile?.about_page_content || <span className="text-red-500">We are dedicated to providing you with the best products and an exceptional shopping experience. Our mission is to bring quality and value directly to you. (Default About Content)</span>}
       </p>
     </div>
   );

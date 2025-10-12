@@ -16,6 +16,7 @@ export default function StoreContactPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("StoreContactPage: Profile from context:", profile); // DEBUG LOG
     if (profile) {
       setIsLoading(false);
     } else {
@@ -48,14 +49,16 @@ export default function StoreContactPage() {
     );
   }
 
-  const hasAddress = profile.store_address_line || profile.store_city || profile.store_province;
+  const hasAddress = profile?.store_address_line || profile?.store_city || profile?.store_province;
+  const displayHeroImage = profile?.contact_page_hero_image_url;
 
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
-      {profile.contact_page_hero_image_url ? (
+      <p className="text-red-500 text-5xl font-bold mb-8">DEBUG: CONTACT PAGE IS RENDERING!</p> {/* DEBUG TEXT */}
+      {displayHeroImage ? (
         <div className="relative w-full max-w-4xl h-64 md:h-96 rounded-3xl overflow-hidden mb-12 shadow-lg">
           <Image
-            src={profile.contact_page_hero_image_url}
+            src={displayHeroImage}
             alt="Contact Page Hero"
             fill
             style={{ objectFit: 'cover' }}
@@ -66,14 +69,14 @@ export default function StoreContactPage() {
         <Mail className="h-24 w-24 text-store-primary mb-6" /> 
       )}
       <h1 className="text-4xl font-bold mb-4 tracking-tight">
-        {profile.contact_page_heading || `Contact ${profile.tenant_name}`}
+        {profile?.contact_page_heading || <span className="text-red-500">Contact {profile?.tenant_name || 'Us'} (Default Heading)</span>}
       </h1>
       <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
-        {profile.contact_page_description || "Have questions or need assistance? Reach out to us!"}
+        {profile?.contact_page_description || <span className="text-red-500">Have questions or need assistance? Reach out to us! (Default Description)</span>}
       </p>
 
       <div className="space-y-4 text-left w-full max-w-md">
-        {profile.email && (
+        {profile?.email && (
           <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm"> {/* Use store-card */}
             <Mail className="h-6 w-6 text-muted-foreground" />
             <div>
@@ -82,7 +85,7 @@ export default function StoreContactPage() {
             </div>
           </div>
         )}
-        {profile.phone_number && (
+        {profile?.phone_number && (
           <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm"> {/* Use store-card */}
             <Phone className="h-6 w-6 text-muted-foreground" />
             <div>
@@ -97,9 +100,9 @@ export default function StoreContactPage() {
             <p className="font-semibold text-base">Visit Us</p>
             {hasAddress ? (
               <p className="text-muted-foreground text-base">
-                {profile.store_address_line && <span>{profile.store_address_line}, </span>}
-                {profile.store_city && <span>{profile.store_city}, </span>}
-                {profile.store_province && <span>{profile.store_province}</span>}
+                {profile?.store_address_line && <span>{profile.store_address_line}, </span>}
+                {profile?.store_city && <span>{profile.store_city}, </span>}
+                {profile?.store_province && <span>{profile.store_province}</span>}
               </p>
             ) : (
               <p className="text-muted-foreground text-base">Online Only</p>
