@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LayoutDashboard, ShoppingCart, Settings, ArrowRight, Package, Monitor, BarChart } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Settings, Package, Monitor, BarChart } from 'lucide-react'; // Removed ArrowRight
 import { PricingCard } from '@/components/pricing-card'; // Import the new PricingCard component
 
 export default function LandingPage() {
@@ -106,7 +106,7 @@ export default function LandingPage() {
             <Button asChild size="lg" className="px-8 py-6 text-lg font-semibold hover:scale-[1.02] transition-transform duration-200">
               <Link href="/signup" target="_blank" rel="noopener noreferrer">
                 <span> {/* Wrapped children in a span */}
-                  Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
+                  Get Started Free
                 </span>
               </Link>
             </Button>
@@ -210,7 +210,7 @@ export default function LandingPage() {
           <Button asChild size="lg" className="px-10 py-7 text-xl font-semibold hover:scale-[1.02] transition-transform duration-200">
             <Link href="/signup" target="_blank" rel="noopener noreferrer">
               <span> {/* Wrapped children in a span */}
-                Sign Up Now <ArrowRight className="ml-3 h-6 w-6" />
+                Sign Up Now
               </span>
             </Link>
           </Button>
