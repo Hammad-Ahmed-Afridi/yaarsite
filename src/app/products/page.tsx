@@ -201,7 +201,7 @@ export default function ProductsPage() {
                     </div>
                   )}
                   <CardHeader>
-                    <CardTitle className="text-lg font-semibold">{product.name}</CardTitle>
+                    <CardTitle className="text-lg font-semibold break-words">{product.name}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{product.description || "No description."}</p>
@@ -218,7 +218,7 @@ export default function ProductsPage() {
                     </div>
                     {isDiscountActive && (
                       <>
-                        <Badge className="bg-green-500 text-white font-medium">
+                        <Badge className="bg-green-500 text-white font-medium max-w-full break-words">
                           {product.discount_percentage}% OFF!
                         </Badge>
                         <p className="text-xs text-muted-foreground">
@@ -227,7 +227,7 @@ export default function ProductsPage() {
                       </>
                     )}
                     {product.category && (
-                      <Badge variant="outline" className="mt-2 font-medium text-xs">
+                      <Badge variant="outline" className="mt-2 font-medium text-xs max-w-full break-words">
                         {product.category}
                       </Badge>
                     )}
