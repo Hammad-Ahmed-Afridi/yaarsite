@@ -46,7 +46,7 @@ export default function StoreLayout({
       try {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('*') // Simplified to select all columns
+          .select('*, store_page_welcome_message, home_page_heading, home_page_description, about_page_content, contact_page_heading, contact_page_description, store_primary_color_hsl, store_background_color_hsl, store_card_background_color_hsl') // Removed custom domain fields
           .eq('tenant_slug', tenantSlug)
           .single();
 
