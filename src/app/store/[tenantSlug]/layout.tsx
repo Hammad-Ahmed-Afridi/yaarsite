@@ -11,7 +11,7 @@ import { useCart } from '@/components/cart-context-provider';
 import { AppLoader } from '@/components/app-loader';
 import { Profile } from '@/components/session-context-provider';
 import { StoreNavbar } from '@/components/store-navbar';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'; // Import Sheet components
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet'; // Import Sheet components
 import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
 import { toast } from 'sonner'; // Import toast
 import { StoreProfileProvider } from '@/components/store-profile-context-provider'; // Import new provider
@@ -161,7 +161,9 @@ export default function StoreLayout({
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-64 p-4 bg-store-background text-store-foreground"> {/* Use store-specific background/foreground */}
-                  <h2 className="text-xl font-bold mb-6 tracking-tight">Navigation</h2>
+                  <SheetHeader> {/* Added SheetHeader */}
+                    <SheetTitle className="text-xl font-bold tracking-tight">Navigation</SheetTitle> {/* Wrapped h2 with SheetTitle */}
+                  </SheetHeader>
                   <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
                 </SheetContent>
               </Sheet>
