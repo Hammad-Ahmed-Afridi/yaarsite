@@ -17,13 +17,17 @@ import { toast } from 'sonner'; // Import toast
 import { StoreProfileProvider } from '@/components/store-profile-context-provider'; // Import new provider
 import { StoreWelcomeBanner } from '@/components/store-welcome-banner'; // Import StoreWelcomeBanner
 
+interface LayoutProps {
+  children: React.ReactNode;
+  params: {
+    tenantSlug: string;
+  };
+}
+
 export default function StoreLayout({
   children,
   params,
-}: {
-  children: React.ReactNode;
-  params: { tenantSlug: string };
-}) {
+}: LayoutProps) {
   const router = useRouter();
   const tenantSlug = params.tenantSlug;
   const [profile, setProfile] = useState<Profile | null>(null);
