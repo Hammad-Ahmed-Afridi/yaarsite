@@ -13,12 +13,12 @@ import { useStoreProfile } from '@/components/store-profile-context-provider'; /
 export default function StoreHomePage() {
   const params = useParams();
   const tenantSlug = params.tenantSlug as string;
-  const { storeProfile: profile, setStoreProfile } = useStoreProfile(); // Use context
+  const { storeProfile: profile } = useStoreProfile(); // Use context
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // No need to fetch profile here, it comes from layout via context
   useEffect(() => {
+    console.log("StoreHomePage: Profile from context:", profile); // DEBUG LOG
     if (profile) {
       setIsLoading(false);
     } else {
@@ -51,13 +51,18 @@ export default function StoreHomePage() {
     );
   }
 
+  // Determine which image to display for the hero section, prioritizing home_page_hero_image_url
+  const displayHeroImage = profile.home_page_hero_image_url || profile.avatar_url;
+  const displayContentImage = profile.home_page_content_image_url;
+
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
+      <p className="text-red-500 text-5xl font-bold mb-8">DEBUG: HOME PAGE IS RENDERING!</p> {/* DEBUG TEXT */}
       {/* Home Page Hero Section */}
-      {profile.home_page_hero_image_url ? (
+      {displayHeroImage ? (
         <div className="relative w-full max-w-4xl h-64 md:h-96 rounded-3xl overflow-hidden mb-12 shadow-lg">
           <Image
-            src={profile.home_page_hero_image_url}
+            src={displayHeroImage}
             alt="Home Page Hero"
             fill
             style={{ objectFit: 'cover' }}
@@ -65,40 +70,30 @@ export default function StoreHomePage() {
           />
         </div>
       ) : (
-        profile.avatar_url ? (
-          <div className="relative h-32 w-32 rounded-full overflow-hidden mb-6 border-2 border-store-primary">
-            <Image
-              src={profile.avatar_url}
-              alt="Store Logo"
-              fill
-              style={{ objectFit: 'cover' }}
-              className="rounded-full"
-            />
-          </div>
-        ) : (
-          <Store className="h-24 w-24 text-store-primary mb-6" />
-        )
+        <Store className="h-24 w-24 text-store-primary mb-6" />
       )}
       <h1 className="text-4xl font-bold mb-4 tracking-tight">
-        {profile.home_page_heading || `Welcome to ${profile.tenant_name}!`}
+        {profile?.home_page_heading || <span className="text-red-500">Welcome to {profile?.tenant_name || 'our store'}! (Default Heading)</span>} {/* Prominent Default */}
       </h1>
       <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
-        {profile.home_page_description || "Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
+        {profile?.home_page_description || <span className="text-red-500">Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you! (Default Description)</span>} {/* Prominent Default */}
       </p>
       <Button asChild size="lg" className="font-semibold bg-store-primary text-store-primary-foreground hover:bg-store-primary/90"> {/* Use store-primary */}
         <Link href={`/store/${tenantSlug}`}>
-          <Package className="mr-2 h-5 w-5" /> View Our Products
+          <span> {/* Wrapped children in a span */}
+            <Package className="mr-2 h-5 w-5" /> View Our Products
+          </span>
         </Link>
       </Button>
 
       {/* Home Page Content Section (Image Left, Text Right) */}
-      {(profile.home_page_content_image_url || profile.home_page_content_text) && (
+      {(displayContentImage || profile?.home_page_content_text) && (
         <section className="mt-20 w-full max-w-4xl">
           <div className="grid md:grid-cols-2 gap-8 items-center text-left">
-            {profile.home_page_content_image_url ? (
+            {displayContentImage ? (
               <div className="relative w-full h-64 md:h-80 rounded-3xl overflow-hidden shadow-lg">
                 <Image
-                  src={profile.home_page_content_image_url}
+                  src={displayContentImage}
                   alt="Home Page Content"
                   fill
                   style={{ objectFit: 'cover' }}
@@ -113,7 +108,7 @@ export default function StoreHomePage() {
             <div className="space-y-4">
               <h2 className="text-3xl font-bold tracking-tight">More About Our Store</h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                {profile.home_page_content_text || "Here you can tell your customers more about your unique selling propositions, your brand story, or any special offers you have. Make it engaging!"}
+                {profile?.home_page_content_text || <span className="text-red-500">Here you can tell your customers more about your unique selling propositions, your brand story, or any special offers you have. Make it engaging! (Default Content Text)</span>} {/* Prominent Default */}
               </p>
             </div>
           </div>
