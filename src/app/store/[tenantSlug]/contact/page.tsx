@@ -49,13 +49,14 @@ export default function StoreContactPage() {
   }
 
   const hasAddress = profile.store_address_line || profile.store_city || profile.store_province;
+  const displayHeroImage = profile.contact_page_hero_image_url;
 
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
-      {profile.contact_page_hero_image_url ? (
+      {displayHeroImage ? (
         <div className="relative w-full max-w-4xl h-64 md:h-96 rounded-3xl overflow-hidden mb-12 shadow-lg">
           <Image
-            src={profile.contact_page_hero_image_url}
+            src={displayHeroImage}
             alt="Contact Page Hero"
             fill
             style={{ objectFit: 'cover' }}
