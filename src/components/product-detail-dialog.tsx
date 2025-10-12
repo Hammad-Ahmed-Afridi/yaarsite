@@ -131,100 +131,101 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full sm:max-w-[900px] max-w-[90vw] max-h-[90vh] flex flex-col font-sans p-4 sm:p-6">
+      <DialogContent className="w-full sm:max-w-[900px] max-w-[90vw] max-h-[90vh] flex flex-col overflow-hidden overflow-x-hidden font-sans p-4 sm:p-6">
         <DialogHeader className="mb-4 flex-shrink-0">
           <DialogTitle className="text-3xl font-bold tracking-tight break-words">{product.name}</DialogTitle>
           <DialogDescription className="text-base leading-relaxed text-muted-foreground break-words">Product details</DialogDescription>
         </DialogHeader>
-        <div className="grid md:grid-cols-2 gap-8 overflow-y-auto flex-1">
-          {/* Image Gallery */}
-          <div className="flex flex-col gap-4">
-            <div className="relative w-full h-[400px] md:h-[500px] bg-muted rounded-xl overflow-hidden flex items-center justify-center shadow-md">
-              {images.length > 0 ? (
-                <>
-                  <Image
-                    src={images[currentImageIndex]}
-                    alt={product.name}
-                    fill
-                    style={{ objectFit: 'contain' }}
-                    className="object-center"
-                  />
-                  {hasMultipleImages && (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/50 hover:bg-background/70 rounded-full z-10"
-                        onClick={handlePrevImage}
-                      >
-                        <ChevronLeft className="h-6 w-6" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/50 hover:bg-background/70 rounded-full z-10"
-                        onClick={handleNextImage}
-                      >
-                        <ChevronRight className="h-6 w-6" />
-                      </Button>
-                    </>
-                  )}
-                </>
-              ) : (
-                <ImageIcon className="h-24 w-24 text-muted-foreground" />
-              )}
-            </div>
-            {hasMultipleImages && (
-              <div className="flex gap-2 justify-center">
-                {images.map((img, index) => (
-                  <div
-                    key={index}
-                    className={cn(
-                      "relative w-20 h-20 rounded-md overflow-hidden cursor-pointer border-2", // Larger thumbnails
-                      index === currentImageIndex ? "border-primary" : "border-transparent opacity-70 hover:opacity-100"
-                    )}
-                    onClick={() => setCurrentImageIndex(index)}
-                  >
+        <div className="flex-1 overflow-y-auto">
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Image Gallery */}
+            <div className="flex flex-col gap-4">
+              <div className="relative w-full h-[400px] md:h-[500px] bg-muted rounded-xl overflow-hidden flex items-center justify-center shadow-md">
+                {images.length > 0 ? (
+                  <>
                     <Image
-                      src={img}
-                      alt={`Thumbnail ${index + 1}`}
+                      src={images[currentImageIndex]}
+                      alt={product.name}
                       fill
-                      style={{ objectFit: 'cover' }}
+                      style={{ objectFit: 'contain' }}
+                      className="object-center"
                     />
-                  </div>
-                ))}
+                    {hasMultipleImages && (
+                      <>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/50 hover:bg-background/70 rounded-full z-10"
+                          onClick={handlePrevImage}
+                        >
+                          <ChevronLeft className="h-6 w-6" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/50 hover:bg-background/70 rounded-full z-10"
+                          onClick={handleNextImage}
+                        >
+                          <ChevronRight className="h-6 w-6" />
+                        </Button>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <ImageIcon className="h-24 w-24 text-muted-foreground" />
+                )}
               </div>
-            )}
-          </div>
-
-          {/* Product Details & Actions */}
-          <div className="space-y-6 w-full">
-            <h3 className="text-3xl font-bold tracking-tight break-words">{product.name}</h3>
-            
-            {/* Price and Stock */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              {isDiscountActive && product.original_price !== null ? (
-                <div className="flex items-baseline gap-2">
-                  <span className="text-lg text-muted-foreground line-through">Rs{product.original_price.toFixed(2)}</span>
-                  <span className="text-4xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span>
+              {hasMultipleImages && (
+                <div className="flex gap-2 justify-center">
+                  {images.map((img, index) => (
+                    <div
+                      key={index}
+                      className={cn(
+                        "relative w-20 h-20 rounded-md overflow-hidden cursor-pointer border-2", // Larger thumbnails
+                        index === currentImageIndex ? "border-primary" : "border-transparent opacity-70 hover:opacity-100"
+                      )}
+                      onClick={() => setCurrentImageIndex(index)}
+                    >
+                      <Image
+                        src={img}
+                        alt={`Thumbnail ${index + 1}`}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </div>
+                  ))}
                 </div>
-              ) : (
-                <span className="text-4xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span>
               )}
-              <Badge variant="secondary" className="text-lg px-4 py-2 font-medium">
-                {product.stock} in stock
-              </Badge>
             </div>
-            {isDiscountActive && (
-              <div className="space-y-1">
-                <Badge className="bg-green-500 text-white text-base px-3 py-1 font-medium">
-                  {product.discount_percentage}% OFF!
+
+            {/* Product Details & Actions */}
+            <div className="space-y-6 w-full">
+              <h3 className="text-3xl font-bold tracking-tight break-words">{product.name}</h3>
+              
+              {/* Price and Stock */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                {isDiscountActive && product.original_price !== null ? (
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-lg text-muted-foreground line-through">Rs{product.original_price.toFixed(2)}</span>
+                    <span className="text-4xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span>
+                  </div>
+                ) : (
+                  <span className="text-4xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span>
+                )}
+                <Badge variant="secondary" className="text-lg px-4 py-2 font-medium">
+                  {product.stock} in stock
                 </Badge>
-                <p className="text-sm text-muted-foreground break-words">
-                  Valid from {format(new Date(product.discount_start_date!), "PPP")} to {format(new Date(product.discount_end_date!), "PPP")}
-                </p>
               </div>
-            )}
+              {isDiscountActive && (
+                <div className="space-y-1">
+                  <Badge className="bg-green-500 text-white text-base px-3 py-1 font-medium">
+                    {product.discount_percentage}% OFF!
+                  </Badge>
+                  <p className="text-sm text-muted-foreground break-words">
+                    Valid from {format(new Date(product.discount_start_date!), "PPP")} to {format(new Date(product.discount_end_date!), "PPP")}
+                  </p>
+                </div>
+              )}
 
             {/* Description */}
             <div className="space-y-2">
@@ -336,6 +337,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
             )}
           </div>
         </div>
+        {/* Re-added flex-shrink-0 */}
         <Button
           className="w-full py-6 text-lg flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200 mt-6 flex-shrink-0"
           onClick={handleAddToCart}
