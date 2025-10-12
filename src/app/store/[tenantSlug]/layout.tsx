@@ -46,7 +46,7 @@ export default function StoreLayout({
       try {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('*, store_page_welcome_message, home_page_heading, home_page_description, about_page_content, contact_page_heading, contact_page_description, store_primary_color_hsl, store_background_color_hsl, store_card_background_color_hsl') // Removed custom domain fields
+          .select('*') // Simplified to select all columns
           .eq('tenant_slug', tenantSlug)
           .single();
 
@@ -170,7 +170,7 @@ export default function StoreLayout({
         </header>
 
         {/* Store Welcome Banner */}
-        <StoreWelcomeBanner message={profile.store_page_welcome_message || `Welcome to ${profile.tenant_name || 'our store'}!`} />
+        <StoreWelcomeBanner message={profile?.store_page_welcome_message || `Welcome to ${profile?.tenant_name || 'our store'}!`} />
 
         {/* Main Content */}
         <main className="flex-1 p-4 sm:p-8"> {/* Adjusted padding */}
