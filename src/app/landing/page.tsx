@@ -105,9 +105,7 @@ export default function LandingPage() {
           <div className="relative z-10 flex flex-col sm:flex-row gap-4">
             <Button asChild size="lg" className="px-8 py-6 text-lg font-semibold hover:scale-[1.02] transition-transform duration-200">
               <Link href="/signup" target="_blank" rel="noopener noreferrer">
-                <span className="flex items-center"> {/* Wrapped icon and text in a span */}
-                  Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
-                </span>
+                Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="px-8 py-6 text-lg font-semibold hover:scale-[1.02] transition-transform duration-200">
@@ -209,9 +207,7 @@ export default function LandingPage() {
           </p>
           <Button asChild size="lg" className="px-10 py-7 text-xl font-semibold hover:scale-[1.02] transition-transform duration-200">
             <Link href="/signup" target="_blank" rel="noopener noreferrer">
-              <span className="flex items-center"> {/* Wrapped icon and text in a span */}
-                Sign Up Now <ArrowRight className="ml-3 h-6 w-6" />
-              </span>
+              Sign Up Now <ArrowRight className="ml-3 h-6 w-6" />
             </Link>
           </Button>
         </div>

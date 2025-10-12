@@ -46,7 +46,7 @@ export default function StoreLayout({
       try {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('*, store_page_welcome_message, home_page_heading, home_page_description, about_page_content, contact_page_heading, contact_page_description, store_primary_color_hsl, store_background_color_hsl, store_card_background_color_hsl, store_foreground_color_hsl, store_card_foreground_color_hsl') // Added foreground colors
+          .select('*, store_page_welcome_message, home_page_heading, home_page_description, about_page_content, contact_page_heading, contact_page_description, store_primary_color_hsl, store_background_color_hsl, store_card_background_color_hsl') // Removed custom domain fields
           .eq('tenant_slug', tenantSlug)
           .single();
 
@@ -73,7 +73,19 @@ export default function StoreLayout({
     fetchStoreProfile();
   }, [tenantSlug, cartItems, clearCart]); // Added cartItems and clearCart to dependencies
 
-  // Removed the useEffect block that was here
+  // Apply custom CSS variables for store theme
+  useEffect(() => {
+    if (profile) {
+      const root = document.documentElement; // Target the <html> element
+      root.style.setProperty('--store-primary', profile.store_primary_color_hsl || 'var(--primary)');
+      root.style.setProperty('--store-background', profile.store_background_color_hsl || 'var(--background)');
+      root.style.setProperty('--store-card-background', profile.store_card_background_color_hsl || 'var(--card)');
+      // Foreground colors will default to the theme's foregrounds if not explicitly set
+      root.style.setProperty('--store-foreground', 'var(--foreground)');
+      root.style.setProperty('--store-card-foreground', 'var(--card-foreground)');
+    }
+  }, [profile]);
+
 
   if (isLoading) {
     return <AppLoader message="Loading store..." />;
