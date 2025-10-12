@@ -159,7 +159,7 @@ export function StoreSetupDialog({ onStoreCreated }: StoreSetupDialogProps) {
     <>
       <Dialog open={isDialogOpen}>
         <DialogContent
-          className="w-full max-w-md p-6 font-sans"
+          className="w-full max-w-md max-w-[90vw] max-h-[90vh] overflow-y-auto p-6 font-sans" // Added max-w-[90vw] and max-h-[90vh] overflow-y-auto
           onPointerDownOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
         >

@@ -98,7 +98,7 @@ export default function CartPage() {
                           />
                         )}
                         <div className="flex-1 space-y-1">
-                          <CardTitle className="text-lg font-semibold">{item.name}</CardTitle>
+                          <CardTitle className="text-lg font-semibold line-clamp-2">{item.name}</CardTitle> {/* Added line-clamp-2 */}
                           <p className="text-muted-foreground text-base">Price: Rs{item.price.toFixed(2)}</p>
                           <div className="flex items-center gap-2">
                             <Button

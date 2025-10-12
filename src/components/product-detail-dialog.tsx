@@ -152,7 +152,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto font-sans p-6">
+      <DialogContent className="sm:max-w-[900px] max-w-[90vw] max-h-[90vh] overflow-y-auto font-sans p-6"> {/* Added max-w-[90vw] and max-h-[90vh] overflow-y-auto */}
         <DialogHeader className="mb-4">
           <DialogTitle className="text-3xl font-bold tracking-tight">{product.name}</DialogTitle>
           <DialogDescription className="text-base leading-relaxed text-muted-foreground">Product details</DialogDescription>
