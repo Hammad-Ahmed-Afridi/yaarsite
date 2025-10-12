@@ -57,7 +57,6 @@ export default function StoreHomePage() {
 
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
-      <p className="text-red-500 text-5xl font-bold mb-8">DEBUG: HOME PAGE IS RENDERING!</p> {/* DEBUG TEXT */}
       {/* Home Page Hero Section */}
       {displayHeroImage ? (
         <div className="relative w-full max-w-4xl h-64 md:h-96 rounded-3xl overflow-hidden mb-12 shadow-lg">
@@ -78,10 +77,9 @@ export default function StoreHomePage() {
       <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
         {profile?.home_page_description || <span className="text-red-500">Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you! (Default Description)</span>} {/* Prominent Default */}
       </p>
-      {/* Use store-primary */}
       <Button asChild size="lg" className="font-semibold bg-store-primary text-store-primary-foreground hover:bg-store-primary/90">
         <Link href={`/store/${tenantSlug}`}>
-          <span> {/* Wrapped children in a span */}
+          <span>
             <Package className="mr-2 h-5 w-5" /> View Our Products
           </span>
         </Link>
