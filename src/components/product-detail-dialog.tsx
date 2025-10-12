@@ -39,7 +39,7 @@ interface ProductDetailDialogProps {
 
 export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerId }: ProductDetailDialogProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(undefined); // Changed from null to undefined
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(undefined);
   const [selectedAttributes, setSelectedAttributes] = useState<{[key: string]: string}>({});
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
@@ -59,7 +59,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
         setSelectedVariant(product.variants[0]); // Select the first variant by default
       } else {
         setSelectedAttributes({});
-        setSelectedVariant(undefined); // Changed from null to undefined
+        setSelectedVariant(undefined);
       }
     }
   }, [isOpen, product]);
@@ -72,7 +72,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
           variant.attributes[attrName] === selectedAttributes[attrName]
         )
       );
-      setSelectedVariant(foundVariant || undefined); // Changed from null to undefined
+      setSelectedVariant(foundVariant || undefined);
     }
   }, [selectedAttributes, product]);
 
@@ -83,7 +83,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
   const images = product.image_urls || [];
   const hasMultipleImages = images.length > 1;
   const hasSizeChart = !!product.size_chart_url;
-  const hasVariants = product.variants && product.variants.length > 0;
+  const hasVariants = !!(product.variants && product.variants.length > 0); // Fixed: Ensure hasVariants is a strict boolean
 
   // Determine current price and stock based on selected variant or main product
   const currentPrice = selectedVariant?.price ?? product.price ?? 0;
@@ -117,7 +117,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
       toast.error("This product is out of stock.");
       return;
     }
-    if (hasVariants && selectedVariant === undefined) { // Changed condition here
+    if (hasVariants && selectedVariant === undefined) {
       toast.error("Please select all product variations.");
       return;
     }
