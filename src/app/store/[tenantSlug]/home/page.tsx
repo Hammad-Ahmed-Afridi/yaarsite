@@ -60,7 +60,7 @@ export default function StoreHomePage() {
       <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
         {profile.home_page_description || "Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
       </p>
-      <Button asChild size="lg" className="font-semibold bg-store-primary text-store-primary-foreground hover:bg-store-primary/90"> {/* Use store-primary */}
+      <Button asChild size="lg" className="font-semibold bg-store-primary text-store-foreground hover:bg-store-primary/90"> {/* Changed text-store-primary-foreground to text-store-foreground */}
         <Link href={`/store/${tenantSlug}`}>
           <Package className="mr-2 h-5 w-5" /> View Our Products
         </Link>
