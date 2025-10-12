@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, use } from 'react'; // Import 'use' from react
+import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -25,8 +25,7 @@ export default function StoreLayout({
   params: { tenantSlug: string };
 }) {
   const router = useRouter();
-  const resolvedParams = use(Promise.resolve(params)); // Unwrap params using React.use()
-  const tenantSlug = resolvedParams.tenantSlug;
+  const tenantSlug = params.tenantSlug;
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
