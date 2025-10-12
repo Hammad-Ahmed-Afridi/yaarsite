@@ -126,12 +126,12 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-w-sm md:max-w-2xl lg:max-w-4xl max-h-[90vh] overflow-y-auto font-sans p-4 sm:p-6"> {/* Adjusted width classes */}
+      <DialogContent className="sm:max-w-[900px] max-w-[90vw] max-h-[90vh] overflow-y-auto font-sans p-4 sm:p-6"> {/* Adjusted padding here */}
         <DialogHeader className="mb-4">
           <DialogTitle className="text-3xl font-bold tracking-tight">{product.name}</DialogTitle>
           <DialogDescription className="text-base leading-relaxed text-muted-foreground">Product details</DialogDescription>
         </DialogHeader>
-        <div className="grid md:grid-cols-2 gap-4 md:gap-8"> {/* Adjusted gap for responsiveness */}
+        <div className="grid md:grid-cols-2 gap-8">
           {/* Image Gallery */}
           <div className="flex flex-col gap-4">
             <div className="relative w-full h-80 md:h-96 bg-muted rounded-xl overflow-hidden flex items-center justify-center shadow-md">
@@ -289,7 +289,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                     <Ruler className="h-4 w-4" /> View Size Chart
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="w-full max-w-md md:max-w-3xl max-h-[90vh] overflow-y-auto"> {/* Adjusted width classes */}
+                <AlertDialogContent className="max-w-3xl max-w-[90vw] max-h-[90vh] overflow-y-auto"> {/* Added max-w-[90vw] */}
                   <AlertDialogHeader>
                     <AlertDialogTitle className="text-2xl font-bold">Size Chart</AlertDialogTitle>
                     <AlertDialogDescription>
