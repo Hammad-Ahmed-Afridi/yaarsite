@@ -193,7 +193,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
           </div>
 
           {/* Product Details & Actions */}
-          <div className="space-y-6">
+          <div className="space-y-6 w-full"> {/* Added w-full here to ensure it takes full available width */}
             <h3 className="text-3xl font-bold tracking-tight break-words">{product.name}</h3>
             <p className="text-muted-foreground text-lg leading-relaxed break-words">{product.description || "No description available."}</p>
             
