@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import *as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
@@ -229,7 +229,7 @@ export function DiscountDialog({ products, onDiscountApplied }: DiscountDialogPr
           <Percent className="h-4 w-4" /> Discount
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] max-w-[90vw] max-h-[90vh] overflow-y-auto overflow-x-hidden font-sans">
+      <DialogContent className="sm:max-w-[600px] max-w-[90vw] max-h-[90vh] overflow-y-auto overflow-x-hidden font-sans"> {/* Added max-w-[90vw] */}
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold tracking-tight">Apply Product Discount</DialogTitle>
           <DialogDescription className="text-base leading-relaxed">

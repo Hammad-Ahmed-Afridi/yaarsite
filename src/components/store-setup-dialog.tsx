@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import *as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/session-context-provider';
@@ -159,7 +159,7 @@ export function StoreSetupDialog({ onStoreCreated }: StoreSetupDialogProps) {
     <>
       <Dialog open={isDialogOpen}>
         <DialogContent
-          className="w-full max-w-md p-6 font-sans"
+          className="w-full max-w-md p-6 font-sans max-w-[90vw]" // Added max-w-[90vw]
           onPointerDownOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
         >

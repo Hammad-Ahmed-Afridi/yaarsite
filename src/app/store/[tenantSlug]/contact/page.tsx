@@ -96,7 +96,7 @@ export default function StoreContactPage() {
           <div>
             <p className="font-semibold text-base">Visit Us</p>
             {hasAddress ? (
-              <p className="text-muted-foreground text-base">
+              <p className="text-muted-foreground text-base break-words"> {/* Added break-words */}
                 {profile.store_address_line && <span>{profile.store_address_line}, </span>}
                 {profile.store_city && <span>{profile.store_city}, </span>}
                 {profile.store_province && <span>{profile.store_province}</span>}

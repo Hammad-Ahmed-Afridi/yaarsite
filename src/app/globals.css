@@ -2,9 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 @layer base {
+  html {
+    overflow-x: hidden; /* Ensure no horizontal scroll from the root */
+  }
   :root {
     --background: 0 0% 100%; /* White */
     --foreground: 222.2 84% 4.9%; /* Dark blue-grey */

@@ -51,7 +51,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="w-full overflow-x-hidden">
       <head>
         <link rel="manifest" href="/manifest.json" />
         {/* You might want to add more specific icons for different platforms here */}

@@ -170,7 +170,7 @@ export default function OrdersPage() {
               <Card key={order.id} className="bg-card text-card-foreground shadow-md rounded-3xl">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg font-semibold">Order ID: {order.id.substring(0, 8)}...</CardTitle>
-                  <p className="text-sm text-muted-foreground leading-relaxed">Customer: {order.customer_name} ({order.customer_email})</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed break-words">Customer: {order.customer_name} ({order.customer_email})</p> {/* Added break-words */}
                 </CardHeader>
                 <CardContent className="space-y-2 text-base">
                   <div className="flex justify-between items-center">
@@ -179,7 +179,7 @@ export default function OrdersPage() {
                   </div>
                   <div className="flex justify-between items-start">
                     <span className="font-medium">Address:</span>
-                    <div className="text-right leading-relaxed">
+                    <div className="text-right leading-relaxed break-words"> {/* Added break-words */}
                       <span>{order.shipping_address_line},</span><br/>
                       <span>{order.shipping_city}, {order.shipping_province}</span>
                     </div>
@@ -201,7 +201,7 @@ export default function OrdersPage() {
                     <div className="space-y-1 mt-2 border-t pt-2">
                       <p className="font-semibold text-sm">Items Ordered:</p>
                       {order.items_json.map((item, itemIndex) => (
-                        <div key={itemIndex} className="flex justify-between text-sm text-muted-foreground">
+                        <div key={itemIndex} className="flex justify-between text-sm text-muted-foreground break-words"> {/* Added break-words */}
                           <span>
                             {item.name}
                             {item.selected_color && <span className="ml-1">({item.selected_color})</span>}
