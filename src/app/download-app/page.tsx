@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, Download, Smartphone, Monitor, Apple, Chrome } from 'lucide-react'; // Removed Edge
+import { ArrowLeft, Download, Smartphone, Monitor, Apple, Chrome } from 'lucide-react';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
@@ -118,7 +118,6 @@ export default function DownloadAppPage() {
               {/* Edge Desktop */}
               <div className="space-y-2">
                 <h3 className="text-xl font-semibold flex items-center gap-2">
-                  {/* Removed Edge icon as it's not exported by lucide-react */}
                   Microsoft Edge
                 </h3>
                 <ol className="list-decimal list-inside text-muted-foreground space-y-2 leading-relaxed">
@@ -133,9 +132,7 @@ export default function DownloadAppPage() {
           </Card>
         </div>
 
-        <Button asChild className="mt-12 font-semibold">
-          <Link href="/">Back to Dashboard</Link>
-        </Button>
+        {/* Removed the "Back to Dashboard" button */}
       </main>
     </div>
   );
