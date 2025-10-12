@@ -73,18 +73,7 @@ export default function StoreLayout({
     fetchStoreProfile();
   }, [tenantSlug, cartItems, clearCart]); // Added cartItems and clearCart to dependencies
 
-  // Apply custom CSS variables for store theme
-  useEffect(() => {
-    if (profile) {
-      const root = document.documentElement; // Target the <html> element
-      root.style.setProperty('--store-primary', profile.store_primary_color_hsl || 'var(--primary)');
-      root.style.setProperty('--store-background', profile.store_background_color_hsl || 'var(--background)');
-      root.style.setProperty('--store-foreground', profile.store_foreground_color_hsl || 'var(--foreground)'); // Use profile foreground
-      root.style.setProperty('--store-card-background', profile.store_card_background_color_hsl || 'var(--card)');
-      root.style.setProperty('--store-card-foreground', profile.store_card_foreground_color_hsl || 'var(--card-foreground)'); // Use profile card foreground
-    }
-  }, [profile]);
-
+  // Removed the useEffect block that was here
 
   if (isLoading) {
     return <AppLoader message="Loading store..." />;
