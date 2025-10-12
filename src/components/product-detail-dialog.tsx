@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, ShoppingCart, Image as ImageIcon, Ruler, Minus, Plus } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Badge } => '@/components/ui/badge';
 import { useCart } from '@/components/cart-context-provider';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -126,7 +126,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px] max-w-[90vw] max-h-[90vh] overflow-y-auto font-sans p-6"> {/* Added max-w-[90vw] */}
+      <DialogContent className="sm:max-w-[900px] max-w-[90vw] max-h-[90vh] overflow-y-auto font-sans p-4 sm:p-6"> {/* Adjusted padding here */}
         <DialogHeader className="mb-4">
           <DialogTitle className="text-3xl font-bold tracking-tight">{product.name}</DialogTitle>
           <DialogDescription className="text-base leading-relaxed text-muted-foreground">Product details</DialogDescription>

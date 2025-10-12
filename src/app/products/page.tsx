@@ -179,7 +179,7 @@ export default function ProductsPage() {
             <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products.map((product) => {
               const isDiscountActive = product.discount_percentage && product.discount_start_date && product.discount_end_date &&
                                        new Date(product.discount_start_date) <= new Date() && new Date(product.discount_end_date) >= new Date();
@@ -231,11 +231,11 @@ export default function ProductsPage() {
                         {product.category}
                       </Badge>
                     )}
-                    <div className="flex gap-2 mt-4">
+                    <div className="grid grid-cols-2 gap-2 mt-4"> {/* Changed to grid for mobile responsiveness */}
                       <EditProductDialog product={product} onProductUpdated={fetchProducts} />
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="destructive" size="sm" className="flex-1 font-semibold">
+                          <Button variant="destructive" size="sm" className="font-semibold"> {/* Removed flex-1 */}
                             <Trash2 className="mr-2 h-4 w-4" /> Delete
                           </Button>
                         </AlertDialogTrigger>
