@@ -21,7 +21,7 @@ import { StoreWelcomeBanner } from '@/components/store-welcome-banner';
 interface StoreLayoutProps {
   children: React.ReactNode;
   // Update params type to be more general to satisfy Next.js's internal LayoutProps
-  params: { [key: string]: string | string[] | undefined };
+  params: { [key: string]: string | string[] | undefined } | Promise<any>;
 }
 
 export default function StoreLayout({
@@ -31,7 +31,8 @@ export default function StoreLayout({
   const router = useRouter();
   
   // Directly access tenantSlug from params, no need for React.use()
-  const tenantSlug = params.tenantSlug as string; // Cast here for safety
+  // We assert params as the object type because we know it will be at runtime in a client component
+  const tenantSlug = (params as { tenantSlug: string }).tenantSlug;
   
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
