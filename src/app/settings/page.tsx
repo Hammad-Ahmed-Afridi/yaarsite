@@ -95,6 +95,53 @@ export default function SettingsPage() {
     }
   }, [profile, form]);
 
+  // Effect for live theme preview
+  useEffect(() => {
+    const root = document.documentElement;
+    // Store original values to revert on unmount
+    const originalPrimary = root.style.getPropertyValue('--store-primary');
+    const originalBackground = root.style.getPropertyValue('--store-background');
+    const originalCardBackground = root.style.getPropertyValue('--store-card-background');
+
+    const unsubscribe = form.watch((values, { name }) => {
+      if (name === 'storePrimaryAccentColor' || name === 'storeBackgroundColor' || name === 'storeCardHeaderFooterBackgroundColor') {
+        const primaryHex = values.storePrimaryAccentColor;
+        const backgroundHex = values.storeBackgroundColor;
+        const cardBackgroundHex = values.storeCardHeaderFooterBackgroundColor;
+
+        if (primaryHex) {
+          const hsl = hexToHsl(primaryHex);
+          if (hsl) root.style.setProperty('--store-primary', hsl);
+        } else {
+          // Revert to profile's saved value or global default if input is cleared
+          root.style.setProperty('--store-primary', profile?.store_primary_color_hsl || 'var(--primary)');
+        }
+
+        if (backgroundHex) {
+          const hsl = hexToHsl(backgroundHex);
+          if (hsl) root.style.setProperty('--store-background', hsl);
+        } else {
+          root.style.setProperty('--store-background', profile?.store_background_color_hsl || 'var(--background)');
+        }
+
+        if (cardBackgroundHex) {
+          const hsl = hexToHsl(cardBackgroundHex);
+          if (hsl) root.style.setProperty('--store-card-background', hsl);
+        } else {
+          root.style.setProperty('--store-card-background', profile?.store_card_background_color_hsl || 'var(--card)');
+        }
+      }
+    });
+
+    return () => {
+      unsubscribe.unsubscribe();
+      // Revert to original values on component unmount
+      root.style.setProperty('--store-primary', originalPrimary);
+      root.style.setProperty('--store-background', originalBackground);
+      root.style.setProperty('--store-card-background', originalCardBackground);
+    };
+  }, [form, profile]); // Depend on form and profile to ensure correct initial values and updates
+
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
