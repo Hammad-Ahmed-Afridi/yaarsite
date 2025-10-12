@@ -179,7 +179,7 @@ export default function OrdersPage() {
                   </div>
                   <div className="flex justify-between items-start">
                     <span className="font-medium">Address:</span>
-                    <div className="text-right leading-relaxed break-words"> {/* Added break-words */}
+                    <div className="text-right leading-relaxed">
                       <span>{order.shipping_address_line},</span><br/>
                       <span>{order.shipping_city}, {order.shipping_province}</span>
                     </div>
@@ -220,7 +220,7 @@ export default function OrdersPage() {
                       onValueChange={(newStatus: Order['status']) => handleUpdateOrderStatus(order.id, newStatus)}
                       disabled={isUpdatingStatus}
                     >
-                      <SelectTrigger className="w-full font-medium"> {/* Changed w-[140px] to w-full */}
+                      <SelectTrigger className="w-[140px] font-medium">
                         <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
                       <SelectContent>
