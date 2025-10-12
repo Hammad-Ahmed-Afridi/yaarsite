@@ -460,7 +460,7 @@ export default function SettingsPage() {
                       id="jazzcashPhoneNumber"
                       type="tel"
                       placeholder="03001234567"
-                      className="pl-10" {/* Added pl-10 here */}
+                      className="pl-10"
                       {...form.register("jazzcashPhoneNumber")}
                     />
                   </div>
