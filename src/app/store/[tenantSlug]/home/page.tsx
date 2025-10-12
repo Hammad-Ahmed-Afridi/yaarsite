@@ -72,10 +72,10 @@ export default function StoreHomePage() {
         <Store className="h-24 w-24 text-store-primary mb-6" />
       )}
       <h1 className="text-4xl font-bold mb-4 tracking-tight">
-        {profile?.home_page_heading || <span className="text-red-500">Welcome to {profile?.tenant_name || 'our store'}! (Default Heading)</span>} {/* Prominent Default */}
+        {profile?.home_page_heading || `Welcome to ${profile?.tenant_name || 'our store'}!`}
       </h1>
       <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
-        {profile?.home_page_description || <span className="text-red-500">Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you! (Default Description)</span>} {/* Prominent Default */}
+        {profile?.home_page_description || "Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
       </p>
       <Button asChild size="lg" className="font-semibold bg-store-primary text-store-primary-foreground hover:bg-store-primary/90">
         <Link href={`/store/${tenantSlug}`}>
@@ -107,7 +107,7 @@ export default function StoreHomePage() {
             <div className="space-y-4">
               <h2 className="text-3xl font-bold tracking-tight">More About Our Store</h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                {profile?.home_page_content_text || <span className="text-red-500">Here you can tell your customers more about your unique selling propositions, your brand story, or any special offers you have. Make it engaging! (Default Content Text)</span>} {/* Prominent Default */}
+                {profile?.home_page_content_text || "Here you can tell your customers more about your unique selling propositions, your brand story, or any special offers you have. Make it engaging!"}
               </p>
             </div>
           </div>
