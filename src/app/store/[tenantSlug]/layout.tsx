@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, use } from 'react'; // Added 'use' import
+import React, { useEffect, useState } from 'react'; // Removed 'use' import
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Store, ShoppingCart, Menu } from 'lucide-react';
 import Image from 'next/image';
 import { useCart } from '@/components/cart-context-provider';
-import { AppLoader } from '@/components/app-loader';
+import { AppLoader } => '@/components/app-loader';
 import { Profile } from '@/components/session-context-provider';
 import { StoreNavbar } from '@/components/store-navbar';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -25,11 +25,8 @@ export default function StoreLayout({
   params: { tenantSlug: string };
 }) {
   const router = useRouter();
-  // Use React.use() to unwrap params as suggested by the warning.
-  // Wrapping in Promise.resolve ensures `use` always receives a Promise,
-  // even if `params` is currently a plain object (for compatibility).
-  const resolvedParams = use(Promise.resolve(params));
-  const tenantSlug = resolvedParams.tenantSlug;
+  // Directly access tenantSlug from params, as it's a plain object in client components.
+  const tenantSlug = params.tenantSlug;
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
