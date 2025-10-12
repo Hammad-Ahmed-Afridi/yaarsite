@@ -87,9 +87,7 @@ export default function StoreHomePage() {
       </p>
       <Button asChild size="lg" className="font-semibold bg-store-primary text-store-primary-foreground hover:bg-store-primary/90"> {/* Use store-primary */}
         <Link href={`/store/${tenantSlug}`}>
-          <span> {/* Wrapped children in a span */}
-            <Package className="mr-2 h-5 w-5" /> View Our Products
-          </span>
+          <Package className="mr-2 h-5 w-5" /> View Our Products
         </Link>
       </Button>
 

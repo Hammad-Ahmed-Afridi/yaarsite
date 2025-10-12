@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, use } from 'react'; // Import 'use' from React
+import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { useCart } from '@/components/cart-context-provider';
 import { AppLoader } from '@/components/app-loader';
 import { Profile } from '@/components/session-context-provider';
 import { StoreNavbar } from '@/components/store-navbar';
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet'; // Import Sheet components
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'; // Import Sheet components
 import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
 import { toast } from 'sonner'; // Import toast
 import { StoreProfileProvider } from '@/components/store-profile-context-provider'; // Import new provider
@@ -25,8 +25,7 @@ export default function StoreLayout({
   params: { tenantSlug: string };
 }) {
   const router = useRouter();
-  const resolvedParams = use(Promise.resolve(params)); // Unwrap params using React.use
-  const tenantSlug = resolvedParams.tenantSlug; // Access tenantSlug from resolvedParams
+  const tenantSlug = params.tenantSlug;
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -162,9 +161,7 @@ export default function StoreLayout({
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-64 p-4 bg-store-background text-store-foreground"> {/* Use store-specific background/foreground */}
-                  <SheetHeader> {/* Added SheetHeader */}
-                    <SheetTitle className="text-xl font-bold tracking-tight">Navigation</SheetTitle> {/* Wrapped h2 with SheetTitle */}
-                  </SheetHeader>
+                  <h2 className="text-xl font-bold mb-6 tracking-tight">Navigation</h2>
                   <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
                 </SheetContent>
               </Sheet>

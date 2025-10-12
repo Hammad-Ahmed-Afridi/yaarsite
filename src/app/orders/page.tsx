@@ -201,8 +201,8 @@ export default function OrdersPage() {
                     <div className="space-y-1 mt-2 border-t pt-2">
                       <p className="font-semibold text-sm">Items Ordered:</p>
                       {order.items_json.map((item, itemIndex) => (
-                        <div key={itemIndex} className="flex flex-wrap justify-between text-sm text-muted-foreground">
-                          <span className="min-w-0 flex-1"> {/* Added min-w-0 and flex-1 */}
+                        <div key={itemIndex} className="flex justify-between text-sm text-muted-foreground">
+                          <span>
                             {item.name}
                             {item.selected_color && <span className="ml-1">({item.selected_color})</span>}
                             {item.selected_size_input && <span className="ml-1">[{item.selected_size_input}]</span>}
