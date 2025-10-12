@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, use } from 'react'; // Import 'use' hook
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -20,10 +20,8 @@ import { StoreWelcomeBanner } from '@/components/store-welcome-banner';
 // Define the props interface for the client component
 interface StoreLayoutProps {
   children: React.ReactNode;
-  // Use 'any' for params to bypass Next.js's internal LayoutProps constraint
-  // This is a workaround for a known Next.js TypeScript quirk in client layouts.
-  // We still ensure 'tenantSlug' is treated as a string within the component.
-  params: any;
+  // Update params type to reflect it might be a Promise
+  params: Promise<{ tenantSlug: string }> | { tenantSlug: string };
 }
 
 export default function StoreLayout({
@@ -31,8 +29,11 @@ export default function StoreLayout({
   params,
 }: StoreLayoutProps) {
   const router = useRouter();
-  // Safely cast params.tenantSlug to string, as we know it will be a string at runtime
-  const tenantSlug = params.tenantSlug as string;
+  
+  // Unwrap params using React.use()
+  const resolvedParams = use(params);
+  const tenantSlug = resolvedParams.tenantSlug as string;
+  
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
