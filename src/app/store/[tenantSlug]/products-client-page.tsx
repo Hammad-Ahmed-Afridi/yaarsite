@@ -178,7 +178,7 @@ export default function StoreProductsPage() {
               <p className="text-base text-muted-foreground leading-relaxed">Please select another category or view all products.</p>
             </div>
           ) : (
-            <div className="grid gap-6 grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Adjusted grid for mobile */}
+            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Adjusted grid for mobile */}
               {filteredProducts.map((product) => {
                 const isDiscountActive = product.discount_percentage && product.discount_start_date && product.discount_end_date &&
                                          new Date(product.discount_start_date) <= new Date() && new Date(product.discount_end_date) >= new Date();
