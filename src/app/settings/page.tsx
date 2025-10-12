@@ -43,7 +43,9 @@ const formSchema = z.object({
   // Simplified Store theme colors (HEX format for input)
   storePrimaryAccentColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
   storeBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
+  storeForegroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(), // New: Store Foreground Color
   storeCardHeaderFooterBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
+  storeCardHeaderFooterForegroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(), // New: Store Card Foreground Color
 });
 
 const DELIVERY_CHARGE_OPTIONS = [
@@ -73,7 +75,9 @@ export default function SettingsPage() {
       logo: undefined,
       storePrimaryAccentColor: "",
       storeBackgroundColor: "",
+      storeForegroundColor: "", // Default
       storeCardHeaderFooterBackgroundColor: "",
+      storeCardHeaderFooterForegroundColor: "", // Default
     },
   });
 
@@ -89,7 +93,9 @@ export default function SettingsPage() {
         // Convert HSL from profile to HEX for form display
         storePrimaryAccentColor: profile.store_primary_color_hsl ? hslToHex(profile.store_primary_color_hsl) || "" : "",
         storeBackgroundColor: profile.store_background_color_hsl ? hslToHex(profile.store_background_color_hsl) || "" : "",
+        storeForegroundColor: profile.store_foreground_color_hsl ? hslToHex(profile.store_foreground_color_hsl) || "" : "", // New
         storeCardHeaderFooterBackgroundColor: profile.store_card_background_color_hsl ? hslToHex(profile.store_card_background_color_hsl) || "" : "",
+        storeCardHeaderFooterForegroundColor: profile.store_card_foreground_color_hsl ? hslToHex(profile.store_card_foreground_color_hsl) || "" : "", // New
       });
       setLogoPreview(profile.avatar_url || null);
     }
@@ -262,7 +268,9 @@ export default function SettingsPage() {
       // Convert HEX colors to HSL for storage
       const storePrimaryAccentColorHsl = values.storePrimaryAccentColor ? hexToHsl(values.storePrimaryAccentColor) : null;
       const storeBackgroundColorHsl = values.storeBackgroundColor ? hexToHsl(values.storeBackgroundColor) : null;
+      const storeForegroundColorHsl = values.storeForegroundColor ? hexToHsl(values.storeForegroundColor) : null; // New
       const storeCardHeaderFooterBackgroundColorHsl = values.storeCardHeaderFooterBackgroundColor ? hexToHsl(values.storeCardHeaderFooterBackgroundColor) : null;
+      const storeCardHeaderFooterForegroundColorHsl = values.storeCardHeaderFooterForegroundColor ? hexToHsl(values.storeCardHeaderFooterForegroundColor) : null; // New
 
 
       const { error } = await supabase
@@ -278,7 +286,9 @@ export default function SettingsPage() {
           // New: Save HSL colors
           store_primary_color_hsl: storePrimaryAccentColorHsl,
           store_background_color_hsl: storeBackgroundColorHsl,
+          store_foreground_color_hsl: storeForegroundColorHsl, // New
           store_card_background_color_hsl: storeCardHeaderFooterBackgroundColorHsl,
+          store_card_foreground_color_hsl: storeCardHeaderFooterForegroundColorHsl, // New
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -451,7 +461,7 @@ export default function SettingsPage() {
                   )}
                 </div>
 
-                <h3 className="text-xl font-semibold tracking-tight mt-8">Payment Settings</h3>
+                <h3 className="text-xl font-semibold mt-8">Payment Settings</h3>
                 <div className="grid gap-2">
                   <Label htmlFor="jazzcashPhoneNumber" className="text-sm font-medium">JazzCash Phone Number</Label>
                   <div className="relative">
@@ -502,10 +512,24 @@ export default function SettingsPage() {
                     )}
                   </div>
                   <div className="grid gap-2">
+                    <Label htmlFor="storeForegroundColor" className="text-sm font-medium">Store Foreground Color</Label>
+                    <Input id="storeForegroundColor" type="color" {...form.register("storeForegroundColor")} />
+                    {form.formState.errors.storeForegroundColor && (
+                      <p className="text-destructive text-sm">{form.formState.errors.storeForegroundColor.message}</p>
+                    )}
+                  </div>
+                  <div className="grid gap-2">
                     <Label htmlFor="storeCardHeaderFooterBackgroundColor" className="text-sm font-medium">Card, Header & Footer Background Color</Label>
                     <Input id="storeCardHeaderFooterBackgroundColor" type="color" {...form.register("storeCardHeaderFooterBackgroundColor")} />
                     {form.formState.errors.storeCardHeaderFooterBackgroundColor && (
                       <p className="text-destructive text-sm">{form.formState.errors.storeCardHeaderFooterBackgroundColor.message}</p>
+                    )}
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="storeCardHeaderFooterForegroundColor" className="text-sm font-medium">Card, Header & Footer Foreground Color</Label>
+                    <Input id="storeCardHeaderFooterForegroundColor" type="color" {...form.register("storeCardHeaderFooterForegroundColor")} />
+                    {form.formState.errors.storeCardHeaderFooterForegroundColor && (
+                      <p className="text-destructive text-sm">{form.formState.errors.storeCardHeaderFooterForegroundColor.message}</p>
                     )}
                   </div>
                   <div className="grid gap-2">
