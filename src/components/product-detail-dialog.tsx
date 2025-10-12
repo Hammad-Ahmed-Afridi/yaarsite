@@ -117,7 +117,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
       toast.error("This product is out of stock.");
       return;
     }
-    if (hasVariants && !selectedVariant) {
+    if (hasVariants && selectedVariant === undefined) { // Changed condition here
       toast.error("Please select all product variations.");
       return;
     }
@@ -339,7 +339,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
             <Button
               className="w-full py-6 text-lg flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
               onClick={handleAddToCart}
-              disabled={currentStock <= 0 || (hasVariants && !selectedVariant)}
+              disabled={currentStock <= 0 || (hasVariants && selectedVariant === undefined)}
             >
               <ShoppingCart className="h-5 w-5" />
               {currentStock <= 0 ? "Out of Stock" : "Add to Cart"}
