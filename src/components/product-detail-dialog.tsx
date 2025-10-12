@@ -39,7 +39,7 @@ interface ProductDetailDialogProps {
 
 export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerId }: ProductDetailDialogProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(undefined); // Changed from null to undefined
   const [selectedAttributes, setSelectedAttributes] = useState<{[key: string]: string}>({});
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
@@ -59,7 +59,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
         setSelectedVariant(product.variants[0]); // Select the first variant by default
       } else {
         setSelectedAttributes({});
-        setSelectedVariant(null);
+        setSelectedVariant(undefined); // Changed from null to undefined
       }
     }
   }, [isOpen, product]);
@@ -72,7 +72,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
           variant.attributes[attrName] === selectedAttributes[attrName]
         )
       );
-      setSelectedVariant(foundVariant || null);
+      setSelectedVariant(foundVariant || undefined); // Changed from null to undefined
     }
   }, [selectedAttributes, product]);
 

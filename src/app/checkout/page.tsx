@@ -151,8 +151,8 @@ export default function CheckoutPage() {
         price: item.price,
         quantity: item.quantity,
         image_url: item.image_url,
-        selected_color: item.selected_color || null, // Include selected color
-        selected_size_input: item.selected_size_input || null, // Include selected size input
+        variantId: item.variantId || null, // Include variantId
+        selectedAttributes: item.selectedAttributes || null, // Include selected attributes
       }));
 
       const response = await fetch('/api/place-order', {
