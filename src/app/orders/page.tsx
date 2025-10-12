@@ -1,19 +1,21 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react'; // Import useRef
 import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Trash2, Edit, ShoppingCart, ArrowLeft, Wallet, Banknote, Smartphone } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'; // Import Dialog components
+import { Trash2, Edit, ShoppingCart, ArrowLeft, Wallet, Banknote, Smartphone, Printer } from 'lucide-react'; // Import Printer icon
 import { useSession } from '@/components/session-context-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { AppLoader } from '@/components/app-loader';
 import Link from 'next/link';
+import { InvoiceDocument } from '@/components/invoice-document'; // Import InvoiceDocument
 
 interface Order {
   id: string;
@@ -32,9 +34,9 @@ interface Order {
     price: number;
     quantity: number;
     image_url?: string;
-    selected_color?: string; // New: selected color
-    selected_size_input?: string; // New: selected size input
-  }>; // Explicitly type items_json
+    selected_color?: string;
+    selected_size_input?: string;
+  }>;
   payment_method: string;
   created_at: string;
   updated_at: string;
@@ -49,6 +51,9 @@ export default function OrdersPage() {
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [isDeletingOrder, setIsDeletingOrder] = useState(false);
+  const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false); // State for print dialog
+  const [selectedOrderForPrint, setSelectedOrderForPrint] = useState<Order | null>(null); // State for selected order
+  const invoiceRef = useRef<HTMLDivElement>(null); // Ref for the invoice component
 
   const fetchOrders = useCallback(async () => {
     if (!user) {
@@ -135,6 +140,34 @@ export default function OrdersPage() {
     setIsDeletingOrder(false);
   };
 
+  const handlePrintInvoice = (order: Order) => {
+    setSelectedOrderForPrint(order);
+    setIsPrintDialogOpen(true);
+  };
+
+  const triggerPrint = () => {
+    if (invoiceRef.current) {
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write('<html><head><title>Invoice</title>');
+        // Copy styles from the current document
+        Array.from(document.querySelectorAll('link[rel="stylesheet"], style')).forEach(node => {
+          printWindow.document.write(node.outerHTML);
+        });
+        printWindow.document.write('</head><body>');
+        printWindow.document.write('<div class="print-only">'); // Add a class for print-only content
+        printWindow.document.write(invoiceRef.current.innerHTML);
+        printWindow.document.write('</div></body></html>');
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+      } else {
+        toast.error("Failed to open print window. Please allow pop-ups.");
+      }
+    }
+  };
+
   if (isLoadingOrders) {
     return (
       <AppLoader message="Loading orders..." />
@@ -173,24 +206,24 @@ export default function OrdersPage() {
                   <p className="text-sm text-muted-foreground leading-relaxed">Customer: {order.customer_name} ({order.customer_email})</p>
                 </CardHeader>
                 <CardContent className="space-y-2 text-base">
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center flex-wrap"> {/* Added flex-wrap */}
                     <span className="font-medium">Phone:</span>
-                    <span>{order.customer_phone}</span>
+                    <span className="text-right">{order.customer_phone}</span>
                   </div>
-                  <div className="flex justify-between items-start">
+                  <div className="flex justify-between items-start flex-wrap"> {/* Added flex-wrap */}
                     <span className="font-medium">Address:</span>
-                    <div className="text-right leading-relaxed">
+                    <div className="text-right leading-relaxed max-w-[70%]"> {/* Added max-w */}
                       <span>{order.shipping_address_line},</span><br/>
                       <span>{order.shipping_city}, {order.shipping_province}</span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center flex-wrap"> {/* Added flex-wrap */}
                     <span className="font-medium">Total:</span>
                     <span>Rs{order.total_amount.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center flex-wrap"> {/* Added flex-wrap */}
                     <span className="font-medium">Payment Method:</span>
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1 text-right">
                       {getPaymentMethodIcon(order.payment_method)}
                       {order.payment_method}
                     </span>
@@ -201,8 +234,8 @@ export default function OrdersPage() {
                     <div className="space-y-1 mt-2 border-t pt-2">
                       <p className="font-semibold text-sm">Items Ordered:</p>
                       {order.items_json.map((item, itemIndex) => (
-                        <div key={itemIndex} className="flex justify-between text-sm text-muted-foreground">
-                          <span>
+                        <div key={itemIndex} className="flex justify-between text-sm text-muted-foreground flex-wrap"> {/* Added flex-wrap */}
+                          <span className="max-w-[70%] truncate"> {/* Added truncate */}
                             {item.name}
                             {item.selected_color && <span className="ml-1">({item.selected_color})</span>}
                             {item.selected_size_input && <span className="ml-1">[{item.selected_size_input}]</span>}
@@ -213,7 +246,7 @@ export default function OrdersPage() {
                     </div>
                   )}
 
-                  <div className="flex justify-between items-center pt-2 border-t">
+                  <div className="flex justify-between items-center pt-2 border-t flex-wrap"> {/* Added flex-wrap */}
                     <span className="font-medium">Status:</span>
                     <Select
                       value={order.status}
@@ -232,11 +265,14 @@ export default function OrdersPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center flex-wrap"> {/* Added flex-wrap */}
                     <span className="font-medium">Date:</span>
                     <span>{new Date(order.created_at).toLocaleDateString()}</span>
                   </div>
-                  <div className="flex justify-end mt-4">
+                  <div className="flex justify-end gap-2 mt-4"> {/* Added gap-2 */}
+                    <Button variant="outline" size="sm" className="font-semibold" onClick={() => handlePrintInvoice(order)}>
+                      <Printer className="mr-2 h-4 w-4" /> Print
+                    </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="destructive" size="sm" className="font-semibold">
@@ -269,6 +305,29 @@ export default function OrdersPage() {
           </div>
         )}
       </main>
+
+      {/* Print Invoice Dialog */}
+      <Dialog open={isPrintDialogOpen} onOpenChange={setIsPrintDialogOpen}>
+        <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto font-sans">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold tracking-tight">Print Invoice</DialogTitle>
+            <DialogDescription className="text-base leading-relaxed">
+              Review the invoice before printing.
+            </DialogDescription>
+          </DialogHeader>
+          {selectedOrderForPrint && profile && (
+            <InvoiceDocument order={selectedOrderForPrint} storeProfile={profile} ref={invoiceRef} />
+          )}
+          <div className="flex justify-end gap-2 no-print"> {/* Added no-print class */}
+            <Button variant="outline" onClick={() => setIsPrintDialogOpen(false)} className="font-semibold">
+              Cancel
+            </Button>
+            <Button onClick={triggerPrint} className="font-semibold">
+              <Printer className="mr-2 h-4 w-4" /> Print Invoice
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
