@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff, Mail, Lock, Phone, User, Store, RefreshCcw } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, Phone, User, RefreshCcw } from 'lucide-react'; // Removed Store icon
 import Link from 'next/link';
 
 // Function to generate a random 4-character alphanumeric code
@@ -157,7 +157,7 @@ export default function SignupPage() {
     <div className="flex items-center justify-center min-h-screen bg-background p-4 font-sans">
       <Card className="w-full max-w-md bg-card text-card-foreground shadow-lg rounded-3xl">
         <CardHeader className="text-center space-y-2">
-          <Store className="mx-auto h-10 w-10 text-primary" />
+          {/* Removed Store icon */}
           <CardTitle className="text-3xl font-bold tracking-tight">Create Account</CardTitle>
           <CardDescription className="text-base text-muted-foreground leading-relaxed">Sign up to get started with your store</CardDescription>
           <p className="text-destructive text-sm font-semibold mt-2">
