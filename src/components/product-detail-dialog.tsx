@@ -134,7 +134,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
         <div className="grid md:grid-cols-2 gap-8">
           {/* Image Gallery */}
           <div className="flex flex-col gap-4">
-            <div className="relative w-full h-80 md:h-96 bg-muted rounded-xl overflow-hidden flex items-center justify-center shadow-md">
+            <div className="relative w-full h-auto max-h-[50vh] md:h-96 bg-muted rounded-xl overflow-hidden flex items-center justify-center shadow-md">
               {images.length > 0 ? (
                 <>
                   <Image
@@ -296,7 +296,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                       Refer to this chart to find your perfect size.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
-                  <div className="relative w-full h-[60vh] flex items-center justify-center bg-muted rounded-md overflow-hidden">
+                  <div className="relative w-full h-auto max-h-[70vh] flex items-center justify-center bg-muted rounded-md overflow-hidden">
                     <Image
                       src={product.size_chart_url!}
                       alt="Size Chart"
