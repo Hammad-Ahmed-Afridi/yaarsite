@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, ShoppingCart, Image as ImageIcon, Ruler, Minus, Plus } from 'lucide-react';
-import { Badge } => '@/components/ui/badge';
+import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/components/cart-context-provider';
 import { toast } from 'sonner';
 import { format } from 'date-fns';

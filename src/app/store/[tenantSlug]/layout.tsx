@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, use } from 'react'; // Import 'use' hook
+import React, { useEffect, useState } from 'react'; // Removed 'use' hook from import
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -20,8 +20,8 @@ import { StoreWelcomeBanner } from '@/components/store-welcome-banner';
 // Define the props interface for the client component
 interface StoreLayoutProps {
   children: React.ReactNode;
-  // Update params type to reflect it might be a Promise
-  params: Promise<{ tenantSlug: string }> | { tenantSlug: string };
+  // Update params type to reflect it is directly an object
+  params: { tenantSlug: string };
 }
 
 export default function StoreLayout({
@@ -30,9 +30,8 @@ export default function StoreLayout({
 }: StoreLayoutProps) {
   const router = useRouter();
   
-  // Unwrap params using React.use()
-  const resolvedParams = use(params);
-  const tenantSlug = resolvedParams.tenantSlug as string;
+  // Directly access tenantSlug from params, no need for React.use()
+  const tenantSlug = params.tenantSlug as string;
   
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
