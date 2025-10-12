@@ -161,7 +161,7 @@ export default function SignupPage() {
           <CardTitle className="text-3xl font-bold tracking-tight">Create Account</CardTitle>
           <CardDescription className="text-base text-muted-foreground leading-relaxed">Sign up to get started with your store</CardDescription>
           <p className="text-destructive text-sm font-semibold mt-2">
-            Important: Kindly put in the correct credentials or your account will get banned and deleted.
+            Please ensure your details are accurate to maintain account security and avoid service interruptions.
           </p>
         </CardHeader>
         <CardContent>
