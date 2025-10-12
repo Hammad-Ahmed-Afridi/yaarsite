@@ -1,21 +1,21 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, use } from 'react'; // Added 'use' import
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Store, ShoppingCart, Menu } from 'lucide-react'; // Import Menu icon
+import { Store, ShoppingCart, Menu } from 'lucide-react';
 import Image from 'next/image';
 import { useCart } from '@/components/cart-context-provider';
 import { AppLoader } from '@/components/app-loader';
 import { Profile } from '@/components/session-context-provider';
 import { StoreNavbar } from '@/components/store-navbar';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'; // Import Sheet components
-import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile hook
-import { toast } from 'sonner'; // Import toast
-import { StoreProfileProvider } from '@/components/store-profile-context-provider'; // Import new provider
-import { StoreWelcomeBanner } from '@/components/store-welcome-banner'; // Import StoreWelcomeBanner
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { toast } from 'sonner';
+import { StoreProfileProvider } from '@/components/store-profile-context-provider';
+import { StoreWelcomeBanner } from '@/components/store-welcome-banner';
 
 export default function StoreLayout({
   children,
@@ -25,13 +25,17 @@ export default function StoreLayout({
   params: { tenantSlug: string };
 }) {
   const router = useRouter();
-  const tenantSlug = params.tenantSlug;
+  // Use React.use() to unwrap params as suggested by the warning.
+  // Wrapping in Promise.resolve ensures `use` always receives a Promise,
+  // even if `params` is currently a plain object (for compatibility).
+  const resolvedParams = use(Promise.resolve(params));
+  const tenantSlug = resolvedParams.tenantSlug;
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isSheetOpen, setIsSheetOpen] = useState(false); // State for mobile menu
-  const { cartItems, itemCount, clearCart } = useCart(); // Get clearCart from context
-  const isMobile = useIsMobile(); // Use the hook to detect mobile
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const { cartItems, itemCount, clearCart } = useCart();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     async function fetchStoreProfile() {
@@ -46,7 +50,7 @@ export default function StoreLayout({
       try {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('*') // Simplified to select all columns
+          .select('*')
           .eq('tenant_slug', tenantSlug)
           .single();
 
@@ -57,7 +61,6 @@ export default function StoreLayout({
         }
         setProfile(profileData);
 
-        // Check if cart needs to be cleared
         if (cartItems.length > 0 && cartItems[0].storeOwnerId !== profileData.id) {
           clearCart();
           toast.info(`Your cart was cleared because you are now shopping at ${profileData.tenant_name || 'a new store'}.`);
@@ -71,16 +74,14 @@ export default function StoreLayout({
     }
 
     fetchStoreProfile();
-  }, [tenantSlug, cartItems, clearCart]); // Added cartItems and clearCart to dependencies
+  }, [tenantSlug, cartItems, clearCart]);
 
-  // Apply custom CSS variables for store theme
   useEffect(() => {
     if (profile) {
-      const root = document.documentElement; // Target the <html> element
+      const root = document.documentElement;
       root.style.setProperty('--store-primary', profile.store_primary_color_hsl || 'var(--primary)');
       root.style.setProperty('--store-background', profile.store_background_color_hsl || 'var(--background)');
       root.style.setProperty('--store-card-background', profile.store_card_background_color_hsl || 'var(--card)');
-      // Foreground colors will default to the theme's foregrounds if not explicitly set
       root.style.setProperty('--store-foreground', 'var(--foreground)');
       root.style.setProperty('--store-card-foreground', 'var(--card-foreground)');
     }
@@ -113,9 +114,9 @@ export default function StoreLayout({
 
   return (
     <StoreProfileProvider initialProfile={profile}>
-      <div className="min-h-screen bg-store-background text-store-foreground flex flex-col font-sans"> {/* Use store-specific background/foreground */}
+      <div className="min-h-screen bg-store-background text-store-foreground flex flex-col font-sans">
         {/* Header */}
-        <header className="flex items-center justify-between p-4 border-b border-border bg-store-card text-store-card-foreground"> {/* Use store-specific card colors */}
+        <header className="flex items-center justify-between p-4 border-b border-border bg-store-card text-store-card-foreground">
           {/* Left section: Logo + Store Name */}
           <div className="flex items-center space-x-4">
             {profile?.avatar_url ? (
@@ -160,7 +161,7 @@ export default function StoreLayout({
                     <span className="sr-only">Toggle menu</span>
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-64 p-4 bg-store-background text-store-foreground"> {/* Use store-specific background/foreground */}
+                <SheetContent side="right" className="w-64 p-4 bg-store-background text-store-foreground">
                   <h2 className="text-xl font-bold mb-6 tracking-tight">Navigation</h2>
                   <StoreNavbar tenantSlug={tenantSlug} direction="vertical" onLinkClick={() => setIsSheetOpen(false)} />
                 </SheetContent>
@@ -173,11 +174,11 @@ export default function StoreLayout({
         <StoreWelcomeBanner message={profile?.store_page_welcome_message || `Welcome to ${profile?.tenant_name || 'our store'}!`} />
 
         {/* Main Content */}
-        <main className="flex-1 p-4 sm:p-8"> {/* Adjusted padding */}
+        <main className="flex-1 p-4 sm:p-8">
           {children}
         </main>
 
-        <footer className="w-full py-4 text-center text-store-foreground text-sm border-t border-border bg-store-card"> {/* Use store-specific card colors */}
+        <footer className="w-full py-4 text-center text-store-foreground text-sm border-t border-border bg-store-card">
           Made with Yaarsite
         </footer>
       </div>
