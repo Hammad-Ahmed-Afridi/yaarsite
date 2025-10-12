@@ -131,7 +131,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full sm:max-w-[900px] max-w-[90vw] max-h-[90vh] flex flex-col overflow-hidden overflow-x-hidden font-sans p-4 sm:p-6">
+      <DialogContent className="w-full sm:max-w-[900px] max-w-[90vw] max-h-[90vh] flex flex-col overflow-hidden font-sans p-4 sm:p-6">
         <DialogHeader className="mb-4 flex-shrink-0">
           <DialogTitle className="text-3xl font-bold tracking-tight break-words">{product.name}</DialogTitle>
           <DialogDescription className="text-base leading-relaxed text-muted-foreground break-words">Product details</DialogDescription>
@@ -337,9 +337,10 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
             )}
           </div>
         </div>
-        {/* Re-added flex-shrink-0 */}
         <Button
-          className="w-full py-6 text-lg flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200 mt-6 flex-shrink-0"
+          className={cn(
+            "w-full py-6 text-lg flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200 mt-6 flex-shrink-0"
+          )}
           onClick={handleAddToCart}
           disabled={product.stock <= 0 || (hasColors && !selectedColor)}
         >
