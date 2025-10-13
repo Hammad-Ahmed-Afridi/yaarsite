@@ -30,7 +30,6 @@ export default function LandingPage() {
         "JazzCash & EasyPaisa Payments",
         "Product Discount Feature",
         "Product Size Charts & Colors",
-        "Limited Support",
       ],
       buttonText: "Start for Free",
       buttonLink: "/signup",
@@ -43,8 +42,8 @@ export default function LandingPage() {
       priceYearly: 5000,
       features: [
         "Everything in Free", // Inherits all features from the Free plan
-        "Unlimited Products",
-        "Priority Support",
+        "Unlimited Products", // Overrides the 2-product limit
+        "Priority Support", // Overrides limited support
       ],
       buttonText: "Go Pro",
       buttonLink: "/signup",
@@ -57,10 +56,11 @@ export default function LandingPage() {
       priceYearly: 70000,
       features: [
         "Everything in Pro",
+        "Everything custom made just for you",
+        "Prebuilt .com domain integration",
+        "Highly customizable and robust store with all the features that you need",
         "Advanced Analytics & Reporting",
         "Dedicated Account Manager",
-        "Custom Domain Integration (Coming Soon)",
-        "API Access (Coming Soon)",
         "24/7 Premium Support",
       ],
       buttonText: "Get Business",
