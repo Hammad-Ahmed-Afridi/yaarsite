@@ -134,8 +134,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
       <DialogContent className="w-full sm:max-w-[900px] max-w-[90vw] max-h-[90vh] font-sans p-4 sm:p-6"> {/* Removed flex-col and overflow-y-auto */}
         <div className="flex flex-col h-full"> {/* New wrapper div to manage internal flex layout */}
           <DialogHeader className="mb-3 flex-shrink-0">
-            <DialogTitle className="text-2xl font-bold tracking-tight break-words">{product.name}</DialogTitle>
-            <DialogDescription className="text-sm leading-relaxed text-muted-foreground break-words">Product details</DialogDescription>
+            {/* Removed DialogTitle and DialogDescription */}
           </DialogHeader>
           <div className="flex-1 min-w-0 overflow-y-auto"> {/* This div now handles scrolling */}
             <div className="grid md:grid-cols-2 gap-6">
@@ -200,29 +199,29 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               </div>
 
               {/* Product Details & Actions */}
-              <div className="space-y-4 w-full">
-                <h3 className="text-2xl font-bold tracking-tight break-words">{product.name}</h3>
+              <div className="space-y-3 w-full"> {/* Reduced space-y */}
+                <h3 className="text-xl font-bold tracking-tight break-words">{product.name}</h3> {/* Reduced font size */}
                 
                 {/* Price and Stock */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2"> {/* Reduced gap */}
                   {isDiscountActive && product.original_price !== null ? (
                     <div className="flex items-baseline gap-1">
-                      <span className="text-base text-muted-foreground line-through">Rs{product.original_price.toFixed(2)}</span>
-                      <span className="text-3xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span>
+                      <span className="text-sm text-muted-foreground line-through">Rs{product.original_price.toFixed(2)}</span> {/* Reduced font size */}
+                      <span className="text-2xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span> {/* Reduced font size */}
                     </div>
                   ) : (
-                    <span className="text-3xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span>
+                    <span className="text-2xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span> {/* Reduced font size */}
                   )}
-                  <Badge variant="secondary" className="text-sm px-3 py-1 font-medium">
+                  <Badge variant="secondary" className="text-xs px-2 py-0.5 font-medium"> {/* Reduced font size and padding */}
                     {product.stock} in stock
                   </Badge>
                 </div>
                 {isDiscountActive && (
                   <div className="space-y-1">
-                    <Badge className="bg-green-500 text-white text-xs px-2 py-0.5 font-medium">
+                    <Badge className="bg-green-500 text-white text-xs px-2 py-0.5 font-medium"> {/* Reduced font size and padding */}
                       {product.discount_percentage}% OFF!
                     </Badge>
-                    <p className="text-xs text-muted-foreground break-words">
+                    <p className="text-xs text-muted-foreground break-words"> {/* Reduced font size */}
                       Valid from {format(new Date(product.discount_start_date!), "PPP")} to {format(new Date(product.discount_end_date!), "PPP")}
                     </p>
                   </div>
@@ -230,11 +229,11 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
               {/* Description */}
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground leading-relaxed break-words">
+                <p className="text-xs text-muted-foreground leading-relaxed break-words"> {/* Reduced font size */}
                   {showFullDescription ? product.description : shortDescription}
                 </p>
                 {canToggleDescription && (
-                  <Button variant="link" onClick={() => setShowFullDescription(!showFullDescription)} className="p-0 h-auto text-primary text-sm">
+                  <Button variant="link" onClick={() => setShowFullDescription(!showFullDescription)} className="p-0 h-auto text-primary text-xs"> {/* Reduced font size */}
                     {showFullDescription ? "Read Less" : "Read More"}
                   </Button>
                 )}
@@ -243,7 +242,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               {/* Color Selection */}
               {hasColors && (
                 <div className="space-y-1">
-                  <Label className="text-sm font-medium">Select Color:</Label>
+                  <Label className="text-xs font-medium">Select Color:</Label> {/* Reduced font size */}
                   <RadioGroup
                     value={selectedColor}
                     onValueChange={setSelectedColor}
@@ -255,7 +254,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                         <Label
                           htmlFor={`color-${color}`}
                           className={cn(
-                            "relative w-8 h-8 rounded-full border-2 cursor-pointer flex items-center justify-center",
+                            "relative w-7 h-7 rounded-full border-2 cursor-pointer flex items-center justify-center", {/* Reduced size */}
                             "peer-data-[state=checked]:ring-2 peer-data-[state=checked]:ring-primary peer-data-[state=checked]:ring-offset-2",
                             "hover:ring-1 hover:ring-muted-foreground transition-all duration-200",
                             // Fallback border for light colors, or if color name isn't a valid CSS color
@@ -265,7 +264,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                           title={color}
                         >
                           {selectedColor === color && (
-                            <Check className="h-4 w-4 text-white drop-shadow-sm" />
+                            <Check className="h-3 w-3 text-white drop-shadow-sm" /> {/* Reduced icon size */}
                           )}
                           <span className="sr-only">{color}</span>
                         </Label>
@@ -277,23 +276,23 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
               {/* Quantity Selector */}
               <div className="space-y-1">
-                <Label htmlFor="quantity" className="text-sm font-medium">Quantity:</Label>
+                <Label htmlFor="quantity" className="text-xs font-medium">Quantity:</Label> {/* Reduced font size */}
                 <div className="flex items-center gap-1">
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-7 w-7"
+                    className="h-6 w-6" {/* Reduced size */}
                     onClick={() => handleQuantityChange(quantity - 1)}
                     disabled={quantity <= 1 || product.stock <= 0}
                   >
-                    <Minus className="h-3 w-3" />
+                    <Minus className="h-3 w-3" /> {/* Reduced icon size */}
                   </Button>
                   <Input
                     id="quantity"
                     type="number"
                     value={quantity}
                     onChange={(e) => handleQuantityChange(parseInt(e.target.value))}
-                    className="w-16 text-center text-sm"
+                    className="w-14 text-center text-xs" {/* Reduced width and font size */}
                     min="1"
                     max={product.stock}
                     disabled={product.stock <= 0}
@@ -301,11 +300,11 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-7 w-7"
+                    className="h-6 w-6" {/* Reduced size */}
                     onClick={() => handleQuantityChange(quantity + 1)}
                     disabled={quantity >= product.stock || product.stock <= 0}
                   >
-                    <Plus className="h-3 w-3" />
+                    <Plus className="h-3 w-3" /> {/* Reduced icon size */}
                   </Button>
                 </div>
               </div>
@@ -314,42 +313,42 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               {hasSizeChart && (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="outline" className="w-full flex items-center gap-2 font-semibold text-sm py-2 h-auto">
-                      <Ruler className="h-4 w-4" /> View Size Chart
+                    <Button variant="outline" className="w-full flex items-center gap-2 font-semibold text-xs py-1.5 h-auto"> {/* Reduced font size and padding */}
+                      <Ruler className="h-3 w-3" /> View Size Chart {/* Reduced icon size */}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent className="w-full max-w-3xl max-w-[90vw] max-h-[90vh] overflow-y-auto">
                     <AlertDialogHeader>
-                      <AlertDialogTitle className="text-xl font-bold break-words">Size Chart</AlertDialogTitle>
-                    <AlertDialogDescription className="text-sm break-words">
-                      Refer to this chart to find your perfect size.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <div className="relative w-full h-auto max-h-[70vh] flex items-center justify-center bg-muted rounded-md overflow-hidden">
-                    <Image
-                      src={product.size_chart_url!}
-                      alt="Size Chart"
-                      fill
-                      style={{ objectFit: 'contain' }}
-                      className="object-center"
-                    />
-                  </div>
-                  <AlertDialogAction className="w-full font-semibold text-sm py-2 h-auto">Close</AlertDialogAction>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
+                      <AlertDialogTitle className="text-lg font-bold break-words">Size Chart</AlertDialogTitle> {/* Reduced font size */}
+                      <AlertDialogDescription className="text-xs break-words"> {/* Reduced font size */}
+                        Refer to this chart to find your perfect size.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <div className="relative w-full h-auto max-h-[70vh] flex items-center justify-center bg-muted rounded-md overflow-hidden">
+                      <Image
+                        src={product.size_chart_url!}
+                        alt="Size Chart"
+                        fill
+                        style={{ objectFit: 'contain' }}
+                        className="object-center"
+                      />
+                    </div>
+                    <AlertDialogAction className="w-full font-semibold text-xs py-1.5 h-auto">Close</AlertDialogAction> {/* Reduced font size and padding */}
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+            </div>
           </div>
-        </div>
-        <Button
-          className={cn(
-            "w-full py-3 text-base flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200 mt-4 flex-shrink-0"
-          )}
-          onClick={handleAddToCart}
-          disabled={product.stock <= 0 || (hasColors && !selectedColor)}
-        >
-          <ShoppingCart className="h-4 w-4" />
-          {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
-        </Button>
+          <Button
+            className={cn(
+              "w-full py-2 text-sm flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200 mt-3 flex-shrink-0" {/* Reduced font size, padding, and margin-top */}
+            )}
+            onClick={handleAddToCart}
+            disabled={product.stock <= 0 || (hasColors && !selectedColor)}
+          >
+            <ShoppingCart className="h-3 w-3" /> {/* Reduced icon size */}
+            {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
+          </Button>
         </div> {/* Closes new wrapper div */}
       </DialogContent>
     </Dialog>
