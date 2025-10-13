@@ -5,8 +5,8 @@ import Image from 'next/image';
 import {
   Dialog,
   DialogContent,
-  // Removed DialogHeader import
-  // Removed DialogTitle import
+  DialogHeader,
+  DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -132,12 +132,11 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="w-full sm:max-w-[900px] max-w-[90vw] max-h-[90vh] flex flex-col overflow-y-auto overflow-x-hidden font-sans p-4 sm:p-6">
-        <div className="flex flex-col h-full"> {/* This is the single direct child of DialogContent */}
-          {/* Header section */}
-          <div className="mb-4 flex-shrink-0 flex flex-col space-y-1.5 text-center sm:text-left">
-            {/* DialogTitle is removed as it's sr-only and might cause parsing issues */}
+        <div className="flex flex-col h-full"> {/* New wrapper div */}
+          <DialogHeader className="mb-4 flex-shrink-0">
+            <DialogTitle className="text-3xl font-bold tracking-tight break-words">{product.name}</DialogTitle>
             <DialogDescription className="text-base leading-relaxed text-muted-foreground break-words">Product details</DialogDescription>
-          </div>
+          </DialogHeader>
           <div className="flex-1 overflow-y-auto min-w-0">
             <div className="grid md:grid-cols-2 gap-8">
               {/* Image Gallery */}
@@ -178,12 +177,12 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                   )}
                 </div>
                 {hasMultipleImages && (
-                  <div className="flex gap-2 justify-center flex-wrap">
+                  <div className="flex gap-2 justify-center flex-wrap"> {/* Added flex-wrap here for thumbnails */}
                     {images.map((img, index) => (
                       <div
                         key={index}
                         className={cn(
-                          "relative w-20 h-20 rounded-md overflow-hidden cursor-pointer border-2",
+                          "relative w-20 h-20 rounded-md overflow-hidden cursor-pointer border-2", // Larger thumbnails
                           index === currentImageIndex ? "border-primary" : "border-transparent opacity-70 hover:opacity-100"
                         )}
                         onClick={() => setCurrentImageIndex(index)}
@@ -201,7 +200,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               </div>
 
               {/* Product Details & Actions */}
-              <div className="space-y-6 w-full min-w-0">
+              <div className="space-y-6 w-full min-w-0"> {/* Added min-w-0 here */}
                 <h3 className="text-3xl font-bold tracking-tight break-words">{product.name}</h3>
                 
                 {/* Price and Stock */}
@@ -317,7 +316,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                       <Ruler className="h-4 w-4" /> View Size Chart
                     </Button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent className="w-full max-w-3xl max-w-[90vw] max-h-[90vh] overflow-y-auto overflow-x-hidden">
+                  <AlertDialogContent className="w-full max-w-3xl max-w-[90vw] max-h-[90vh] overflow-y-auto overflow-x-hidden"> {/* Added overflow-x-hidden here */}
                     <AlertDialogHeader>
                       <AlertDialogTitle className="text-2xl font-bold break-words">Size Chart</AlertDialogTitle>
                       <AlertDialogDescription className="break-words">
@@ -339,6 +338,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               )}
             </div>
           </div>
+          </div>
           <Button
             className={cn(
               "w-full py-6 text-lg flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200 mt-6 flex-shrink-0"
@@ -349,7 +349,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
             <ShoppingCart className="h-5 w-5" />
             {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
           </Button>
-        </div>
+        </div> {/* Closing tag for new wrapper div */}
       </DialogContent>
     </Dialog>
   );
