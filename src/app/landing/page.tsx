@@ -12,25 +12,27 @@ export default function LandingPage() {
     <span className="inline-block text-primary font-bold animate-continuous-pulse">Yaarsite</span>
   );
 
+  const freePlanFeatures = [
+    "Dashboard Access",
+    "Product Management (Up to 2 products)",
+    "Order Management",
+    "Free Yaarsite Subdomain",
+    "Basic Analytics",
+    "Cash on Delivery Payment",
+    "Store Customization (Home, About, Contact Pages)",
+    "Custom Store Logo & Description",
+    "Custom Delivery Charges",
+    "JazzCash & EasyPaisa Payments",
+    "Product Discount Feature",
+    "Product Size Charts & Colors",
+  ];
+
   const pricingPlans = [
     {
       planName: "Free",
       description: "Perfect for getting started with your online store.",
       priceMonthly: 0,
-      features: [
-        "Dashboard Access",
-        "Product Management (Up to 2 products)",
-        "Order Management",
-        "Free Yaarsite Subdomain",
-        "Basic Analytics",
-        "Cash on Delivery Payment",
-        "Store Customization (Home, About, Contact Pages)",
-        "Custom Store Logo & Description",
-        "Custom Delivery Charges",
-        "JazzCash & EasyPaisa Payments",
-        "Product Discount Feature",
-        "Product Size Charts & Colors",
-      ],
+      features: freePlanFeatures,
       buttonText: "Start for Free",
       buttonLink: "/signup?plan=free", // Added plan query parameter
       isMostPopular: false,
@@ -41,7 +43,7 @@ export default function LandingPage() {
       priceMonthly: 500,
       priceYearly: 5000,
       features: [
-        "Everything in Free", // Inherits all features from the Free plan
+        ...freePlanFeatures, // Explicitly include all free plan features
         "Unlimited Products", // Overrides the 2-product limit
         "Priority Support", // Overrides limited support
       ],
