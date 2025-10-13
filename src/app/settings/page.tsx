@@ -62,6 +62,11 @@ export default function SettingsPage() {
   const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
 
+  // State for live preview colors (HEX format)
+  const [livePrimaryColor, setLivePrimaryColor] = useState<string | null>(null);
+  const [liveBackgroundColor, setLiveBackgroundColor] = useState<string | null>(null);
+  const [liveCardBackgroundColor, setLiveCardBackgroundColor] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -92,8 +97,56 @@ export default function SettingsPage() {
         storeCardHeaderFooterBackgroundColor: profile.store_card_background_color_hsl ? hslToHex(profile.store_card_background_color_hsl) || "" : "",
       });
       setLogoPreview(profile.avatar_url || null);
+
+      // Initialize live preview colors with profile values
+      setLivePrimaryColor(profile.store_primary_color_hsl ? hslToHex(profile.store_primary_color_hsl) : null);
+      setLiveBackgroundColor(profile.store_background_color_hsl ? hslToHex(profile.store_background_color_hsl) : null);
+      setLiveCardBackgroundColor(profile.store_card_background_color_hsl ? hslToHex(profile.store_card_background_color_hsl) : null);
     }
   }, [profile, form]);
+
+  // Effect to apply live theme colors to the document root
+  useEffect(() => {
+    const root = document.documentElement;
+
+    const applyLiveStyles = () => {
+      if (livePrimaryColor) {
+        const hsl = hexToHsl(livePrimaryColor);
+        if (hsl) root.style.setProperty('--store-primary', hsl);
+      } else {
+        root.style.removeProperty('--store-primary'); // Revert to default
+      }
+      if (liveBackgroundColor) {
+        const hsl = hexToHsl(liveBackgroundColor);
+        if (hsl) root.style.setProperty('--store-background', hsl);
+      } else {
+        root.style.removeProperty('--store-background'); // Revert to default
+      }
+      if (liveCardBackgroundColor) {
+        const hsl = hexToHsl(liveCardBackgroundColor);
+        if (hsl) root.style.setProperty('--store-card-background', hsl);
+      } else {
+        root.style.removeProperty('--store-card-background'); // Revert to default
+      }
+    };
+
+    applyLiveStyles();
+
+    // Cleanup function: revert to profile's saved colors or global defaults
+    return () => {
+      if (profile) {
+        root.style.setProperty('--store-primary', profile.store_primary_color_hsl || 'var(--primary)');
+        root.style.setProperty('--store-background', profile.store_background_color_hsl || 'var(--background)');
+        root.style.setProperty('--store-card-background', profile.store_card_background_color_hsl || 'var(--card)');
+      } else {
+        // If no profile, revert to global defaults
+        root.style.removeProperty('--store-primary');
+        root.style.removeProperty('--store-background');
+        root.style.removeProperty('--store-card-background');
+      }
+    };
+  }, [livePrimaryColor, liveBackgroundColor, liveCardBackgroundColor, profile]);
+
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -156,11 +209,12 @@ export default function SettingsPage() {
     setIsUpdatingStore(true);
     try {
       if (currentImageUrl) {
-        const pathSegment = bucketName === 'store-logos' ? 'store-logos/' : 'store-content-images/';
-        const path = currentImageUrl.split(pathSegment)[1];
-        if (path) {
+        // Extract path within the bucket from the full public URL
+        const bucketPathIndex = currentImageUrl.indexOf(`/${bucketName}/`);
+        if (bucketPathIndex !== -1) {
+          const path = currentImageUrl.substring(bucketPathIndex + `/${bucketName}/`.length);
           const { error: deleteStorageError } = await supabase.storage
-            .from(bucketName) // Use bucketName here
+            .from(bucketName)
             .remove([path]);
 
           if (deleteStorageError) {
@@ -216,9 +270,10 @@ export default function SettingsPage() {
 
         if (file) {
           if (currentUrl) {
-            const pathSegment = bucketName === 'store-logos' ? 'store-logos/' : 'store-content-images/';
-            const oldPath = currentUrl.split(pathSegment)[1];
-            if (oldPath) {
+            // Extract path within the bucket from the full public URL
+            const bucketPathIndex = currentUrl.indexOf(`/${bucketName}/`);
+            if (bucketPathIndex !== -1) {
+              const oldPath = currentUrl.substring(bucketPathIndex + `/${bucketName}/`.length);
               const { error: deleteOldError } = await supabase.storage
                 .from(bucketName)
                 .remove([oldPath]);
@@ -497,21 +552,48 @@ export default function SettingsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="storeBackgroundColor" className="text-sm font-medium">Store Background Color</Label>
-                    <Input id="storeBackgroundColor" type="color" {...form.register("storeBackgroundColor")} />
+                    <Input
+                      id="storeBackgroundColor"
+                      type="color"
+                      {...form.register("storeBackgroundColor")}
+                      onChange={(e) => {
+                        form.setValue("storeBackgroundColor", e.target.value);
+                        setLiveBackgroundColor(e.target.value);
+                      }}
+                      value={form.watch("storeBackgroundColor") || '#000000'} // Default to black if null for color picker
+                    />
                     {form.formState.errors.storeBackgroundColor && (
                       <p className="text-destructive text-sm">{form.formState.errors.storeBackgroundColor.message}</p>
                     )}
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="storeCardHeaderFooterBackgroundColor" className="text-sm font-medium">Card, Header & Footer Background Color</Label>
-                    <Input id="storeCardHeaderFooterBackgroundColor" type="color" {...form.register("storeCardHeaderFooterBackgroundColor")} />
+                    <Input
+                      id="storeCardHeaderFooterBackgroundColor"
+                      type="color"
+                      {...form.register("storeCardHeaderFooterBackgroundColor")}
+                      onChange={(e) => {
+                        form.setValue("storeCardHeaderFooterBackgroundColor", e.target.value);
+                        setLiveCardBackgroundColor(e.target.value);
+                      }}
+                      value={form.watch("storeCardHeaderFooterBackgroundColor") || '#000000'}
+                    />
                     {form.formState.errors.storeCardHeaderFooterBackgroundColor && (
                       <p className="text-destructive text-sm">{form.formState.errors.storeCardHeaderFooterBackgroundColor.message}</p>
                     )}
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="storePrimaryAccentColor" className="text-sm font-medium">Primary Accent Color (Buttons, Links, Icons)</Label>
-                    <Input id="storePrimaryAccentColor" type="color" {...form.register("storePrimaryAccentColor")} />
+                    <Input
+                      id="storePrimaryAccentColor"
+                      type="color"
+                      {...form.register("storePrimaryAccentColor")}
+                      onChange={(e) => {
+                        form.setValue("storePrimaryAccentColor", e.target.value);
+                        setLivePrimaryColor(e.target.value);
+                      }}
+                      value={form.watch("storePrimaryAccentColor") || '#000000'}
+                    />
                     {form.formState.errors.storePrimaryAccentColor && (
                       <p className="text-destructive text-sm">{form.formState.errors.storePrimaryAccentColor.message}</p>
                     )}
