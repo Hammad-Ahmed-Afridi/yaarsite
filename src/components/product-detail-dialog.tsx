@@ -132,9 +132,10 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="w-full sm:max-w-[900px] max-w-[90vw] max-h-[90vh] flex flex-col overflow-y-auto overflow-x-hidden font-sans p-4 sm:p-6">
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full"> {/* New wrapper div */}
           <DialogHeader className="mb-4 flex-shrink-0">
-            {/* Removed DialogTitle and DialogDescription from here */}
+            <DialogTitle className="text-3xl font-bold tracking-tight break-words">{product.name}</DialogTitle>
+            <DialogDescription className="text-base leading-relaxed text-muted-foreground break-words">Product details</DialogDescription>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto min-w-0">
             <div className="grid md:grid-cols-2 gap-8">
@@ -337,6 +338,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               )}
             </div>
           </div>
+          </div>
           <Button
             className={cn(
               "w-full py-6 text-lg flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200 mt-6 flex-shrink-0"
@@ -347,7 +349,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
             <ShoppingCart className="h-5 w-5" />
             {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
           </Button>
-        </div>
+        </div> {/* Closing tag for new wrapper div */}
       </DialogContent>
     </Dialog>
   );
