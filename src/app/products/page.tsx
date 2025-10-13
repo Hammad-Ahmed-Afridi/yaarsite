@@ -47,13 +47,8 @@ interface Product {
   created_at: string;
 }
 
-// Function to determine product limit based on plan type
-const getProductLimit = (planType: string | null): number => {
-  if (planType === 'pro') { // Only 'pro' plan gets unlimited products
-    return Infinity; 
-  }
-  return 2; // Default to 2 products for Free and Business plans
-};
+// Removed function to determine product limit based on plan type
+const PRODUCT_LIMIT = 2; // Hardcoded product limit
 
 export default function ProductsPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
@@ -63,7 +58,8 @@ export default function ProductsPage() {
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
 
-  const productLimit = getProductLimit(profile?.plan_type || 'free'); // Get dynamic limit
+  // Removed productLimit = getProductLimit(profile?.plan_type || 'free');
+  const productLimit = PRODUCT_LIMIT; // Use hardcoded limit
 
   const fetchProducts = useCallback(async () => {
     if (!user) {

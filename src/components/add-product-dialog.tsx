@@ -42,12 +42,14 @@ const formSchema = z.object({
 
 interface AddProductDialogProps {
   onProductAdded: () => void;
-  currentProductCount: number;
-  productLimit: number; // New prop: dynamic product limit
+  // Removed currentProductCount: number;
+  // Removed productLimit: number;
 }
 
-export function AddProductDialog({ onProductAdded, currentProductCount, productLimit }: AddProductDialogProps) {
-  const { user } = useSession();
+const PRODUCT_LIMIT = 2; // Hardcoded product limit
+
+export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
+  const { user, profile } = useSession(); // Added profile to useSession
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImageFiles, setSelectedImageFiles] = useState<File[]>([]);
@@ -202,8 +204,21 @@ export function AddProductDialog({ onProductAdded, currentProductCount, productL
       return;
     }
 
-    if (productLimit !== Infinity && currentProductCount >= productLimit) {
-      toast.error(`You have reached the maximum limit of ${productLimit} products for your current plan.`);
+    // Fetch current product count to enforce limit
+    const { count: currentProductCount, error: countError } = await supabase
+      .from('products')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id);
+
+    if (countError) {
+      console.error("Error fetching product count:", countError);
+      toast.error("Failed to check product limit. Please try again.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (currentProductCount !== null && currentProductCount >= PRODUCT_LIMIT) {
+      toast.error(`You have reached the maximum limit of ${PRODUCT_LIMIT} products.`);
       setIsSubmitting(false);
       return;
     }
@@ -307,7 +322,8 @@ export function AddProductDialog({ onProductAdded, currentProductCount, productL
     }
   };
 
-  const isAddProductDisabled = productLimit !== Infinity && currentProductCount >= productLimit;
+  // Removed isAddProductDisabled logic based on props
+  const isAddProductDisabled = profile?.plan_type !== 'pro' && products.length >= PRODUCT_LIMIT; // Re-evaluate based on fixed limit
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

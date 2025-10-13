@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation'; // Import useSearchParams
+import { useRouter } from 'next/navigation'; // Removed useSearchParams
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -40,7 +40,7 @@ const formSchema = z.object({
 
 export default function SignupPage() {
   const router = useRouter();
-  const searchParams = useSearchParams(); // Use useSearchParams hook
+  // Removed const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -118,8 +118,8 @@ export default function SignupPage() {
     }
 
     try {
-      const planType = searchParams.get('plan') || 'free'; // Get plan from URL, default to 'free'
-
+      // Removed const planType = searchParams.get('plan') || 'free';
+      
       const { error: signUpError } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
@@ -127,7 +127,7 @@ export default function SignupPage() {
           data: {
             name: values.name,
             phone_number: values.phoneNumber || null,
-            plan_type: planType, // Pass the plan type to raw_user_meta_data
+            // Removed plan_type: planType,
           },
         },
       });
