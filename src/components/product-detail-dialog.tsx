@@ -137,7 +137,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
             <DialogTitle className="text-2xl font-bold tracking-tight break-words">{product.name}</DialogTitle>
             <DialogDescription className="text-sm leading-relaxed text-muted-foreground break-words">Product details</DialogDescription>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto min-w-0">
+          <div className="flex-1 min-w-0"> {/* Removed overflow-y-auto from here */}
             <div className="grid md:grid-cols-2 gap-6">
               {/* Image Gallery */}
               <div className="flex flex-col gap-3">
@@ -339,7 +339,6 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                 </AlertDialog>
               )}
             </div>
-          </div>
           </div>
           <Button
             className={cn(
