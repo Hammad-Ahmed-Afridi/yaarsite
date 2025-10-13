@@ -42,14 +42,12 @@ const formSchema = z.object({
 
 interface AddProductDialogProps {
   onProductAdded: () => void;
-  // Removed currentProductCount: number;
-  // Removed productLimit: number;
 }
 
 const PRODUCT_LIMIT = 2; // Hardcoded product limit
 
 export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
-  const { user, profile } = useSession(); // Added profile to useSession
+  const { user } = useSession(); // Removed profile from useSession
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImageFiles, setSelectedImageFiles] = useState<File[]>([]);
@@ -208,7 +206,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
     const { count: currentProductCount, error: countError } = await supabase
       .from('products')
       .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id);
+      .eq('user.id', user.id); // Corrected: use user.id directly
 
     if (countError) {
       console.error("Error fetching product count:", countError);
@@ -322,13 +320,13 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
     }
   };
 
-  // Removed isAddProductDisabled logic based on props
-  const isAddProductDisabled = profile?.plan_type !== 'pro' && products.length >= PRODUCT_LIMIT; // Re-evaluate based on fixed limit
+  // The Add Product button is always enabled, the limit check happens on submission.
+  // Removed isAddProductDisabled constant.
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2 font-semibold" disabled={isAddProductDisabled}>
+        <Button className="flex items-center gap-2 font-semibold">
           <Plus className="h-4 w-4" /> Add Product
         </Button>
       </DialogTrigger>

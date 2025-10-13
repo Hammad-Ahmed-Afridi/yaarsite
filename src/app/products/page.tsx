@@ -47,7 +47,6 @@ interface Product {
   created_at: string;
 }
 
-// Removed function to determine product limit based on plan type
 const PRODUCT_LIMIT = 2; // Hardcoded product limit
 
 export default function ProductsPage() {
@@ -57,9 +56,6 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
-
-  // Removed productLimit = getProductLimit(profile?.plan_type || 'free');
-  const productLimit = PRODUCT_LIMIT; // Use hardcoded limit
 
   const fetchProducts = useCallback(async () => {
     if (!user) {
@@ -145,7 +141,7 @@ export default function ProductsPage() {
     );
   }
 
-  const isAddProductDisabled = productLimit !== Infinity && products.length >= productLimit;
+  const isAddProductDisabled = products.length >= PRODUCT_LIMIT; // Simplified to fixed limit
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
@@ -162,18 +158,14 @@ export default function ProductsPage() {
         </div>
         <div className="flex items-center justify-between mb-6">
           <p className="text-muted-foreground text-base leading-relaxed">
-            {productLimit === Infinity ? (
-              "Unlimited products"
-            ) : (
-              `${products.length}/${productLimit} products used`
-            )}
+            {`${products.length}/${PRODUCT_LIMIT} products used`}
             {isAddProductDisabled && (
               <span className="ml-2 text-destructive"> (Maximum limit reached)</span>
             )}
           </p>
           <div className="flex gap-2">
             <DiscountDialog products={products} onDiscountApplied={fetchProducts} /> {/* Discount button */}
-            <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} productLimit={productLimit} />
+            <AddProductDialog onProductAdded={fetchProducts} />
           </div>
         </div>
 
@@ -182,9 +174,9 @@ export default function ProductsPage() {
             <Package className="h-16 w-16 text-muted-foreground mb-4" />
             <p className="text-xl text-muted-foreground mb-4 font-semibold">No Products Yet</p>
             <p className="text-base text-muted-foreground mb-6 leading-relaxed">
-              Add your first product to start selling! You can add {productLimit === Infinity ? "unlimited" : `up to ${productLimit}`} products.
+              Add your first product to start selling! You can add up to {PRODUCT_LIMIT} products.
             </p>
-            <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} productLimit={productLimit} />
+            <AddProductDialog onProductAdded={fetchProducts} />
           </div>
         ) : (
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
