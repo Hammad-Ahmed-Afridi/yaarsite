@@ -57,9 +57,9 @@ export default function LandingPage() {
       priceMonthly: 7000,
       priceYearly: 70000,
       features: [
-        "Everything in Pro",
-        "Custom domain integration", // Updated from "Prebuilt .com domain integration"
-        "Custom coded platform with all your desired features", // New feature added
+        "Everything you need in a store", // Updated text here
+        "Custom domain integration",
+        "Custom coded platform with all your desired features",
         "Highly customizable and robust store with all the features that you need",
         "Advanced Analytics & Reporting",
         "Dedicated Account Manager",
