@@ -47,7 +47,13 @@ interface Product {
   created_at: string;
 }
 
-const PRODUCT_LIMIT = 2; // Changed from 3 to 2
+// Function to determine product limit based on plan type
+const getProductLimit = (planType: string | null): number => {
+  if (planType === 'pro' || planType === 'business') {
+    return Infinity; // Unlimited products for Pro and Business plans
+  }
+  return 2; // Default to 2 products for Free plan
+};
 
 export default function ProductsPage() {
   const { user, profile, isLoading: isSessionLoading } = useSession();
@@ -56,6 +62,8 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
+
+  const productLimit = getProductLimit(profile?.plan_type || 'free'); // Get dynamic limit
 
   const fetchProducts = useCallback(async () => {
     if (!user) {
@@ -141,7 +149,7 @@ export default function ProductsPage() {
     );
   }
 
-  const isAddProductDisabled = products.length >= PRODUCT_LIMIT;
+  const isAddProductDisabled = productLimit !== Infinity && products.length >= productLimit;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
@@ -158,14 +166,18 @@ export default function ProductsPage() {
         </div>
         <div className="flex items-center justify-between mb-6">
           <p className="text-muted-foreground text-base leading-relaxed">
-            {products.length}/{PRODUCT_LIMIT} products used
+            {productLimit === Infinity ? (
+              "Unlimited products"
+            ) : (
+              `${products.length}/${productLimit} products used`
+            )}
             {isAddProductDisabled && (
               <span className="ml-2 text-destructive"> (Maximum limit reached)</span>
             )}
           </p>
           <div className="flex gap-2">
             <DiscountDialog products={products} onDiscountApplied={fetchProducts} /> {/* Discount button */}
-            <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
+            <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} productLimit={productLimit} />
           </div>
         </div>
 
@@ -174,9 +186,9 @@ export default function ProductsPage() {
             <Package className="h-16 w-16 text-muted-foreground mb-4" />
             <p className="text-xl text-muted-foreground mb-4 font-semibold">No Products Yet</p>
             <p className="text-base text-muted-foreground mb-6 leading-relaxed">
-              Add your first product to start selling! You can add up to {PRODUCT_LIMIT} products.
+              Add your first product to start selling! You can add {productLimit === Infinity ? "unlimited" : `up to ${productLimit}`} products.
             </p>
-            <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} />
+            <AddProductDialog onProductAdded={fetchProducts} currentProductCount={products.length} productLimit={productLimit} />
           </div>
         ) : (
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

@@ -39,6 +39,7 @@ export interface Profile { // Exported for use in DashboardHeader
   store_primary_color_hsl: string | null; // Used for accent (buttons, links, icons)
   store_background_color_hsl: string | null; // Main store background
   store_card_background_color_hsl: string | null; // Cards, Header, Footer background
+  plan_type: string | null; // New: User's plan type (e.g., 'free', 'pro', 'business')
   // Removed custom domain fields
 }
 

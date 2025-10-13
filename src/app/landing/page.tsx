@@ -32,7 +32,7 @@ export default function LandingPage() {
         "Product Size Charts & Colors",
       ],
       buttonText: "Start for Free",
-      buttonLink: "/signup",
+      buttonLink: "/signup?plan=free", // Added plan query parameter
       isMostPopular: false,
     },
     {
@@ -46,7 +46,7 @@ export default function LandingPage() {
         "Priority Support", // Overrides limited support
       ],
       buttonText: "Go Pro",
-      buttonLink: "/signup",
+      buttonLink: "/signup?plan=pro", // Added plan query parameter
       isMostPopular: true,
     },
     {
@@ -64,7 +64,7 @@ export default function LandingPage() {
         "24/7 Premium Support",
       ],
       buttonText: "Get Business",
-      buttonLink: "/signup",
+      buttonLink: "/signup?plan=business", // Added plan query parameter
       isMostPopular: false,
     },
   ];
@@ -106,7 +106,7 @@ export default function LandingPage() {
           </p>
           <div className="relative z-10 flex flex-col sm:flex-row gap-4">
             <Button asChild size="lg" className="px-8 py-6 text-lg font-semibold hover:scale-[1.02] transition-transform duration-200">
-              <Link href="/signup" target="_blank" rel="noopener noreferrer">
+              <Link href="/signup?plan=free" target="_blank" rel="noopener noreferrer"> {/* Default to free plan */}
                 <span> {/* Wrapped children in a span */}
                   Get Started Free
                 </span>
@@ -210,7 +210,7 @@ export default function LandingPage() {
             Join {animatedYaarsite} today and transform your business idea into a thriving online store.
           </p>
           <Button asChild size="lg" className="px-10 py-7 text-xl font-semibold hover:scale-[1.02] transition-transform duration-200">
-            <Link href="/signup" target="_blank" rel="noopener noreferrer">
+            <Link href="/signup?plan=free" target="_blank" rel="noopener noreferrer"> {/* Default to free plan */}
               <span> {/* Wrapped children in a span */}
                 Sign Up Now
               </span>

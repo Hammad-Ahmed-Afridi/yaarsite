@@ -28,7 +28,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-const PRODUCT_LIMIT = 2;
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Product name is required." }),
@@ -44,9 +43,10 @@ const formSchema = z.object({
 interface AddProductDialogProps {
   onProductAdded: () => void;
   currentProductCount: number;
+  productLimit: number; // New prop: dynamic product limit
 }
 
-export function AddProductDialog({ onProductAdded, currentProductCount }: AddProductDialogProps) {
+export function AddProductDialog({ onProductAdded, currentProductCount, productLimit }: AddProductDialogProps) {
   const { user } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -202,8 +202,8 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
       return;
     }
 
-    if (currentProductCount >= PRODUCT_LIMIT) {
-      toast.error(`You have reached the maximum limit of ${PRODUCT_LIMIT} products.`);
+    if (productLimit !== Infinity && currentProductCount >= productLimit) {
+      toast.error(`You have reached the maximum limit of ${productLimit} products for your current plan.`);
       setIsSubmitting(false);
       return;
     }
@@ -307,7 +307,7 @@ export function AddProductDialog({ onProductAdded, currentProductCount }: AddPro
     }
   };
 
-  const isAddProductDisabled = currentProductCount >= PRODUCT_LIMIT;
+  const isAddProductDisabled = productLimit !== Infinity && currentProductCount >= productLimit;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
