@@ -318,9 +318,10 @@ export default function SettingsPage() {
     try {
       if (currentImageUrl) {
         // Extract path within the bucket from the full public URL
-        const bucketPathIndex = currentImageUrl.indexOf(`/${bucketName}/`);
+        const bucketPathSegment = `${bucketName}/`;
+        const bucketPathIndex = currentImageUrl.indexOf(bucketPathSegment);
         if (bucketPathIndex !== -1) {
-          const path = currentImageUrl.substring(bucketPathIndex + `/${bucketName}/`.length);
+          const path = currentImageUrl.substring(bucketPathIndex + bucketPathSegment.length);
           const { error: deleteStorageError } = await supabase.storage
             .from(bucketName)
             .remove([path]);
@@ -398,13 +399,16 @@ export default function SettingsPage() {
 
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log("Settings Page: onSubmit started.");
     if (!user) {
       toast.error("You must be logged in to update store settings.");
+      console.log("Settings Page: User not logged in, returning.");
       return;
     }
 
     setIsUpdatingStore(true);
     let newAvatarUrl = profile?.avatar_url ?? null;
+    console.log("Settings Page: isUpdatingStore set to true.");
 
     try {
       const uploadImageAndGetUrl = async (
@@ -413,25 +417,37 @@ export default function SettingsPage() {
         bucketName: 'store-logos', // Only 'store-logos' bucket here
         imageType: string
       ): Promise<string | null> => {
-        if (!file && !currentUrl) return null;
+        console.log(`Settings Page: uploadImageAndGetUrl for ${imageType} started.`);
+        if (!file && !currentUrl) {
+          console.log(`Settings Page: No file or current URL for ${imageType}, returning null.`);
+          return null;
+        }
 
         if (file) {
+          console.log(`Settings Page: New file detected for ${imageType}.`);
           if (currentUrl) {
-            const pathSegment = bucketName === 'store-logos' ? 'store-logos/' : 'store-content-images/';
-            const oldPath = currentUrl.split(pathSegment)[1];
-            if (oldPath) {
+            console.log(`Settings Page: Existing URL found for ${imageType}, attempting to delete old image.`);
+            const bucketPathSegment = `${bucketName}/`;
+            const bucketPathIndex = currentUrl.indexOf(bucketPathSegment);
+            if (bucketPathIndex !== -1) {
+              const oldPath = currentUrl.substring(bucketPathIndex + bucketPathSegment.length);
               const { error: deleteOldError } = await supabase.storage
                 .from(bucketName)
                 .remove([oldPath]);
               if (deleteOldError) {
-                console.warn(`Failed to delete old ${imageType} from storage:`, deleteOldError.message);
+                console.warn(`Settings Page: Failed to delete old ${imageType} from storage:`, deleteOldError.message);
+              } else {
+                console.log(`Settings Page: Old ${imageType} deleted successfully.`);
               }
+            } else {
+              console.warn(`Settings Page: Could not extract old path for ${imageType} from URL: ${currentUrl}`);
             }
           }
 
           const fileExtension = file.name.split('.').pop();
           const fileName = `${user.id}/${imageType}-${uuidv4()}.${fileExtension}`;
-          const { error: uploadError } = await supabase.storage
+          console.log(`Settings Page: Uploading new ${imageType} with fileName: ${fileName}`);
+          const { data, error: uploadError } = await supabase.storage
             .from(bucketName)
             .upload(fileName, file, {
               cacheControl: '3600',
@@ -439,30 +455,38 @@ export default function SettingsPage() {
             });
 
           if (uploadError) {
+            console.error(`Settings Page: ${imageType} upload failed:`, uploadError.message);
             throw new Error(`${imageType} upload failed: ${uploadError.message}`);
           }
+          console.log(`Settings Page: ${imageType} uploaded successfully.`);
 
           const { data: publicUrlData } = supabase.storage
             .from(bucketName)
             .getPublicUrl(fileName);
 
           if (publicUrlData?.publicUrl) {
+            console.log(`Settings Page: Public URL obtained for ${imageType}: ${publicUrlData.publicUrl}`);
             return publicUrlData.publicUrl;
           } else {
+            console.error(`Settings Page: Failed to get public URL for uploaded ${imageType}.`);
             throw new Error(`Failed to get public URL for uploaded ${imageType}.`);
           }
         }
+        console.log(`Settings Page: No new file for ${imageType}, returning current URL.`);
         return currentUrl;
       };
 
       newAvatarUrl = await uploadImageAndGetUrl(selectedLogoFile, profile?.avatar_url ?? null, 'store-logos', 'logo');
+      console.log("Settings Page: Avatar URL determined:", newAvatarUrl);
 
       // Convert HEX colors (from live state, which reflects selected palette or initial custom) to HSL for storage
       const storePrimaryAccentColorHsl = livePrimaryColor ? hexToHsl(livePrimaryColor) : null;
       const storeBackgroundColorHsl = liveBackgroundColor ? hexToHsl(liveBackgroundColor) : null;
       const storeCardHeaderFooterBackgroundColorHsl = liveCardBackgroundColor ? hexToHsl(liveCardBackgroundColor) : null;
+      console.log("Settings Page: Converted colors to HSL:", { storePrimaryAccentColorHsl, storeBackgroundColorHsl, storeCardHeaderFooterBackgroundColorHsl });
 
 
+      console.log("Settings Page: Attempting to update profile in Supabase.");
       const { error } = await supabase
         .from('profiles')
         .update({
@@ -480,18 +504,22 @@ export default function SettingsPage() {
         .eq('id', user.id);
 
       if (error) {
-        console.error("Error updating store settings:", error);
+        console.error("Settings Page: Error updating store settings in Supabase:", error);
         toast.error("Failed to update store settings. Please try again.");
       } else {
+        console.log("Settings Page: Store settings updated successfully in Supabase.");
         toast.success("Store settings updated successfully!");
+        console.log("Settings Page: Refreshing profile data.");
         await refreshProfile();
         setSelectedLogoFile(null);
+        console.log("Settings Page: Profile refreshed, selected logo file cleared.");
       }
-    } catch (err) {
-      console.error("Unexpected error during store settings update:", err);
-      toast.error("An unexpected error occurred.");
+    } catch (err: any) {
+      console.error("Settings Page: Unexpected error during store settings update:", err);
+      toast.error(err.message || "An unexpected error occurred.");
     } finally {
       setIsUpdatingStore(false);
+      console.log("Settings Page: isUpdatingStore set to false (finally block).");
     }
   };
 
@@ -569,7 +597,7 @@ export default function SettingsPage() {
                     {...form.register("storeDescription")}
                   />
                   {form.formState.errors.storeDescription && (
-                    <p className="text-destructive text-sm">{form.formState.errors.storeDescription.message}</p>
+                      <p className="text-destructive text-sm">{form.formState.errors.storeDescription.message}</p>
                   )}
                 </div>
 
