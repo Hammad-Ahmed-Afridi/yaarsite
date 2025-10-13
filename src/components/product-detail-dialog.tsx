@@ -177,7 +177,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                   )}
                 </div>
                 {hasMultipleImages && (
-                  <div className="flex gap-2 justify-center">
+                  <div className="flex gap-2 justify-center flex-wrap"> {/* Added flex-wrap here for thumbnails */}
                     {images.map((img, index) => (
                       <div
                         key={index}
@@ -200,7 +200,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               </div>
 
               {/* Product Details & Actions */}
-              <div className="space-y-6 w-full">
+              <div className="space-y-6 w-full min-w-0"> {/* Added min-w-0 here */}
                 <h3 className="text-3xl font-bold tracking-tight break-words">{product.name}</h3>
                 
                 {/* Price and Stock */}
@@ -316,7 +316,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                       <Ruler className="h-4 w-4" /> View Size Chart
                     </Button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent className="w-full max-w-3xl max-w-[90vw] max-h-[90vh] overflow-y-auto">
+                  <AlertDialogContent className="w-full max-w-3xl max-w-[90vw] max-h-[90vh] overflow-y-auto overflow-x-hidden"> {/* Added overflow-x-hidden here */}
                     <AlertDialogHeader>
                       <AlertDialogTitle className="text-2xl font-bold break-words">Size Chart</AlertDialogTitle>
                       <AlertDialogDescription className="break-words">
