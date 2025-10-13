@@ -5,7 +5,7 @@ import Image from 'next/image';
 import {
   Dialog,
   DialogContent,
-  // Removed DialogHeader import as it's no longer used
+  DialogHeader, // Re-imported DialogHeader
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
@@ -132,10 +132,11 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="w-full sm:max-w-[900px] max-w-[90vw] max-h-[90vh] flex flex-col overflow-y-auto overflow-x-hidden font-sans p-4 sm:p-6">
-        <div className="flex flex-col h-full"> {/* This is the single child of DialogContent */}
-          <div className="mb-4 flex-shrink-0 flex flex-col space-y-1.5 text-center sm:text-left"> {/* Header div */}
+        <React.Fragment> {/* Explicit React.Fragment as the single child of DialogContent */}
+          <DialogHeader className="mb-4 flex-shrink-0"> {/* Re-added DialogHeader */}
+            <DialogTitle className="sr-only">Product Details</DialogTitle> {/* Added DialogTitle, visually hidden */}
             <DialogDescription className="text-base leading-relaxed text-muted-foreground break-words">Product details</DialogDescription>
-          </div>
+          </DialogHeader>
           <div className="flex-1 overflow-y-auto min-w-0">
             <div className="grid md:grid-cols-2 gap-8">
               {/* Image Gallery */}
@@ -347,7 +348,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
             <ShoppingCart className="h-5 w-5" />
             {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
           </Button>
-        </div>
+        </React.Fragment>
       </DialogContent>
     </Dialog>
   );
