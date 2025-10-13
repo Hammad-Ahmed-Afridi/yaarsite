@@ -211,7 +211,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                       <span className="text-3xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span> {/* Reduced text-4xl to text-3xl */}
                     </div>
                   ) : (
-                    <span className="text-3xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span> {/* Reduced text-4xl to text-3xl */}
+                    <span className="text-3xl font-extrabold text-primary">Rs{product.price.toFixed(2)}</span> /* Reduced text-4xl to text-3xl */
                   )}
                   <Badge variant="secondary" className="text-base px-3 py-1 font-medium"> {/* Reduced text-lg px-4 py-2 to text-base px-3 py-1 */}
                     {product.stock} in stock
@@ -245,9 +245,9 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                 <div className="space-y-2">
                   <Label className="text-sm font-medium">Select Color:</Label> {/* Reduced text-base to text-sm */}
                   <RadioGroup
-                    value={selectedColor}
                     onValueChange={setSelectedColor}
-                    className="flex flex-wrap gap-2" {/* Reduced gap-3 to gap-2 */}
+                    value={selectedColor}
+                    className="flex flex-wrap gap-2" /* Reduced gap-3 to gap-2 */
                   >
                     {product.available_colors?.map((color) => (
                       <div key={color} className="flex items-center">
@@ -265,7 +265,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                           title={color} // Show color name on hover
                         >
                           {selectedColor === color && (
-                            <Check className="h-4 w-4 text-white drop-shadow-sm" /> {/* Reduced h-5 w-5 to h-4 w-4 */}
+                            <Check className="h-4 w-4 text-white drop-shadow-sm" /> /* Reduced h-5 w-5 to h-4 w-4 */
                           )}
                           <span className="sr-only">{color}</span> {/* Screen reader text */}
                         </Label>
@@ -340,7 +340,6 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               )}
             </div>
           </div>
-          </div> {/* Closing tag for the flex-1 overflow-y-auto div */}
           <Button
             className={cn(
               "w-full py-4 text-base flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200 mt-4 flex-shrink-0" // Reduced py-6 to py-4, text-lg to text-base, mt-6 to mt-4
