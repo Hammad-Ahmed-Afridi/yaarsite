@@ -19,13 +19,68 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2, ArrowLeft, Phone, Palette } from 'lucide-react'; // Import Palette icon
+import { Settings, Copy, ExternalLink, Image as ImageIcon, X, Loader2, ArrowLeft, Phone, Palette, Paintbrush } from 'lucide-react'; // Import Palette and Paintbrush icons
 import Image from 'next/image';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { AppLoader } from '@/components/app-loader';
 
 const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
+// Define the structure for a color palette
+interface ColorPalette {
+  id: string;
+  name: string;
+  primary: string; // HEX
+  background: string; // HEX
+  cardBackground: string; // HEX
+}
+
+// Pre-built premium, minimalistic color palettes (HEX values)
+const PRESET_PALETTES: ColorPalette[] = [
+  {
+    id: 'yaarsite-default',
+    name: 'Yaarsite Default',
+    primary: '#29A399', // Teal
+    background: '#FFFFFF', // White
+    cardBackground: '#FFFFFF', // White
+  },
+  {
+    id: 'modern-grey',
+    name: 'Modern Grey',
+    primary: '#60A5FA', // Sky Blue
+    background: '#F8FAFC', // Slate 50
+    cardBackground: '#FFFFFF', // White
+  },
+  {
+    id: 'soft-earth',
+    name: 'Soft Earth',
+    primary: '#84CC16', // Lime Green
+    background: '#FFFBEB', // Amber 50
+    cardBackground: '#FFFFFF', // White
+  },
+  {
+    id: 'deep-ocean',
+    name: 'Deep Ocean',
+    primary: '#3B82F6', // Blue
+    background: '#E0F2F7', // Cyan 50
+    cardBackground: '#FFFFFF', // White
+  },
+  {
+    id: 'midnight-plum',
+    name: 'Midnight Plum',
+    primary: '#A78BFA', // Lavender
+    background: '#1E1B4B', // Dark Indigo
+    cardBackground: '#2A245C', // Slightly lighter Indigo
+  },
+  {
+    id: 'forest-mist',
+    name: 'Forest Mist',
+    primary: '#34D399', // Emerald Green
+    background: '#F0FDF4', // Green 50
+    cardBackground: '#FFFFFF', // White
+  },
+];
 
 const formSchema = z.object({
   storeName: z.string().min(3, { message: "Store name must be at least 3 characters." }),
@@ -40,10 +95,10 @@ const formSchema = z.object({
     .optional()
     .or(z.literal('')),
   logo: z.instanceof(File).optional(),
-  // Simplified Store theme colors (HEX format for input)
-  storePrimaryAccentColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
-  storeBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
-  storeCardHeaderFooterBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional(),
+  // These fields are now implicitly set by palette selection, but still part of the form for submission
+  storePrimaryAccentColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional().or(z.literal('')),
+  storeBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional().or(z.literal('')),
+  storeCardHeaderFooterBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional().or(z.literal('')),
 });
 
 const DELIVERY_CHARGE_OPTIONS = [
@@ -66,6 +121,9 @@ export default function SettingsPage() {
   const [livePrimaryColor, setLivePrimaryColor] = useState<string | null>(null);
   const [liveBackgroundColor, setLiveBackgroundColor] = useState<string | null>(null);
   const [liveCardBackgroundColor, setLiveCardBackgroundColor] = useState<string | null>(null);
+
+  // State for selected palette ID
+  const [selectedPaletteId, setSelectedPaletteId] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -91,17 +149,42 @@ export default function SettingsPage() {
         jazzcashPhoneNumber: profile.jazzcash_phone_number || "",
         easypaisaPhoneNumber: profile.easypaisa_phone_number || "",
         logo: undefined,
-        // Convert HSL from profile to HEX for form display
-        storePrimaryAccentColor: profile.store_primary_color_hsl ? hslToHex(profile.store_primary_color_hsl) || "" : "",
-        storeBackgroundColor: profile.store_background_color_hsl ? hslToHex(profile.store_background_color_hsl) || "" : "",
-        storeCardHeaderFooterBackgroundColor: profile.store_card_background_color_hsl ? hslToHex(profile.store_card_background_color_hsl) || "" : "",
+        storePrimaryAccentColor: "", // Reset these as they will be set by palette logic
+        storeBackgroundColor: "",
+        storeCardHeaderFooterBackgroundColor: "",
       });
       setLogoPreview(profile.avatar_url || null);
 
-      // Initialize live preview colors with profile values
-      setLivePrimaryColor(profile.store_primary_color_hsl ? hslToHex(profile.store_primary_color_hsl) : null);
-      setLiveBackgroundColor(profile.store_background_color_hsl ? hslToHex(profile.store_background_color_hsl) : null);
-      setLiveCardBackgroundColor(profile.store_card_background_color_hsl ? hslToHex(profile.store_card_background_color_hsl) : null);
+      // Convert HSL from profile to HEX for comparison and live preview
+      const currentPrimaryHex = profile.store_primary_color_hsl ? hslToHex(profile.store_primary_color_hsl) : null;
+      const currentBackgroundHex = profile.store_background_color_hsl ? hslToHex(profile.store_background_color_hsl) : null;
+      const currentCardBackgroundHex = profile.store_card_background_color_hsl ? hslToHex(profile.store_card_background_color_hsl) : null;
+
+      // Try to find a matching preset palette
+      let matchedPalette = PRESET_PALETTES.find(p =>
+        p.primary === currentPrimaryHex &&
+        p.background === currentBackgroundHex &&
+        p.cardBackground === currentCardBackgroundHex
+      );
+
+      if (matchedPalette) {
+        setSelectedPaletteId(matchedPalette.id);
+        // Set form values for submission
+        form.setValue("storePrimaryAccentColor", matchedPalette.primary);
+        form.setValue("storeBackgroundColor", matchedPalette.background);
+        form.setValue("storeCardHeaderFooterBackgroundColor", matchedPalette.cardBackground);
+      } else {
+        setSelectedPaletteId(null); // No preset matches, implies custom colors
+        // Set form values to current custom colors for submission
+        form.setValue("storePrimaryAccentColor", currentPrimaryHex || "");
+        form.setValue("storeBackgroundColor", currentBackgroundHex || "");
+        form.setValue("storeCardHeaderFooterBackgroundColor", currentCardBackgroundHex || "");
+      }
+
+      // Initialize live preview colors with profile values (whether preset or custom)
+      setLivePrimaryColor(currentPrimaryHex);
+      setLiveBackgroundColor(currentBackgroundHex);
+      setLiveCardBackgroundColor(currentCardBackgroundHex);
     }
   }, [profile, form]);
 
@@ -249,6 +332,27 @@ export default function SettingsPage() {
     }
   }, [user, refreshProfile, profile]);
 
+  const handlePaletteChange = (paletteId: string) => {
+    setSelectedPaletteId(paletteId);
+    const selected = PRESET_PALETTES.find(p => p.id === paletteId);
+    if (selected) {
+      setLivePrimaryColor(selected.primary);
+      setLiveBackgroundColor(selected.background);
+      setLiveCardBackgroundColor(selected.cardBackground);
+      form.setValue("storePrimaryAccentColor", selected.primary);
+      form.setValue("storeBackgroundColor", selected.background);
+      form.setValue("storeCardHeaderFooterBackgroundColor", selected.cardBackground);
+    }
+  };
+
+  const handleResetToDefaultColors = () => {
+    const defaultPalette = PRESET_PALETTES.find(p => p.id === 'yaarsite-default');
+    if (defaultPalette) {
+      handlePaletteChange(defaultPalette.id); // Use the existing handler
+      toast.info("Colors reset to Yaarsite Default.");
+    }
+  };
+
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) {
@@ -270,10 +374,9 @@ export default function SettingsPage() {
 
         if (file) {
           if (currentUrl) {
-            // Extract path within the bucket from the full public URL
-            const bucketPathIndex = currentUrl.indexOf(`/${bucketName}/`);
-            if (bucketPathIndex !== -1) {
-              const oldPath = currentUrl.substring(bucketPathIndex + `/${bucketName}/`.length);
+            const pathSegment = bucketName === 'store-logos' ? 'store-logos/' : 'store-content-images/';
+            const oldPath = currentUrl.split(pathSegment)[1];
+            if (oldPath) {
               const { error: deleteOldError } = await supabase.storage
                 .from(bucketName)
                 .remove([oldPath]);
@@ -311,26 +414,21 @@ export default function SettingsPage() {
 
       newAvatarUrl = await uploadImageAndGetUrl(selectedLogoFile, profile?.avatar_url ?? null, 'store-logos', 'logo');
 
-      // The store_url will now be dynamically generated based on custom_domain or tenant_slug
-      // We no longer update store_url directly from here.
-
-      // Convert HEX colors to HSL for storage
-      const storePrimaryAccentColorHsl = values.storePrimaryAccentColor ? hexToHsl(values.storePrimaryAccentColor) : null;
-      const storeBackgroundColorHsl = values.storeBackgroundColor ? hexToHsl(values.storeBackgroundColor) : null;
-      const storeCardHeaderFooterBackgroundColorHsl = values.storeCardHeaderFooterBackgroundColor ? hexToHsl(values.storeCardHeaderFooterBackgroundColor) : null;
+      // Convert HEX colors (from live state, which reflects selected palette or initial custom) to HSL for storage
+      const storePrimaryAccentColorHsl = livePrimaryColor ? hexToHsl(livePrimaryColor) : null;
+      const storeBackgroundColorHsl = liveBackgroundColor ? hexToHsl(liveBackgroundColor) : null;
+      const storeCardHeaderFooterBackgroundColorHsl = liveCardBackgroundColor ? hexToHsl(liveCardBackgroundColor) : null;
 
 
       const { error } = await supabase
         .from('profiles')
         .update({
           tenant_name: values.storeName,
-          // store_url: newStoreUrl, // Removed direct update of store_url
           store_description: values.storeDescription || null,
           avatar_url: newAvatarUrl,
           delivery_charge: values.deliveryCharge,
           jazzcash_phone_number: values.jazzcashPhoneNumber || null,
           easypaisa_phone_number: values.easypaisaPhoneNumber || null,
-          // New: Save HSL colors
           store_primary_color_hsl: storePrimaryAccentColorHsl,
           store_background_color_hsl: storeBackgroundColorHsl,
           store_card_background_color_hsl: storeCardHeaderFooterBackgroundColorHsl,
@@ -544,61 +642,46 @@ export default function SettingsPage() {
 
               <div className="space-y-6">
                 <h3 className="text-xl font-semibold tracking-tight flex items-center gap-2">
-                  <Palette className="h-5 w-5 text-primary" /> Store Theme Colors
+                  <Paintbrush className="h-5 w-5 text-primary" /> Store Theme Colors
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Customize the main colors of your public store. Leave blank to use default theme.
+                  Choose a pre-built color palette for your public store.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="storeBackgroundColor" className="text-sm font-medium">Store Background Color</Label>
-                    <Input
-                      id="storeBackgroundColor"
-                      type="color"
-                      {...form.register("storeBackgroundColor")}
-                      onChange={(e) => {
-                        form.setValue("storeBackgroundColor", e.target.value);
-                        setLiveBackgroundColor(e.target.value);
-                      }}
-                      value={form.watch("storeBackgroundColor") || '#000000'} // Default to black if null for color picker
-                    />
-                    {form.formState.errors.storeBackgroundColor && (
-                      <p className="text-destructive text-sm">{form.formState.errors.storeBackgroundColor.message}</p>
-                    )}
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="storeCardHeaderFooterBackgroundColor" className="text-sm font-medium">Card, Header & Footer Background Color</Label>
-                    <Input
-                      id="storeCardHeaderFooterBackgroundColor"
-                      type="color"
-                      {...form.register("storeCardHeaderFooterBackgroundColor")}
-                      onChange={(e) => {
-                        form.setValue("storeCardHeaderFooterBackgroundColor", e.target.value);
-                        setLiveCardBackgroundColor(e.target.value);
-                      }}
-                      value={form.watch("storeCardHeaderFooterBackgroundColor") || '#000000'}
-                    />
-                    {form.formState.errors.storeCardHeaderFooterBackgroundColor && (
-                      <p className="text-destructive text-sm">{form.formState.errors.storeCardHeaderFooterBackgroundColor.message}</p>
-                    )}
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="storePrimaryAccentColor" className="text-sm font-medium">Primary Accent Color (Buttons, Links, Icons)</Label>
-                    <Input
-                      id="storePrimaryAccentColor"
-                      type="color"
-                      {...form.register("storePrimaryAccentColor")}
-                      onChange={(e) => {
-                        form.setValue("storePrimaryAccentColor", e.target.value);
-                        setLivePrimaryColor(e.target.value);
-                      }}
-                      value={form.watch("storePrimaryAccentColor") || '#000000'}
-                    />
-                    {form.formState.errors.storePrimaryAccentColor && (
-                      <p className="text-destructive text-sm">{form.formState.errors.storePrimaryAccentColor.message}</p>
-                    )}
-                  </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="colorPalette" className="text-sm font-medium">Select Color Palette</Label>
+                  <Select
+                    onValueChange={handlePaletteChange}
+                    value={selectedPaletteId || ""} // Use empty string if null for Select component
+                    disabled={isUpdatingStore}
+                  >
+                    <SelectTrigger id="colorPalette" className="font-medium">
+                      <SelectValue placeholder="Select a Preset" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRESET_PALETTES.map((palette) => (
+                        <SelectItem key={palette.id} value={palette.id} className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <div className="flex -space-x-1">
+                              <span className="block h-4 w-4 rounded-full border border-border" style={{ backgroundColor: palette.primary }}></span>
+                              <span className="block h-4 w-4 rounded-full border border-border" style={{ backgroundColor: palette.background }}></span>
+                              <span className="block h-4 w-4 rounded-full border border-border" style={{ backgroundColor: palette.cardBackground }}></span>
+                            </div>
+                            <span>{palette.name}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleResetToDefaultColors}
+                  disabled={isUpdatingStore}
+                  className="w-full font-semibold"
+                >
+                  Reset to Yaarsite Default Colors
+                </Button>
               </div>
 
               <Button type="submit" className="w-full font-semibold" disabled={isUpdatingStore}>
