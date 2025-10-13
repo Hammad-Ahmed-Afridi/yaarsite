@@ -132,12 +132,12 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="w-full sm:max-w-[900px] max-w-[90vw] max-h-[90vh] flex flex-col overflow-y-auto overflow-x-hidden font-sans p-4 sm:p-6">
-        <React.Fragment>
+        <div> {/* New wrapper div */}
           <DialogHeader className="mb-3 flex-shrink-0">
             <DialogTitle className="text-2xl font-bold tracking-tight break-words">{product.name}</DialogTitle>
             <DialogDescription className="text-sm leading-relaxed text-muted-foreground break-words">Product details</DialogDescription>
           </DialogHeader>
-          <div className="flex-1 min-w-0"> {/* Removed overflow-y-auto from here */}
+          <div className="flex-1 min-w-0">
             <div className="grid md:grid-cols-2 gap-6">
               {/* Image Gallery */}
               <div className="flex flex-col gap-3">
@@ -350,7 +350,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
             <ShoppingCart className="h-4 w-4" />
             {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
           </Button>
-        </React.Fragment>
+        </div> {/* Closes new wrapper div */}
       </DialogContent>
     </Dialog>
   );
