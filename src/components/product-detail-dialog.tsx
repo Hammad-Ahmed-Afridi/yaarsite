@@ -134,7 +134,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
       <DialogContent className="w-full sm:max-w-[900px] max-w-[90vw] max-h-[90vh] flex flex-col overflow-y-auto overflow-x-hidden font-sans p-4 sm:p-6">
         <div className="flex flex-col h-full"> {/* New wrapper div */}
           <DialogHeader className="mb-4 flex-shrink-0">
-            <DialogTitle className="text-3xl font-bold tracking-tight break-words">{product.name}</DialogTitle>
+            {/* Removed DialogTitle here as requested */}
             <DialogDescription className="text-base leading-relaxed text-muted-foreground break-words">Product details</DialogDescription>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto min-w-0">
@@ -337,7 +337,6 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                 </AlertDialog>
               )}
             </div>
-          </div>
           </div>
           <Button
             className={cn(
