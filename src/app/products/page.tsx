@@ -49,10 +49,10 @@ interface Product {
 
 // Function to determine product limit based on plan type
 const getProductLimit = (planType: string | null): number => {
-  if (planType === 'pro' || planType === 'business') {
-    return Infinity; // Unlimited products for Pro and Business plans
+  if (planType === 'pro') { // Only 'pro' plan gets unlimited products
+    return Infinity; 
   }
-  return 2; // Default to 2 products for Free plan
+  return 2; // Default to 2 products for Free and Business plans
 };
 
 export default function ProductsPage() {

@@ -57,7 +57,7 @@ export default function LandingPage() {
       priceMonthly: 7000,
       priceYearly: 70000,
       features: [
-        "Everything you need in a store", // Updated text here
+        "Everything you need in a store",
         "Custom domain integration",
         "Custom coded platform with all your desired features",
         "Highly customizable and robust store with all the features that you need",
