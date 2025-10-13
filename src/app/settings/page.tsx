@@ -80,6 +80,34 @@ const PRESET_PALETTES: ColorPalette[] = [
     background: '#F0FDF4', // Green 50
     cardBackground: '#FFFFFF', // White
   },
+  {
+    id: 'warm-sunset',
+    name: 'Warm Sunset',
+    primary: '#F97316', // Orange 500
+    background: '#FFF7ED', // Orange 50
+    cardBackground: '#FFFFFF',
+  },
+  {
+    id: 'cool-breeze',
+    name: 'Cool Breeze',
+    primary: '#06B6D4', // Cyan 500
+    background: '#F0F9FF', // Sky 50
+    cardBackground: '#FFFFFF',
+  },
+  {
+    id: 'elegant-rose',
+    name: 'Elegant Rose',
+    primary: '#EC4899', // Pink 500
+    background: '#FDF2F8', // Pink 50
+    cardBackground: '#FFFFFF',
+  },
+  {
+    id: 'dark-charcoal',
+    name: 'Dark Charcoal',
+    primary: '#A8A29E', // Stone 400
+    background: '#1F2937', // Gray 800
+    cardBackground: '#374151', // Gray 700
+  },
 ];
 
 const formSchema = z.object({
@@ -95,7 +123,6 @@ const formSchema = z.object({
     .optional()
     .or(z.literal('')),
   logo: z.instanceof(File).optional(),
-  // These fields are now implicitly set by palette selection, but still part of the form for submission
   storePrimaryAccentColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional().or(z.literal('')),
   storeBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional().or(z.literal('')),
   storeCardHeaderFooterBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional().or(z.literal('')),
@@ -122,7 +149,7 @@ export default function SettingsPage() {
   const [liveBackgroundColor, setLiveBackgroundColor] = useState<string | null>(null);
   const [liveCardBackgroundColor, setLiveCardBackgroundColor] = useState<string | null>(null);
 
-  // State for selected palette ID
+  // State for selected palette ID, 'custom' indicates manual input
   const [selectedPaletteId, setSelectedPaletteId] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -149,7 +176,7 @@ export default function SettingsPage() {
         jazzcashPhoneNumber: profile.jazzcash_phone_number || "",
         easypaisaPhoneNumber: profile.easypaisa_phone_number || "",
         logo: undefined,
-        storePrimaryAccentColor: "", // Reset these as they will be set by palette logic
+        storePrimaryAccentColor: "",
         storeBackgroundColor: "",
         storeCardHeaderFooterBackgroundColor: "",
       });
@@ -169,13 +196,11 @@ export default function SettingsPage() {
 
       if (matchedPalette) {
         setSelectedPaletteId(matchedPalette.id);
-        // Set form values for submission
         form.setValue("storePrimaryAccentColor", matchedPalette.primary);
         form.setValue("storeBackgroundColor", matchedPalette.background);
         form.setValue("storeCardHeaderFooterBackgroundColor", matchedPalette.cardBackground);
       } else {
-        setSelectedPaletteId(null); // No preset matches, implies custom colors
-        // Set form values to current custom colors for submission
+        setSelectedPaletteId('custom'); // Indicate custom colors
         form.setValue("storePrimaryAccentColor", currentPrimaryHex || "");
         form.setValue("storeBackgroundColor", currentBackgroundHex || "");
         form.setValue("storeCardHeaderFooterBackgroundColor", currentCardBackgroundHex || "");
@@ -334,15 +359,33 @@ export default function SettingsPage() {
 
   const handlePaletteChange = (paletteId: string) => {
     setSelectedPaletteId(paletteId);
-    const selected = PRESET_PALETTES.find(p => p.id === paletteId);
-    if (selected) {
-      setLivePrimaryColor(selected.primary);
-      setLiveBackgroundColor(selected.background);
-      setLiveCardBackgroundColor(selected.cardBackground);
-      form.setValue("storePrimaryAccentColor", selected.primary);
-      form.setValue("storeBackgroundColor", selected.background);
-      form.setValue("storeCardHeaderFooterBackgroundColor", selected.cardBackground);
+    if (paletteId === 'custom') {
+      // When switching to custom, retain current live colors in form fields
+      form.setValue("storePrimaryAccentColor", livePrimaryColor || "");
+      form.setValue("storeBackgroundColor", liveBackgroundColor || "");
+      form.setValue("storeCardHeaderFooterBackgroundColor", liveCardBackgroundColor || "");
+    } else {
+      const selected = PRESET_PALETTES.find(p => p.id === paletteId);
+      if (selected) {
+        setLivePrimaryColor(selected.primary);
+        setLiveBackgroundColor(selected.background);
+        setLiveCardBackgroundColor(selected.cardBackground);
+        form.setValue("storePrimaryAccentColor", selected.primary);
+        form.setValue("storeBackgroundColor", selected.background);
+        form.setValue("storeCardHeaderFooterBackgroundColor", selected.cardBackground);
+      }
     }
+  };
+
+  const handleColorInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setColorState: React.Dispatch<React.SetStateAction<string | null>>,
+    formFieldName: keyof z.infer<typeof formSchema>
+  ) => {
+    const newColor = e.target.value;
+    setColorState(newColor);
+    form.setValue(formFieldName, newColor);
+    setSelectedPaletteId('custom'); // Any manual change means it's custom
   };
 
   const handleResetToDefaultColors = () => {
@@ -645,7 +688,7 @@ export default function SettingsPage() {
                   <Paintbrush className="h-5 w-5 text-primary" /> Store Theme Colors
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Choose a pre-built color palette for your public store.
+                  Choose a pre-built color palette or customize your own for your public store.
                 </p>
                 <div className="grid gap-2">
                   <Label htmlFor="colorPalette" className="text-sm font-medium">Select Color Palette</Label>
@@ -655,7 +698,7 @@ export default function SettingsPage() {
                     disabled={isUpdatingStore}
                   >
                     <SelectTrigger id="colorPalette" className="font-medium">
-                      <SelectValue placeholder="Select a Preset" />
+                      <SelectValue placeholder="Select a Preset or Custom" />
                     </SelectTrigger>
                     <SelectContent>
                       {PRESET_PALETTES.map((palette) => (
@@ -670,9 +713,57 @@ export default function SettingsPage() {
                           </div>
                         </SelectItem>
                       ))}
+                      <SelectItem value="custom" className="font-medium text-primary">
+                        <div className="flex items-center gap-2">
+                          <Palette className="h-4 w-4" />
+                          <span>Custom Colors</span>
+                        </div>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+
+                {selectedPaletteId === 'custom' && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="storeBackgroundColor" className="text-sm font-medium">Store Background Color</Label>
+                      <Input
+                        id="storeBackgroundColor"
+                        type="color"
+                        value={liveBackgroundColor || '#FFFFFF'} // Default to white if null for color picker
+                        onChange={(e) => handleColorInputChange(e, setLiveBackgroundColor, "storeBackgroundColor")}
+                      />
+                      {form.formState.errors.storeBackgroundColor && (
+                        <p className="text-destructive text-sm">{form.formState.errors.storeBackgroundColor.message}</p>
+                      )}
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="storeCardHeaderFooterBackgroundColor" className="text-sm font-medium">Card, Header & Footer Background Color</Label>
+                      <Input
+                        id="storeCardHeaderFooterBackgroundColor"
+                        type="color"
+                        value={liveCardBackgroundColor || '#FFFFFF'} // Default to white if null for color picker
+                        onChange={(e) => handleColorInputChange(e, setLiveCardBackgroundColor, "storeCardHeaderFooterBackgroundColor")}
+                      />
+                      {form.formState.errors.storeCardHeaderFooterBackgroundColor && (
+                        <p className="text-destructive text-sm">{form.formState.errors.storeCardHeaderFooterBackgroundColor.message}</p>
+                      )}
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="storePrimaryAccentColor" className="text-sm font-medium">Primary Accent Color (Buttons, Links, Icons)</Label>
+                      <Input
+                        id="storePrimaryAccentColor"
+                        type="color"
+                        value={livePrimaryColor || '#29A399'} // Default to Yaarsite primary if null for color picker
+                        onChange={(e) => handleColorInputChange(e, setLivePrimaryColor, "storePrimaryAccentColor")}
+                      />
+                      {form.formState.errors.storePrimaryAccentColor && (
+                        <p className="text-destructive text-sm">{form.formState.errors.storePrimaryAccentColor.message}</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <Button
                   type="button"
                   variant="outline"
