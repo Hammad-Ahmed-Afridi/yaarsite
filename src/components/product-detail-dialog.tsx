@@ -55,6 +55,7 @@ interface ProductDetailDialogProps {
 export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerId }: ProductDetailDialogProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
+  const [selectedSizeInput, setSelectedSizeInput] = useState<string | undefined>(undefined); // New state for size input
   const [quantity, setQuantity] = useState(1);
   const [showFullDescription, setShowFullDescription] = useState(false); // New state for description toggle
 
@@ -64,6 +65,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
     if (isOpen) {
       setCurrentImageIndex(0);
       setSelectedColor(product?.available_colors?.[0] || undefined);
+      setSelectedSizeInput(undefined); // Reset size input
       setQuantity(1);
       setShowFullDescription(false); // Reset description toggle
     }
@@ -118,7 +120,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
       storeOwnerId: storeOwnerId,
       stock: product.stock,
       selected_color: selectedColor,
-      // selected_size_input: undefined, // Removed: Allow selected_size_input to be passed if it exists
+      selected_size_input: selectedSizeInput, // Pass selected size input
     }, quantity);
     onOpenChange(false);
   };
@@ -272,6 +274,22 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                       </div>
                     ))}
                   </RadioGroup>
+                </div>
+              )}
+
+              {/* Size Input */}
+              {/* Assuming a product might have a size chart OR a direct size input, but not both for simplicity */}
+              {!hasSizeChart && (
+                <div className="space-y-2">
+                  <Label htmlFor="size-input" className="text-base font-medium">Size (Optional):</Label>
+                  <Input
+                    id="size-input"
+                    type="text"
+                    placeholder="e.g., Small, M, 32"
+                    value={selectedSizeInput || ''}
+                    onChange={(e) => setSelectedSizeInput(e.target.value)}
+                    className="w-full text-base"
+                  />
                 </div>
               )}
 
