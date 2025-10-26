@@ -68,9 +68,7 @@ export default function ContactPageSettingsPage() {
         contactPageHeading: profile.contact_page_heading || "",
         contactPageDescription: profile.contact_page_description || "",
         contactPageHeroImage: undefined,
-        // These fields are now intentionally left blank by default,
-        // and will only show values if explicitly set by the user in the form.
-        // We explicitly set them to empty strings here to prevent pre-filling from profile.
+        // Explicitly set these to empty strings on load to prevent pre-filling
         storeContactEmail: "", 
         storeContactPhoneNumber: "", 
         storeAddressLine: profile.store_address_line || "",
@@ -243,8 +241,8 @@ export default function ContactPageSettingsPage() {
           contact_page_heading: values.contactPageHeading || null,
           contact_page_description: values.contactPageDescription || null,
           contact_page_hero_image_url: newContactPageHeroImageUrl,
-          store_contact_email: values.storeContactEmail || null, // Use the new field name
-          store_contact_phone: values.storeContactPhoneNumber || null, // Use the new field name
+          store_contact_email: values.storeContactEmail || null,
+          store_contact_phone: values.storeContactPhoneNumber || null,
           store_address_line: values.storeAddressLine || null,
           store_city: values.storeCity || null,
           store_province: values.storeProvince || null,
@@ -286,13 +284,13 @@ export default function ContactPageSettingsPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      <DashboardHeader profile={profile} onSignOut={handleSignOut} /> {/* Removed currentPath */}
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} />
 
-      <main className="flex-1 p-4 sm:p-8 flex justify-center"> {/* Adjusted padding */}
+      <main className="flex-1 p-4 sm:p-8 flex justify-center">
         <Card className="w-full max-w-2xl bg-card text-card-foreground shadow-lg rounded-3xl">
           <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">
             <Button variant="ghost" size="icon" asChild>
-              <Link href="/"> {/* Changed href to dashboard root */}
+              <Link href="/">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>
@@ -384,6 +382,7 @@ export default function ContactPageSettingsPage() {
                       type="email"
                       placeholder="your.store@example.com"
                       className="pl-10"
+                      autoComplete="off" {/* Added autoComplete="off" */}
                       {...form.register("storeContactEmail")}
                     />
                   </div>
@@ -401,6 +400,7 @@ export default function ContactPageSettingsPage() {
                       type="tel"
                       placeholder="03001234567"
                       className="pl-10"
+                      autoComplete="off" {/* Added autoComplete="off" */}
                       {...form.register("storeContactPhoneNumber")}
                     />
                   </div>
@@ -426,7 +426,7 @@ export default function ContactPageSettingsPage() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> {/* Adjusted for mobile responsiveness */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="storeCity" className="text-sm font-medium">Store City</Label>
                     <Input
