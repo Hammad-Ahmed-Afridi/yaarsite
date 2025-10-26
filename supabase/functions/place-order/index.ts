@@ -113,7 +113,15 @@ serve(async (req) => {
         shipping_city,
         shipping_address_line,
         total_amount: roundedCalculatedTotal, // Use the rounded calculated total for insertion
-        items_json, 
+        items_json: items_json.map((item: any) => ({ // Ensure selected_size_input is included
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image_url: item.image_url,
+          selected_color: item.selected_color || null,
+          selected_size_input: item.selected_size_input || null,
+        })), 
         user_id,
         status: 'pending',
         payment_method, 

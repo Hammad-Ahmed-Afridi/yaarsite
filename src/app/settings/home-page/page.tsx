@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import *as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession, ProfileImageKey } from '@/components/session-context-provider';
@@ -130,8 +130,10 @@ export default function HomePageSettingsPage() {
     setIsUpdating(true);
     try {
       if (currentImageUrl) {
-        const path = currentImageUrl.split('store-content-images/')[1];
-        if (path) {
+        const bucketPathSegment = `${bucketName}/`; // Use dynamic bucket name
+        const bucketPathIndex = currentImageUrl.indexOf(bucketPathSegment);
+        if (bucketPathIndex !== -1) {
+          const path = currentImageUrl.substring(bucketPathIndex + bucketPathSegment.length);
           const { error: deleteStorageError } = await supabase.storage
             .from(bucketName) // Use bucketName here
             .remove([path]);
@@ -182,16 +184,19 @@ export default function HomePageSettingsPage() {
       const uploadImageAndGetUrl = async (
         file: File | null,
         currentUrl: string | null,
-        imageType: string
+        imageType: string,
+        bucketName: 'store-logos' | 'store-content-images' // Pass bucketName here
       ): Promise<string | null> => {
         if (!file && !currentUrl) return null;
 
         if (file) {
           if (currentUrl) {
-            const oldPath = currentUrl.split('store-content-images/')[1];
-            if (oldPath) {
+            const bucketPathSegment = `${bucketName}/`; // Use dynamic bucket name
+            const bucketPathIndex = currentUrl.indexOf(bucketPathSegment);
+            if (bucketPathIndex !== -1) {
+              const oldPath = currentUrl.substring(bucketPathIndex + bucketPathSegment.length);
               const { error: deleteOldError } = await supabase.storage
-                .from('store-content-images')
+                .from(bucketName) // Use bucketName here
                 .remove([oldPath]);
               if (deleteOldError) {
                 console.warn(`Failed to delete old ${imageType} from storage:`, deleteOldError.message);
@@ -202,7 +207,7 @@ export default function HomePageSettingsPage() {
           const fileExtension = file.name.split('.').pop();
           const fileName = `${user.id}/${imageType}-${uuidv4()}.${fileExtension}`;
           const { error: uploadError } = await supabase.storage
-            .from('store-content-images')
+            .from(bucketName) // Use bucketName here
             .upload(fileName, file, {
               cacheControl: '3600',
               upsert: false,
@@ -213,7 +218,7 @@ export default function HomePageSettingsPage() {
           }
 
           const { data: publicUrlData } = supabase.storage
-            .from('store-content-images')
+            .from(bucketName) // Use bucketName here
             .getPublicUrl(fileName);
 
           if (publicUrlData?.publicUrl) {
@@ -225,8 +230,8 @@ export default function HomePageSettingsPage() {
         return currentUrl;
       };
 
-      newHomePageHeroImageUrl = await uploadImageAndGetUrl(selectedHomePageHeroImageFile, profile?.home_page_hero_image_url ?? null, 'home-page-hero-image');
-      newHomePageContentImageUrl = await uploadImageAndGetUrl(selectedHomePageContentImageFile, profile?.home_page_content_image_url ?? null, 'home-page-content-image');
+      newHomePageHeroImageUrl = await uploadImageAndGetUrl(selectedHomePageHeroImageFile, profile?.home_page_hero_image_url ?? null, 'home-page-hero-image', 'store-content-images');
+      newHomePageContentImageUrl = await uploadImageAndGetUrl(selectedHomePageContentImageFile, profile?.home_page_content_image_url ?? null, 'home-page-content-image', 'store-content-images');
 
       const { error } = await supabase
         .from('profiles')

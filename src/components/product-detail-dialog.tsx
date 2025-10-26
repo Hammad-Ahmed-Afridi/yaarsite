@@ -118,7 +118,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
       storeOwnerId: storeOwnerId,
       stock: product.stock,
       selected_color: selectedColor,
-      selected_size_input: undefined,
+      // selected_size_input: undefined, // Removed: Allow selected_size_input to be passed if it exists
     }, quantity);
     onOpenChange(false);
   };

@@ -139,8 +139,10 @@ export default function ContactPageSettingsPage() {
     setIsUpdating(true);
     try {
       if (currentImageUrl) {
-        const path = currentImageUrl.split('store-content-images/')[1];
-        if (path) {
+        const bucketPathSegment = `${bucketName}/`; // Use dynamic bucket name
+        const bucketPathIndex = currentImageUrl.indexOf(bucketPathSegment);
+        if (bucketPathIndex !== -1) {
+          const path = currentImageUrl.substring(bucketPathIndex + bucketPathSegment.length);
           const { error: deleteStorageError } = await supabase.storage
             .from(bucketName)
             .remove([path]);
@@ -189,16 +191,19 @@ export default function ContactPageSettingsPage() {
       const uploadImageAndGetUrl = async (
         file: File | null,
         currentUrl: string | null,
-        imageType: string
+        imageType: string,
+        bucketName: 'store-logos' | 'store-content-images' // Pass bucketName here
       ): Promise<string | null> => {
         if (!file && !currentUrl) return null;
 
         if (file) {
           if (currentUrl) {
-            const oldPath = currentUrl.split('store-content-images/')[1];
-            if (oldPath) {
+            const bucketPathSegment = `${bucketName}/`; // Use dynamic bucket name
+            const bucketPathIndex = currentUrl.indexOf(bucketPathSegment);
+            if (bucketPathIndex !== -1) {
+              const oldPath = currentUrl.substring(bucketPathIndex + bucketPathSegment.length);
               const { error: deleteOldError } = await supabase.storage
-                .from('store-content-images')
+                .from(bucketName)
                 .remove([oldPath]);
               if (deleteOldError) {
                 console.warn(`Failed to delete old ${imageType} from storage:`, deleteOldError.message);
@@ -209,7 +214,7 @@ export default function ContactPageSettingsPage() {
           const fileExtension = file.name.split('.').pop();
           const fileName = `${user.id}/${imageType}-${uuidv4()}.${fileExtension}`;
           const { error: uploadError } = await supabase.storage
-            .from('store-content-images')
+            .from(bucketName)
             .upload(fileName, file, {
               cacheControl: '3600',
               upsert: false,
@@ -220,7 +225,7 @@ export default function ContactPageSettingsPage() {
           }
 
           const { data: publicUrlData } = supabase.storage
-            .from('store-content-images')
+            .from(bucketName)
             .getPublicUrl(fileName);
 
           if (publicUrlData?.publicUrl) {
@@ -232,7 +237,7 @@ export default function ContactPageSettingsPage() {
         return currentUrl;
       };
 
-      newContactPageHeroImageUrl = await uploadImageAndGetUrl(selectedContactPageHeroImageFile, profile?.contact_page_hero_image_url ?? null, 'contact-page-hero-image');
+      newContactPageHeroImageUrl = await uploadImageAndGetUrl(selectedContactPageHeroImageFile, profile?.contact_page_hero_image_url ?? null, 'contact-page-hero-image', 'store-content-images');
 
       const { error } = await supabase
         .from('profiles')
