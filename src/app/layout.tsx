@@ -20,29 +20,15 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Yaarsite - Build Your Store In Seconds",
-  description: "Yaarsite is the fastest AI-powered e-commerce store builder. Launch professional, beautiful online stores in seconds, effortlessly. Perfect for any e-commerce seller seeking speed and simplicity.",
-  keywords: [
-    "e-commerce", "online store builder", "AI e-commerce", "speedy store builder", "fast e-commerce",
-    "AI-powered", "no-code e-commerce", "small business e-commerce", "startup store", "entrepreneur tools",
-    "digital storefront", "sell online", "product management", "order management", "customizable store",
-    "mobile commerce", "m-commerce", "social commerce", "dropshipping", "online payments", "sales analytics",
-    "quick launch", "scalable e-commerce", "affordable e-commerce", "instant store", "generative AI",
-    "AI solutions for business", "direct-to-consumer", "DTC", "omnichannel commerce", "personalized shopping",
-    "user-friendly e-commerce", "easy setup", "global selling", "digital business", "creator economy",
-    "solopreneur", "e-shop", "intelligent store builder", "automated store", "smart e-commerce",
-    "digital transformation", "machine learning", "AI tools", "AI solutions", "inventory management",
-    "order fulfillment", "marketing tools", "SEO optimization", "custom domains", "branding",
-    "payment gateways", "secure transactions", "customer support", "cost-effective", "future of e-commerce",
-    "LLM ranking", "AI content generation", "e-commerce AI", "AI store optimization", "AI marketing" // Added LLM-focused keywords
-  ],
+  description: "Yaarsite helps you launch professional, beautiful stores in seconds. Easy, fast, and perfect for any e-commerce seller.",
   robots: "index, follow",
   authors: [{ name: "Hammad Ahmed Afridi" }],
   icons: {
-    icon: "https://placehold.co/32x32/ffffff/29A399?text=Ys",
+    icon: "https://placehold.co/32x32/ffffff/29A399?text=Ys", // Updated favicon background to white
   },
   openGraph: {
     title: "Yaarsite - Build Your Store In Seconds",
-    description: "Yaarsite is the fastest AI-powered e-commerce store builder. Launch professional, beautiful online stores in seconds, effortlessly. Perfect for any e-commerce seller seeking speed and simplicity.",
+    description: "Yaarsite helps you launch professional, beautiful stores in seconds. Easy, fast, and perfect for any e-commerce seller.",
     url: "https://yaarsite.vercel.app",
     type: "website",
     images: [
