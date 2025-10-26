@@ -29,8 +29,8 @@ const formSchema = z.object({
   contactPageHeading: z.string().max(100, { message: "Contact page heading cannot exceed 100 characters." }).optional(),
   contactPageDescription: z.string().max(500, { message: "Contact page description cannot exceed 500 characters." }).optional(),
   contactPageHeroImage: z.instanceof(File).optional(),
-  email: z.string().email({ message: "Please enter a valid email address." }).optional().or(z.literal('')),
-  phoneNumber: z.string()
+  storeContactEmail: z.string().email({ message: "Please enter a valid email address." }).optional().or(z.literal('')),
+  storeContactPhoneNumber: z.string()
     .regex(/^03\d{9}$/, { message: "Phone number must start with 03 and be 11 digits long." })
     .optional()
     .or(z.literal('')),
@@ -54,8 +54,8 @@ export default function ContactPageSettingsPage() {
       contactPageHeading: "",
       contactPageDescription: "",
       contactPageHeroImage: undefined,
-      email: "", // Initialize as empty string
-      phoneNumber: "", // Initialize as empty string
+      storeContactEmail: "", // Initialize as empty string
+      storeContactPhoneNumber: "", // Initialize as empty string
       storeAddressLine: "",
       storeCity: "",
       storeProvince: "",
@@ -68,10 +68,9 @@ export default function ContactPageSettingsPage() {
         contactPageHeading: profile.contact_page_heading || "",
         contactPageDescription: profile.contact_page_description || "",
         contactPageHeroImage: undefined,
-        // These fields are now intentionally left blank by default,
-        // and will only show values if explicitly set by the user in the form.
-        email: profile.email || "", // Keep this to load *saved store email*, not user auth email
-        phoneNumber: profile.phone_number || "", // Keep this to load *saved store phone*, not user auth phone
+        // Use the new store-specific contact fields
+        storeContactEmail: profile.store_contact_email || "", 
+        storeContactPhoneNumber: profile.store_contact_phone || "", 
         storeAddressLine: profile.store_address_line || "",
         storeCity: profile.store_city || "",
         storeProvince: profile.store_province || "",
@@ -242,8 +241,8 @@ export default function ContactPageSettingsPage() {
           contact_page_heading: values.contactPageHeading || null,
           contact_page_description: values.contactPageDescription || null,
           contact_page_hero_image_url: newContactPageHeroImageUrl,
-          email: values.email || null, // Use the value from the form
-          phone_number: values.phoneNumber || null, // Use the value from the form
+          store_contact_email: values.storeContactEmail || null, // Use the new field name
+          store_contact_phone: values.storeContactPhoneNumber || null, // Use the new field name
           store_address_line: values.storeAddressLine || null,
           store_city: values.storeCity || null,
           store_province: values.storeProvince || null,
@@ -375,36 +374,36 @@ export default function ContactPageSettingsPage() {
               <div className="space-y-6">
                 <h3 className="text-xl font-semibold tracking-tight">Contact Information</h3>
                 <div className="grid gap-2">
-                  <Label htmlFor="email" className="text-sm font-medium">Store Email</Label>
+                  <Label htmlFor="storeContactEmail" className="text-sm font-medium">Store Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                      id="email"
+                      id="storeContactEmail"
                       type="email"
                       placeholder="your.store@example.com"
                       className="pl-10"
-                      {...form.register("email")}
+                      {...form.register("storeContactEmail")}
                     />
                   </div>
-                  {form.formState.errors.email && (
-                    <p className="text-destructive text-sm">{form.formState.errors.email.message}</p>
+                  {form.formState.errors.storeContactEmail && (
+                    <p className="text-destructive text-sm">{form.formState.errors.storeContactEmail.message}</p>
                   )}
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="phoneNumber" className="text-sm font-medium">Store Phone Number</Label>
+                  <Label htmlFor="storeContactPhoneNumber" className="text-sm font-medium">Store Phone Number</Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                      id="phoneNumber"
+                      id="storeContactPhoneNumber"
                       type="tel"
                       placeholder="03001234567"
                       className="pl-10"
-                      {...form.register("phoneNumber")}
+                      {...form.register("storeContactPhoneNumber")}
                     />
                   </div>
-                  {form.formState.errors.phoneNumber && (
-                    <p className="text-destructive text-sm">{form.formState.errors.phoneNumber.message}</p>
+                  {form.formState.errors.storeContactPhoneNumber && (
+                    <p className="text-destructive text-sm">{form.formState.errors.storeContactPhoneNumber.message}</p>
                   )}
                 </div>
 

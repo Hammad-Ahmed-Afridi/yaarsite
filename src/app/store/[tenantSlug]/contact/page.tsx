@@ -73,26 +73,26 @@ export default function StoreContactPage() {
       </p>
 
       <div className="space-y-4 text-left w-full max-w-md">
-        {/* Email Section - Renders only if profile.email is provided */}
-        {profile.email && (
+        {/* Email Section - Renders only if profile.store_contact_email is provided */}
+        {profile.store_contact_email && (
           <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm">
             <Mail className="h-6 w-6 text-muted-foreground" />
             <div>
               <p className="font-semibold text-base">Email Us</p>
-              <a href={`mailto:${profile.email}`} className="text-store-primary hover:underline text-base">
-                {profile.email}
+              <a href={`mailto:${profile.store_contact_email}`} className="text-store-primary hover:underline text-base">
+                {profile.store_contact_email}
               </a>
             </div>
           </div>
         )}
-        {/* Phone Section - Renders only if profile.phone_number is provided */}
-        {profile.phone_number && (
+        {/* Phone Section - Renders only if profile.store_contact_phone is provided */}
+        {profile.store_contact_phone && (
           <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm">
             <Phone className="h-6 w-6 text-muted-foreground" />
             <div>
               <p className="font-semibold text-base">Call Us</p>
-              <a href={`tel:${profile.phone_number}`} className="text-store-primary hover:underline text-base">
-                {profile.phone_number}
+              <a href={`tel:${profile.store_contact_phone}`} className="text-store-primary hover:underline text-base">
+                {profile.store_contact_phone}
               </a>
             </div>
           </div>
