@@ -73,24 +73,26 @@ export default function StoreContactPage() {
       </p>
 
       <div className="space-y-4 text-left w-full max-w-md">
-        {profile.email && (
-          <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm"> {/* Use store-card */}
-            <Mail className="h-6 w-6 text-muted-foreground" />
-            <div>
-              <p className="font-semibold text-base">Email Us</p>
-              <a href={`mailto:${profile.email}`} className="text-store-primary hover:underline text-base">{profile.email}</a> {/* Use store-primary */}
-            </div>
+        {/* Always render email section, use placeholder if profile.email is null */}
+        <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm">
+          <Mail className="h-6 w-6 text-muted-foreground" />
+          <div>
+            <p className="font-semibold text-base">Email Us</p>
+            <a href={`mailto:${profile.email || "example@gmail.com"}`} className="text-store-primary hover:underline text-base">
+              {profile.email || "example@gmail.com"}
+            </a>
           </div>
-        )}
-        {profile.phone_number && (
-          <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm"> {/* Use store-card */}
-            <Phone className="h-6 w-6 text-muted-foreground" />
-            <div>
-              <p className="font-semibold text-base">Call Us</p>
-              <a href={`tel:${profile.phone_number}`} className="text-store-primary hover:underline text-base">{profile.phone_number}</a> {/* Use store-primary */}
-            </div>
+        </div>
+        {/* Always render phone section, use placeholder if profile.phone_number is null */}
+        <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm">
+          <Phone className="h-6 w-6 text-muted-foreground" />
+          <div>
+            <p className="font-semibold text-base">Call Us</p>
+            <a href={`tel:${profile.phone_number || "123456789"}`} className="text-store-primary hover:underline text-base">
+              {profile.phone_number || "123456789"}
+            </a>
           </div>
-        )}
+        </div>
         <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm"> {/* Use store-card */}
           <MapPin className="h-6 w-6 text-muted-foreground" />
           <div>
