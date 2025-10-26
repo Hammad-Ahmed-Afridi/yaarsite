@@ -85,7 +85,7 @@ export default function SignupPage() {
       .single();
 
     if (error && error.code !== 'PGRST116') { // PGRST116 means "no rows found"
-      console.error("Error checking phone number uniqueness:", error.message || error); // Improved error logging
+      console.error("Error checking phone number uniqueness:", error);
       return "An error occurred while checking phone number. Please try again.";
     }
 
