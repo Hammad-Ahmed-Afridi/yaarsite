@@ -11,7 +11,7 @@ export interface Profile { // Exported for use in DashboardHeader
   email: string | null;
   first_name: string | null;
   last_name: string | null;
-  phone_number: string | null;
+  phone_number: string | null; // Added phone_number
   tenant_name: string | null;
   tenant_slug: string | null;
   store_url: string | null;

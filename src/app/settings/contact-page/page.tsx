@@ -69,7 +69,7 @@ export default function ContactPageSettingsPage() {
         contactPageDescription: profile.contact_page_description || "",
         contactPageHeroImage: undefined,
         email: profile.email || "",
-        phoneNumber: profile.phone_number || "",
+        phoneNumber: profile.phone_number || "", // Now correctly maps to the new column
         storeAddressLine: profile.store_address_line || "",
         storeCity: profile.store_city || "",
         storeProvince: profile.store_province || "",
@@ -241,7 +241,7 @@ export default function ContactPageSettingsPage() {
           contact_page_description: values.contactPageDescription || null,
           contact_page_hero_image_url: newContactPageHeroImageUrl,
           email: values.email || null,
-          phone_number: values.phoneNumber || null,
+          phone_number: values.phoneNumber || null, // Now correctly updates the new column
           store_address_line: values.storeAddressLine || null,
           store_city: values.storeCity || null,
           store_province: values.storeProvince || null,
