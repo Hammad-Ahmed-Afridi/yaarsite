@@ -118,10 +118,8 @@ export default function AboutPageSettingsPage() {
     setIsUpdating(true);
     try {
       if (currentImageUrl) {
-        const bucketPathSegment = `${bucketName}/`; // Use dynamic bucket name
-        const bucketPathIndex = currentImageUrl.indexOf(bucketPathSegment);
-        if (bucketPathIndex !== -1) {
-          const path = currentImageUrl.substring(bucketPathIndex + bucketPathSegment.length);
+        const path = currentImageUrl.split('store-content-images/')[1];
+        if (path) {
           const { error: deleteStorageError } = await supabase.storage
             .from(bucketName) // Use bucketName here
             .remove([path]);
@@ -170,19 +168,16 @@ export default function AboutPageSettingsPage() {
       const uploadImageAndGetUrl = async (
         file: File | null,
         currentUrl: string | null,
-        imageType: string,
-        bucketName: 'store-logos' | 'store-content-images' // Pass bucketName here
+        imageType: string
       ): Promise<string | null> => {
         if (!file && !currentUrl) return null;
 
         if (file) {
           if (currentUrl) {
-            const bucketPathSegment = `${bucketName}/`; // Use dynamic bucket name
-            const bucketPathIndex = currentUrl.indexOf(bucketPathSegment);
-            if (bucketPathIndex !== -1) {
-              const oldPath = currentUrl.substring(bucketPathIndex + bucketPathSegment.length);
+            const oldPath = currentUrl.split('store-content-images/')[1];
+            if (oldPath) {
               const { error: deleteOldError } = await supabase.storage
-                .from(bucketName) // Use bucketName here
+                .from('store-content-images')
                 .remove([oldPath]);
               if (deleteOldError) {
                 console.warn(`Failed to delete old ${imageType} from storage:`, deleteOldError.message);
@@ -193,7 +188,7 @@ export default function AboutPageSettingsPage() {
           const fileExtension = file.name.split('.').pop();
           const fileName = `${user.id}/${imageType}-${uuidv4()}.${fileExtension}`;
           const { error: uploadError } = await supabase.storage
-            .from(bucketName) // Use bucketName here
+            .from('store-content-images')
             .upload(fileName, file, {
               cacheControl: '3600',
               upsert: false,
@@ -204,7 +199,7 @@ export default function AboutPageSettingsPage() {
           }
 
           const { data: publicUrlData } = supabase.storage
-            .from(bucketName) // Use bucketName here
+            .from('store-content-images')
             .getPublicUrl(fileName);
 
           if (publicUrlData?.publicUrl) {
@@ -216,7 +211,7 @@ export default function AboutPageSettingsPage() {
         return currentUrl;
       };
 
-      newAboutPageHeroImageUrl = await uploadImageAndGetUrl(selectedAboutPageHeroImageFile, profile?.about_page_hero_image_url ?? null, 'about-page-hero-image', 'store-content-images');
+      newAboutPageHeroImageUrl = await uploadImageAndGetUrl(selectedAboutPageHeroImageFile, profile?.about_page_hero_image_url ?? null, 'about-page-hero-image');
 
       const { error } = await supabase
         .from('profiles')

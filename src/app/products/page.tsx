@@ -95,38 +95,22 @@ export default function ProductsPage() {
     }
   };
 
-  const handleDeleteProduct = async (productId: string, imageUrls: string[] | null, sizeChartUrl: string | null) => {
+  const handleDeleteProduct = async (productId: string, imageUrls: string[] | null) => {
     setIsDeletingProduct(true);
     try {
-      if (user) {
-        // Delete product images
-        if (imageUrls && imageUrls.length > 0) {
-          const imagePaths = imageUrls.map(url => {
-            const path = url.split('product-images/')[1];
-            return path;
-          }).filter(Boolean) as string[];
+      if (imageUrls && imageUrls.length > 0 && user) {
+        const imagePaths = imageUrls.map(url => {
+          const path = url.split('product-images/')[1];
+          return path;
+        }).filter(Boolean) as string[];
 
-          if (imagePaths.length > 0) {
-            const { error: deleteStorageError } = await supabase.storage
-              .from('product-images')
-              .remove(imagePaths);
+        if (imagePaths.length > 0) {
+          const { error: deleteStorageError } = await supabase.storage
+            .from('product-images')
+            .remove(imagePaths);
 
-            if (deleteStorageError) {
-              console.warn("Failed to delete product images from storage:", deleteStorageError.message);
-            }
-          }
-        }
-
-        // Delete size chart image
-        if (sizeChartUrl) {
-          const sizeChartPath = sizeChartUrl.split('store-content-images/')[1];
-          if (sizeChartPath) {
-            const { error: deleteSizeChartError } = await supabase.storage
-              .from('store-content-images')
-              .remove([sizeChartPath]);
-            if (deleteSizeChartError) {
-              console.warn("Failed to delete size chart image from storage:", deleteSizeChartError.message);
-            }
+          if (deleteStorageError) {
+            console.warn("Failed to delete product images from storage:", deleteStorageError.message);
           }
         }
       }
@@ -266,7 +250,7 @@ export default function ProductsPage() {
                           <AlertDialogFooter>
                             <AlertDialogCancel className="font-medium">Cancel</AlertDialogCancel>
                             <AlertDialogAction
-                              onClick={() => handleDeleteProduct(product.id, product.image_urls, product.size_chart_url)}
+                              onClick={() => handleDeleteProduct(product.id, product.image_urls)}
                               disabled={isDeletingProduct}
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-semibold"
                             >

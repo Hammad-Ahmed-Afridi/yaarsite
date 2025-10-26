@@ -153,7 +153,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
         }
 
         let fileToUpload = file;
-        if (file.size > 600 * 1024) { // Compress if larger than 600KB
+        if (file.size > 600 * 1024) {
           toast.info(`Compressing "${file.name}" for faster loading...`);
           fileToUpload = await compressImage(file);
           if (fileToUpload.size < file.size) {
@@ -286,7 +286,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
       const initialImageUrls = product.image_urls || [];
       for (const initialUrl of initialImageUrls) {
         if (!existingImageUrls.includes(initialUrl)) {
-          const path = initialUrl.split('product-images/')[1]; // Corrected bucket name
+          const path = initialUrl.split('product-images/')[1];
           if (path) oldImagePathsToRemove.push(path);
         }
       }

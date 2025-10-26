@@ -90,7 +90,7 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
       const existingItemIndex = prevItems.findIndex(cartItem => 
         cartItem.id === item.id && 
         cartItem.selected_color === item.selected_color &&
-        cartItem.selected_size_input === item.selected_size_input // Corrected: Include selected_size_input
+        cartItem.selected_size_input === item.selected_size_input
       );
 
       if (existingItemIndex > -1) {
