@@ -68,7 +68,9 @@ export default function ContactPageSettingsPage() {
         contactPageHeading: profile.contact_page_heading || "",
         contactPageDescription: profile.contact_page_description || "",
         contactPageHeroImage: undefined,
-        // Explicitly set these to empty strings on load to prevent pre-filling
+        // These fields are now intentionally left blank by default,
+        // and will only show values if explicitly set by the user in the form.
+        // We explicitly set them to empty strings here to prevent pre-filling from profile.
         storeContactEmail: "", 
         storeContactPhoneNumber: "", 
         storeAddressLine: profile.store_address_line || "",
@@ -379,10 +381,10 @@ export default function ContactPageSettingsPage() {
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="storeContactEmail"
-                      type="email"
+                      type="text" // Changed type to text
                       placeholder="your.store@example.com"
                       className="pl-10"
-                      autoComplete="off" {/* Added autoComplete="off" */}
+                      autoComplete="off"
                       {...form.register("storeContactEmail")}
                     />
                   </div>
@@ -397,10 +399,10 @@ export default function ContactPageSettingsPage() {
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="storeContactPhoneNumber"
-                      type="tel"
+                      type="text" // Changed type to text
                       placeholder="03001234567"
                       className="pl-10"
-                      autoComplete="off" {/* Added autoComplete="off" */}
+                      autoComplete="off"
                       {...form.register("storeContactPhoneNumber")}
                     />
                   </div>
