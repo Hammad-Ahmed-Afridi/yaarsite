@@ -8,11 +8,10 @@ import { useInactivityLogout } from '@/hooks/use-inactivity-logout';
 // Define the Profile type based on your Supabase schema
 export interface Profile { // Exported for use in DashboardHeader
   id: string;
-  // Renamed for clarity: these are for the store's public contact info
-  store_contact_email: string | null; 
+  email: string | null;
   first_name: string | null;
   last_name: string | null;
-  store_contact_phone: string | null; 
+  phone_number: string | null;
   tenant_name: string | null;
   tenant_slug: string | null;
   store_url: string | null;

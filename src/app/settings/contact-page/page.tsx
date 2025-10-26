@@ -29,8 +29,8 @@ const formSchema = z.object({
   contactPageHeading: z.string().max(100, { message: "Contact page heading cannot exceed 100 characters." }).optional(),
   contactPageDescription: z.string().max(500, { message: "Contact page description cannot exceed 500 characters." }).optional(),
   contactPageHeroImage: z.instanceof(File).optional(),
-  storeContactEmail: z.string().email({ message: "Please enter a valid email address." }).optional().or(z.literal('')),
-  storeContactPhoneNumber: z.string()
+  email: z.string().email({ message: "Please enter a valid email address." }).optional().or(z.literal('')),
+  phoneNumber: z.string()
     .regex(/^03\d{9}$/, { message: "Phone number must start with 03 and be 11 digits long." })
     .optional()
     .or(z.literal('')),
@@ -54,8 +54,8 @@ export default function ContactPageSettingsPage() {
       contactPageHeading: "",
       contactPageDescription: "",
       contactPageHeroImage: undefined,
-      storeContactEmail: "", // Always initialize as empty string
-      storeContactPhoneNumber: "", // Always initialize as empty string
+      email: "",
+      phoneNumber: "",
       storeAddressLine: "",
       storeCity: "",
       storeProvince: "",
@@ -68,11 +68,8 @@ export default function ContactPageSettingsPage() {
         contactPageHeading: profile.contact_page_heading || "",
         contactPageDescription: profile.contact_page_description || "",
         contactPageHeroImage: undefined,
-        // These fields are now intentionally left blank by default,
-        // and will only show values if explicitly set by the user in the form.
-        // We explicitly set them to empty strings here to prevent pre-filling from profile.
-        storeContactEmail: "", 
-        storeContactPhoneNumber: "", 
+        email: profile.email || "",
+        phoneNumber: profile.phone_number || "",
         storeAddressLine: profile.store_address_line || "",
         storeCity: profile.store_city || "",
         storeProvince: profile.store_province || "",
@@ -243,8 +240,8 @@ export default function ContactPageSettingsPage() {
           contact_page_heading: values.contactPageHeading || null,
           contact_page_description: values.contactPageDescription || null,
           contact_page_hero_image_url: newContactPageHeroImageUrl,
-          store_contact_email: values.storeContactEmail || null,
-          store_contact_phone: values.storeContactPhoneNumber || null,
+          email: values.email || null,
+          phone_number: values.phoneNumber || null,
           store_address_line: values.storeAddressLine || null,
           store_city: values.storeCity || null,
           store_province: values.storeProvince || null,
@@ -286,13 +283,13 @@ export default function ContactPageSettingsPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      <DashboardHeader profile={profile} onSignOut={handleSignOut} />
+      <DashboardHeader profile={profile} onSignOut={handleSignOut} /> {/* Removed currentPath */}
 
-      <main className="flex-1 p-4 sm:p-8 flex justify-center">
+      <main className="flex-1 p-4 sm:p-8 flex justify-center"> {/* Adjusted padding */}
         <Card className="w-full max-w-2xl bg-card text-card-foreground shadow-lg rounded-3xl">
           <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">
             <Button variant="ghost" size="icon" asChild>
-              <Link href="/">
+              <Link href="/"> {/* Changed href to dashboard root */}
                 <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>
@@ -376,38 +373,36 @@ export default function ContactPageSettingsPage() {
               <div className="space-y-6">
                 <h3 className="text-xl font-semibold tracking-tight">Contact Information</h3>
                 <div className="grid gap-2">
-                  <Label htmlFor="storeContactEmail" className="text-sm font-medium">Store Email</Label>
+                  <Label htmlFor="email" className="text-sm font-medium">Store Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                      id="storeContactEmail"
-                      type="text" // Changed type to text
+                      id="email"
+                      type="email"
                       placeholder="your.store@example.com"
                       className="pl-10"
-                      autoComplete="off"
-                      {...form.register("storeContactEmail")}
+                      {...form.register("email")}
                     />
                   </div>
-                  {form.formState.errors.storeContactEmail && (
-                    <p className="text-destructive text-sm">{form.formState.errors.storeContactEmail.message}</p>
+                  {form.formState.errors.email && (
+                    <p className="text-destructive text-sm">{form.formState.errors.email.message}</p>
                   )}
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="storeContactPhoneNumber" className="text-sm font-medium">Store Phone Number</Label>
+                  <Label htmlFor="phoneNumber" className="text-sm font-medium">Store Phone Number</Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                      id="storeContactPhoneNumber"
-                      type="text" // Changed type to text
+                      id="phoneNumber"
+                      type="tel"
                       placeholder="03001234567"
                       className="pl-10"
-                      autoComplete="off"
-                      {...form.register("storeContactPhoneNumber")}
+                      {...form.register("phoneNumber")}
                     />
                   </div>
-                  {form.formState.errors.storeContactPhoneNumber && (
-                    <p className="text-destructive text-sm">{form.formState.errors.storeContactPhoneNumber.message}</p>
+                  {form.formState.errors.phoneNumber && (
+                    <p className="text-destructive text-sm">{form.formState.errors.phoneNumber.message}</p>
                   )}
                 </div>
 
@@ -428,7 +423,7 @@ export default function ContactPageSettingsPage() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> {/* Adjusted for mobile responsiveness */}
                   <div className="grid gap-2">
                     <Label htmlFor="storeCity" className="text-sm font-medium">Store City</Label>
                     <Input
