@@ -73,40 +73,37 @@ export default function StoreContactPage() {
       </p>
 
       <div className="space-y-4 text-left w-full max-w-md">
-        {/* Email Section */}
-        <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm">
-          <Mail className="h-6 w-6 text-muted-foreground" />
-          <div>
-            <p className="font-semibold text-base">Email Us</p>
-            {profile.email ? (
+        {/* Email Section - Renders only if profile.email is provided */}
+        {profile.email && (
+          <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm">
+            <Mail className="h-6 w-6 text-muted-foreground" />
+            <div>
+              <p className="font-semibold text-base">Email Us</p>
               <a href={`mailto:${profile.email}`} className="text-store-primary hover:underline text-base">
                 {profile.email}
               </a>
-            ) : (
-              <span className="text-muted-foreground text-base">Not provided</span>
-            )}
+            </div>
           </div>
-        </div>
-        {/* Phone Section */}
-        <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm">
-          <Phone className="h-6 w-6 text-muted-foreground" />
-          <div>
-            <p className="font-semibold text-base">Call Us</p>
-            {profile.phone_number ? (
+        )}
+        {/* Phone Section - Renders only if profile.phone_number is provided */}
+        {profile.phone_number && (
+          <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm">
+            <Phone className="h-6 w-6 text-muted-foreground" />
+            <div>
+              <p className="font-semibold text-base">Call Us</p>
               <a href={`tel:${profile.phone_number}`} className="text-store-primary hover:underline text-base">
                 {profile.phone_number}
               </a>
-            ) : (
-              <span className="text-muted-foreground text-base">Not provided</span>
-            )}
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm"> {/* Use store-card */}
+        )}
+        {/* Address Section - Renders as before */}
+        <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm">
           <MapPin className="h-6 w-6 text-muted-foreground" />
           <div>
             <p className="font-semibold text-base">Visit Us</p>
             {hasAddress ? (
-              <p className="text-muted-foreground text-base break-words"> {/* Added break-words */}
+              <p className="text-muted-foreground text-base break-words">
                 {profile.store_address_line && <span>{profile.store_address_line}, </span>}
                 {profile.store_city && <span>{profile.store_city}, </span>}
                 {profile.store_province && <span>{profile.store_province}</span>}
