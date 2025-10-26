@@ -73,24 +73,32 @@ export default function StoreContactPage() {
       </p>
 
       <div className="space-y-4 text-left w-full max-w-md">
-        {/* Always render email section, use placeholder if profile.email is null */}
+        {/* Email Section */}
         <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm">
           <Mail className="h-6 w-6 text-muted-foreground" />
           <div>
             <p className="font-semibold text-base">Email Us</p>
-            <a href={`mailto:${profile.email || "example@gmail.com"}`} className="text-store-primary hover:underline text-base">
-              {profile.email || "example@gmail.com"}
-            </a>
+            {profile.email ? (
+              <a href={`mailto:${profile.email}`} className="text-store-primary hover:underline text-base">
+                {profile.email}
+              </a>
+            ) : (
+              <span className="text-muted-foreground text-base">Not provided</span>
+            )}
           </div>
         </div>
-        {/* Always render phone section, use placeholder if profile.phone_number is null */}
+        {/* Phone Section */}
         <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm">
           <Phone className="h-6 w-6 text-muted-foreground" />
           <div>
             <p className="font-semibold text-base">Call Us</p>
-            <a href={`tel:${profile.phone_number || "123456789"}`} className="text-store-primary hover:underline text-base">
-              {profile.phone_number || "123456789"}
-            </a>
+            {profile.phone_number ? (
+              <a href={`tel:${profile.phone_number}`} className="text-store-primary hover:underline text-base">
+                {profile.phone_number}
+              </a>
+            ) : (
+              <span className="text-muted-foreground text-base">Not provided</span>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm"> {/* Use store-card */}
