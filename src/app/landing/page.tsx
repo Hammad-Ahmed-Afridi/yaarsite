@@ -104,7 +104,7 @@ export default function LandingPage() {
             Build Your <span className="text-primary">Speedy AI-Powered</span> Store in Seconds with {animatedYaarsite}
           </h1>
           <p className="relative z-10 text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl leading-relaxed">
-            {animatedYaarsite} is the fastest AI-powered e-commerce store builder, designed for entrepreneurs to launch professional, beautiful stores in seconds. Focus on your products, we handle the tech and speed.
+            {animatedYaarsite} is the fastest **no-code**, AI-powered e-commerce store builder, designed for **small businesses** and **entrepreneurs** to launch professional, beautiful **digital storefronts** in seconds. Focus on your products, we handle the tech and speed for your **online business**.
           </p>
           <div className="relative z-10 flex flex-col sm:flex-row gap-4">
             <Button asChild size="lg" className="px-8 py-6 text-lg font-semibold hover:scale-[1.02] transition-transform duration-200">
@@ -128,7 +128,7 @@ export default function LandingPage() {
         <div className="container mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Everything You Need to Sell Online</h2>
           <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-            Experience lightning-fast setup and intuitive management. {animatedYaarsite} provides a complete, speedy solution for your e-commerce business, from AI-assisted store creation to effortless product and order tracking.
+            Experience lightning-fast setup and intuitive management. {animatedYaarsite} provides a complete, speedy solution for your **e-commerce business**, from AI-assisted store creation to effortless product and order tracking, ensuring **scalable** and **user-friendly digital transformation**.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card className="group p-6 text-left shadow-lg hover:shadow-2xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.05] hover:bg-gradient-to-br hover:from-primary/5 hover:to-transparent">
@@ -137,7 +137,7 @@ export default function LandingPage() {
                 <CardTitle className="text-xl font-semibold">Intuitive Dashboard</CardTitle>
               </CardHeader>
               <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
-                Manage your products, orders, and store settings with an easy-to-use, fast interface.
+                Manage your products, orders, and store settings with an easy-to-use, fast interface for your **digital storefront**.
               </CardContent>
             </Card>
             <Card className="group p-6 text-left shadow-lg hover:shadow-2xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.05] hover:bg-gradient-to-br hover:from-primary/5 hover:to-transparent">
@@ -146,7 +146,7 @@ export default function LandingPage() {
                 <CardTitle className="text-xl font-semibold">Effortless Product Management</CardTitle>
               </CardHeader>
               <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
-                Quickly add, edit, and organize your products with images and detailed descriptions.
+                Quickly add, edit, and organize your products with images and detailed descriptions, supporting your **online business**.
               </CardContent>
             </Card>
             <Card className="group p-6 text-left shadow-lg hover:shadow-2xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.05] hover:bg-gradient-to-br hover:from-primary/5 hover:to-transparent">
@@ -155,7 +155,7 @@ export default function LandingPage() {
                 <CardTitle className="text-xl font-semibold">Seamless Order Management</CardTitle>
               </CardHeader>
               <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
-                Efficiently track customer orders from pending to delivered, all in one place.
+                Efficiently track customer orders from pending to delivered, all in one place, streamlining your **e-commerce operations**.
               </CardContent>
             </Card>
             <Card className="group p-6 text-left shadow-lg hover:shadow-2xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.05] hover:bg-gradient-to-br hover:from-primary/5 hover:to-transparent">
@@ -164,7 +164,7 @@ export default function LandingPage() {
                 <CardTitle className="text-xl font-semibold">Customizable Storefront</CardTitle>
               </CardHeader>
               <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
-                Rapidly personalize your store's look and feel to match your brand.
+                Rapidly personalize your store's look and feel to match your brand, enabling **direct-to-consumer (DTC)** sales.
               </CardContent>
             </Card>
             <Card className="group p-6 text-left shadow-lg hover:shadow-2xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.05] hover:bg-gradient-to-br hover:from-primary/5 hover:to-transparent">
@@ -173,7 +173,7 @@ export default function LandingPage() {
                 <CardTitle className="text-xl font-semibold">Fully Responsive Design</CardTitle>
               </CardHeader>
               <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
-                Your store looks stunning and loads perfectly fast on any device, from desktops to mobile phones.
+                Your store looks stunning and loads perfectly fast on any device, from desktops to mobile phones, ensuring a great **mobile commerce** experience.
               </CardContent>
             </Card>
             <Card className="group p-6 text-left shadow-lg hover:shadow-2xl transition-all duration-300 rounded-4xl border-2 border-border/50 hover:scale-[1.05] hover:bg-gradient-to-br hover:from-primary/5 hover:to-transparent">
@@ -182,7 +182,7 @@ export default function LandingPage() {
                 <CardTitle className="text-xl font-semibold">Real-time Analytics</CardTitle>
               </CardHeader>
               <CardContent className="p-0 text-muted-foreground text-base leading-relaxed">
-                Instantly track your sales with intuitive, real-time data.
+                Instantly track your sales with intuitive, real-time data, empowering **data-driven decisions** for your **small business**.
               </CardContent>
             </Card>
           </div>
