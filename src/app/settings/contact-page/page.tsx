@@ -54,8 +54,8 @@ export default function ContactPageSettingsPage() {
       contactPageHeading: "",
       contactPageDescription: "",
       contactPageHeroImage: undefined,
-      email: "",
-      phoneNumber: "",
+      email: "", // Initialize as empty string
+      phoneNumber: "", // Initialize as empty string
       storeAddressLine: "",
       storeCity: "",
       storeProvince: "",
@@ -68,8 +68,10 @@ export default function ContactPageSettingsPage() {
         contactPageHeading: profile.contact_page_heading || "",
         contactPageDescription: profile.contact_page_description || "",
         contactPageHeroImage: undefined,
-        email: profile.email || "",
-        phoneNumber: profile.phone_number || "",
+        // These fields are now intentionally left blank by default,
+        // and will only show values if explicitly set by the user in the form.
+        email: profile.email || "", // Keep this to load *saved store email*, not user auth email
+        phoneNumber: profile.phone_number || "", // Keep this to load *saved store phone*, not user auth phone
         storeAddressLine: profile.store_address_line || "",
         storeCity: profile.store_city || "",
         storeProvince: profile.store_province || "",
@@ -240,8 +242,8 @@ export default function ContactPageSettingsPage() {
           contact_page_heading: values.contactPageHeading || null,
           contact_page_description: values.contactPageDescription || null,
           contact_page_hero_image_url: newContactPageHeroImageUrl,
-          email: values.email || null,
-          phone_number: values.phoneNumber || null,
+          email: values.email || null, // Use the value from the form
+          phone_number: values.phoneNumber || null, // Use the value from the form
           store_address_line: values.storeAddressLine || null,
           store_city: values.storeCity || null,
           store_province: values.storeProvince || null,
