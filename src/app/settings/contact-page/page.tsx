@@ -54,8 +54,8 @@ export default function ContactPageSettingsPage() {
       contactPageHeading: "",
       contactPageDescription: "",
       contactPageHeroImage: undefined,
-      storeContactEmail: "", // Initialize as empty string
-      storeContactPhoneNumber: "", // Initialize as empty string
+      storeContactEmail: "", // Always initialize as empty string
+      storeContactPhoneNumber: "", // Always initialize as empty string
       storeAddressLine: "",
       storeCity: "",
       storeProvince: "",
@@ -68,9 +68,11 @@ export default function ContactPageSettingsPage() {
         contactPageHeading: profile.contact_page_heading || "",
         contactPageDescription: profile.contact_page_description || "",
         contactPageHeroImage: undefined,
-        // Use the new store-specific contact fields
-        storeContactEmail: profile.store_contact_email || "", 
-        storeContactPhoneNumber: profile.store_contact_phone || "", 
+        // These fields are now intentionally left blank by default,
+        // and will only show values if explicitly set by the user in the form.
+        // We explicitly set them to empty strings here to prevent pre-filling from profile.
+        storeContactEmail: "", 
+        storeContactPhoneNumber: "", 
         storeAddressLine: profile.store_address_line || "",
         storeCity: profile.store_city || "",
         storeProvince: profile.store_province || "",
