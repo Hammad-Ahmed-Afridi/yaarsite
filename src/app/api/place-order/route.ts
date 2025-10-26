@@ -45,7 +45,7 @@ export async function POST(request: Request) {
         shipping_city: shippingCity,
         shipping_address_line: shippingAddressLine,
         total_amount: totalAmount,
-        items_json: items,
+        items_json: items, // items already contains selected_size_input from cart-context-provider
         user_id: storeOwnerId,
         payment_method: paymentMethod, // New: pass payment method
       }),

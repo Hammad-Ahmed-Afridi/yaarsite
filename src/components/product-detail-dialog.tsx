@@ -55,6 +55,7 @@ interface ProductDetailDialogProps {
 export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerId }: ProductDetailDialogProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
+  const [selectedSizeInput, setSelectedSizeInput] = useState<string | undefined>(undefined); // New state for size input
   const [quantity, setQuantity] = useState(1);
   const [showFullDescription, setShowFullDescription] = useState(false); // New state for description toggle
 
@@ -64,6 +65,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
     if (isOpen) {
       setCurrentImageIndex(0);
       setSelectedColor(product?.available_colors?.[0] || undefined);
+      setSelectedSizeInput(undefined); // Reset size input
       setQuantity(1);
       setShowFullDescription(false); // Reset description toggle
     }
@@ -105,6 +107,11 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
       toast.error("Please select a color.");
       return;
     }
+    // If colors are available, and size input is used, ensure it's not empty
+    if (hasColors && selectedSizeInput === '') {
+      toast.error("Please enter a size.");
+      return;
+    }
     if (quantity > product.stock) {
       toast.error(`Cannot add more than available stock (${product.stock} in stock).`);
       return;
@@ -118,7 +125,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
       storeOwnerId: storeOwnerId,
       stock: product.stock,
       selected_color: selectedColor,
-      selected_size_input: undefined,
+      selected_size_input: selectedSizeInput, // Pass the selected size input
     }, quantity);
     onOpenChange(false);
   };
@@ -275,6 +282,21 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                 </div>
               )}
 
+              {/* Size Input (appears if colors are available) */}
+              {hasColors && (
+                <div className="space-y-2">
+                  <Label htmlFor="size-input" className="text-base font-medium">Size (Optional):</Label>
+                  <Input
+                    id="size-input"
+                    type="text"
+                    placeholder="e.g., M, L, XL, 32, 34"
+                    value={selectedSizeInput || ''}
+                    onChange={(e) => setSelectedSizeInput(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+              )}
+
               {/* Quantity Selector */}
               <div className="space-y-2">
                 <Label htmlFor="quantity" className="text-base font-medium">Quantity:</Label>
@@ -344,7 +366,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               "w-full py-6 text-lg flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200 mt-6 flex-shrink-0"
             )}
             onClick={handleAddToCart}
-            disabled={product.stock <= 0 || (hasColors && !selectedColor)}
+            disabled={product.stock <= 0 || (hasColors && !selectedColor) || (hasColors && selectedSizeInput === '')}
           >
             <ShoppingCart className="h-5 w-5" />
             {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}

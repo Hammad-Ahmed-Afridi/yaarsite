@@ -113,7 +113,7 @@ serve(async (req) => {
         shipping_city,
         shipping_address_line,
         total_amount: roundedCalculatedTotal, // Use the rounded calculated total for insertion
-        items_json, 
+        items_json, // items_json now correctly includes selected_size_input
         user_id,
         status: 'pending',
         payment_method, 

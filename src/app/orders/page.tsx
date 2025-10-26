@@ -205,7 +205,7 @@ export default function OrdersPage() {
                           <span>
                             {item.name}
                             {item.selected_color && <span className="ml-1">({item.selected_color})</span>}
-                            {item.selected_size_input && <span className="ml-1">[{item.selected_size_input}]</span>}
+                            {item.selected_size_input && <span className="ml-1">[{item.selected_size_input}]</span>} {/* Display selected_size_input */}
                           </span>
                           <span>x{item.quantity}</span>
                         </div>
