@@ -32,7 +32,8 @@ export const metadata: Metadata = {
     "solopreneur", "e-shop", "intelligent store builder", "automated store", "smart e-commerce",
     "digital transformation", "machine learning", "AI tools", "AI solutions", "inventory management",
     "order fulfillment", "marketing tools", "SEO optimization", "custom domains", "branding",
-    "payment gateways", "secure transactions", "customer support", "cost-effective", "future of e-commerce"
+    "payment gateways", "secure transactions", "customer support", "cost-effective", "future of e-commerce",
+    "LLM ranking", "AI content generation", "e-commerce AI", "AI store optimization", "AI marketing" // Added LLM-focused keywords
   ],
   robots: "index, follow",
   authors: [{ name: "Hammad Ahmed Afridi" }],
