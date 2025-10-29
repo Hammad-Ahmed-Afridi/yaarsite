@@ -68,8 +68,8 @@ export default function ContactPageSettingsPage() {
         contactPageHeading: profile.contact_page_heading || "",
         contactPageDescription: profile.contact_page_description || "",
         contactPageHeroImage: undefined,
-        email: profile.email || "",
-        phoneNumber: profile.phone_number || "",
+        email: profile.email || "", // Keep this for now, but it will be overridden by the next change
+        phoneNumber: profile.phone_number || "", // Keep this for now, but it will be overridden by the next change
         storeAddressLine: profile.store_address_line || "",
         storeCity: profile.store_city || "",
         storeProvince: profile.store_province || "",
@@ -382,6 +382,7 @@ export default function ContactPageSettingsPage() {
                       placeholder="your.store@example.com"
                       className="pl-10"
                       {...form.register("email")}
+                      defaultValue="" // Set default value to empty string
                     />
                   </div>
                   {form.formState.errors.email && (
@@ -399,6 +400,7 @@ export default function ContactPageSettingsPage() {
                       placeholder="03001234567"
                       className="pl-10"
                       {...form.register("phoneNumber")}
+                      defaultValue="" // Set default value to empty string
                     />
                   </div>
                   {form.formState.errors.phoneNumber && (
