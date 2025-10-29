@@ -206,7 +206,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
     const { count: currentProductCount, error: countError } = await supabase
       .from('products')
       .select('id', { count: 'exact', head: true })
-      .eq('user.id', user.id); // Corrected: use user.id directly
+      .eq('user_id', user.id); // Corrected: use 'user_id' directly
 
     if (countError) {
       console.error("Error fetching product count:", countError);
