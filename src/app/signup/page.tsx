@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation'; // Removed useSearchParams
+import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -29,7 +29,12 @@ const formSchema = z.object({
     .regex(/^03\d{9}$/, { message: "Must start with 03 and be 11 digits long." })
     .optional()
     .or(z.literal('')),
-  password: z.string().min(6, { message: "Password must be at least 6 characters long." }),
+  password: z.string()
+    .min(8, { message: "Password must be at least 8 characters long." }) // Increased minimum length
+    .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter." })
+    .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter." })
+    .regex(/\d/, { message: "Password must contain at least one number." })
+    .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one symbol (e.g., !@#$%)." }),
   confirmPassword: z.string(),
   terms: z.boolean().refine(val => val === true, { message: "You must accept the terms and conditions." }),
   humanVerificationCode: z.string(), // Will be refined later
@@ -40,7 +45,6 @@ const formSchema = z.object({
 
 export default function SignupPage() {
   const router = useRouter();
-  // Removed const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -118,8 +122,6 @@ export default function SignupPage() {
     }
 
     try {
-      // Removed const planType = searchParams.get('plan') || 'free';
-      
       const { error: signUpError } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
@@ -127,7 +129,6 @@ export default function SignupPage() {
           data: {
             name: values.name,
             phone_number: values.phoneNumber || null,
-            // Removed plan_type: planType,
           },
         },
       });
@@ -233,7 +234,9 @@ export default function SignupPage() {
                   {...form.register("password")}
                 />
               </div>
-              <p className="text-muted-foreground text-xs">Must be at least 6 characters long</p>
+              <p className="text-muted-foreground text-xs">
+                Must be at least 8 characters long and include uppercase, lowercase, number, and symbol.
+              </p>
               {form.formState.errors.password && (
                 <p className="text-destructive text-sm">{form.formState.errors.password.message}</p>
               )}
