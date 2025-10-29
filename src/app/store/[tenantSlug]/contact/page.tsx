@@ -73,21 +73,21 @@ export default function StoreContactPage() {
       </p>
 
       <div className="space-y-4 text-left w-full max-w-md">
-        {profile.email && (
+        {profile.store_contact_email && (
           <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm"> {/* Use store-card */}
             <Mail className="h-6 w-6 text-muted-foreground" />
             <div>
               <p className="font-semibold text-base">Email Us</p>
-              <a href={`mailto:${profile.email}`} className="text-store-primary hover:underline text-base">{profile.email}</a> {/* Use store-primary */}
+              <a href={`mailto:${profile.store_contact_email}`} className="text-store-primary hover:underline text-base">{profile.store_contact_email}</a> {/* Use store-primary */}
             </div>
           </div>
         )}
-        {profile.phone_number && (
+        {profile.store_contact_phone && (
           <div className="flex items-center gap-4 p-4 border rounded-lg bg-store-card shadow-sm"> {/* Use store-card */}
             <Phone className="h-6 w-6 text-muted-foreground" />
             <div>
               <p className="font-semibold text-base">Call Us</p>
-              <a href={`tel:${profile.phone_number}`} className="text-store-primary hover:underline text-base">{profile.phone_number}</a> {/* Use store-primary */}
+              <a href={`tel:${profile.store_contact_phone}`} className="text-store-primary hover:underline text-base">{profile.store_contact_phone}</a> {/* Use store-primary */}
             </div>
           </div>
         )}
