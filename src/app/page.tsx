@@ -224,7 +224,7 @@ export default function DashboardPage() {
               <CardTitle className="text-xl font-semibold">Customize Store</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-base text-muted-foreground leading-relaxed">Customize your store's Home, About Us, and Contact Us pages.</p>
+              <p className="text-base text-muted-foreground leading-relaxed">Customize your store's Home, About, and Contact pages.</p>
               <Button onClick={() => router.push('/pages')} className="w-full font-semibold" disabled={profile?.tenant_name === null}>Customize Store</Button>
             </CardContent>
           </Card>
