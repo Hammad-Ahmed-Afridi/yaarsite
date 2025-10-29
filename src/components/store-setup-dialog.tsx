@@ -163,8 +163,8 @@ export function StoreSetupDialog({ onStoreCreated }: StoreSetupDialogProps) {
           onPointerDownOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
         >
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+          <DialogHeader className="text-center"> {/* Added text-center here */}
+            <DialogTitle className="flex items-center justify-center gap-2 text-2xl font-bold tracking-tight"> {/* Added justify-center here */}
               <Store className="h-6 w-6 text-primary" />
               Set Up Your Store
             </DialogTitle>
