@@ -122,13 +122,12 @@ export default function SignupPage() {
     }
 
     try {
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
         options: {
           data: {
-            name: values.name,
-            phone_number: values.phoneNumber || null,
+            name: values.name, // Keep name for first_name in profile via trigger
           },
         },
       });
@@ -138,6 +137,24 @@ export default function SignupPage() {
         toast.error(getAuthErrorMessage(signUpError)); // Use centralized error handling
         refreshVerificationCode(); // Refresh code on error
       } else {
+        // If signup is successful, update the profile with email and phone number
+        if (signUpData.user) {
+          const { error: profileUpdateError } = await supabase
+            .from('profiles')
+            .update({
+              email: values.email,
+              phone_number: values.phoneNumber || null,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', signUpData.user.id);
+
+          if (profileUpdateError) {
+            console.error("Signup Page: Error updating profile with email/phone:", profileUpdateError);
+            // Log the error but proceed with signup success, as the core user is created.
+            // The user can update these fields later in settings if needed.
+          }
+        }
+
         // IMPORTANT: Sign out immediately after successful signup so the user is not logged in
         // and can manually navigate to the login page.
         const { error: signOutError } = await supabase.auth.signOut();
