@@ -168,7 +168,7 @@ export function StoreSetupDialog({ onStoreCreated }: StoreSetupDialogProps) {
               <Store className="h-6 w-6 text-primary" />
               Set Up Your Store
             </DialogTitle>
-            <DialogDescription className="text-base leading-relaxed">
+            <DialogDescription className="text-base leading-relaxed text-center">
               Welcome! Let's get your store ready. You can change these details later.
             </DialogDescription>
           </DialogHeader>
