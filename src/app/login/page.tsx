@@ -37,7 +37,7 @@ export default function LoginPage() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log("Login Page: Attempting form submission with values:", values);
     setIsLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email: values.email,
       password: values.password,
     });
@@ -45,17 +45,10 @@ export default function LoginPage() {
     if (error) {
       console.error("Login Page: Supabase sign-in error:", error);
       toast.error(getAuthErrorMessage(error));
-    } else if (data.user) {
-      // Check if the user's email is confirmed
-      if (!data.user.email_confirmed_at) {
-        toast.info("Please verify your email address to continue.");
-        console.log("Login Page: User email not confirmed, redirecting to /verify-email.");
-        router.push(`/verify-email?email=${encodeURIComponent(values.email)}`);
-      } else {
-        toast.success("Logged in successfully!");
-        console.log("Login Page: Redirecting to / after successful login.");
-        router.push('/');
-      }
+    } else {
+      toast.success("Logged in successfully!");
+      console.log("Login Page: Redirecting to / after successful login.");
+      router.push('/');
     }
     setIsLoading(false);
     console.log("Login Page: Submission finished, isLoading set to false.");
