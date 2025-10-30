@@ -10,7 +10,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const publicPaths = ['/login', '/signup', '/store', '/cart', '/checkout', '/landing', '/terms-and-conditions'];
+  const publicPaths = ['/login', '/signup', '/store', '/cart', '/checkout', '/landing', '/terms-and-conditions', '/verify-email']; // Added /verify-email
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
 
   const [isReadyToRender, setIsReadyToRender] = useState(false);
@@ -44,6 +44,14 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
       // Clear the flag if user is authenticated and not on dashboard (e.g., navigated to products)
       if (typeof window !== 'undefined' && pathname !== '/') {
         localStorage.removeItem('wasAuthenticatedOnDashboard');
+      }
+
+      // NEW: Check for email confirmation
+      if (!user.email_confirmed_at && pathname !== '/verify-email') {
+        console.log("AuthWrapper: Authenticated user, but email not confirmed. Redirecting to /verify-email.");
+        router.push(`/verify-email?email=${encodeURIComponent(user.email || '')}`);
+        setIsReadyToRender(false);
+        return;
       }
 
       if (pathname === '/signup') {
