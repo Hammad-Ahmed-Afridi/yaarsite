@@ -250,7 +250,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
               {/* Color Selection */}
               {hasColors && (
-                <div className="space-y-2">
+                <div className="space-y-2 pl-4"> {/* Added pl-4 here */}
                   <Label className="text-base font-medium">Select Color:</Label>
                   <RadioGroup
                     value={selectedColor}
@@ -285,7 +285,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
 
               {/* Size Selection */}
               {hasSizes && (
-                <div className="space-y-2">
+                <div className="space-y-2 pl-4"> {/* Added pl-4 here */}
                   <Label className="text-base font-medium">Select Size:</Label>
                   <RadioGroup
                     value={selectedSize}
