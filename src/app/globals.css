@@ -57,9 +57,9 @@
     --store-secondary: var(--secondary);
     --store-accent: var(--accent);
     --store-background: var(--background);
-    --store-foreground: var(--foreground);
+    --store-foreground: var(--foreground); /* This will be dynamically set in layout.tsx */
     --store-card-background: var(--card);
-    --store-card-foreground: var(--card-foreground);
+    --store-card-foreground: var(--card-foreground); /* This will be dynamically set in layout.tsx */
   }
 
   .dark {
@@ -113,9 +113,9 @@
     --store-secondary: var(--secondary);
     --store-accent: var(--accent);
     --store-background: var(--background);
-    --store-foreground: var(--foreground);
+    --store-foreground: var(--foreground); /* This will be dynamically set in layout.tsx */
     --store-card-background: var(--card);
-    --store-card-foreground: var(--card-foreground);
+    --store-card-foreground: var(--card-foreground); /* This will be dynamically set in layout.tsx */
   }
 }
 

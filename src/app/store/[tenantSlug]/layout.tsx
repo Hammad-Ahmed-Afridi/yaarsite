@@ -23,6 +23,22 @@ interface StoreLayoutProps {
   // Removed params prop as it will now be accessed via useParams hook
 }
 
+// Helper function to determine foreground color based on background HSL lightness
+const getForegroundColorHsl = (backgroundColorHsl: string | null): string => {
+  if (!backgroundColorHsl) {
+    // Fallback to global foreground if no store background is set
+    return 'var(--foreground)';
+  }
+  const lightnessMatch = backgroundColorHsl.match(/(\d+)%$/);
+  if (lightnessMatch) {
+    const lightness = parseInt(lightnessMatch[1], 10);
+    // If background is light (lightness > 50%), use dark foreground
+    // If background is dark (lightness <= 50%), use light foreground
+    return lightness > 50 ? '222.2 84% 4.9%' : '0 0% 100%'; // Dark blue-grey or White
+  }
+  return 'var(--foreground)'; // Fallback
+};
+
 export default function StoreLayout({
   children,
 }: StoreLayoutProps) {
@@ -81,11 +97,17 @@ export default function StoreLayout({
   useEffect(() => {
     if (profile) {
       const root = document.documentElement;
-      root.style.setProperty('--store-primary', profile.store_primary_color_hsl || 'var(--primary)');
-      root.style.setProperty('--store-background', profile.store_background_color_hsl || 'var(--background)');
-      root.style.setProperty('--store-card-background', profile.store_card_background_color_hsl || 'var(--card)');
-      root.style.setProperty('--store-foreground', 'var(--foreground)');
-      root.style.setProperty('--store-card-foreground', 'var(--card-foreground)');
+      const primaryHsl = profile.store_primary_color_hsl || 'var(--primary)';
+      const backgroundHsl = profile.store_background_color_hsl || 'var(--background)';
+      const cardBackgroundHsl = profile.store_card_background_color_hsl || 'var(--card)';
+
+      root.style.setProperty('--store-primary', primaryHsl);
+      root.style.setProperty('--store-background', backgroundHsl);
+      root.style.setProperty('--store-card-background', cardBackgroundHsl);
+
+      // Dynamically set foreground based on background lightness
+      root.style.setProperty('--store-foreground', getForegroundColorHsl(backgroundHsl));
+      root.style.setProperty('--store-card-foreground', getForegroundColorHsl(cardBackgroundHsl));
     }
   }, [profile]);
 
