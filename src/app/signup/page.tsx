@@ -138,8 +138,23 @@ export default function SignupPage() {
         toast.error(getAuthErrorMessage(signUpError)); // Use centralized error handling
         refreshVerificationCode(); // Refresh code on error
       } else {
-        // The handle_new_user trigger will now correctly populate email and phone_number in profiles.
-        // No need for client-side profile update here.
+        // Explicitly update user metadata after successful signup
+        // This ensures raw_user_meta_data is populated for the trigger
+        if (signUpData.user) {
+          console.log("Signup Page: User signed up, attempting to update user metadata explicitly.");
+          const { error: updateError } = await supabase.auth.updateUser({
+            data: {
+              name: values.name,
+              phone_number: values.phoneNumber || null,
+            },
+          });
+          if (updateError) {
+            console.warn("Signup Page: Error updating user metadata after signup:", updateError);
+            // Don't block signup success, but log the warning
+          } else {
+            console.log("Signup Page: User metadata updated successfully after signup.");
+          }
+        }
 
         // IMPORTANT: Sign out immediately after successful signup so the user is not logged in
         // and can manually navigate to the login page.
