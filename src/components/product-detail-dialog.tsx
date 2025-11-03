@@ -10,7 +10,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, ShoppingCart, Image as ImageIcon, Ruler, Minus, Plus, Check } from 'lucide-react'; // Added Check icon
+import { ChevronLeft, ChevronRight, ShoppingCart, Image as ImageIcon, Ruler, Minus, Plus, Check, Shirt } from 'lucide-react'; // Added Shirt icon
 import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/components/cart-context-provider';
 import { toast } from 'sonner';
@@ -43,6 +43,7 @@ interface Product {
   discount_end_date: string | null;
   size_chart_url: string | null;
   available_colors: string[] | null;
+  available_sizes: string[] | null; // New: available_sizes
 }
 
 interface ProductDetailDialogProps {
@@ -55,7 +56,7 @@ interface ProductDetailDialogProps {
 export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerId }: ProductDetailDialogProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
-  const [selectedSizeInput, setSelectedSizeInput] = useState<string | undefined>(undefined); // New state for size input
+  const [selectedSize, setSelectedSize] = useState<string | undefined>(undefined); // New state for selected size
   const [quantity, setQuantity] = useState(1);
   const [showFullDescription, setShowFullDescription] = useState(false); // New state for description toggle
 
@@ -65,7 +66,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
     if (isOpen) {
       setCurrentImageIndex(0);
       setSelectedColor(product?.available_colors?.[0] || undefined);
-      setSelectedSizeInput(undefined); // Reset size input
+      setSelectedSize(product?.available_sizes?.[0] || undefined); // Initialize selected size
       setQuantity(1);
       setShowFullDescription(false); // Reset description toggle
     }
@@ -78,6 +79,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
   const images = product.image_urls || [];
   const hasMultipleImages = images.length > 1;
   const hasColors = (product.available_colors !== null && product.available_colors.length > 0);
+  const hasSizes = (product.available_sizes !== null && product.available_sizes.length > 0); // New: check for available sizes
   const hasSizeChart = !!product.size_chart_url;
 
   const handlePrevImage = () => {
@@ -107,9 +109,8 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
       toast.error("Please select a color.");
       return;
     }
-    // If colors are available, and size input is used, ensure it's not empty
-    if (hasColors && selectedSizeInput === '') {
-      toast.error("Please enter a size.");
+    if (hasSizes && !selectedSize) { // New: Validate size selection
+      toast.error("Please select a size.");
       return;
     }
     if (quantity > product.stock) {
@@ -125,7 +126,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
       storeOwnerId: storeOwnerId,
       stock: product.stock,
       selected_color: selectedColor,
-      selected_size_input: selectedSizeInput, // Pass the selected size input
+      selected_size: selectedSize, // Pass the selected size
     }, quantity);
     onOpenChange(false);
   };
@@ -282,18 +283,35 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                 </div>
               )}
 
-              {/* Size Input (appears if colors are available) */}
-              {hasColors && (
+              {/* Size Selection */}
+              {hasSizes && (
                 <div className="space-y-2">
-                  <Label htmlFor="size-input" className="text-base font-medium">Size (Optional):</Label>
-                  <Input
-                    id="size-input"
-                    type="text"
-                    placeholder="e.g., M, L, XL, 32, 34"
-                    value={selectedSizeInput || ''}
-                    onChange={(e) => setSelectedSizeInput(e.target.value)}
-                    className="w-full"
-                  />
+                  <Label className="text-base font-medium">Select Size:</Label>
+                  <RadioGroup
+                    value={selectedSize}
+                    onValueChange={setSelectedSize}
+                    className="flex flex-wrap gap-3"
+                  >
+                    {product.available_sizes?.map((size) => (
+                      <div key={size} className="flex items-center">
+                        <RadioGroupItem value={size} id={`size-${size}`} className="peer sr-only" />
+                        <Label
+                          htmlFor={`size-${size}`}
+                          className={cn(
+                            "relative w-12 h-12 rounded-md border-2 cursor-pointer flex items-center justify-center text-base font-semibold",
+                            "peer-data-[state=checked]:ring-2 peer-data-[state=checked]:ring-primary peer-data-[state=checked]:ring-offset-2",
+                            "hover:bg-muted transition-all duration-200"
+                          )}
+                        >
+                          {size}
+                          {selectedSize === size && (
+                            <Check className="absolute top-1 right-1 h-4 w-4 text-primary" />
+                          )}
+                          <span className="sr-only">{size}</span>
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
                 </div>
               )}
 
@@ -366,7 +384,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
               "w-full py-6 text-lg flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200 mt-6 flex-shrink-0"
             )}
             onClick={handleAddToCart}
-            disabled={product.stock <= 0 || (hasColors && !selectedColor) || (hasColors && selectedSizeInput === '')}
+            disabled={product.stock <= 0 || (hasColors && !selectedColor) || (hasSizes && !selectedSize)}
           >
             <ShoppingCart className="h-5 w-5" />
             {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}

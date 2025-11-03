@@ -22,7 +22,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Image as ImageIcon, Loader2, X, Edit, ChevronDown, Ruler } from 'lucide-react'; // Added Ruler icon
+import { Image as ImageIcon, Loader2, X, Edit, ChevronDown, Ruler, Shirt } from 'lucide-react'; // Added Shirt icon
 import Image from 'next/image';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Import Select components
 
@@ -38,6 +38,7 @@ const formSchema = z.object({
   category: z.string().optional(), // New: category field
   sizeChartImage: z.instanceof(File).optional(), // New: sizeChartImage
   availableColors: z.string().optional(), // New: availableColors as comma-separated string
+  availableSizes: z.string().optional(), // New: availableSizes as comma-separated string
 });
 
 interface Product {
@@ -56,6 +57,7 @@ interface Product {
   created_at: string;
   size_chart_url: string | null; // New: size_chart_url
   available_colors: string[] | null; // New: available_colors
+  available_sizes: string[] | null; // New: available_sizes
 }
 
 interface EditProductDialogProps {
@@ -87,6 +89,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
       category: product.category || "", // Default category
       sizeChartImage: undefined,
       availableColors: product.available_colors?.join(', ') || "",
+      availableSizes: product.available_sizes?.join(', ') || "", // Initialize new field
     },
   });
 
@@ -101,6 +104,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
         category: product.category || "",
         sizeChartImage: undefined, // Reset file input
         availableColors: product.available_colors?.join(', ') || "",
+        availableSizes: product.available_sizes?.join(', ') || "", // Set existing sizes
       });
       setExistingImageUrls(product.image_urls || []);
       setSelectedNewImageFiles([]);
@@ -410,6 +414,10 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
         ? values.availableColors.split(',').map(color => color.trim()).filter(Boolean)
         : null;
 
+      const availableSizesArray = values.availableSizes
+        ? values.availableSizes.split(',').map(size => size.trim().toUpperCase()).filter(Boolean)
+        : null;
+
       const { error: updateError } = await supabase
         .from('products')
         .update({
@@ -425,6 +433,7 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
           discount_end_date: updatedDiscountEndDate,
           size_chart_url: newSizeChartUrl, // New: update size chart URL
           available_colors: availableColorsArray, // New: update available colors
+          available_sizes: availableSizesArray, // New: update available sizes
           updated_at: new Date().toISOString(),
         })
         .eq('id', product.id)
@@ -670,6 +679,21 @@ export function EditProductDialog({ product, onProductUpdated }: EditProductDial
             />
             {form.formState.errors.availableColors && (
               <p className="text-destructive text-sm">{form.formState.errors.availableColors.message}</p>
+            )}
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="availableSizes" className="text-sm font-medium">Available Sizes (Optional)</Label>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Enter sizes separated by commas (e.g., "XS, S, M, L, XL, XXL"). Customers can select these.
+            </p>
+            <Input
+              id="availableSizes"
+              placeholder="e.g., XS, S, M, L, XL"
+              {...form.register("availableSizes")}
+            />
+            {form.formState.errors.availableSizes && (
+              <p className="text-destructive text-sm">{form.formState.errors.availableSizes.message}</p>
             )}
           </div>
 

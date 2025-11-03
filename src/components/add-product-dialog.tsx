@@ -22,7 +22,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Image as ImageIcon, Loader2, X, ChevronDown, Ruler } from 'lucide-react'; // Added Ruler icon
+import { Plus, Image as ImageIcon, Loader2, X, ChevronDown, Ruler, Shirt } from 'lucide-react'; // Added Shirt icon
 import Image from 'next/image';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Import Select components
 
@@ -38,6 +38,7 @@ const formSchema = z.object({
   category: z.string().optional(), // New: category field
   sizeChartImage: z.instanceof(File).optional(), // New: sizeChartImage
   availableColors: z.string().optional(), // New: availableColors as comma-separated string
+  availableSizes: z.string().optional(), // New: availableSizes as comma-separated string
 });
 
 interface AddProductDialogProps {
@@ -69,6 +70,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
       category: "", // Default category
       sizeChartImage: undefined,
       availableColors: "",
+      availableSizes: "", // Initialize new field
     },
   });
 
@@ -282,6 +284,10 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
         ? values.availableColors.split(',').map(color => color.trim()).filter(Boolean)
         : null;
 
+      const availableSizesArray = values.availableSizes
+        ? values.availableSizes.split(',').map(size => size.trim().toUpperCase()).filter(Boolean)
+        : null;
+
       const { error: insertError } = await supabase
         .from('products')
         .insert({
@@ -295,6 +301,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
           original_price: values.price, // Set original_price to initial price
           size_chart_url: sizeChartUrl, // New: insert size chart URL
           available_colors: availableColorsArray, // New: insert available colors
+          available_sizes: availableSizesArray, // New: insert available sizes
         });
 
       if (insertError) {
@@ -529,6 +536,21 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
             />
             {form.formState.errors.availableColors && (
               <p className="text-destructive text-sm">{form.formState.errors.availableColors.message}</p>
+            )}
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="availableSizes" className="text-sm font-medium">Available Sizes (Optional)</Label>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Enter sizes separated by commas (e.g., "XS, S, M, L, XL, XXL"). Customers can select these.
+            </p>
+            <Input
+              id="availableSizes"
+              placeholder="e.g., XS, S, M, L, XL"
+              {...form.register("availableSizes")}
+            />
+            {form.formState.errors.availableSizes && (
+              <p className="text-destructive text-sm">{form.formState.errors.availableSizes.message}</p>
             )}
           </div>
 

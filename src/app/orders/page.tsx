@@ -33,7 +33,7 @@ interface Order {
     quantity: number;
     image_url?: string;
     selected_color?: string; // New: selected color
-    selected_size_input?: string; // New: selected size input
+    selected_size?: string; // New: selected size
   }>; // Explicitly type items_json
   payment_method: string;
   created_at: string;
@@ -205,7 +205,7 @@ export default function OrdersPage() {
                           <span>
                             {item.name}
                             {item.selected_color && <span className="ml-1">({item.selected_color})</span>}
-                            {item.selected_size_input && <span className="ml-1">[{item.selected_size_input}]</span>} {/* Display selected_size_input */}
+                            {item.selected_size && <span className="ml-1">[{item.selected_size}]</span>} {/* Display selected_size */}
                           </span>
                           <span>x{item.quantity}</span>
                         </div>

@@ -99,6 +99,12 @@ export default function CartPage() {
                         )}
                         <div className="flex-1 space-y-1">
                           <CardTitle className="text-lg font-semibold">{item.name}</CardTitle>
+                          {item.selected_color && (
+                            <p className="text-muted-foreground text-sm">Color: {item.selected_color}</p>
+                          )}
+                          {item.selected_size && (
+                            <p className="text-muted-foreground text-sm">Size: {item.selected_size}</p>
+                          )}
                           <p className="text-muted-foreground text-base">Price: Rs{item.price.toFixed(2)}</p>
                           <div className="flex items-center gap-2">
                             <Button
@@ -152,6 +158,7 @@ export default function CartPage() {
                           <TableRow>
                             <TableHead className="w-[100px] font-semibold">Product</TableHead>
                             <TableHead className="font-semibold">Name</TableHead>
+                            <TableHead className="font-semibold">Details</TableHead> {/* New column for details */}
                             <TableHead className="font-semibold">Price</TableHead>
                             <TableHead className="text-center font-semibold">Quantity</TableHead>
                             <TableHead className="text-right font-semibold">Total</TableHead>
@@ -174,6 +181,10 @@ export default function CartPage() {
                                 )}
                               </TableCell>
                               <TableCell className="font-medium text-base">{item.name}</TableCell>
+                              <TableCell className="text-sm text-muted-foreground"> {/* Display details */}
+                                {item.selected_color && <p>Color: {item.selected_color}</p>}
+                                {item.selected_size && <p>Size: {item.selected_size}</p>}
+                              </TableCell>
                               <TableCell className="text-base">Rs{item.price.toFixed(2)}</TableCell>
                               <TableCell className="text-center">
                                 <div className="flex items-center justify-center gap-2">

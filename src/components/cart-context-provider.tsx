@@ -17,7 +17,7 @@ interface CartItem {
   discount_start_date?: string | null; // New: discount_start_date
   discount_end_date?: string | null; // New: discount_end_date
   selected_color?: string; // New: selected color
-  selected_size_input?: string; // New: selected size input
+  selected_size?: string; // New: selected size
 }
 
 interface CartContextType {
@@ -90,11 +90,11 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
       const existingItemIndex = prevItems.findIndex(cartItem => 
         cartItem.id === item.id && 
         cartItem.selected_color === item.selected_color &&
-        cartItem.selected_size_input === item.selected_size_input // Include selected_size_input in uniqueness check
+        cartItem.selected_size === item.selected_size // Include selected_size in uniqueness check
       );
 
       if (existingItemIndex > -1) {
-        // If item exists with same color/size/size_input, update its quantity
+        // If item exists with same color/size, update its quantity
         const updatedItems = [...prevItems];
         const newQuantity = updatedItems[existingItemIndex].quantity + quantityToAdd;
 
@@ -107,7 +107,7 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
         toast.success(`${item.name} quantity updated in cart!`);
         return updatedItems;
       } else {
-        // If item is new or has different color/size/size_input, add it to the cart
+        // If item is new or has different color/size, add it to the cart
         if (quantityToAdd > item.stock) {
           toast.error(`Cannot add more than available stock (${item.stock} in stock).`);
           return prevItems; // Prevent adding if initial quantity exceeds stock
