@@ -20,13 +20,15 @@ export interface Profile { // Exported for use in DashboardHeader
   updated_at: string | null;
   delivery_charge: number | null; // Added delivery_charge
   home_page_heading: string | null; // Added for store customization
+  home_page_description: string | null; // Added for store customization
   home_page_hero_image_url: string | null; // New: Home page hero image
+  home_page_content_image_url: string | null; // New: Home page content image
   home_page_content_text: string | null; // New: Home page content text
   about_page_content: string | null; // Added for store customization
   about_page_hero_image_url: string | null; // New: About page hero image
   store_page_welcome_message: string | null; // Added for store customization
   contact_page_heading: string | null; // Added for contact page customization
-  // Removed contact_page_description: string | null;
+  contact_page_description: string | null; // Added for contact page customization
   contact_page_hero_image_url: string | null; // New: Contact page hero image
   store_address_line: string | null; // New: Store physical address line
   store_city: string | null; // New: Store city
@@ -44,6 +46,7 @@ export interface Profile { // Exported for use in DashboardHeader
 export type ProfileImageKey =
   'avatar_url' |
   'home_page_hero_image_url' |
+  'home_page_content_image_url' |
   'about_page_hero_image_url' |
   'contact_page_hero_image_url';
 

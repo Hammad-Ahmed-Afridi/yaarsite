@@ -53,7 +53,7 @@ export default function StoreHomePage() {
 
   // Determine which image to display for the hero section, prioritizing home_page_hero_image_url
   const displayHeroImage = profile.home_page_hero_image_url || profile.avatar_url;
-  // Removed displayContentImage
+  const displayContentImage = profile.home_page_content_image_url;
 
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
@@ -74,7 +74,9 @@ export default function StoreHomePage() {
       <h1 className="text-4xl font-bold mb-4 tracking-tight">
         {profile?.home_page_heading || `Welcome to ${profile?.tenant_name || 'our store'}!`}
       </h1>
-      {/* Removed Home Page Description */}
+      <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
+        {profile?.home_page_description || "Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
+      </p>
       <Button asChild size="lg" className="font-semibold bg-store-primary text-store-primary-foreground hover:bg-store-primary/90">
         <Link href={`/store/${tenantSlug}`}>
           <span>
@@ -83,7 +85,34 @@ export default function StoreHomePage() {
         </Link>
       </Button>
 
-      {/* Removed Home Page Content Section */}
+      {/* Home Page Content Section (Image Left, Text Right) */}
+      {(displayContentImage || profile?.home_page_content_text) && (
+        <section className="mt-20 w-full max-w-4xl">
+          <div className="grid md:grid-cols-2 gap-8 items-center text-left">
+            {displayContentImage ? (
+              <div className="relative w-full h-64 md:h-80 rounded-3xl overflow-hidden shadow-lg">
+                <Image
+                  src={displayContentImage}
+                  alt="Home Page Content"
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  className="object-center"
+                />
+              </div>
+            ) : (
+              <div className="flex items-center justify-center w-full h-64 md:h-80 rounded-3xl bg-muted shadow-lg">
+                <ImageIcon className="h-24 w-24 text-muted-foreground" />
+              </div>
+            )}
+            <div className="space-y-4">
+              <h2 className="text-3xl font-bold tracking-tight">More About Our Store</h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                {profile?.home_page_content_text || "Here you can tell your customers more about your unique selling propositions, your brand story, or any special offers you have. Make it engaging!"}
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

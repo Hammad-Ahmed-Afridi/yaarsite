@@ -68,7 +68,9 @@ export default function StoreContactPage() {
       <h1 className="text-4xl font-bold mb-4 tracking-tight">
         {profile.contact_page_heading || `Contact ${profile.tenant_name}`}
       </h1>
-      {/* Removed Contact Page Description */}
+      <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
+        {profile.contact_page_description || "Have questions or need assistance? Reach out to us!"}
+      </p>
 
       <div className="space-y-4 text-left w-full max-w-md">
         {profile.store_contact_email && (

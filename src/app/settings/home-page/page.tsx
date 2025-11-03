@@ -27,7 +27,9 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/web
 
 const formSchema = z.object({
   homePageHeading: z.string().max(100, { message: "Home page heading cannot exceed 100 characters." }).optional(),
+  homePageDescription: z.string().max(500, { message: "Home page description cannot exceed 500 characters." }).optional(),
   homePageHeroImage: z.instanceof(File).optional(),
+  homePageContentImage: z.instanceof(File).optional(),
   homePageContentText: z.string().max(1000, { message: "Home page content text cannot exceed 1000 characters." }).optional(),
 });
 
@@ -39,14 +41,17 @@ export default function HomePageSettingsPage() {
 
   const [selectedHomePageHeroImageFile, setSelectedHomePageHeroImageFile] = useState<File | null>(null);
   const [homePageHeroImagePreview, setHomePageHeroImagePreview] = useState<string | null>(null);
-  // Removed state for selectedHomePageContentImageFile and homePageContentImagePreview
+  const [selectedHomePageContentImageFile, setSelectedHomePageContentImageFile] = useState<File | null>(null);
+  const [homePageContentImagePreview, setHomePageContentImagePreview] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       homePageHeading: "",
+      homePageDescription: "",
       homePageContentText: "",
       homePageHeroImage: undefined,
+      homePageContentImage: undefined,
     },
   });
 
@@ -54,11 +59,13 @@ export default function HomePageSettingsPage() {
     if (profile) {
       form.reset({
         homePageHeading: profile.home_page_heading || "",
+        homePageDescription: profile.home_page_description || "",
         homePageContentText: profile.home_page_content_text || "",
         homePageHeroImage: undefined,
+        homePageContentImage: undefined,
       });
       setHomePageHeroImagePreview(profile.home_page_hero_image_url || null);
-      // Removed setting for homePageContentImagePreview
+      setHomePageContentImagePreview(profile.home_page_content_image_url || null);
     }
   }, [profile, form]);
 
@@ -169,7 +176,7 @@ export default function HomePageSettingsPage() {
 
     setIsUpdating(true);
     let newHomePageHeroImageUrl = profile?.home_page_hero_image_url ?? null;
-    // Removed newHomePageContentImageUrl
+    let newHomePageContentImageUrl = profile?.home_page_content_image_url ?? null;
 
     try {
       const uploadImageAndGetUrl = async (
@@ -219,15 +226,15 @@ export default function HomePageSettingsPage() {
       };
 
       newHomePageHeroImageUrl = await uploadImageAndGetUrl(selectedHomePageHeroImageFile, profile?.home_page_hero_image_url ?? null, 'home-page-hero-image');
-      // Removed upload for newHomePageContentImageUrl
+      newHomePageContentImageUrl = await uploadImageAndGetUrl(selectedHomePageContentImageFile, profile?.home_page_content_image_url ?? null, 'home-page-content-image');
 
       const { error } = await supabase
         .from('profiles')
         .update({
           home_page_heading: values.homePageHeading || null,
-          // Removed home_page_description
+          home_page_description: values.homePageDescription || null,
           home_page_hero_image_url: newHomePageHeroImageUrl,
-          home_page_content_image_url: null, // Explicitly set to null
+          home_page_content_image_url: newHomePageContentImageUrl,
           home_page_content_text: values.homePageContentText || null,
           updated_at: new Date().toISOString(),
         })
@@ -240,7 +247,7 @@ export default function HomePageSettingsPage() {
         toast.success("Home page settings updated successfully!");
         await refreshProfile();
         setSelectedHomePageHeroImageFile(null);
-        // Removed clearing for setSelectedHomePageContentImageFile
+        setSelectedHomePageContentImageFile(null);
       }
     } catch (err) {
       console.error("Unexpected error during home page settings update:", err);
@@ -294,7 +301,18 @@ export default function HomePageSettingsPage() {
                   <p className="text-destructive text-sm">{form.formState.errors.homePageHeading.message}</p>
                 )}
               </div>
-              {/* Removed Home Page Description Textarea */}
+              <div className="grid gap-2">
+                <Label htmlFor="homePageDescription" className="text-sm font-medium">Home Page Description</Label>
+                <Textarea
+                  id="homePageDescription"
+                  placeholder="Discover a wide range of products hand-picked just for you."
+                  rows={3}
+                  {...form.register("homePageDescription")}
+                />
+                {form.formState.errors.homePageDescription && (
+                  <p className="text-destructive text-sm">{form.formState.errors.homePageDescription.message}</p>
+                )}
+              </div>
               <div className="grid gap-2">
                 <Label className="text-sm font-medium">Home Page Hero Image</Label>
                 <p className="text-xs text-muted-foreground leading-relaxed">
@@ -344,7 +362,54 @@ export default function HomePageSettingsPage() {
                 )}
               </div>
 
-              {/* Removed Home Page Content Image section */}
+              <div className="grid gap-2">
+                <Label className="text-sm font-medium">Home Page Content Image</Label>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  This image will appear alongside a text section on your home page. Recommended: Square aspect ratio, max 5MB.
+                </p>
+                <div className="flex items-center gap-4 mt-2 flex-wrap">
+                  {(homePageContentImagePreview || profile?.home_page_content_image_url) ? (
+                    <div className="relative w-24 h-24 border rounded-md overflow-hidden">
+                      <Image
+                        src={homePageContentImagePreview || profile!.home_page_content_image_url!}
+                        alt="Home Page Content Image Preview"
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-1 right-1 h-6 w-6 rounded-full"
+                        onClick={() => handleRemoveImage(profile?.home_page_content_image_url ?? null, setHomePageContentImagePreview, setSelectedHomePageContentImageFile, 'store-content-images', 'home page content image', 'home_page_content_image_url')}
+                        disabled={isUpdating}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center w-24 h-24 border-2 border-dashed rounded-md bg-muted">
+                      <ImageIcon className="h-10 w-10 text-muted-foreground" />
+                    </div>
+                  )}
+                  <Label htmlFor="home-page-content-image-upload" className="flex-1">
+                    <Input
+                      id="home-page-content-image-upload"
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      className="hidden"
+                      onChange={(e) => handleImageChange(e, setSelectedHomePageContentImageFile, setHomePageContentImagePreview, "homePageContentImage", 'store-content-images', 'home page content image')}
+                      disabled={isUpdating}
+                    />
+                    <Button asChild variant="outline" className="w-full font-semibold" disabled={isUpdating}>
+                      <span>{homePageContentImagePreview || profile?.home_page_content_image_url ? "Change Image" : "Upload Image"}</span>
+                    </Button>
+                  </Label>
+                </div>
+                {form.formState.errors.homePageContentImage && (
+                  <p className="text-destructive text-sm">{form.formState.errors.homePageContentImage.message}</p>
+                )}
+              </div>
 
               <div className="grid gap-2">
                 <Label htmlFor="homePageContentText" className="text-sm font-medium">Home Page Content Text</Label>
