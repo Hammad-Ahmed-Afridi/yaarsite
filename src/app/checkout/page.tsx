@@ -152,7 +152,7 @@ export default function CheckoutPage() {
         quantity: item.quantity,
         image_url: item.image_url,
         selected_color: item.selected_color || null, // Include selected color
-        selected_size_input: undefined, // Removed size input, so pass undefined
+        selected_size: item.selected_size || null, // Correctly include selected size
       }));
 
       console.log("Checkout Page: Sending order with cartTotal:", cartTotal); // Add this line
