@@ -9,7 +9,7 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession, ProfileImageKey } from '@/components/session-context-provider';
-import { compressImage, hexToHsl, hslToHex } from '@/lib/utils'; // Import hexToHsl and hslToHex
+import { compressImage, hexToHsl, hslToHex, getContrastingTextColor } from '@/lib/utils'; // Import getContrastingTextColor
 import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from '@/components/ui/button';
@@ -34,6 +34,8 @@ interface ColorPalette {
   primary: string; // HEX
   background: string; // HEX
   cardBackground: string; // HEX
+  foreground: string; // HEX (text color on background)
+  cardForeground: string; // HEX (text color on cardBackground)
 }
 
 // Pre-built premium, minimalistic color palettes (HEX values)
@@ -44,6 +46,8 @@ const PRESET_PALETTES: ColorPalette[] = [
     primary: '#29A399', // Teal
     background: '#FFFFFF', // White
     cardBackground: '#FFFFFF', // White
+    foreground: '#222222', // Dark grey for white background
+    cardForeground: '#222222', // Dark grey for white card background
   },
   {
     id: 'modern-grey',
@@ -51,6 +55,8 @@ const PRESET_PALETTES: ColorPalette[] = [
     primary: '#60A5FA', // Sky Blue
     background: '#F8FAFC', // Slate 50
     cardBackground: '#FFFFFF', // White
+    foreground: '#222222',
+    cardForeground: '#222222',
   },
   {
     id: 'soft-earth',
@@ -58,6 +64,8 @@ const PRESET_PALETTES: ColorPalette[] = [
     primary: '#84CC16', // Lime Green
     background: '#FFFBEB', // Amber 50
     cardBackground: '#FFFFFF', // White
+    foreground: '#222222',
+    cardForeground: '#222222',
   },
   {
     id: 'deep-ocean',
@@ -65,6 +73,8 @@ const PRESET_PALETTES: ColorPalette[] = [
     primary: '#3B82F6', // Blue
     background: '#E0F2F7', // Cyan 50
     cardBackground: '#FFFFFF', // White
+    foreground: '#222222',
+    cardForeground: '#222222',
   },
   {
     id: 'midnight-plum',
@@ -72,6 +82,8 @@ const PRESET_PALETTES: ColorPalette[] = [
     primary: '#A78BFA', // Lavender
     background: '#1E1B4B', // Dark Indigo
     cardBackground: '#2A245C', // Slightly lighter Indigo
+    foreground: '#FFFFFF', // White for dark background
+    cardForeground: '#FFFFFF', // White for dark card background
   },
   {
     id: 'forest-mist',
@@ -79,6 +91,8 @@ const PRESET_PALETTES: ColorPalette[] = [
     primary: '#34D399', // Emerald Green
     background: '#F0FDF4', // Green 50
     cardBackground: '#FFFFFF', // White
+    foreground: '#222222',
+    cardForeground: '#222222',
   },
   {
     id: 'warm-sunset',
@@ -86,6 +100,8 @@ const PRESET_PALETTES: ColorPalette[] = [
     primary: '#F97316', // Orange 500
     background: '#FFF7ED', // Orange 50
     cardBackground: '#FFFFFF',
+    foreground: '#222222',
+    cardForeground: '#222222',
   },
   {
     id: 'cool-breeze',
@@ -93,6 +109,8 @@ const PRESET_PALETTES: ColorPalette[] = [
     primary: '#06B6D4', // Cyan 500
     background: '#F0F9FF', // Sky 50
     cardBackground: '#FFFFFF',
+    foreground: '#222222',
+    cardForeground: '#222222',
   },
   {
     id: 'elegant-rose',
@@ -100,6 +118,8 @@ const PRESET_PALETTES: ColorPalette[] = [
     primary: '#EC4899', // Pink 500
     background: '#FDF2F8', // Pink 50
     cardBackground: '#FFFFFF',
+    foreground: '#222222',
+    cardForeground: '#222222',
   },
   {
     id: 'dark-charcoal',
@@ -107,6 +127,8 @@ const PRESET_PALETTES: ColorPalette[] = [
     primary: '#A8A29E', // Stone 400
     background: '#1F2937', // Gray 800
     cardBackground: '#374151', // Gray 700
+    foreground: '#FFFFFF',
+    cardForeground: '#FFFFFF',
   },
 ];
 
@@ -126,6 +148,8 @@ const formSchema = z.object({
   storePrimaryAccentColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional().or(z.literal('')),
   storeBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional().or(z.literal('')),
   storeCardHeaderFooterBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional().or(z.literal('')),
+  storeForegroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional().or(z.literal('')), // New field
+  storeCardForegroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid HEX color format." }).optional().or(z.literal('')), // New field
 });
 
 const DELIVERY_CHARGE_OPTIONS = [
@@ -148,6 +172,8 @@ export default function SettingsPage() {
   const [livePrimaryColor, setLivePrimaryColor] = useState<string | null>(null);
   const [liveBackgroundColor, setLiveBackgroundColor] = useState<string | null>(null);
   const [liveCardBackgroundColor, setLiveCardBackgroundColor] = useState<string | null>(null);
+  const [liveForegroundColor, setLiveForegroundColor] = useState<string | null>(null); // New state
+  const [liveCardForegroundColor, setLiveCardForegroundColor] = useState<string | null>(null); // New state
 
   // State for selected palette ID, 'custom' indicates manual input
   const [selectedPaletteId, setSelectedPaletteId] = useState<string | null>(null);
@@ -164,6 +190,8 @@ export default function SettingsPage() {
       storePrimaryAccentColor: "",
       storeBackgroundColor: "",
       storeCardHeaderFooterBackgroundColor: "",
+      storeForegroundColor: "", // Default
+      storeCardForegroundColor: "", // Default
     },
   });
 
@@ -179,6 +207,8 @@ export default function SettingsPage() {
         storePrimaryAccentColor: "",
         storeBackgroundColor: "",
         storeCardHeaderFooterBackgroundColor: "",
+        storeForegroundColor: "",
+        storeCardForegroundColor: "",
       });
       setLogoPreview(profile.avatar_url || null);
 
@@ -186,12 +216,16 @@ export default function SettingsPage() {
       const currentPrimaryHex = profile.store_primary_color_hsl ? hslToHex(profile.store_primary_color_hsl) : null;
       const currentBackgroundHex = profile.store_background_color_hsl ? hslToHex(profile.store_background_color_hsl) : null;
       const currentCardBackgroundHex = profile.store_card_background_color_hsl ? hslToHex(profile.store_card_background_color_hsl) : null;
+      const currentForegroundHex = profile.store_foreground_color_hsl ? hslToHex(profile.store_foreground_color_hsl) : null; // New
+      const currentCardForegroundHex = profile.store_card_foreground_color_hsl ? hslToHex(profile.store_card_foreground_color_hsl) : null; // New
 
       // Try to find a matching preset palette
       let matchedPalette = PRESET_PALETTES.find(p =>
         p.primary === currentPrimaryHex &&
         p.background === currentBackgroundHex &&
-        p.cardBackground === currentCardBackgroundHex
+        p.cardBackground === currentCardBackgroundHex &&
+        p.foreground === currentForegroundHex && // Include new foreground colors
+        p.cardForeground === currentCardForegroundHex // Include new card foreground colors
       );
 
       if (matchedPalette) {
@@ -199,17 +233,23 @@ export default function SettingsPage() {
         form.setValue("storePrimaryAccentColor", matchedPalette.primary);
         form.setValue("storeBackgroundColor", matchedPalette.background);
         form.setValue("storeCardHeaderFooterBackgroundColor", matchedPalette.cardBackground);
+        form.setValue("storeForegroundColor", matchedPalette.foreground); // Set new form values
+        form.setValue("storeCardForegroundColor", matchedPalette.cardForeground); // Set new form values
       } else {
         setSelectedPaletteId('custom'); // Indicate custom colors
         form.setValue("storePrimaryAccentColor", currentPrimaryHex || "");
         form.setValue("storeBackgroundColor", currentBackgroundHex || "");
         form.setValue("storeCardHeaderFooterBackgroundColor", currentCardBackgroundHex || "");
+        form.setValue("storeForegroundColor", currentForegroundHex || ""); // Set new form values
+        form.setValue("storeCardForegroundColor", currentCardForegroundHex || ""); // Set new form values
       }
 
       // Initialize live preview colors with profile values (whether preset or custom)
       setLivePrimaryColor(currentPrimaryHex);
       setLiveBackgroundColor(currentBackgroundHex);
       setLiveCardBackgroundColor(currentCardBackgroundHex);
+      setLiveForegroundColor(currentForegroundHex); // Initialize new live states
+      setLiveCardForegroundColor(currentCardForegroundHex); // Initialize new live states
     }
   }, [profile, form]);
 
@@ -236,6 +276,18 @@ export default function SettingsPage() {
       } else {
         root.style.removeProperty('--store-card-background'); // Revert to default
       }
+      if (liveForegroundColor) { // New: Apply foreground color
+        const hsl = hexToHsl(liveForegroundColor);
+        if (hsl) root.style.setProperty('--store-foreground', hsl);
+      } else {
+        root.style.removeProperty('--store-foreground');
+      }
+      if (liveCardForegroundColor) { // New: Apply card foreground color
+        const hsl = hexToHsl(liveCardForegroundColor);
+        if (hsl) root.style.setProperty('--store-card-foreground', hsl);
+      } else {
+        root.style.removeProperty('--store-card-foreground');
+      }
     };
 
     applyLiveStyles();
@@ -246,14 +298,18 @@ export default function SettingsPage() {
         root.style.setProperty('--store-primary', profile.store_primary_color_hsl || 'var(--primary)');
         root.style.setProperty('--store-background', profile.store_background_color_hsl || 'var(--background)');
         root.style.setProperty('--store-card-background', profile.store_card_background_color_hsl || 'var(--card)');
+        root.style.setProperty('--store-foreground', profile.store_foreground_color_hsl || 'var(--foreground)'); // Revert foreground
+        root.style.setProperty('--store-card-foreground', profile.store_card_foreground_color_hsl || 'var(--card-foreground)'); // Revert card foreground
       } else {
         // If no profile, revert to global defaults
         root.style.removeProperty('--store-primary');
         root.style.removeProperty('--store-background');
         root.style.removeProperty('--store-card-background');
+        root.style.removeProperty('--store-foreground');
+        root.style.removeProperty('--store-card-foreground');
       }
     };
-  }, [livePrimaryColor, liveBackgroundColor, liveCardBackgroundColor, profile]);
+  }, [livePrimaryColor, liveBackgroundColor, liveCardBackgroundColor, liveForegroundColor, liveCardForegroundColor, profile]);
 
 
   const handleSignOut = async () => {
@@ -365,15 +421,22 @@ export default function SettingsPage() {
       form.setValue("storePrimaryAccentColor", livePrimaryColor || "");
       form.setValue("storeBackgroundColor", liveBackgroundColor || "");
       form.setValue("storeCardHeaderFooterBackgroundColor", liveCardBackgroundColor || "");
+      form.setValue("storeForegroundColor", liveForegroundColor || ""); // Retain current foreground
+      form.setValue("storeCardForegroundColor", liveCardForegroundColor || ""); // Retain current card foreground
     } else {
       const selected = PRESET_PALETTES.find(p => p.id === paletteId);
       if (selected) {
         setLivePrimaryColor(selected.primary);
         setLiveBackgroundColor(selected.background);
         setLiveCardBackgroundColor(selected.cardBackground);
+        setLiveForegroundColor(selected.foreground); // Set new live states
+        setLiveCardForegroundColor(selected.cardForeground); // Set new live states
+
         form.setValue("storePrimaryAccentColor", selected.primary);
         form.setValue("storeBackgroundColor", selected.background);
         form.setValue("storeCardHeaderFooterBackgroundColor", selected.cardBackground);
+        form.setValue("storeForegroundColor", selected.foreground); // Set new form values
+        form.setValue("storeCardForegroundColor", selected.cardForeground); // Set new form values
       }
     }
   };
@@ -483,7 +546,9 @@ export default function SettingsPage() {
       const storePrimaryAccentColorHsl = livePrimaryColor ? hexToHsl(livePrimaryColor) : null;
       const storeBackgroundColorHsl = liveBackgroundColor ? hexToHsl(liveBackgroundColor) : null;
       const storeCardHeaderFooterBackgroundColorHsl = liveCardBackgroundColor ? hexToHsl(liveCardBackgroundColor) : null;
-      console.log("Settings Page: Converted colors to HSL:", { storePrimaryAccentColorHsl, storeBackgroundColorHsl, storeCardHeaderFooterBackgroundColorHsl });
+      const storeForegroundColorHsl = liveForegroundColor ? hexToHsl(liveForegroundColor) : null; // New
+      const storeCardForegroundColorHsl = liveCardForegroundColor ? hexToHsl(liveCardForegroundColor) : null; // New
+      console.log("Settings Page: Converted colors to HSL:", { storePrimaryAccentColorHsl, storeBackgroundColorHsl, storeCardHeaderFooterBackgroundColorHsl, storeForegroundColorHsl, storeCardForegroundColorHsl });
 
 
       console.log("Settings Page: Attempting to update profile in Supabase.");
@@ -499,6 +564,8 @@ export default function SettingsPage() {
           store_primary_color_hsl: storePrimaryAccentColorHsl,
           store_background_color_hsl: storeBackgroundColorHsl,
           store_card_background_color_hsl: storeCardHeaderFooterBackgroundColorHsl,
+          store_foreground_color_hsl: storeForegroundColorHsl, // New
+          store_card_foreground_color_hsl: storeCardForegroundColorHsl, // New
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -736,6 +803,8 @@ export default function SettingsPage() {
                               <span className="block h-4 w-4 rounded-full border border-border" style={{ backgroundColor: palette.primary }}></span>
                               <span className="block h-4 w-4 rounded-full border border-border" style={{ backgroundColor: palette.background }}></span>
                               <span className="block h-4 w-4 rounded-full border border-border" style={{ backgroundColor: palette.cardBackground }}></span>
+                              <span className="block h-4 w-4 rounded-full border border-border" style={{ backgroundColor: palette.foreground }}></span> {/* New: foreground preview */}
+                              <span className="block h-4 w-4 rounded-full border border-border" style={{ backgroundColor: palette.cardForeground }}></span> {/* New: card foreground preview */}
                             </div>
                             <span>{palette.name}</span>
                           </div>
@@ -787,6 +856,30 @@ export default function SettingsPage() {
                       />
                       {form.formState.errors.storePrimaryAccentColor && (
                         <p className="text-destructive text-sm">{form.formState.errors.storePrimaryAccentColor.message}</p>
+                      )}
+                    </div>
+                    <div className="grid gap-2"> {/* New: Store Foreground Color */}
+                      <Label htmlFor="storeForegroundColor" className="text-sm font-medium">Store Foreground Color (Text on Background)</Label>
+                      <Input
+                        id="storeForegroundColor"
+                        type="color"
+                        value={liveForegroundColor || getContrastingTextColor(liveBackgroundColor || '#FFFFFF')} // Default based on background
+                        onChange={(e) => handleColorInputChange(e, setLiveForegroundColor, "storeForegroundColor")}
+                      />
+                      {form.formState.errors.storeForegroundColor && (
+                        <p className="text-destructive text-sm">{form.formState.errors.storeForegroundColor.message}</p>
+                      )}
+                    </div>
+                    <div className="grid gap-2"> {/* New: Store Card Foreground Color */}
+                      <Label htmlFor="storeCardForegroundColor" className="text-sm font-medium">Card Foreground Color (Text on Cards)</Label>
+                      <Input
+                        id="storeCardForegroundColor"
+                        type="color"
+                        value={liveCardForegroundColor || getContrastingTextColor(liveCardBackgroundColor || '#FFFFFF')} // Default based on card background
+                        onChange={(e) => handleColorInputChange(e, setLiveCardForegroundColor, "storeCardForegroundColor")}
+                      />
+                      {form.formState.errors.storeCardForegroundColor && (
+                        <p className="text-destructive text-sm">{form.formState.errors.storeCardForegroundColor.message}</p>
                       )}
                     </div>
                   </div>

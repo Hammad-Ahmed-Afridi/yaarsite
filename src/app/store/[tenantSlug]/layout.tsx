@@ -84,8 +84,8 @@ export default function StoreLayout({
       root.style.setProperty('--store-primary', profile.store_primary_color_hsl || 'var(--primary)');
       root.style.setProperty('--store-background', profile.store_background_color_hsl || 'var(--background)');
       root.style.setProperty('--store-card-background', profile.store_card_background_color_hsl || 'var(--card)');
-      root.style.setProperty('--store-foreground', 'var(--foreground)');
-      root.style.setProperty('--store-card-foreground', 'var(--card-foreground)');
+      root.style.setProperty('--store-foreground', profile.store_foreground_color_hsl || 'var(--foreground)'); // Apply store foreground
+      root.style.setProperty('--store-card-foreground', profile.store_card_foreground_color_hsl || 'var(--card-foreground)'); // Apply store card foreground
     }
   }, [profile]);
 

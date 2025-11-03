@@ -163,3 +163,31 @@ export function hslToHex(hsl: string): string | null {
 
   return "#" + r_hex + g_hex + b_hex;
 }
+
+/**
+ * Determines a contrasting text color (black or white) for a given background HEX color.
+ * @param backgroundColorHex The HEX color string of the background.
+ * @returns A HEX string, either '#000000' (black) or '#FFFFFF' (white).
+ */
+export function getContrastingTextColor(backgroundColorHex: string): string {
+  // Convert HEX to RGB
+  let r = 0, g = 0, b = 0;
+  if (backgroundColorHex.length === 4) {
+    r = parseInt(backgroundColorHex[1] + backgroundColorHex[1], 16);
+    g = parseInt(backgroundColorHex[2] + backgroundColorHex[2], 16);
+    b = parseInt(backgroundColorHex[3] + backgroundColorHex[3], 16);
+  } else if (backgroundColorHex.length === 7) {
+    r = parseInt(backgroundColorHex.substring(1, 3), 16);
+    g = parseInt(backgroundColorHex.substring(3, 5), 16);
+    b = parseInt(backgroundColorHex.substring(5, 7), 16);
+  } else {
+    return '#000000'; // Default to black for invalid hex
+  }
+
+  // Calculate luminance (Y = 0.2126 R + 0.7152 G + 0.0722 B)
+  // Using sRGB luminance formula
+  const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+
+  // Return black for light colors, white for dark colors
+  return luminance > 0.5 ? '#222222' : '#FFFFFF'; // Using a slightly softer dark grey
+}
