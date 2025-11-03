@@ -56,13 +56,10 @@ export default function StoreHomePage() {
 
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
-      {/* Combined Welcome Section */}
-      <h1 className="text-4xl font-bold mb-4 tracking-tight">
+      {/* Welcome Section - Now only heading */}
+      <h1 className="text-4xl font-bold mb-8 tracking-tight"> {/* Adjusted mb-4 to mb-8 for spacing */}
         {profile?.home_page_heading || `Welcome to ${profile?.tenant_name || 'our store'}!`}
       </h1>
-      <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
-        Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!
-      </p>
 
       {/* Home Page Content Section (Image Left, Text Right) */}
       {(displayContentImage || profile?.home_page_content_text) && (
