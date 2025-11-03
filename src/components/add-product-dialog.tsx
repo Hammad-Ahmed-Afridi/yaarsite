@@ -199,39 +199,47 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log("AddProductDialog: onSubmit started.");
     if (!user) {
       toast.error("You must be logged in to add a product.");
+      console.log("AddProductDialog: User not logged in, returning.");
       return;
     }
 
     // Fetch current product count to enforce limit
+    console.log("AddProductDialog: Checking product limit.");
     const { count: currentProductCount, error: countError } = await supabase
       .from('products')
       .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id); // Corrected: use 'user_id' directly
+      .eq('user_id', user.id);
 
     if (countError) {
-      console.error("Error fetching product count:", countError);
+      console.error("AddProductDialog: Error fetching product count:", countError);
       toast.error("Failed to check product limit. Please try again.");
-      setIsSubmitting(false);
+      setIsSubmitting(false); // Ensure this is reset
       return;
     }
 
     if (currentProductCount !== null && currentProductCount >= PRODUCT_LIMIT) {
       toast.error(`You have reached the maximum limit of ${PRODUCT_LIMIT} products.`);
-      setIsSubmitting(false);
+      setIsSubmitting(false); // Ensure this is reset
+      console.log("AddProductDialog: Product limit reached, returning.");
       return;
     }
+    console.log(`AddProductDialog: Current products: ${currentProductCount}/${PRODUCT_LIMIT}. Proceeding.`);
 
     setIsSubmitting(true);
+    console.log("AddProductDialog: isSubmitting set to true.");
     let imageUrls: string[] = [];
     let sizeChartUrl: string | null = null;
 
     try {
+      console.log("AddProductDialog: Starting image uploads.");
       if (selectedImageFiles.length > 0) {
         for (const file of selectedImageFiles) {
           const fileExtension = file.name.split('.').pop();
-          const fileName = `${user.id}/products/${uuidv4()}.${fileExtension}`; // Use 'products' subfolder
+          const fileName = `${user.id}/products/${uuidv4()}.${fileExtension}`;
+          console.log(`AddProductDialog: Uploading product image: ${fileName}`);
           const { data, error: uploadError } = await supabase.storage
             .from('product-images')
             .upload(fileName, file, {
@@ -240,6 +248,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
             });
 
           if (uploadError) {
+            console.error("AddProductDialog: Product image upload failed:", uploadError);
             throw new Error(`Image upload failed: ${uploadError.message}`);
           }
 
@@ -249,23 +258,29 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
 
           if (publicUrlData?.publicUrl) {
             imageUrls.push(publicUrlData.publicUrl);
+            console.log(`AddProductDialog: Product image uploaded, URL: ${publicUrlData.publicUrl}`);
           } else {
+            console.error("AddProductDialog: Failed to get public URL for uploaded product image.");
             throw new Error("Failed to get public URL for uploaded image.");
           }
         }
       }
+      console.log("AddProductDialog: Finished product image uploads. URLs:", imageUrls);
 
+      console.log("AddProductDialog: Starting size chart upload.");
       if (selectedSizeChartFile) {
         const fileExtension = selectedSizeChartFile.name.split('.').pop();
-        const fileName = `${user.id}/size-charts/${uuidv4()}.${fileExtension}`; // Use 'size-charts' subfolder
+        const fileName = `${user.id}/size-charts/${uuidv4()}.${fileExtension}`;
+        console.log(`AddProductDialog: Uploading size chart: ${fileName}`);
         const { data, error: uploadError } = await supabase.storage
-          .from('store-content-images') // Using store-content-images bucket for size charts
+          .from('store-content-images')
           .upload(fileName, selectedSizeChartFile, {
             cacheControl: '3600',
             upsert: false,
           });
 
         if (uploadError) {
+          console.error("AddProductDialog: Size chart upload failed:", uploadError);
           throw new Error(`Size chart upload failed: ${uploadError.message}`);
         }
 
@@ -275,10 +290,13 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
 
         if (publicUrlData?.publicUrl) {
           sizeChartUrl = publicUrlData.publicUrl;
+          console.log(`AddProductDialog: Size chart uploaded, URL: ${publicUrlData.publicUrl}`);
         } else {
+          console.error("AddProductDialog: Failed to get public URL for uploaded size chart.");
           throw new Error("Failed to get public URL for uploaded size chart.");
         }
       }
+      console.log("AddProductDialog: Finished size chart upload. URL:", sizeChartUrl);
 
       const availableColorsArray = values.availableColors
         ? values.availableColors.split(',').map(color => color.trim()).filter(Boolean)
@@ -288,6 +306,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
         ? values.availableSizes.split(',').map(size => size.trim().toUpperCase()).filter(Boolean)
         : null;
 
+      console.log("AddProductDialog: Attempting to insert product into Supabase.");
       const { error: insertError } = await supabase
         .from('products')
         .insert({
@@ -297,18 +316,20 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
           price: values.price,
           stock: values.stock,
           image_urls: imageUrls.length > 0 ? imageUrls : null,
-          category: values.category || null, // New: insert category
-          original_price: values.price, // Set original_price to initial price
-          size_chart_url: sizeChartUrl, // New: insert size chart URL
-          available_colors: availableColorsArray, // New: insert available colors
-          available_sizes: availableSizesArray, // New: insert available sizes
+          category: values.category || null,
+          original_price: values.price,
+          size_chart_url: sizeChartUrl,
+          available_colors: availableColorsArray,
+          available_sizes: availableSizesArray,
         });
 
       if (insertError) {
+        console.error("AddProductDialog: Supabase insert error:", insertError);
         throw new Error(`Failed to add product: ${insertError.message}`);
       }
 
       toast.success("Product added successfully!");
+      console.log("AddProductDialog: Product added successfully, resetting form and closing dialog.");
       form.reset();
       setSelectedImageFiles([]);
       setImagePreviews([]);
@@ -320,15 +341,13 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
       onProductAdded();
 
     } catch (error: any) {
-      console.error("Error adding product:", error);
+      console.error("AddProductDialog: Error caught during product addition:", error);
       toast.error(error.message || "Failed to add product. Please try again.");
     } finally {
       setIsSubmitting(false);
+      console.log("AddProductDialog: isSubmitting set to false (finally block).");
     }
   };
-
-  // The Add Product button is always enabled, the limit check happens on submission.
-  // Removed isAddProductDisabled constant.
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
