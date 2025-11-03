@@ -24,7 +24,7 @@ const generateRandomCode = () => {
 
 const formSchema = z.object({
   customerName: z.string().min(1, { message: "Name is required." }),
-  customerEmail: z.string().email({ message: "Please enter a valid email address." }),
+  customerEmail: z.string().email({ message: "Please enter a valid email address." }).endsWith("@gmail.com", { message: "Only Gmail addresses are allowed." }),
   customerPhone: z.string()
     .regex(/^03\d{9}$/, { message: "Phone number must start with 03 and be 11 digits long." }),
   shippingProvince: z.string().min(1, { message: "Province is required." }),
@@ -270,7 +270,7 @@ export default function CheckoutPage() {
                 <Input
                   id="customerEmail"
                   type="email"
-                  placeholder="your.email@example.com"
+                  placeholder="your.email@gmail.com"
                   {...form.register("customerEmail")}
                 />
                 {form.formState.errors.customerEmail && (
