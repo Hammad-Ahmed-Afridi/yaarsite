@@ -42,9 +42,10 @@ interface Product {
   discount_percentage: number | null; // New: discount_percentage
   discount_start_date: string | null; // New: discount_start_date
   discount_end_date: string | null; // New: discount_end_date
+  created_at: string;
   size_chart_url: string | null; // New: size_chart_url
   available_colors: string[] | null; // New: available_colors
-  created_at: string;
+  available_sizes: string[] | null; // New: available_sizes
 }
 
 const PRODUCT_LIMIT = 2; // Hardcoded product limit
