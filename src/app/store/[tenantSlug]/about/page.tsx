@@ -49,23 +49,29 @@ export default function StoreAboutPage() {
 
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
-      {profile.about_page_hero_image_url ? (
-        <div className="relative w-full max-w-4xl h-64 md:h-96 rounded-3xl overflow-hidden mb-12 shadow-lg">
-          <Image
-            src={profile.about_page_hero_image_url}
-            alt="About Us Hero"
-            fill
-            style={{ objectFit: 'cover' }}
-            className="object-center"
-          />
+      <div className="grid md:grid-cols-2 gap-8 items-center w-full max-w-4xl text-left">
+        {profile.about_page_hero_image_url ? (
+          <div className="relative w-full h-64 md:h-80 rounded-3xl overflow-hidden shadow-lg">
+            <Image
+              src={profile.about_page_hero_image_url}
+              alt="About Us Hero"
+              fill
+              style={{ objectFit: 'cover' }}
+              className="object-center"
+            />
+          </div>
+        ) : (
+          <div className="flex items-center justify-center w-full h-64 md:h-80 rounded-3xl bg-muted shadow-lg">
+            <Info className="h-24 w-24 text-muted-foreground" />
+          </div>
+        )}
+        <div className="space-y-4 text-center md:text-left">
+          <h1 className="text-4xl font-bold tracking-tight">About {profile.tenant_name}</h1>
+          <p className="text-lg text-muted-foreground leading-relaxed">
+            {profile.about_page_content || "We are dedicated to providing you with the best products and an exceptional shopping experience. Our mission is to bring quality and value directly to you."}
+          </p>
         </div>
-      ) : (
-        <Info className="h-24 w-24 text-store-primary mb-6" /> 
-      )}
-      <h1 className="text-4xl font-bold mb-4 tracking-tight">About {profile.tenant_name}</h1>
-      <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
-        {profile.about_page_content || "We are dedicated to providing you with the best products and an exceptional shopping experience. Our mission is to bring quality and value directly to you."}
-      </p>
+      </div>
     </div>
   );
 }
