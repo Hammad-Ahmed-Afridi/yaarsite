@@ -175,11 +175,6 @@ export default function StoreLayout({
         {/* Store Welcome Banner */}
         <StoreWelcomeBanner message={profile?.store_page_welcome_message || `Welcome to ${profile?.tenant_name || 'our store'}!`} />
 
-        {/* Global introductory text for the store */}
-        <p className="text-lg text-muted-foreground py-4 px-4 sm:px-8 max-w-prose mx-auto leading-relaxed text-center">
-          hello how are you all doing
-        </p>
-
         {/* Main Content */}
         <main className="flex-1 p-4 sm:p-8">
           {children}
