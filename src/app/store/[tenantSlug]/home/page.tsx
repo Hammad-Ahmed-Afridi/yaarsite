@@ -51,8 +51,8 @@ export default function StoreHomePage() {
     );
   }
 
-  // Determine which image to display for the hero section, prioritizing home_page_hero_image_url
-  const displayHeroImage = profile.home_page_hero_image_url || profile.avatar_url;
+  // Determine which image to display for the hero section, prioritizing avatar_url
+  const displayHeroImage = profile.avatar_url;
   const displayContentImage = profile.home_page_content_image_url;
 
   return (
@@ -75,7 +75,7 @@ export default function StoreHomePage() {
         {profile?.home_page_heading || `Welcome to ${profile?.tenant_name || 'our store'}!`}
       </h1>
       <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
-        {profile?.home_page_description || "Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
+        {"Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
       </p>
       <Button asChild size="lg" className="font-semibold bg-store-primary text-store-primary-foreground hover:bg-store-primary/90">
         <Link href={`/store/${tenantSlug}`}>

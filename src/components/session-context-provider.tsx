@@ -20,8 +20,6 @@ export interface Profile { // Exported for use in DashboardHeader
   updated_at: string | null;
   delivery_charge: number | null; // Added delivery_charge
   home_page_heading: string | null; // Added for store customization
-  home_page_description: string | null; // Added for store customization
-  home_page_hero_image_url: string | null; // New: Home page hero image
   home_page_content_image_url: string | null; // New: Home page content image
   home_page_content_text: string | null; // New: Home page content text
   about_page_content: string | null; // Added for store customization
@@ -45,7 +43,6 @@ export interface Profile { // Exported for use in DashboardHeader
 // Define a type for the specific profile keys that store image URLs
 export type ProfileImageKey =
   'avatar_url' |
-  'home_page_hero_image_url' |
   'home_page_content_image_url' |
   'about_page_hero_image_url' |
   'contact_page_hero_image_url';
