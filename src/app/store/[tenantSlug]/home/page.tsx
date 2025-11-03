@@ -61,7 +61,7 @@ export default function StoreHomePage() {
         {profile?.home_page_heading || `Welcome to ${profile?.tenant_name || 'our store'}!`}
       </h1>
       <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
-        hello how are you all doing. Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!
+        Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!
       </p>
 
       {/* Home Page Content Section (Image Left, Text Right) */}
