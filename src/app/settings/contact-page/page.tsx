@@ -27,7 +27,6 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/web
 
 const formSchema = z.object({
   contactPageHeading: z.string().max(100, { message: "Contact page heading cannot exceed 100 characters." }).optional(),
-  contactPageDescription: z.string().max(500, { message: "Contact page description cannot exceed 500 characters." }).optional(),
   contactPageHeroImage: z.instanceof(File).optional(),
   storeContactEmail: z.string().email({ message: "Please enter a valid email address." }).optional().or(z.literal('')),
   storeContactPhone: z.string()
@@ -52,7 +51,6 @@ export default function ContactPageSettingsPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       contactPageHeading: "",
-      contactPageDescription: "",
       contactPageHeroImage: undefined,
       storeContactEmail: "", // Initialize as empty
       storeContactPhone: "", // Initialize as empty
@@ -66,7 +64,6 @@ export default function ContactPageSettingsPage() {
     if (profile) {
       form.reset({
         contactPageHeading: profile.contact_page_heading || "",
-        contactPageDescription: profile.contact_page_description || "",
         contactPageHeroImage: undefined,
         storeContactEmail: profile.store_contact_email || "", // Use new field
         storeContactPhone: profile.store_contact_phone || "", // Use new field
@@ -238,7 +235,6 @@ export default function ContactPageSettingsPage() {
         .from('profiles')
         .update({
           contact_page_heading: values.contactPageHeading || null,
-          contact_page_description: values.contactPageDescription || null,
           contact_page_hero_image_url: newContactPageHeroImageUrl,
           store_contact_email: values.storeContactEmail || null, // Use new field
           store_contact_phone: values.storeContactPhone || null, // Use new field
@@ -355,18 +351,6 @@ export default function ContactPageSettingsPage() {
                 />
                 {form.formState.errors.contactPageHeading && (
                   <p className="text-destructive text-sm">{form.formState.errors.contactPageHeading.message}</p>
-                )}
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="contactPageDescription" className="text-sm font-medium">Contact Page Description</Label>
-                <Textarea
-                  id="contactPageDescription"
-                  placeholder="We'd love to hear from you. Reach out with any questions or feedback."
-                  rows={3}
-                  {...form.register("contactPageDescription")}
-                />
-                {form.formState.errors.contactPageDescription && (
-                  <p className="text-destructive text-sm">{form.formState.errors.contactPageDescription.message}</p>
                 )}
               </div>
 

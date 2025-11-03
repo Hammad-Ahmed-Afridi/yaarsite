@@ -26,7 +26,6 @@ export interface Profile { // Exported for use in DashboardHeader
   about_page_hero_image_url: string | null; // New: About page hero image
   store_page_welcome_message: string | null; // Added for store customization
   contact_page_heading: string | null; // Added for contact page customization
-  contact_page_description: string | null; // Added for contact page customization
   contact_page_hero_image_url: string | null; // New: Contact page hero image
   store_address_line: string | null; // New: Store physical address line
   store_city: string | null; // New: Store city

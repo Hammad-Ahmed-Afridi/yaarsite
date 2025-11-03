@@ -69,7 +69,7 @@ export default function StoreContactPage() {
         {profile.contact_page_heading || `Contact ${profile.tenant_name}`}
       </h1>
       <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
-        {profile.contact_page_description || "Have questions or need assistance? Reach out to us!"}
+        {"Have questions or need assistance? Reach out to us!"}
       </p>
 
       <div className="space-y-4 text-left w-full max-w-md">
