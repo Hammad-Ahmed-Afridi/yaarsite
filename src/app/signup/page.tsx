@@ -125,10 +125,10 @@ export default function SignupPage() {
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
-        phone: values.phoneNumber || undefined, // Pass phone number directly to auth.users
         options: {
           data: {
-            name: values.name, // Keep name for first_name in profile via trigger
+            name: values.name,
+            phone_number: values.phoneNumber || null, // Pass phone number to raw_user_meta_data
           },
         },
       });
