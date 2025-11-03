@@ -14,7 +14,7 @@ export function InactivityWarningBanner() {
   return (
     <div className="relative w-full overflow-hidden bg-black text-white py-1 text-sm text-center">
       <div className="animate-marquee whitespace-nowrap">
-        You will be signed out after 1 minute of inactivity. Kindly sign back in.
+        You will be signed out after 2 minutes of inactivity. Kindly sign back in.
       </div>
     </div>
   );
