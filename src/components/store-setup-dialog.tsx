@@ -103,7 +103,8 @@ export function StoreSetupDialog({ onStoreCreated }: StoreSetupDialogProps) {
         }
       }
 
-      const appBaseUrl = window.location.origin; // Dynamically get base URL
+      // Use NEXT_PUBLIC_APP_URL for the base URL, fallback to window.location.origin for local dev
+      const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
       const storeUrl = `${appBaseUrl}/store/${uniqueTenantSlug}`;
 
       // 3. Update the user's profile with store information
