@@ -125,6 +125,7 @@ export default function SignupPage() {
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
+        phone: values.phoneNumber || undefined, // Pass phone number directly to auth.users
         options: {
           data: {
             name: values.name, // Keep name for first_name in profile via trigger
@@ -137,23 +138,8 @@ export default function SignupPage() {
         toast.error(getAuthErrorMessage(signUpError)); // Use centralized error handling
         refreshVerificationCode(); // Refresh code on error
       } else {
-        // If signup is successful, update the profile with email and phone number
-        if (signUpData.user) {
-          const { error: profileUpdateError } = await supabase
-            .from('profiles')
-            .update({
-              email: values.email,
-              phone_number: values.phoneNumber || null,
-              updated_at: new Date().toISOString(),
-            })
-            .eq('id', signUpData.user.id);
-
-          if (profileUpdateError) {
-            console.error("Signup Page: Error updating profile with email/phone:", profileUpdateError);
-            // Log the error but proceed with signup success, as the core user is created.
-            // The user can update these fields later in settings if needed.
-          }
-        }
+        // The handle_new_user trigger will now correctly populate email and phone_number in profiles.
+        // No need for client-side profile update here.
 
         // IMPORTANT: Sign out immediately after successful signup so the user is not logged in
         // and can manually navigate to the login page.
