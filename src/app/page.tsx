@@ -87,16 +87,15 @@ export default function DashboardPage() {
         localStorage.setItem('wasAuthenticatedOnDashboard', 'true');
       }
     } else if (!isSessionLoading && !user) {
+      // This block handles when a user becomes unauthenticated *while on the dashboard*
+      // or if they land on the dashboard unauthenticated.
+      // In this case, we want to clear the flag if they are no longer authenticated.
       if (typeof window !== 'undefined') {
         localStorage.removeItem('wasAuthenticatedOnDashboard');
       }
     }
-
-    return () => {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('wasAuthenticatedOnDashboard');
-      }
-    };
+    // Removed the cleanup function that was clearing 'wasAuthenticatedOnDashboard'
+    // as it was causing incorrect redirects on refresh after navigation.
   }, [isSessionLoading, user, session, fetchDashboardData]);
 
   if (isSessionLoading || isLoadingDashboardData) {
