@@ -24,7 +24,7 @@ const generateRandomCode = () => {
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
-  email: z.string().email({ message: "Enter a valid email address." }),
+  email: z.string().email({ message: "Enter a valid email address." }).endsWith("@gmail.com", { message: "Only Gmail addresses are allowed." }),
   phoneNumber: z.string()
     .regex(/^03\d{9}$/, { message: "Must start with 03 and be 11 digits long." })
     .optional()
