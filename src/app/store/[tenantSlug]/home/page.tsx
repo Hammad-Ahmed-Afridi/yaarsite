@@ -56,9 +56,14 @@ export default function StoreHomePage() {
 
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
+      {/* New introductory text */}
+      <p className="text-lg text-muted-foreground mb-8 max-w-prose mx-auto leading-relaxed text-center">
+        hello how are you all doing
+      </p>
+
       {/* Home Page Content Section (Image Left, Text Right) - NOW FIRST */}
       {(displayContentImage || profile?.home_page_content_text) && (
-        <section className="w-full max-w-4xl mb-20"> {/* Adjusted margin-top to margin-bottom */}
+        <section className="w-full max-w-4xl mb-20">
           <div className="grid md:grid-cols-2 gap-8 items-center text-left">
             {displayContentImage ? (
               <div className="relative w-full h-64 md:h-80 rounded-3xl overflow-hidden shadow-lg">
