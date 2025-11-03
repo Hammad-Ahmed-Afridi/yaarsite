@@ -35,6 +35,8 @@ export interface Profile { // Exported for use in DashboardHeader
   store_primary_color_hsl: string | null; // Used for accent (buttons, links, icons)
   store_background_color_hsl: string | null; // Main store background
   store_card_background_color_hsl: string | null; // Cards, Header, Footer background
+  store_foreground_color_hsl: string | null; // New: Text color on background
+  store_card_foreground_color_hsl: string | null; // New: Text color on card background
   store_contact_email: string | null; // New: Store's public contact email
   store_contact_phone: string | null; // New: Store's public contact phone
 }
