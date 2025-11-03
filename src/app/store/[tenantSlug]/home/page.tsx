@@ -56,49 +56,9 @@ export default function StoreHomePage() {
 
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
-      {/* New text message at the very top */}
-      <p className="text-xl font-semibold text-primary mb-8">Hello how are you all doing</p>
-
-      {/* Home Page Hero Image Section - NOW FIRST */}
-      {profile.home_page_hero_image_url ? (
-        <section className="w-full max-w-4xl mb-12">
-          <div className="relative w-full h-64 md:h-96 rounded-3xl overflow-hidden shadow-lg">
-            <Image
-              src={profile.home_page_hero_image_url}
-              alt="Home Page Hero"
-              fill
-              style={{ objectFit: 'cover' }}
-              className="object-center"
-            />
-          </div>
-        </section>
-      ) : (
-        // Fallback if no hero image is set
-        <section className="w-full max-w-4xl mb-12">
-          <div className="flex items-center justify-center w-full h-64 md:h-96 rounded-3xl bg-muted shadow-lg">
-            <ImageIcon className="h-24 w-24 text-muted-foreground" />
-          </div>
-        </section>
-      )}
-
-      {/* Main Welcome Message and Product Button - NOW SECOND */}
-      <h1 className="text-4xl font-bold mb-4 tracking-tight">
-        {profile?.home_page_heading || `Welcome to ${profile?.tenant_name || 'our store'}!`}
-      </h1>
-      <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
-        {"Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
-      </p>
-      <Button asChild size="lg" className="font-semibold bg-store-primary text-store-primary-foreground hover:bg-store-primary/90">
-        <Link href={`/store/${tenantSlug}`}>
-          <span>
-            View Our Products
-          </span>
-        </Link>
-      </Button>
-
-      {/* Home Page Content Section (Image Left, Text Right) - NOW THIRD */}
+      {/* Home Page Content Section (Image Left, Text Right) - NOW FIRST */}
       {(displayContentImage || profile?.home_page_content_text) && (
-        <section className="mt-20 w-full max-w-4xl">
+        <section className="w-full max-w-4xl mb-20"> {/* Adjusted margin-top to margin-bottom */}
           <div className="grid md:grid-cols-2 gap-8 items-center text-left">
             {displayContentImage ? (
               <div className="relative w-full h-64 md:h-80 rounded-3xl overflow-hidden shadow-lg">
@@ -124,6 +84,21 @@ export default function StoreHomePage() {
           </div>
         </section>
       )}
+
+      {/* Home Page Hero Section - NOW SECOND, without the Store icon */}
+      <h1 className="text-4xl font-bold mb-4 tracking-tight">
+        {profile?.home_page_heading || `Welcome to ${profile?.tenant_name || 'our store'}!`}
+      </h1>
+      <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
+        {"Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
+      </p>
+      <Button asChild size="lg" className="font-semibold bg-store-primary text-store-primary-foreground hover:bg-store-primary/90">
+        <Link href={`/store/${tenantSlug}`}>
+          <span>
+            View Our Products
+          </span>
+        </Link>
+      </Button>
     </div>
   );
 }
