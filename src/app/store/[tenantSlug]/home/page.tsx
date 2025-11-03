@@ -56,9 +56,29 @@ export default function StoreHomePage() {
 
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 px-4 font-sans">
-      {/* Home Page Content Section (Image Left, Text Right) - NOW FIRST */}
+      {/* Introductory text - remains at the very top */}
+      <p className="text-lg text-muted-foreground mb-8 max-w-prose mx-auto leading-relaxed text-center">
+        hello how are you all doing
+      </p>
+
+      {/* Home Page Hero Section - NOW SECOND */}
+      <h1 className="text-4xl font-bold mb-4 tracking-tight">
+        {profile?.home_page_heading || `Welcome to ${profile?.tenant_name || 'our store'}!`}
+      </h1>
+      <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
+        {"Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
+      </p>
+      <Button asChild size="lg" className="font-semibold bg-store-primary text-store-primary-foreground hover:bg-store-primary/90 mb-20"> {/* Added mb-20 for spacing */}
+        <Link href={`/store/${tenantSlug}`}>
+          <span>
+            View Our Products
+          </span>
+        </Link>
+      </Button>
+
+      {/* Home Page Content Section (Image Left, Text Right) - NOW THIRD */}
       {(displayContentImage || profile?.home_page_content_text) && (
-        <section className="w-full max-w-4xl mb-20"> {/* Adjusted margin-top to margin-bottom */}
+        <section className="w-full max-w-4xl"> {/* Removed mb-20 as it's now the last section */}
           <div className="grid md:grid-cols-2 gap-8 items-center text-left">
             {displayContentImage ? (
               <div className="relative w-full h-64 md:h-80 rounded-3xl overflow-hidden shadow-lg">
@@ -84,21 +104,6 @@ export default function StoreHomePage() {
           </div>
         </section>
       )}
-
-      {/* Home Page Hero Section - NOW SECOND, without the Store icon */}
-      <h1 className="text-4xl font-bold mb-4 tracking-tight">
-        {profile?.home_page_heading || `Welcome to ${profile?.tenant_name || 'our store'}!`}
-      </h1>
-      <p className="text-lg text-muted-foreground mb-8 max-w-prose leading-relaxed">
-        {"Discover a wide range of products hand-picked just for you. We're excited to share our offerings with you!"}
-      </p>
-      <Button asChild size="lg" className="font-semibold bg-store-primary text-store-primary-foreground hover:bg-store-primary/90">
-        <Link href={`/store/${tenantSlug}`}>
-          <span>
-            View Our Products
-          </span>
-        </Link>
-      </Button>
     </div>
   );
 }
