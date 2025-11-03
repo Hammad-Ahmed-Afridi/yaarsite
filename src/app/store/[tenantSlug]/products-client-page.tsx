@@ -175,7 +175,7 @@ export default function StoreProductsPage() {
           {filteredProducts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Package className="h-16 w-16 text-muted-foreground mb-4" />
-              <p className className="text-xl text-muted-foreground mb-4 font-semibold">No products in this category.</p>
+              <p className="text-xl text-muted-foreground mb-4 font-semibold">No products in this category.</p>
               <p className="text-base text-muted-foreground leading-relaxed">Please select another category or view all products.</p>
             </div>
           ) : (
