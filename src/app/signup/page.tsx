@@ -99,6 +99,25 @@ export default function SignupPage() {
     return true;
   }, []);
 
+  // Custom validation for email uniqueness
+  const validateEmailUniqueness = useCallback(async (email: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('email', email)
+      .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 means "no rows found"
+      console.error("Error checking email uniqueness:", error);
+      return "An error occurred while checking email. Please try again.";
+    }
+
+    if (data) {
+      return "An account with this email already exists. Please log in.";
+    }
+    return true;
+  }, []);
+
   // Log form validation errors for debugging
   React.useEffect(() => {
     if (Object.keys(form.formState.errors).length > 0) {
@@ -119,6 +138,15 @@ export default function SignupPage() {
         refreshVerificationCode();
         return;
       }
+    }
+
+    // Perform client-side email uniqueness check before Supabase signup
+    const emailError = await validateEmailUniqueness(values.email);
+    if (typeof emailError === 'string') {
+      form.setError("email", { type: "manual", message: emailError });
+      setIsLoading(false);
+      refreshVerificationCode();
+      return;
     }
 
     try {
