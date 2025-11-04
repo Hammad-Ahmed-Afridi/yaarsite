@@ -22,7 +22,7 @@ export const getAuthErrorMessage = (error: any): string => {
       return "Invalid email or password.";
     }
     if (error.message.includes("User already registered")) {
-      return "An account with this email already exists. Please log in.";
+      return "An account with this email already exists.";
     }
     if (error.message.includes("Password should be at least 6 characters")) {
       return "Password must be at least 6 characters long.";

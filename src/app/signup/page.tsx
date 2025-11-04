@@ -113,7 +113,7 @@ export default function SignupPage() {
     }
 
     if (data) {
-      return "An account with this email already exists. Please log in.";
+      return "An account with this email already exists.";
     }
     return true;
   }, []);
