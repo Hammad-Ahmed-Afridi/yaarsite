@@ -1,6 +1,10 @@
 export const getAuthErrorMessage = (error: any): string => {
   if (!error) return "An unknown error occurred.";
 
+  // --- DEBUG LOG: Please copy the message from your browser console after trying to sign up with an existing email ---
+  console.log("Supabase Auth Error Message (for debugging):", error.message);
+  // --- END DEBUG LOG ---
+
   // Check for Supabase database errors (e.g., unique constraint violations)
   if (error.code === '23505') { // PostgreSQL unique_violation error code
     if (error.message.includes('unique_phone_number')) {
