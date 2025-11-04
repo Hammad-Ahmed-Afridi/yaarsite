@@ -175,7 +175,7 @@ export function StoreSetupDialog({ onStoreCreated }: StoreSetupDialogProps) {
           {isBuildingStore ? (
             <AppLoader
               message="Yaarsite AI is building your store. Wait for the magic to happen..."
-              secondaryMessage="This might take a few moments as we set everything up for you." // Added secondary message
+              secondaryMessage="If it does not load, kindly refresh the browser and sign in."
               size="lg"
               isFullScreen={false}
               className="py-12"

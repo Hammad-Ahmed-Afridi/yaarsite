@@ -137,7 +137,10 @@ export default function OrdersPage() {
 
   if (isLoadingOrders) {
     return (
-      <AppLoader message="Loading orders..." />
+      <AppLoader
+        message="Loading orders..."
+        secondaryMessage="If it does not load, kindly refresh the browser and sign in."
+      />
     );
   }
 

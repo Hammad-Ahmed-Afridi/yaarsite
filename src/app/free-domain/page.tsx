@@ -42,7 +42,12 @@ export default function FreeDomainPage() {
   const displayStoreUrl = profile?.store_url || "Store URL not available";
 
   if (isSessionLoading) {
-    return <AppLoader message="Loading page..." />;
+    return (
+      <AppLoader
+        message="Loading page..."
+        secondaryMessage="If it does not load, kindly refresh the browser and sign in."
+      />
+    );
   }
 
   if (!profile || profile.tenant_name === null) {

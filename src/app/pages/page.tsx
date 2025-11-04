@@ -28,7 +28,12 @@ export default function PagesPage() {
   };
 
   if (isSessionLoading) {
-    return <AppLoader message="Loading pages..." />;
+    return (
+      <AppLoader
+        message="Loading pages..."
+        secondaryMessage="If it does not load, kindly refresh the browser and sign in."
+      />
+    );
   }
 
   if (!profile || profile.tenant_name === null) {

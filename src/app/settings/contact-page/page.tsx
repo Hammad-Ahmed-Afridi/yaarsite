@@ -262,7 +262,12 @@ export default function ContactPageSettingsPage() {
   };
 
   if (isSessionLoading) {
-    return <AppLoader message="Loading contact page settings..." />;
+    return (
+      <AppLoader
+        message="Loading contact page settings..."
+        secondaryMessage="If it does not load, kindly refresh the browser and sign in."
+      />
+    );
   }
 
   if (!profile || profile.tenant_name === null) {

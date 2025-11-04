@@ -97,7 +97,13 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
   // If not ready to render, show the full-screen loader
   if (!isReadyToRender) {
-    return <AppLoader message="Loading..." isFullScreen={true} />;
+    return (
+      <AppLoader
+        message="Loading..."
+        secondaryMessage="If it does not load, kindly refresh the browser and sign in."
+        isFullScreen={true}
+      />
+    );
   }
 
   // If ready to render, show the children

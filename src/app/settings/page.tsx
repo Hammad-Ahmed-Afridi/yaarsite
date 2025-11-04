@@ -216,16 +216,16 @@ export default function SettingsPage() {
       const currentPrimaryHex = profile.store_primary_color_hsl ? hslToHex(profile.store_primary_color_hsl) : null;
       const currentBackgroundHex = profile.store_background_color_hsl ? hslToHex(profile.store_background_color_hsl) : null;
       const currentCardBackgroundHex = profile.store_card_background_color_hsl ? hslToHex(profile.store_card_background_color_hsl) : null;
-      const currentForegroundHex = profile.store_foreground_color_hsl ? hslToHex(profile.store_foreground_color_hsl) : null; // New
-      const currentCardForegroundHex = profile.store_card_foreground_color_hsl ? hslToHex(profile.store_card_foreground_color_hsl) : null; // New
+      const currentForegroundColorHex = profile.store_foreground_color_hsl ? hslToHex(profile.store_foreground_color_hsl) : null; // New
+      const currentCardForegroundColorHex = profile.store_card_foreground_color_hsl ? hslToHex(profile.store_card_foreground_color_hsl) : null; // New
 
       // Try to find a matching preset palette
       let matchedPalette = PRESET_PALETTES.find(p =>
         p.primary === currentPrimaryHex &&
         p.background === currentBackgroundHex &&
         p.cardBackground === currentCardBackgroundHex &&
-        p.foreground === currentForegroundHex && // Include new foreground colors
-        p.cardForeground === currentCardForegroundHex // Include new card foreground colors
+        p.foreground === currentForegroundColorHex && // Include new foreground colors
+        p.cardForeground === currentCardForegroundColorHex // Include new card foreground colors
       );
 
       if (matchedPalette) {
@@ -240,16 +240,16 @@ export default function SettingsPage() {
         form.setValue("storePrimaryAccentColor", currentPrimaryHex || "");
         form.setValue("storeBackgroundColor", currentBackgroundHex || "");
         form.setValue("storeCardHeaderFooterBackgroundColor", currentCardBackgroundHex || "");
-        form.setValue("storeForegroundColor", currentForegroundHex || ""); // Set new form values
-        form.setValue("storeCardForegroundColor", currentCardForegroundHex || ""); // Set new form values
+        form.setValue("storeForegroundColor", currentForegroundColorHex || ""); // Set new form values
+        form.setValue("storeCardForegroundColor", currentCardForegroundColorHex || ""); // Set new form values
       }
 
       // Initialize live preview colors with profile values (whether preset or custom)
       setLivePrimaryColor(currentPrimaryHex);
       setLiveBackgroundColor(currentBackgroundHex);
       setLiveCardBackgroundColor(currentCardBackgroundHex);
-      setLiveForegroundColor(currentForegroundHex); // Initialize new live states
-      setLiveCardForegroundColor(currentCardForegroundHex); // Initialize new live states
+      setLiveForegroundColor(currentForegroundColorHex); // Initialize new live states
+      setLiveCardForegroundColor(currentCardForegroundColorHex); // Initialize new live states
     }
   }, [profile, form]);
 
@@ -609,7 +609,10 @@ export default function SettingsPage() {
 
   if (isSessionLoading) {
     return (
-      <AppLoader message="Loading settings..." />
+      <AppLoader
+        message="Loading settings..."
+        secondaryMessage="If it does not load, kindly refresh the browser and sign in."
+      />
     );
   }
 
@@ -846,18 +849,6 @@ export default function SettingsPage() {
                         <p className="text-destructive text-sm">{form.formState.errors.storeCardHeaderFooterBackgroundColor.message}</p>
                       )}
                     </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="storePrimaryAccentColor" className="text-sm font-medium">Primary Accent Color (Buttons, Links, Icons)</Label>
-                      <Input
-                        id="storePrimaryAccentColor"
-                        type="color"
-                        value={livePrimaryColor || '#29A399'} // Default to Yaarsite primary if null for color picker
-                        onChange={(e) => handleColorInputChange(e, setLivePrimaryColor, "storePrimaryAccentColor")}
-                      />
-                      {form.formState.errors.storePrimaryAccentColor && (
-                        <p className="text-destructive text-sm">{form.formState.errors.storePrimaryAccentColor.message}</p>
-                      )}
-                    </div>
                     <div className="grid gap-2"> {/* New: Store Foreground Color */}
                       <Label htmlFor="storeForegroundColor" className="text-sm font-medium">Store Foreground Color (Text on Background)</Label>
                       <Input
@@ -880,6 +871,18 @@ export default function SettingsPage() {
                       />
                       {form.formState.errors.storeCardForegroundColor && (
                         <p className="text-destructive text-sm">{form.formState.errors.storeCardForegroundColor.message}</p>
+                      )}
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="storePrimaryAccentColor" className="text-sm font-medium">Primary Accent Color (Buttons, Links, Icons)</Label>
+                      <Input
+                        id="storePrimaryAccentColor"
+                        type="color"
+                        value={livePrimaryColor || '#29A399'} // Default to Yaarsite primary if null for color picker
+                        onChange={(e) => handleColorInputChange(e, setLivePrimaryColor, "storePrimaryAccentColor")}
+                      />
+                      {form.formState.errors.storePrimaryAccentColor && (
+                        <p className="text-destructive text-sm">{form.formState.errors.storePrimaryAccentColor.message}</p>
                       )}
                     </div>
                   </div>

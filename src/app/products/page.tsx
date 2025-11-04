@@ -138,7 +138,10 @@ export default function ProductsPage() {
 
   if (isLoadingProducts) {
     return (
-      <AppLoader message="Loading products..." />
+      <AppLoader
+        message="Loading products..."
+        secondaryMessage="If it does not load, kindly refresh the browser and sign in."
+      />
     );
   }
 

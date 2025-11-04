@@ -27,7 +27,12 @@ export default function DownloadAppPage() {
   };
 
   if (isSessionLoading) {
-    return <AppLoader message="Loading app download instructions..." />;
+    return (
+      <AppLoader
+        message="Loading app download instructions..."
+        secondaryMessage="If it does not load, kindly refresh the browser and sign in."
+      />
+    );
   }
 
   return (

@@ -239,7 +239,12 @@ export default function AboutPageSettingsPage() {
   };
 
   if (isSessionLoading) {
-    return <AppLoader message="Loading about page settings..." />;
+    return (
+      <AppLoader
+        message="Loading about page settings..."
+        secondaryMessage="If it does not load, kindly refresh the browser and sign in."
+      />
+    );
   }
 
   if (!profile || profile.tenant_name === null) {
