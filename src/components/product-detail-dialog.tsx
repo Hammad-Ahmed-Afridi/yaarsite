@@ -363,7 +363,7 @@ export function ProductDetailDialog({ product, isOpen, onOpenChange, storeOwnerI
                         Refer to this chart to find your perfect size.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <div className="relative w-full h-auto max-h-[70vh] flex items-center justify-center bg-muted rounded-md overflow-hidden">
+                    <div className="relative w-full h-[50vh] max-h-[70vh] flex items-center justify-center bg-muted rounded-md overflow-hidden">
                       <Image
                         src={product.size_chart_url!}
                         alt="Size Chart"
