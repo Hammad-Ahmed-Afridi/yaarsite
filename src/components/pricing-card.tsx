@@ -50,7 +50,9 @@ export function PricingCard({
         <CardDescription className="text-base text-muted-foreground leading-relaxed">{description}</CardDescription>
         <div className="mt-4">
           <span className="text-5xl font-extrabold text-foreground">Rs&nbsp;{priceMonthly}</span>
-          {/* Removed "/month" and yearly price display */}
+          {priceMonthly > 0 && ( // Conditionally display "One time fee" for paid plans
+            <p className="text-sm text-muted-foreground mt-1">One time fee</p>
+          )}
         </div>
       </CardHeader>
       <CardContent className="flex-1 p-0 mt-6">
