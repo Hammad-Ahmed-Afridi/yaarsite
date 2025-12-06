@@ -251,13 +251,22 @@ export default function LandingPage() {
           <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
             Join {animatedYaarsite} today and transform your business idea into a thriving online store.
           </p>
-          <Button asChild size="lg" className="px-10 py-7 text-xl font-semibold hover:scale-[1.02] transition-transform duration-200">
-            <Link href="/signup" target="_blank" rel="noopener noreferrer">
-              <span>
-                Sign Up Now
-              </span>
-            </Link>
-          </Button>
+          <div className="flex flex-col items-center gap-4"> {/* Added a flex container for buttons */}
+            <Button asChild size="lg" className="px-10 py-7 text-xl font-semibold hover:scale-[1.02] transition-transform duration-200">
+              <Link href="/signup" target="_blank" rel="noopener noreferrer">
+                <span>
+                  Sign Up Now
+                </span>
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="px-10 py-7 text-xl font-semibold hover:scale-[1.02] transition-transform duration-200">
+              <Link href="/connect-with-us" target="_blank" rel="noopener noreferrer">
+                <span>
+                  Connect With Us
+                </span>
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 
