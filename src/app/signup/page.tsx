@@ -8,15 +8,28 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { getAuthErrorMessage } from '@/lib/auth-errors';
+// Removed: import type { Metadata } from 'next'; // Import Metadata type
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff, Mail, Lock, Phone, User, RefreshCcw, Instagram, Facebook, Youtube, Linkedin, MessageCircle, TikTok } from 'lucide-react'; // Added social media icons
+import { Eye, EyeOff, Mail, Lock, Phone, User, RefreshCcw } from 'lucide-react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils'; // Import cn for styling
+
+// Removed: Add page-specific metadata
+// export const metadata: Metadata = {
+//   title: "Sign Up - Create Your Free Ecommerce Store | Yaarsite",
+//   description: "Create your free ecommerce store in seconds with Yaarsite. Start selling online, manage products, and track orders easily. No credit card required!",
+//   keywords: ["ecommerce store", "create online store", "free store builder", "yaarsite signup", "sell online", "start business"],
+//   openGraph: {
+//     title: "Sign Up - Create Your Free Ecommerce Store | Yaarsite",
+//     description: "Create your free ecommerce store in seconds with Yaarsite. Start selling online, manage products, and track orders easily. No credit card required!",
+//     url: "https://yaarsite.vercel.app/signup",
+//     type: "website",
+//   },
+// };
 
 // Function to generate a random 4-character alphanumeric code
 const generateRandomCode = () => {
@@ -205,15 +218,6 @@ export default function SignupPage() {
     }
   };
 
-  const socialMediaButtons = [
-    { name: "WhatsApp", icon: MessageCircle, href: "https://wa.me/YOUR_WHATSAPP_NUMBER", color: "bg-green-500" },
-    { name: "Instagram", icon: Instagram, href: "https://instagram.com/YOUR_INSTAGRAM_HANDLE", color: "bg-pink-500" },
-    { name: "Facebook", icon: Facebook, href: "https://facebook.com/YOUR_FACEBOOK_PAGE", color: "bg-blue-600" },
-    { name: "YouTube", icon: Youtube, href: "https://youtube.com/YOUR_YOUTUBE_CHANNEL", color: "bg-red-600" },
-    { name: "LinkedIn", icon: Linkedin, href: "https://linkedin.com/in/YOUR_LINKEDIN_PROFILE", color: "bg-blue-700" },
-    { name: "TikTok", icon: TikTok, href: "https://tiktok.com/@YOUR_TIKTOK_HANDLE", color: "bg-black" },
-  ];
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4 font-sans">
       <Card className="w-full max-w-md bg-card text-card-foreground shadow-lg rounded-3xl">
@@ -382,26 +386,6 @@ export default function SignupPage() {
             <Link href="/login" className="text-primary hover:underline font-medium">
               Sign in
             </Link>
-          </div>
-
-          {/* Social Media Buttons Section */}
-          <div className="mt-8 pt-6 border-t border-border space-y-4">
-            <p className="text-center text-muted-foreground text-base font-medium">Connect with us:</p>
-            <div className="grid grid-cols-2 gap-3"> {/* Responsive grid for buttons */}
-              {socialMediaButtons.map((btn) => (
-                <Button
-                  key={btn.name}
-                  asChild
-                  className={cn("w-full flex items-center gap-2 font-semibold text-white", btn.color)}
-                  style={{ backgroundColor: btn.color === "bg-black" ? "black" : undefined }} // Ensure black background for TikTok
-                >
-                  <a href={btn.href} target="_blank" rel="noopener noreferrer">
-                    <btn.icon className="h-4 w-4" />
-                    {btn.name}
-                  </a>
-                </Button>
-              ))}
-            </div>
           </div>
         </CardContent>
       </Card>
