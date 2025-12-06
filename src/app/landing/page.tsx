@@ -76,7 +76,7 @@ export default function LandingPage() {
     {
       planName: "Business",
       description: "Advanced features for growing businesses and maximum control.",
-      priceMonthly: 7000,
+      priceMonthly: 49999, // Changed from 7000 to 49999
       priceYearly: 70000,
       features: [
         { text: "Dashboard Access", included: true },
