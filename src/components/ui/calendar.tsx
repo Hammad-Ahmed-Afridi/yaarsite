@@ -55,13 +55,13 @@ function Calendar({
       }}
       components={
         {
-          IconLeft: ({ className, ...iconProps }) => (
+          IconLeft: ({ className, ...iconProps }: { className?: string }) => (
             <ChevronLeft className={cn("h-4 w-4", className)} {...iconProps} />
           ),
-          IconRight: ({ className, ...iconProps }) => (
+          IconRight: ({ className, ...iconProps }: { className?: string }) => (
             <ChevronRight className={cn("h-4 w-4", className)} {...iconProps} />
           ),
-        } as DayPickerProps['components'] // Explicitly cast to the expected type
+        } as DayPickerProps['components']
       }
       {...props}
     />
