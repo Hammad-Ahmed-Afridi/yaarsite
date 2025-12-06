@@ -136,7 +136,7 @@ export default function LandingPage() {
           <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-accent/5 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob-2"></div>
         </div>
         <div className="container mx-auto flex flex-col items-center justify-center text-center px-4">
-          <h1 className="relative z-10 text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">
+          <h1 className="relative z-10 text-3xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">
             Launch Your Ecommerce<br />
             Store in <span className="text-primary">Seconds</span> with<br />
             {animatedYaarsite}
