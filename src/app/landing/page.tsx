@@ -122,10 +122,10 @@ export default function LandingPage() {
         </div>
         <nav className="space-x-4">
           <Button asChild variant="ghost">
-            <Link href="/login" target="_blank" rel="noopener noreferrer">Log In</Link>
+            <Link href="/login">Log In</Link>
           </Button>
           <Button asChild>
-            <Link href="/signup" target="_blank" rel="noopener noreferrer">Get Started</Link>
+            <Link href="/signup">Get Started</Link>
           </Button>
         </nav>
       </header>
@@ -148,14 +148,14 @@ export default function LandingPage() {
           
           <div className="relative z-10 flex flex-col sm:flex-row gap-4">
             <Button asChild size="lg" className="px-8 py-6 text-lg font-semibold hover:scale-[1.02] transition-transform duration-200">
-              <Link href="/signup" target="_blank" rel="noopener noreferrer">
+              <Link href="/signup">
                 <span>
                   Get Started Free
                 </span>
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="px-8 py-6 text-lg font-semibold hover:scale-[1.02] transition-transform duration-200">
-              <Link href="/login" target="_blank" rel="noopener noreferrer">
+              <Link href="/login">
                 Log In
               </Link>
             </Button>
@@ -252,7 +252,7 @@ export default function LandingPage() {
             Join {animatedYaarsite} today and transform your business idea into a thriving online store.
           </p>
           <Button asChild size="lg" className="px-10 py-7 text-xl font-semibold hover:scale-[1.02] transition-transform duration-200">
-            <Link href="/signup" target="_blank" rel="noopener noreferrer">
+            <Link href="/signup">
               <span>
                 Sign Up Now
               </span>
