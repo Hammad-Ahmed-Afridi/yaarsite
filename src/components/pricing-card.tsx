@@ -1,12 +1,12 @@
 "use client";
 
 import React from 'react';
-import Link from 'next/link'; // Added Link import
+import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check, Star, X } from 'lucide-react'; // Added X icon
+import { Check, Star, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge'; // Added Badge import
+import { Badge } from '@/components/ui/badge';
 
 interface FeatureItem {
   text: string;
@@ -17,7 +17,8 @@ interface PricingCardProps {
   planName: string;
   priceMonthly: number;
   priceYearly?: number;
-  features: FeatureItem[]; // Updated to array of FeatureItem
+  originalPrice?: number; // New: Optional original price for discount display
+  features: FeatureItem[];
   isMostPopular?: boolean;
   buttonText: string;
   buttonLink: string;
@@ -28,6 +29,7 @@ export function PricingCard({
   planName,
   priceMonthly,
   priceYearly,
+  originalPrice, // Destructure new prop
   features,
   isMostPopular = false,
   buttonText,
@@ -49,8 +51,11 @@ export function PricingCard({
         <CardTitle className="text-3xl font-bold tracking-tight mb-2">{planName}</CardTitle>
         <CardDescription className="text-base text-muted-foreground leading-relaxed">{description}</CardDescription>
         <div className="mt-4">
+          {originalPrice && originalPrice > priceMonthly && (
+            <p className="text-sm text-muted-foreground line-through mb-1">Rs&nbsp;{originalPrice}</p>
+          )}
           <span className="text-5xl font-extrabold text-foreground">Rs&nbsp;{priceMonthly}</span>
-          {priceMonthly > 0 && ( // Conditionally display "One time fee" for paid plans
+          {priceMonthly > 0 && (
             <p className="text-sm text-muted-foreground mt-1">One time fee</p>
           )}
         </div>
