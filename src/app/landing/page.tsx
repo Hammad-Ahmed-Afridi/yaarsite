@@ -1,11 +1,10 @@
 "use client";
-
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LayoutDashboard, ShoppingCart, Settings, Package, Monitor, BarChart } from 'lucide-react'; // Removed ArrowRight
-import { PricingCard } from '@/components/pricing-card'; // Import the new PricingCard component
+import { LayoutDashboard, ShoppingCart, Settings, Package, Monitor, BarChart } from 'lucide-react';
+import { PricingCard } from '@/components/pricing-card';
 
 export default function LandingPage() {
   const animatedYaarsite = (
@@ -34,7 +33,7 @@ export default function LandingPage() {
       priceMonthly: 0,
       features: freePlanFeatures,
       buttonText: "Start for Free",
-      buttonLink: "/signup", // Removed plan query parameter
+      buttonLink: "/signup",
       isMostPopular: false,
     },
     {
@@ -43,12 +42,12 @@ export default function LandingPage() {
       priceMonthly: 500,
       priceYearly: 5000,
       features: [
-        ...freePlanFeatures, // Explicitly include all free plan features
-        "Unlimited Products", // Overrides the 2-product limit
-        "Priority Support", // Overrides limited support
+        ...freePlanFeatures,
+        "Unlimited Products",
+        "Priority Support",
       ],
       buttonText: "Go Pro",
-      buttonLink: "/signup", // Removed plan query parameter
+      buttonLink: "/signup",
       isMostPopular: true,
     },
     {
@@ -66,7 +65,7 @@ export default function LandingPage() {
         "24/7 Premium Support",
       ],
       buttonText: "Get Business",
-      buttonLink: "/signup", // Removed plan query parameter
+      buttonLink: "/signup",
       isMostPopular: false,
     },
   ];
@@ -94,22 +93,22 @@ export default function LandingPage() {
       <section className="relative bg-gradient-to-b from-background to-muted overflow-hidden rounded-b-4xl shadow-lg py-20 md:py-32">
         {/* Animated background elements for visual engagement */}
         <div className="absolute inset-0 z-0 opacity-20">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 animate-pulse-slow backdrop-blur-sm"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 to-transparent animate-pulse-fast backdrop-blur-sm"></div>
-            <div className="absolute top-1/4 left-1/4 w-48 h-48 bg-primary/5 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob-1"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-accent/5 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob-2"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 animate-pulse-slow backdrop-blur-sm"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 to-transparent animate-pulse-fast backdrop-blur-sm"></div>
+          <div className="absolute top-1/4 left-1/4 w-48 h-48 bg-primary/5 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob-1"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-accent/5 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob-2"></div>
         </div>
         <div className="container mx-auto flex flex-col items-center justify-center text-center px-4">
           <h1 className="relative z-10 text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">
-            Launch Your Ecommerce Store in <span className="text-primary">Seconds</span> with {animatedYaarsite}
+            Build and Launch Your Ecommerce Store in <span className="text-primary">Seconds</span> with {animatedYaarsite}
           </h1>
           <p className="relative z-10 text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl leading-relaxed">
             {animatedYaarsite} helps entrepreneurs build beautiful, professional e-commerce stores effortlessly. Focus on your products, we handle the tech.
           </p>
           <div className="relative z-10 flex flex-col sm:flex-row gap-4">
             <Button asChild size="lg" className="px-8 py-6 text-lg font-semibold hover:scale-[1.02] transition-transform duration-200">
-              <Link href="/signup" target="_blank" rel="noopener noreferrer"> {/* Default to free plan */}
-                <span> {/* Wrapped children in a span */}
+              <Link href="/signup" target="_blank" rel="noopener noreferrer">
+                <span>
                   Get Started Free
                 </span>
               </Link>
@@ -212,8 +211,8 @@ export default function LandingPage() {
             Join {animatedYaarsite} today and transform your business idea into a thriving online store.
           </p>
           <Button asChild size="lg" className="px-10 py-7 text-xl font-semibold hover:scale-[1.02] transition-transform duration-200">
-            <Link href="/signup" target="_blank" rel="noopener noreferrer"> {/* Default to free plan */}
-              <span> {/* Wrapped children in a span */}
+            <Link href="/signup" target="_blank" rel="noopener noreferrer">
+              <span>
                 Sign Up Now
               </span>
             </Link>
