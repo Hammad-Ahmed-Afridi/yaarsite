@@ -46,7 +46,7 @@ export default function LandingPage() {
     {
       planName: "Pro",
       description: "Unlock full potential with unlimited products and priority support.",
-      priceMonthly: 500,
+      priceMonthly: 5000, // Changed from 500 to 5000
       priceYearly: 5000,
       features: [
         { text: "Dashboard Access", included: true },
