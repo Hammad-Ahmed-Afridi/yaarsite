@@ -52,7 +52,7 @@ export function PricingCard({
         <CardDescription className="text-base text-muted-foreground leading-relaxed">{description}</CardDescription>
         <div className="mt-4">
           {originalPrice && originalPrice > priceMonthly && (
-            <p className="text-sm text-muted-foreground line-through mb-1 font-extrabold">Rs&nbsp;{originalPrice}</p>
+            <p className="text-sm text-muted-foreground line-through mb-1 font-black">Rs&nbsp;{originalPrice}</p>
           )}
           <span className="text-5xl font-extrabold text-foreground">Rs&nbsp;{priceMonthly}</span>
           {priceMonthly > 0 && (
