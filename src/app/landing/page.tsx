@@ -25,6 +25,7 @@ export default function LandingPage() {
     { text: "Product Discount Feature", included: true },
     { text: "Product Size Charts & Colors", included: true },
     { text: "Free Link shorteners", included: true },
+    { text: "Rank Top on Google", included: false }, // Added for Free plan
     { text: "Unlimited Products", included: false },
     { text: "Priority Support", included: false },
     { text: "SEO", included: false },
@@ -63,10 +64,12 @@ export default function LandingPage() {
         { text: "Product Discount Feature", included: true },
         { text: "Product Size Charts & Colors", included: true },
         { text: "Free Link shorteners", included: true },
+        { text: "Rank Top on Google", included: true }, // Added for Pro plan
         { text: "Unlimited Products", included: true },
         { text: "Priority Support for One Week", included: true },
         { text: "SEO", included: true },
         { text: "Free Domain", included: true }, // Updated
+        { text: "Limited Customization", included: true }, // Added for Pro plan
         { text: "Custom platform", included: false }, // Updated text and moved position
         { text: "Custom domain integration", included: false }, // Moved to last
       ],
@@ -94,6 +97,7 @@ export default function LandingPage() {
         { text: "Product Discount Feature", included: true },
         { text: "Product Size Charts & Colors", included: true },
         { text: "Free Link shorteners", included: true },
+        { text: "Rank Top on Google", included: true }, // Added for Business plan
         { text: "Unlimited Products", included: true },
         { text: "Priority Support for One Year", included: true },
         { text: "SEO", included: true },
