@@ -4,7 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, Share2 } from 'lucide-react';
+import { ArrowLeft, Share2, Instagram, Facebook, Youtube, Linkedin, Phone } from 'lucide-react'; // Added Linkedin and Phone (for WhatsApp)
+import { FaTiktok } from 'react-icons/fa'; // For TikTok icon
 
 export default function ConnectWithUsPage() {
   return (
@@ -28,24 +29,35 @@ export default function ConnectWithUsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button asChild className="w-full bg-instagram hover:bg-instagram/90 text-white font-semibold py-6 text-lg">
+            <Button asChild className="w-full bg-instagram hover:bg-instagram/90 text-white font-semibold py-6 text-lg flex items-center justify-center gap-3">
               <Link href="https://www.instagram.com/yaarsite" target="_blank" rel="noopener noreferrer">
-                Instagram
+                <Instagram className="h-6 w-6" /> Instagram
               </Link>
             </Button>
-            <Button asChild className="w-full bg-facebook hover:bg-facebook/90 text-white font-semibold py-6 text-lg">
+            <Button asChild className="w-full bg-facebook hover:bg-facebook/90 text-white font-semibold py-6 text-lg flex items-center justify-center gap-3">
               <Link href="https://www.facebook.com/yaarsite" target="_blank" rel="noopener noreferrer">
-                Facebook
+                <Facebook className="h-6 w-6" /> Facebook
               </Link>
             </Button>
-            <Button asChild className="w-full bg-whatsapp hover:bg-whatsapp/90 text-white font-semibold py-6 text-lg">
+            <Button asChild className="w-full bg-whatsapp hover:bg-whatsapp/90 text-white font-semibold py-6 text-lg flex items-center justify-center gap-3">
               <Link href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer"> {/* Replace with actual WhatsApp link */}
-                WhatsApp
+                <Phone className="h-6 w-6" /> WhatsApp
               </Link>
             </Button>
-            <Button asChild className="w-full bg-youtube hover:bg-youtube/90 text-white font-semibold py-6 text-lg">
+            <Button asChild className="w-full bg-youtube hover:bg-youtube/90 text-white font-semibold py-6 text-lg flex items-center justify-center gap-3">
               <Link href="https://www.youtube.com/yaarsite" target="_blank" rel="noopener noreferrer">
-                YouTube
+                <Youtube className="h-6 w-6" /> YouTube
+              </Link>
+            </Button>
+            <Button asChild className="w-full bg-tiktok hover:bg-tiktok/90 text-white font-semibold py-6 text-lg flex items-center justify-center gap-3">
+              <Link href="https://www.tiktok.com/@yaarsite" target="_blank" rel="noopener noreferrer"> {/* Replace with actual TikTok link */}
+                {/* Using a generic icon for TikTok as FaTiktok requires react-icons package */}
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-tiktok"><path d="M9 12v10a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V12a1 1 0 0 0-1-1H10a1 1 0 0 0-1 1Z"/><path d="M12 11V2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1Z"/><path d="M15 12v10a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V12a1 1 0 0 0-1-1H16a1 1 0 0 0-1 1Z"/><path d="M18 11V2a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1Z"/></svg> TikTok
+              </Link>
+            </Button>
+            <Button asChild className="w-full bg-linkedin hover:bg-linkedin/90 text-white font-semibold py-6 text-lg flex items-center justify-center gap-3">
+              <Link href="https://www.linkedin.com/company/yaarsite" target="_blank" rel="noopener noreferrer"> {/* Replace with actual LinkedIn link */}
+                <Linkedin className="h-6 w-6" /> LinkedIn
               </Link>
             </Button>
           </CardContent>

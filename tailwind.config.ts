@@ -69,6 +69,8 @@ export default {
             facebook: '#1877F2', // Facebook Blue
             whatsapp: '#25D366', // WhatsApp Green
             youtube: '#FF0000', // YouTube Red
+            tiktok: '#000000', // TikTok Black
+            linkedin: '#0A66C2', // LinkedIn Blue
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
