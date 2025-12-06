@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, Share2, Instagram, Facebook, Youtube, Linkedin, Phone, TikTok } from 'lucide-react'; // Added TikTok icon
+import { ArrowLeft, Share2, Instagram, Facebook, Youtube, Linkedin, Phone } from 'lucide-react'; // Removed TikTok icon
 
 export default function ConnectWithUsPage() {
   return (
@@ -46,11 +46,6 @@ export default function ConnectWithUsPage() {
             <Button asChild className="w-full bg-youtube hover:bg-youtube/90 text-white font-semibold py-6 text-lg flex items-center justify-center gap-3">
               <Link href="https://www.youtube.com/yaarsite" target="_blank" rel="noopener noreferrer">
                 <Youtube className="h-6 w-6" /> YouTube
-              </Link>
-            </Button>
-            <Button asChild className="w-full bg-tiktok hover:bg-tiktok/90 text-white font-semibold py-6 text-lg flex items-center justify-center gap-3">
-              <Link href="https://www.tiktok.com/@yaarsite" target="_blank" rel="noopener noreferrer"> {/* Replace with actual TikTok link */}
-                <TikTok className="h-6 w-6" /> TikTok
               </Link>
             </Button>
             <Button asChild className="w-full bg-linkedin hover:bg-linkedin/90 text-white font-semibold py-6 text-lg flex items-center justify-center gap-3">
