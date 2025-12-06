@@ -50,10 +50,7 @@ export function PricingCard({
         <CardDescription className="text-base text-muted-foreground leading-relaxed">{description}</CardDescription>
         <div className="mt-4">
           <span className="text-5xl font-extrabold text-foreground">Rs{priceMonthly}</span>
-          <span className="text-lg text-muted-foreground">/month</span>
-          {priceYearly && (
-            <p className="text-sm text-muted-foreground mt-1">or Rs{priceYearly} / year</p>
-          )}
+          {/* Removed "/month" and yearly price display */}
         </div>
       </CardHeader>
       <CardContent className="flex-1 p-0 mt-6">
