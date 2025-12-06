@@ -63,7 +63,12 @@ export default {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
-  			}
+  			},
+            // New social media colors
+            instagram: '#E1306C', // Vibrant pink/red for Instagram
+            facebook: '#1877F2', // Facebook Blue
+            whatsapp: '#25D366', // WhatsApp Green
+            youtube: '#FF0000', // YouTube Red
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
