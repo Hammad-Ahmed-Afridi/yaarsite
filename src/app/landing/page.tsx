@@ -122,7 +122,7 @@ export default function LandingPage() {
         </div>
         <nav className="space-x-4">
           <Button asChild variant="ghost">
-            <Link href="/login" target="_blank" rel="noopener noreferrer">Log In</Link>
+            <Link href="/connect-with-us" target="_blank" rel="noopener noreferrer">Connect</Link>
           </Button>
           <Button asChild>
             <Link href="/signup" target="_blank" rel="noopener noreferrer">Get Started</Link>
