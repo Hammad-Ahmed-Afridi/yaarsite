@@ -29,8 +29,8 @@ export default function LandingPage() {
     { text: "Priority Support", included: false },
     { text: "SEO", included: false },
     { text: "Free Domain", included: false }, // Updated
-    { text: "Custom domain integration", included: false },
-    { text: "Custom platform with all your desired features", included: false },
+    { text: "Custom platform", included: false }, // Updated text and moved position
+    { text: "Custom domain integration", included: false }, // Moved to last
   ];
 
   const pricingPlans = [
@@ -46,8 +46,8 @@ export default function LandingPage() {
     {
       planName: "Pro",
       description: "Unlock full potential with unlimited products and priority support.",
-      priceMonthly: 4999, // Changed from 5000 to 4999
-      priceYearly: 4999, // Changed from 5000 to 4999
+      priceMonthly: 4999, 
+      priceYearly: 4999, 
       features: [
         { text: "Dashboard Access", included: true },
         { text: "Product Management", included: true },
@@ -66,8 +66,8 @@ export default function LandingPage() {
         { text: "Priority Support for One Week", included: true },
         { text: "SEO", included: true },
         { text: "Free Domain", included: true }, // Updated
-        { text: "Custom domain integration", included: false },
-        { text: "Custom platform with all your desired features", included: false },
+        { text: "Custom platform", included: false }, // Updated text and moved position
+        { text: "Custom domain integration", included: false }, // Moved to last
       ],
       buttonText: "Go Pro",
       buttonLink: "/signup",
@@ -96,8 +96,8 @@ export default function LandingPage() {
         { text: "Priority Support for One Year", included: true },
         { text: "SEO", included: true },
         { text: "Free Domain", included: true }, // Updated
-        { text: "Custom domain integration", included: true },
-        { text: "Custom platform with all your desired features", included: true },
+        { text: "Custom platform", included: true }, // Updated text and moved position
+        { text: "Custom domain integration", included: true }, // Moved to last
       ],
       buttonText: "Get Business",
       buttonLink: "/signup",
