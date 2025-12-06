@@ -34,7 +34,7 @@ export default function TermsAndConditionsPage() {
 
             <h3 className="text-xl font-semibold mt-4">1. Account Registration and Use</h3>
             <p>
-              You must be at least 18 years old to use the Service. When you register for an account, you agree to provide accurate, current, and complete information. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.
+              When you register for an account, you agree to provide accurate, current, and complete information. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.
             </p>
 
             <h3 className="text-xl font-semibold mt-4">2. Your Store and Products</h3>
@@ -85,7 +85,7 @@ export default function TermsAndConditionsPage() {
             </p>
 
             <p className="mt-8 text-sm text-muted-foreground">
-              Last updated: July 26, 2024
+              Last updated: December 06, 2025
             </p>
           </CardContent>
         </Card>
