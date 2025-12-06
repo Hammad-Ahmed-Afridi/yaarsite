@@ -74,7 +74,7 @@ export default function LandingPage() {
         { text: "Custom domain integration", included: false }, // Moved to last
       ],
       buttonText: "Go Pro",
-      buttonLink: "/upgrade-plan", // Changed to new upgrade page
+      buttonLink: "/signup",
       isMostPopular: true,
     },
     {
@@ -106,7 +106,7 @@ export default function LandingPage() {
         { text: "Custom domain integration", included: true }, // Moved to last
       ],
       buttonText: "Get Business",
-      buttonLink: "/upgrade-plan", // Changed to new upgrade page
+      buttonLink: "/signup",
       isMostPopular: false,
     },
   ];
