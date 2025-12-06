@@ -53,6 +53,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="w-full overflow-x-hidden">
       <head>
+        <meta name="google-site-verification" content="RQSTgMfXYA-IGbzlGJik3-Vy-ziP5Qn7vBoVaV9_wM0" />
         <link rel="manifest" href="/manifest.json" />
         {/* You might want to add more specific icons for different platforms here */}
         {/* <link rel="apple-touch-icon" href="/apple-touch-icon.png" /> */}
