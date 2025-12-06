@@ -49,7 +49,7 @@ export function PricingCard({
         <CardTitle className="text-3xl font-bold tracking-tight mb-2">{planName}</CardTitle>
         <CardDescription className="text-base text-muted-foreground leading-relaxed">{description}</CardDescription>
         <div className="mt-4">
-          <span className="text-5xl font-extrabold text-foreground">Rs{priceMonthly}</span>
+          <span className="text-5xl font-extrabold text-foreground">Rs&nbsp;{priceMonthly}</span>
           {/* Removed "/month" and yearly price display */}
         </div>
       </CardHeader>
