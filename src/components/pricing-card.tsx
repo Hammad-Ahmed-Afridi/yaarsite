@@ -4,15 +4,20 @@ import React from 'react';
 import Link from 'next/link'; // Added Link import
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check, Star } from 'lucide-react';
+import { Check, Star, X } from 'lucide-react'; // Added X icon
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge'; // Added Badge import
+
+interface FeatureItem {
+  text: string;
+  included: boolean;
+}
 
 interface PricingCardProps {
   planName: string;
   priceMonthly: number;
   priceYearly?: number;
-  features: string[];
+  features: FeatureItem[]; // Updated to array of FeatureItem
   isMostPopular?: boolean;
   buttonText: string;
   buttonLink: string;
@@ -55,8 +60,12 @@ export function PricingCard({
         <ul className="space-y-3 text-base text-muted-foreground">
           {features.map((feature, index) => (
             <li key={index} className="flex items-center gap-3">
-              <Check className="h-5 w-5 text-primary flex-shrink-0" />
-              <span>{feature}</span>
+              {feature.included ? (
+                <Check className="h-5 w-5 text-primary flex-shrink-0" />
+              ) : (
+                <X className="h-5 w-5 text-destructive flex-shrink-0" />
+              )}
+              <span>{feature.text}</span>
             </li>
           ))}
         </ul>

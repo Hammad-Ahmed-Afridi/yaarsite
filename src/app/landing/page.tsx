@@ -12,18 +12,23 @@ export default function LandingPage() {
   );
 
   const freePlanFeatures = [
-    "Dashboard Access",
-    "Product Management (Up to 2 products)",
-    "Order Management",
-    "Free Yaarsite Subdomain",
-    "Basic Analytics",
-    "Cash on Delivery Payment",
-    "Store Customization (Home, About, Contact Pages)",
-    "Custom Store Logo & Description",
-    "Custom Delivery Charges",
-    "JazzCash & EasyPaisa Payments",
-    "Product Discount Feature",
-    "Product Size Charts & Colors",
+    { text: "Dashboard Access", included: true },
+    { text: "Product Management (Up to 2 products)", included: true },
+    { text: "Order Management", included: true },
+    { text: "Free Yaarsite Subdomain", included: true },
+    { text: "Real Time Analytics", included: true },
+    { text: "Cash on Delivery Payment", included: true },
+    { text: "Store Customization (Home, About, Contact Pages)", included: true },
+    { text: "Custom Store Logo & Description", included: true },
+    { text: "Custom Delivery Charges", included: true },
+    { text: "JazzCash & EasyPaisa Payments", included: true },
+    { text: "Product Discount Feature", included: true },
+    { text: "Product Size Charts & Colors", included: true },
+    { text: "Free Link shorteners", included: true },
+    { text: "Unlimited Products", included: false },
+    { text: "Priority Support", included: false },
+    { text: "SEO", included: false },
+    { text: "Free Custom Domain", included: false },
   ];
 
   const pricingPlans = [
@@ -42,9 +47,11 @@ export default function LandingPage() {
       priceMonthly: 500,
       priceYearly: 5000,
       features: [
-        ...freePlanFeatures,
-        "Unlimited Products",
-        "Priority Support",
+        ...freePlanFeatures.filter(f => f.included), // Start with all included free features
+        { text: "Unlimited Products", included: true }, // Override for Pro
+        { text: "Priority Support", included: true }, // Override for Pro
+        { text: "SEO", included: false }, // Still not included in Pro
+        { text: "Free Custom Domain", included: false }, // Still not included in Pro
       ],
       buttonText: "Go Pro",
       buttonLink: "/signup",
@@ -56,13 +63,13 @@ export default function LandingPage() {
       priceMonthly: 7000,
       priceYearly: 70000,
       features: [
-        "Everything you need in a store",
-        "Custom domain integration",
-        "Custom coded platform with all your desired features",
-        "Highly customizable and robust store with all the features that you need",
-        "Advanced Analytics & Reporting",
-        "Dedicated Account Manager",
-        "24/7 Premium Support",
+        { text: "Everything you need in a store", included: true },
+        { text: "Custom domain integration", included: true },
+        { text: "Custom coded platform with all your desired features", included: true },
+        { text: "Highly customizable and robust store with all the features that you need", included: true },
+        { text: "Advanced Analytics & Reporting", included: true },
+        { text: "Dedicated Account Manager", included: true },
+        { text: "24/7 Premium Support", included: true },
       ],
       buttonText: "Get Business",
       buttonLink: "/signup",
