@@ -47,11 +47,23 @@ export default function LandingPage() {
       priceMonthly: 500,
       priceYearly: 5000,
       features: [
-        ...freePlanFeatures.filter(f => f.included), // Start with all included free features
-        { text: "Unlimited Products", included: true }, // Override for Pro
-        { text: "Priority Support", included: true }, // Override for Pro
-        { text: "SEO", included: false }, // Still not included in Pro
-        { text: "Free Custom Domain", included: false }, // Still not included in Pro
+        { text: "Dashboard Access", included: true },
+        { text: "Product Management", included: true },
+        { text: "Order Management", included: true },
+        { text: "Free Yaarsite Subdomain", included: true },
+        { text: "Real Time Analytics", included: true },
+        { text: "Cash on Delivery Payment", included: true },
+        { text: "Store Customization (Home, About, Contact Pages)", included: true },
+        { text: "Custom Store Logo & Description", included: true },
+        { text: "Custom Delivery Charges", included: true },
+        { text: "JazzCash & EasyPaisa Payments", included: true },
+        { text: "Product Discount Feature", included: true },
+        { text: "Product Size Charts & Colors", included: true },
+        { text: "Free Link shorteners", included: true },
+        { text: "Unlimited Products", included: true },
+        { text: "Priority Support for One Week", included: true },
+        { text: "SEO", included: true },
+        { text: "Free Custom Domain", included: true },
       ],
       buttonText: "Go Pro",
       buttonLink: "/signup",
