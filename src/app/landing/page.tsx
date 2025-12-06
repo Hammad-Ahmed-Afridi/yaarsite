@@ -102,9 +102,7 @@ export default function LandingPage() {
           <h1 className="relative z-10 text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">
             Build and Launch Your Ecommerce Store in <span className="text-primary">Seconds</span> with {animatedYaarsite}
           </h1>
-          <p className="relative z-10 text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl leading-relaxed">
-            {animatedYaarsite} helps entrepreneurs build beautiful, professional e-commerce stores effortlessly. Focus on your products, we handle the tech.
-          </p>
+          
           <div className="relative z-10 flex flex-col sm:flex-row gap-4">
             <Button asChild size="lg" className="px-8 py-6 text-lg font-semibold hover:scale-[1.02] transition-transform duration-200">
               <Link href="/signup" target="_blank" rel="noopener noreferrer">
