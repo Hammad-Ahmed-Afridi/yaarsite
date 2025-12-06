@@ -100,12 +100,7 @@ export default function LandingPage() {
         </div>
         <div className="container mx-auto flex flex-col items-center justify-center text-center px-4">
           <h1 className="relative z-10 text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">
-            Build and Launch Your Ecommerce
-            <br className="hidden md:block" /> {/* New break for desktop/tablet after 'Ecommerce' */}
-            Store in <span className="text-primary">Seconds</span> with
-            <br className="hidden md:block" /> {/* New break for desktop/tablet after 'with' */}
-            <br className="md:hidden" /> {/* Existing break for mobile only */}
-            {animatedYaarsite}
+            Build and Launch Your Ecommerce Store in <span className="text-primary">Seconds</span> with <br className="md:hidden" /> {animatedYaarsite}
           </h1>
           
           <div className="relative z-10 flex flex-col sm:flex-row gap-4">
