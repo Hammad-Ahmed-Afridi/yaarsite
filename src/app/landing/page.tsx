@@ -46,8 +46,8 @@ export default function LandingPage() {
     {
       planName: "Pro",
       description: "Unlock full potential with unlimited products and priority support.",
-      priceMonthly: 5000, // Changed from 500 to 5000
-      priceYearly: 5000,
+      priceMonthly: 4999, // Changed from 5000 to 4999
+      priceYearly: 4999, // Changed from 5000 to 4999
       features: [
         { text: "Dashboard Access", included: true },
         { text: "Product Management", included: true },
@@ -76,7 +76,7 @@ export default function LandingPage() {
     {
       planName: "Business",
       description: "Advanced features for growing businesses and maximum control.",
-      priceMonthly: 49999, // Changed from 7000 to 49999
+      priceMonthly: 49999, 
       priceYearly: 70000,
       features: [
         { text: "Dashboard Access", included: true },
