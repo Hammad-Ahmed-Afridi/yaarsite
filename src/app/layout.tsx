@@ -19,16 +19,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Yaarsite - Build and Launch Your Ecommerce Store In Seconds",
-  description: "Yaarsite helps you Build and launch professional, beautiful ecommerce stores in seconds. Easy, fast, and perfect for any e-commerce seller.",
+  title: "Yaarsite - Launch Your Ecommerce Store In Seconds", // Updated title
+  description: "Yaarsite helps you launch professional, beautiful ecommerce stores in seconds. Easy, fast, and perfect so that you can start making money.", // Updated description
   robots: "index, follow",
   authors: [{ name: "Hammad Ahmed Afridi" }],
   icons: {
     icon: "https://placehold.co/32x32/ffffff/29A399?text=Ys", // Updated favicon background to white
   },
   openGraph: {
-    title: "Yaarsite - Build and Launch Your Ecommerce Store In Seconds",
-    description: "Yaarsite helps you Build and launch professional, beautiful ecommerce stores in seconds. Easy, fast, and perfect for any e-commerce seller.",
+    title: "Yaarsite - Launch Your Ecommerce Store In Seconds", // Updated Open Graph title
+    description: "Yaarsite helps you launch professional, beautiful ecommerce stores in seconds. Easy, fast, and perfect so that you can start making money.", // Updated Open Graph description
     url: "https://yaarsite.vercel.app",
     type: "website",
     images: [
