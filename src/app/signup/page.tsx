@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
@@ -8,6 +6,7 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { getAuthErrorMessage } from '@/lib/auth-errors';
+import type { Metadata } from 'next'; // Import Metadata type
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,6 +15,19 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff, Mail, Lock, Phone, User, RefreshCcw } from 'lucide-react';
 import Link from 'next/link';
+
+// Add page-specific metadata
+export const metadata: Metadata = {
+  title: "Sign Up - Create Your Free Ecommerce Store | Yaarsite",
+  description: "Create your free ecommerce store in seconds with Yaarsite. Start selling online, manage products, and track orders easily. No credit card required!",
+  keywords: ["ecommerce store", "create online store", "free store builder", "yaarsite signup", "sell online", "start business"],
+  openGraph: {
+    title: "Sign Up - Create Your Free Ecommerce Store | Yaarsite",
+    description: "Create your free ecommerce store in seconds with Yaarsite. Start selling online, manage products, and track orders easily. No credit card required!",
+    url: "https://yaarsite.vercel.app/signup",
+    type: "website",
+  },
+};
 
 // Function to generate a random 4-character alphanumeric code
 const generateRandomCode = () => {

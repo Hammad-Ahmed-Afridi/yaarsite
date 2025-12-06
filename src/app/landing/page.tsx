@@ -226,7 +226,7 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 px-4 bg-muted">
+      <section id="pricing" className="py-20 px-4 bg-muted">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Choose Your Plan</h2>
           <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
