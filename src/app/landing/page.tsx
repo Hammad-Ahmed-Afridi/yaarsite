@@ -28,9 +28,9 @@ export default function LandingPage() {
     { text: "Unlimited Products", included: false },
     { text: "Priority Support", included: false },
     { text: "SEO", included: false },
-    { text: "Free Custom Domain", included: false },
-    { text: "Custom domain integration", included: false }, // Added
-    { text: "Custom platform with all your desired features", included: false }, // Added
+    { text: "Free Domain", included: false }, // Updated
+    { text: "Custom domain integration", included: false },
+    { text: "Custom platform with all your desired features", included: false },
   ];
 
   const pricingPlans = [
@@ -65,9 +65,9 @@ export default function LandingPage() {
         { text: "Unlimited Products", included: true },
         { text: "Priority Support for One Week", included: true },
         { text: "SEO", included: true },
-        { text: "Free Custom Domain", included: true },
-        { text: "Custom domain integration", included: false }, // Added
-        { text: "Custom platform with all your desired features", included: false }, // Added
+        { text: "Free Domain", included: true }, // Updated
+        { text: "Custom domain integration", included: false },
+        { text: "Custom platform with all your desired features", included: false },
       ],
       buttonText: "Go Pro",
       buttonLink: "/signup",
@@ -95,7 +95,7 @@ export default function LandingPage() {
         { text: "Unlimited Products", included: true },
         { text: "Priority Support for One Year", included: true },
         { text: "SEO", included: true },
-        { text: "Free Custom Domain", included: true },
+        { text: "Free Domain", included: true }, // Updated
         { text: "Custom domain integration", included: true },
         { text: "Custom platform with all your desired features", included: true },
       ],
