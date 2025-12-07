@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, ShoppingCart, DollarSign, Store, Settings, Globe, BellRing, LayoutDashboard, Download, Copy, ExternalLink } from "lucide-react"; // Added Copy and ExternalLink icons
+import { Package, ShoppingCart, DollarSign, Store, Settings, Globe, BellRing, LayoutDashboard, Download } from "lucide-react"; // Added Download icon
 import { toast } from "sonner";
 import { StoreSetupDialog } from "@/components/store-setup-dialog";
 import { DashboardHeader } from "@/components/dashboard-header";
@@ -15,7 +15,6 @@ import { ScrollHintArrow } from "@/components/scroll-hint-arrow";
 import { AppLoader } from "@/components/app-loader";
 import { ConfettiEffect } from '@/components/confetti-effect';
 import Link from "next/link"; // Ensure Link is imported
-import { Input } from "@/components/ui/input"; // Import Input component
 
 export default function DashboardPage() {
   const { user, profile, isLoading: isSessionLoading, initiateSignOut, session } = useSession();
@@ -129,13 +128,6 @@ export default function DashboardPage() {
     }
   };
 
-  const handleCopyUrl = (text: string, message: string) => {
-    navigator.clipboard.writeText(text);
-    toast.info(message);
-  };
-
-  const displayStoreUrl = profile?.store_url || "Store URL not available";
-
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       {profile?.tenant_name === null && <StoreSetupDialog onStoreCreated={() => setShowConfetti(true)} />}
@@ -191,30 +183,6 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
-
-        {/* New Card for Store URL */}
-        <Card className="bg-card text-card-foreground shadow-md rounded-3xl mt-6">
-          <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-2">
-            <Globe className="h-6 w-6 text-blue-500" />
-            <CardTitle className="text-xl font-semibold">Your Store URL</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center gap-4">
-            <div className="flex w-full items-center gap-2">
-              <Input
-                value={displayStoreUrl}
-                readOnly
-                className="flex-1 text-base"
-              />
-              <Button variant="outline" size="icon" onClick={() => handleCopyUrl(displayStoreUrl, "Store URL copied to clipboard!")} disabled={!profile?.store_url}>
-                <Copy className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="icon" onClick={handleOpenStore} disabled={!profile?.store_url}>
-                <ExternalLink className="h-4 w-4" />
-              </Button>
-            </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">This is the direct link to your online store.</p>
-          </CardContent>
-        </Card>
 
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6"> {/* Adjusted grid for mobile */}
           <Card className="bg-card text-card-foreground shadow-md rounded-3xl">
