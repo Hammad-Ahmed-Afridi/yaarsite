@@ -71,9 +71,9 @@ export default function LandingPage() {
         { text: "SEO", included: true },
         { text: "Free Domain", included: true }, // Updated
         { text: "Limited Customization", included: true }, // Added for Pro plan
+        { text: "No Yaarsite branding", included: true }, // Moved to third-to-last position
         { text: "Custom platform", included: false }, // Updated text and moved position
         { text: "Custom domain integration", included: false }, // Moved to last
-        { text: "No Yaarsite branding", included: true }, // New: No Yaarsite branding for Pro plan
       ],
       buttonText: "Go Pro",
       buttonLink: "/signup",
