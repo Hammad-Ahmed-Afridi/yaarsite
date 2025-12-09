@@ -32,6 +32,7 @@ export default function LandingPage() {
     { text: "Free Domain", included: false }, // Updated
     { text: "Custom platform", included: false }, // Updated text and moved position
     { text: "Custom domain integration", included: false }, // Moved to last
+    { text: "No Yaarsite branding", included: false }, // New: No Yaarsite branding for Free plan
   ];
 
   const pricingPlans = [
@@ -72,6 +73,7 @@ export default function LandingPage() {
         { text: "Limited Customization", included: true }, // Added for Pro plan
         { text: "Custom platform", included: false }, // Updated text and moved position
         { text: "Custom domain integration", included: false }, // Moved to last
+        { text: "No Yaarsite branding", included: true }, // New: No Yaarsite branding for Pro plan
       ],
       buttonText: "Go Pro",
       buttonLink: "/signup",
@@ -104,6 +106,7 @@ export default function LandingPage() {
         { text: "Free Domain", included: true }, // Updated
         { text: "Custom platform", included: true }, // Updated text and moved position
         { text: "Custom domain integration", included: true }, // Moved to last
+        { text: "No Yaarsite branding", included: true }, // New: No Yaarsite branding for Business plan
       ],
       buttonText: "Get Business",
       buttonLink: "/signup",
