@@ -232,20 +232,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 bg-muted">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Choose Your Plan</h2>
-          <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-            Select the perfect plan to power your online store. Upgrade anytime!
-          </p>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-            {pricingPlans.map((plan) => (
-              <PricingCard key={plan.planName} {...plan} />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Removed Pricing Section */}
 
       {/* Call to Action Section */}
       <section className="bg-gradient-to-br from-muted to-background rounded-4xl shadow-lg py-20 px-4">
